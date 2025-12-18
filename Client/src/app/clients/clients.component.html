@@ -1,0 +1,32 @@
+﻿<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<h3 class="component-title">{{ 'clients.title' | translate }}</h3>
+<p class="component-subtitle">{{ 'clients.description' | translate }}</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>{{ 'clients.columns.name' | translate }}</th>
+      <th>{{ 'clients.columns.document' | translate }}</th>
+      <th>{{ 'clients.columns.vehicle' | translate }}</th>
+      <th>{{ 'clients.columns.status' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let client of clients">
+      <td>{{ client.name }}</td>
+      <td>{{ client.document }}</td>
+      <td>{{ client.vehicle }}</td>
+      <td>
+        <span class="status-pill" [class.active]="client.statusKey === 'clients.status.active'">
+          {{ client.statusKey | translate }}
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+

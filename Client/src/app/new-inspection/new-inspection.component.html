@@ -1,0 +1,104 @@
+﻿<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<h3 class="component-title">{{ 'newInspection.title' | translate }}</h3>
+<div *ngIf="messageKey" class="message">{{ messageKey | translate }}</div>
+
+<div class="step-indicator">
+  <div *ngFor="let s of sections; let i = index" class="step" [class.active]="i === currentStep" [class.completed]="i < currentStep" (click)="goToStep(i)" style="cursor: pointer;">
+    <span class="step-number">{{ i + 1 }}</span>
+    <span class="step-label">{{ s.titleKey | translate }}</span>
+  </div>
+</div>
+
+<div *ngIf="currentStep === 0" class="step-content">
+  <h3>{{ 'newInspection.headings.vehicle' | translate }}</h3>
+  <div class="form-group">
+    <label>{{ 'newInspection.fields.vehiclePlate' | translate }}</label>
+    <input [(ngModel)]="vehiclePlate" [placeholder]="'newInspection.placeholders.vehiclePlate' | translate" />
+  </div>
+  <div class="form-group">
+    <label>{{ 'newInspection.fields.inspectorName' | translate }}</label>
+    <input [(ngModel)]="inspectorName" [placeholder]="'newInspection.placeholders.inspectorName' | translate" />
+  </div>
+  <div class="form-group">
+    <label>{{ 'newInspection.fields.inspectionDate' | translate }}</label>
+    <input type="date" [(ngModel)]="inspectionDate" />
+  </div>
+  <div class="form-group">
+    <label>{{ 'newInspection.fields.notes' | translate }}</label>
+    <textarea rows="3" [(ngModel)]="notes" [placeholder]="'newInspection.placeholders.notes' | translate"></textarea>
+  </div>
+</div>
+
+<div *ngIf="currentStep === 1" class="step-content">
+  <h3>{{ 'newInspection.headings.suspension' | translate }}</h3>
+  <div *ngFor="let it of suspensionItems; let i = index" class="item-row">
+    <input type="text" [(ngModel)]="suspensionItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <label>
+      <input type="checkbox" [(ngModel)]="suspensionItems[i].passed" />
+      {{ 'newInspection.labels.pass' | translate }}
+    </label>
+    <button (click)="removeItem(suspensionItems, i)"><span [innerHTML]="iconRemove"></span></button>
+  </div>
+  <button (click)="addItem(suspensionItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+</div>
+
+<div *ngIf="currentStep === 2" class="step-content">
+  <h3>{{ 'newInspection.headings.alignment' | translate }}</h3>
+  <div *ngFor="let it of alignmentItems; let i = index" class="item-row">
+    <input type="text" [(ngModel)]="alignmentItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <label>
+      <input type="checkbox" [(ngModel)]="alignmentItems[i].passed" />
+      {{ 'newInspection.labels.pass' | translate }}
+    </label>
+    <button (click)="removeItem(alignmentItems, i)"><span [innerHTML]="iconRemove"></span></button>
+  </div>
+  <button (click)="addItem(alignmentItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+</div>
+
+<div *ngIf="currentStep === 3" class="step-content">
+  <h3>{{ 'newInspection.headings.lights' | translate }}</h3>
+  <div *ngFor="let it of lightsItems; let i = index" class="item-row">
+    <input type="text" [(ngModel)]="lightsItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <label>
+      <input type="checkbox" [(ngModel)]="lightsItems[i].passed" />
+      {{ 'newInspection.labels.pass' | translate }}
+    </label>
+    <button (click)="removeItem(lightsItems, i)"><span [innerHTML]="iconRemove"></span></button>
+  </div>
+  <button (click)="addItem(lightsItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+</div>
+
+<div *ngIf="currentStep === 4" class="step-content">
+  <h3>{{ 'newInspection.headings.brakes' | translate }}</h3>
+  <div *ngFor="let it of brakesItems; let i = index" class="item-row">
+    <input type="text" [(ngModel)]="brakesItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <label>
+      <input type="checkbox" [(ngModel)]="brakesItems[i].passed" />
+      {{ 'newInspection.labels.pass' | translate }}
+    </label>
+    <button (click)="removeItem(brakesItems, i)"><span [innerHTML]="iconRemove"></span></button>
+  </div>
+  <button (click)="addItem(brakesItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+</div>
+
+<div class="step-navigation">
+  <button class="btn-back" (click)="previousStep()" [disabled]="currentStep === 0">
+    <span [innerHTML]="iconBack"></span>{{ 'newInspection.actions.back' | translate }}
+  </button>
+  <div class="spacer"></div>
+  <button class="btn-next" (click)="nextStep()" [disabled]="currentStep === sections.length - 1">
+    <span [innerHTML]="iconNext"></span>{{ 'newInspection.actions.next' | translate }}
+  </button>
+  <button class="btn-save" (click)="submit()" [disabled]="saving">
+    <span [innerHTML]="iconSave"></span>{{ 'newInspection.actions.save' | translate }}
+  </button>
+  <button class="btn-cancel" (click)="close.emit()">
+    <span [innerHTML]="iconCancel"></span>{{ 'newInspection.actions.cancel' | translate }}
+  </button>
+</div>
+

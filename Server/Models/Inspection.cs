@@ -1,0 +1,52 @@
+﻿/*
+ * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+ * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
+*/
+
+#region Imports
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+#endregion
+
+namespace Server.Models
+{
+    #region Inspection Model
+
+    public class Inspection
+    {
+        #region Declarations
+
+        #endregion
+
+        #region Constructor
+
+        #endregion
+
+        #region Properties
+
+        [Key]
+        public long Id { get; set; }
+        public string VehiclePlate { get; set; }
+        public string InspectorName { get; set; }
+        public DateTime InspectionDate { get; set; }
+        public string? Notes { get; set; }
+        public List<InspectionItem> Items { get; set; } = new();
+
+        #endregion
+
+        #region Methods - Public
+
+        #endregion
+
+        #region Methods - Private
+
+        #endregion
+    }
+
+    #endregion
+}
+

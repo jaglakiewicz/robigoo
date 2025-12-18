@@ -1,0 +1,85 @@
+﻿<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div *ngIf="loading" class="loading-message">
+  Loading...
+</div>
+
+<div *ngIf="!loading" class="list-container">
+  <h3 class="component-title" *ngIf="title">{{ title }}</h3>
+
+  <!-- Filters -->
+  <div *ngIf="filters.length > 0" class="filters-section">
+    <div class="filters-grid">
+      <div *ngFor="let filter of filters" class="filter-item">
+        <label *ngIf="filter.label">{{ filter.label }}</label>
+        
+        <input
+          *ngIf="filter.type === 'text'"
+          type="text"
+          [(ngModel)]="filterValues[filter.key]"
+          (ngModelChange)="onFilterChange()"
+          [placeholder]="filter.placeholder || filter.label"
+          class="filter-input"
+        />
+
+        <input
+          *ngIf="filter.type === 'date'"
+          type="date"
+          [(ngModel)]="filterValues[filter.key]"
+          (ngModelChange)="onFilterChange()"
+          class="filter-input"
+        />
+
+        <input
+          *ngIf="filter.type === 'number'"
+          type="number"
+          [(ngModel)]="filterValues[filter.key]"
+          (ngModelChange)="onFilterChange()"
+          [placeholder]="filter.placeholder || filter.label"
+          class="filter-input"
+        />
+
+        <select
+          *ngIf="filter.type === 'select'"
+          [(ngModel)]="filterValues[filter.key]"
+          (ngModelChange)="onFilterChange()"
+          class="filter-input"
+        >
+          <option value="">{{ filter.placeholder || 'Select...' }}</option>
+          <option *ngFor="let opt of filter.options" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <button (click)="clearFilters()" class="clear-btn">Clear Filters</button>
+  </div>
+
+  <!-- Results -->
+  <h4 *ngIf="filtered.length > 0" class="results-title">Results ({{ filtered.length }})</h4>
+
+  <div *ngIf="filtered.length === 0" class="empty-message">
+    {{ emptyMessage }}
+  </div>
+
+  <table *ngIf="filtered.length > 0" class="data-table">
+    <thead>
+      <tr>
+        <th *ngFor="let col of columns" [style.width]="col.width">
+          {{ col.label }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of filtered" (click)="selectItem(item)" class="data-row">
+        <td *ngFor="let col of columns">
+          {{ getColumnValue(item, col) }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

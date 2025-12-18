@@ -1,0 +1,191 @@
+﻿/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Generic List Component - Responsive Design System
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+*/
+
+.list-container {
+  padding: var(--space-lg);
+  background: var(--panel);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 767px) {
+  .list-container {
+    padding: var(--space-md);
+  }
+}
+
+.loading-message {
+  padding: var(--space-2xl) var(--space-lg);
+  text-align: center;
+  color: var(--text-light);
+  font-size: var(--font-size-lg);
+}
+
+.component-title {
+  margin: 0 0 var(--space-md) 0;
+  color: var(--text);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-bottom: 1px solid var(--panel-border);
+  padding: 0;
+}
+
+.filters-section {
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+/* Mobile: Stack filters */
+@media (max-width: 767px) {
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.filter-item label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.filter-input {
+  padding: var(--space-sm) var(--space-md) !important;
+  border: 1px solid var(--panel-border) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: var(--font-size-base) !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(59, 142, 165, 0.1) !important;
+  background: var(--panel) !important;
+}
+
+.clear-btn {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-alt);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  align-self: flex-start;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.clear-btn:hover {
+  background: var(--panel-border);
+  border-color: var(--text-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.clear-btn:active {
+  transform: translateY(0);
+}
+
+.results-title {
+  margin: 0 0 var(--space-md) 0;
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.empty-message {
+  padding: var(--space-2xl) var(--space-lg);
+  text-align: center;
+  color: var(--text-lighter);
+  background: var(--bg-alt);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--panel-border);
+  font-size: var(--font-size-base);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-lg);
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.data-table thead {
+  background: var(--bg-alt);
+  border-bottom: 2px solid var(--panel-border);
+}
+
+.data-table th {
+  padding: var(--space-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.data-table td {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--panel-border);
+  color: var(--text);
+  font-size: var(--font-size-base);
+}
+
+.data-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.data-row {
+  cursor: pointer;
+}
+
+.data-row:hover {
+  background-color: var(--bg-alt);
+}
+
+.data-row:active {
+  background-color: rgba(59, 142, 165, 0.1);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+

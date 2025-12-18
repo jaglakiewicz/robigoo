@@ -1,0 +1,22 @@
+﻿<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<h3 class="component-title">{{ 'notifications.title' | translate }}</h3>
+
+<ng-container *ngIf="notifications.length; else emptyNotifications">
+  <div class="notification-card" *ngFor="let n of notifications">
+    <div class="notification-header">
+      <strong>{{ n.titleKey | translate }}</strong>
+      <span class="notification-time">{{ n.timeKey | translate }}</span>
+    </div>
+    <p>{{ n.bodyKey | translate }}</p>
+  </div>
+</ng-container>
+
+<ng-template #emptyNotifications>
+  <p class="component-subtitle">{{ 'notifications.empty' | translate }}</p>
+</ng-template>
+

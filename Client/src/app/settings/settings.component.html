@@ -1,0 +1,300 @@
+﻿<h3 class="component-title">{{ 'settings.title' | translate }}</h3>
+
+<!-- Step Indicator (Tabs) -->
+<div class="step-indicator">
+  <div *ngFor="let tab of tabs; let i = index" 
+       class="step" 
+       [class.active]="i === activeTab"
+       (click)="changeTab(i)">
+    <span class="step-number">{{ i + 1 }}</span>
+    <span class="step-label">{{ tab.label }}</span>
+  </div>
+</div>
+
+<!-- Tab Contents -->
+<div class="step-content">
+    <!-- Program Settings Tab -->
+    <div *ngIf="activeTab === 0" class="tab-pane">
+      <h3>Ustawienia programu</h3>
+      
+      <div class="form-group">
+        <label>Domyślna drukarka</label>
+        <select [(ngModel)]="programSettings.defaultPrinter">
+          <option value="pdf">PDF</option>
+          <option value="hp">HP LaserJet</option>
+          <option value="canon">Canon</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Format daty</label>
+        <select [(ngModel)]="programSettings.dateFormat">
+          <option value="dd.MM.yyyy">dd.MM.yyyy</option>
+          <option value="yyyy-MM-dd">yyyy-MM-dd</option>
+          <option value="MM/dd/yyyy">MM/dd/yyyy</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Ścieżka backupu</label>
+        <input type="text" [(ngModel)]="programSettings.backupPath" />
+      </div>
+
+      <button class="btn btn-primary" (click)="saveSettings()">Zapisz</button>
+    </div>
+
+    <!-- User Settings Tab -->
+    <div *ngIf="activeTab === 1" class="tab-pane">
+      <h3>Ustawienia użytkownika</h3>
+      
+      <!-- Avatar Section -->
+      <div class="form-group avatar-section">
+        <label>Avatar</label>
+        <div class="avatar-info">
+          <div>Login: <strong>{{ userSettings.login }}</strong></div>
+        </div>
+        <div class="avatar-container">
+          <div class="avatar-preview" *ngIf="userSettings.avatar">
+            <img [src]="userSettings.avatar" alt="Avatar" />
+          </div>
+          <div class="avatar-preview empty" *ngIf="!userSettings.avatar">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+          <input 
+            type="file" 
+            #avatarInput 
+            (change)="onAvatarSelected($event)" 
+            accept="image/*"
+            style="display: none"
+          />
+          <button class="btn btn-secondary" (click)="avatarInput.click()">
+            Zmień avatar
+          </button>
+        </div>
+        <div *ngIf="avatarError" class="error-message">{{ avatarError }}</div>
+        <div *ngIf="avatarSuccess" class="success-message">Avatar został pomyślnie przesłany!</div>
+      </div>
+
+      <!-- Personal Information -->
+      <div class="form-group">
+        <label>Imię *</label>
+        <input type="text" [(ngModel)]="userSettings.firstName" />
+      </div>
+
+      <div class="form-group">
+        <label>Nazwisko *</label>
+        <input type="text" [(ngModel)]="userSettings.lastName" />
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="userSettings.email" />
+      </div>
+
+      <div class="form-group">
+        <label>Telefon</label>
+        <input type="tel" [(ngModel)]="userSettings.phone" />
+      </div>
+
+      <div class="form-group">
+        <label>Numer uprawnień</label>
+        <input type="text" [(ngModel)]="userSettings.permissionNumber" placeholder="Wpisz swój numer uprawnień" />
+      </div>
+
+      <!-- Password Change Section -->
+      <button class="btn btn-secondary toggle-form-btn" [class.expanded]="showPasswordForm" (click)="togglePasswordForm()">
+        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+        {{ showPasswordForm ? 'Anuluj zmianę hasła' : 'Zmień hasło' }}
+      </button>
+
+      <div *ngIf="showPasswordForm" class="password-change-form">
+        <div class="form-group">
+          <label>Stare hasło *</label>
+          <input type="password" [(ngModel)]="passwordForm.oldPassword" placeholder="Wpisz stare hasło" />
+        </div>
+
+        <div class="form-group">
+          <label>Nowe hasło *</label>
+          <input type="password" [(ngModel)]="passwordForm.newPassword" placeholder="Wpisz nowe hasło" />
+        </div>
+
+        <div class="form-group">
+          <label>Potwierdź nowe hasło *</label>
+          <input type="password" [(ngModel)]="passwordForm.confirmPassword" placeholder="Powtórz nowe hasło" />
+        </div>
+
+        <div *ngIf="changePasswordError" class="error-message">{{ changePasswordError }}</div>
+        <div *ngIf="changePasswordSuccess" class="success-message">Hasło zostało zmienione pomyślnie!</div>
+
+        <button class="btn btn-primary" (click)="changePassword()" [disabled]="changingPassword">
+          {{ changingPassword ? 'Zmiana...' : 'Zmień hasło' }}
+        </button>
+      </div>
+
+      <!-- Preferences -->
+      <div class="form-group">
+        <label>Preferowany język</label>
+        <select [(ngModel)]="userSettings.language">
+          <option value="pl">Polski</option>
+          <option value="uk">Ukraiński</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Motyw</label>
+        <select [(ngModel)]="userSettings.theme">
+          <option value="light">Jasny</option>
+          <option value="dark">Ciemny</option>
+          <option value="auto">Auto</option>
+        </select>
+      </div>
+
+      <!-- Save Button -->
+      <div *ngIf="userSettingsError" class="error-message">{{ userSettingsError }}</div>
+      <div *ngIf="userSettingsSuccess" class="success-message">Ustawienia zostały pomyślnie zapisane!</div>
+      <button class="btn btn-primary" (click)="saveUserSettings()" [disabled]="savingSettings">
+        {{ savingSettings ? 'Zapisywanie...' : 'Zapisz ustawienia' }}
+      </button>
+    </div>
+
+    <!-- Admin Settings Tab -->
+    <div *ngIf="activeTab === 2" class="tab-pane">
+      <h3>Zarządzanie użytkownikami</h3>
+        
+        <button class="btn btn-secondary toggle-form-btn" [class.expanded]="showCreateUserForm" (click)="toggleCreateUserForm()">
+          <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+          {{ showCreateUserForm ? 'Anuluj tworzenie użytkownika' : 'Utwórz nowego użytkownika' }}
+        </button>
+
+        <!-- Create User Form -->
+        <div class="create-user-form" *ngIf="showCreateUserForm">
+          <div class="form-group">
+            <label>Login *</label>
+            <input type="text" [(ngModel)]="newUserForm.login" placeholder="Wpisz login" />
+          </div>
+
+          <div class="form-group">
+            <label>Hasło *</label>
+            <input type="password" [(ngModel)]="newUserForm.password" placeholder="Wpisz hasło" />
+          </div>
+
+          <div class="form-group">
+            <label>Imię</label>
+            <input type="text" [(ngModel)]="newUserForm.firstName" placeholder="Wpisz imię" />
+          </div>
+
+          <div class="form-group">
+            <label>Nazwisko</label>
+            <input type="text" [(ngModel)]="newUserForm.lastName" placeholder="Wpisz nazwisko" />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="newUserForm.email" placeholder="Wpisz email" />
+          </div>
+
+          <div class="form-group">
+            <label>Telefon</label>
+            <input type="tel" [(ngModel)]="newUserForm.phone" placeholder="Wpisz numer telefonu" />
+          </div>
+
+          <div class="form-group">
+            <label>Numer uprawnień</label>
+            <input type="text" [(ngModel)]="newUserForm.permissionNumber" placeholder="Wpisz numer uprawnień" />
+          </div>
+
+          <div class="form-group">
+            <label>Rola *</label>
+            <select [(ngModel)]="newUserForm.role">
+              <option value="user">Użytkownik</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
+
+          <div *ngIf="createUserError" class="error-message">{{ createUserError }}</div>
+          <div *ngIf="createUserSuccess" class="success-message">Użytkownik został pomyślnie utworzony!</div>
+
+          <button class="btn btn-primary" (click)="createUser()" [disabled]="creatingUser">
+            {{ creatingUser ? 'Tworzenie...' : 'Utwórz użytkownika' }}
+          </button>
+        </div>
+
+        <!-- Users List -->
+        <div class="users-list" *ngIf="users.length > 0">
+          <h5>Lista użytkowników ({{ users.length }})</h5>
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Login</th>
+                <th>Imię i nazwisko</th>
+                <th>Email</th>
+                <th>Rola</th>
+                <th>Akcje</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.login }}</td>
+                <td>{{ user.firstName }} {{ user.lastName }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role === 'admin' ? 'Administrator' : 'Użytkownik' }}</td>
+                <td>
+                  <button 
+                    *ngIf="canDeleteUser(user)"
+                    class="btn btn-small btn-danger" 
+                    (click)="openDeleteConfirmDialog(user)"
+                    [disabled]="deletingUserId === user.userId"
+                  >
+                    Usuń
+                  </button>
+                  <span *ngIf="!canDeleteUser(user)" class="btn-disabled-text">Brak uprawnień</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Password Confirmation Dialog -->
+        <div class="password-confirm-dialog" *ngIf="showPasswordConfirmDialog">
+          <div class="dialog-overlay" (click)="cancelPasswordConfirmDialog()"></div>
+          <div class="dialog-content">
+            <h4>{{ confirmDialogAction === 'delete' ? 'Potwierdź usunięcie' : 'Potwierdź działanie' }}</h4>
+            <p *ngIf="confirmDialogAction === 'delete' && userToConfirm">
+              Na pewno chcesz usunąć użytkownika <strong>{{ userToConfirm.login }}</strong>?
+            </p>
+            <p class="dialog-info">Wpisz swoje hasło aby potwierdzić:</p>
+            
+            <div class="form-group">
+              <label>Hasło</label>
+              <input 
+                type="password" 
+                [(ngModel)]="confirmDialogPassword"
+                placeholder="Twoje hasło"
+                (keyup.enter)="confirmPasswordAction()"
+              />
+            </div>
+
+            <div *ngIf="confirmDialogError" class="error-message">{{ confirmDialogError }}</div>
+
+            <div class="dialog-buttons">
+              <button 
+                class="btn btn-primary" 
+                (click)="confirmPasswordAction()"
+                [disabled]="confirmingAction"
+              >
+                {{ confirmingAction ? 'Przetwarzanie...' : (confirmDialogAction === 'delete' ? 'Usuń' : 'Potwierdź') }}
+              </button>
+              <button class="btn btn-secondary" (click)="cancelPasswordConfirmDialog()" [disabled]="confirmingAction">
+                Anuluj
+              </button>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>

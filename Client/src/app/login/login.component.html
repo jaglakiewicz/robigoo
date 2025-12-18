@@ -1,0 +1,731 @@
+﻿<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="login-container">
+  <div class="login-illustration" aria-hidden="true">
+    <svg viewBox="0 0 1400 600" focusable="false">
+      <rect class="illustration-ground" x="0" y="360" width="1400" height="240"></rect>
+      <path class="illustration-horizon" d="M0 320 C 240 280 490 320 720 300 C 1000 270 1200 320 1400 290"></path>
+      <g class="illustration-ridges">
+        <line x1="0" y1="360" x2="1400" y2="330"></line>
+        <line x1="0" y1="390" x2="1400" y2="350"></line>
+        <line x1="0" y1="420" x2="1400" y2="370"></line>
+        <line x1="0" y1="450" x2="1400" y2="390"></line>
+        <line x1="0" y1="480" x2="1400" y2="410"></line>
+        <line x1="0" y1="510" x2="1400" y2="430"></line>
+      </g>
+      <g class="illustration-field-blocks">
+        <polygon points="0,360 200,350 320,420 0,440"></polygon>
+        <polygon points="260,340 520,320 600,420 340,440"></polygon>
+        <polygon points="580,310 880,300 960,400 660,420"></polygon>
+        <polygon points="920,300 1200,320 1400,420 1020,420"></polygon>
+      </g>
+      <g class="agri-wheat">
+        <g class="wheat-stalk" transform="translate(60 382) scale(0.38)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="82"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,8)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(120 372) scale(0.46)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="88"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,8)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(185 362) scale(0.56)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="94"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,9)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(250 352) scale(0.66)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="102"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,10)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,78)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,78)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,78)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(320 346) scale(0.76)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="110"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,11)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,78)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,78)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,78)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(390 342) scale(0.86)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="118"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,11)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,78)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,78)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,78)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(460 338) scale(0.96)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="124"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,78)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,78)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,78)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,89)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,89)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,89)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(530 338) scale(1.04)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="128"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,78)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,78)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,78)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,89)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,89)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,89)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(600 340) scale(1.0)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="122"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,78)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,78)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,78)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(670 344) scale(0.92)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="114"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,11)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,78)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,78)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,78)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(740 350) scale(0.84)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="108"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,10)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(810 356) scale(0.76)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="100"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,10)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,67)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,67)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,67)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(880 362) scale(0.7)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="94"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,9)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(950 368) scale(0.64)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="88"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,8)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,56)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,56)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,56)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(1020 374) scale(0.58)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="82"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,8)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(1090 380) scale(0.54)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="78"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,7)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(1160 386) scale(0.48)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="72"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,7)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,45)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,45)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,45)"></path>
+            </g>
+          </g>
+        </g>
+        <g class="wheat-stalk" transform="translate(1230 392) scale(0.44)">
+          <g class="wheat-stalk-body">
+            <line class="wheat-stem" x1="0" y1="0" x2="0" y2="68"></line>
+            <g class="wheat-head">
+              <path class="wheat-tip" d="M0,-10 L3,-4 L0,0 L-3,-4 Z" transform="translate(0,6)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,12)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,12)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,12)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,23)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,23)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,23)"></path>
+              <line class="wheat-branch" x1="0" y1="0" x2="-8" y2="-10" transform="translate(0,34)"></line>
+              <line class="wheat-branch" x1="0" y1="0" x2="8" y2="-10" transform="translate(0,34)"></line>
+              <path class="wheat-kernel" d="M0,-8 C3,-5 3,-1 0,2 C-3,-1 -3,-5 0,-8Z" transform="translate(0,34)"></path>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g class="sprayer-assembly">
+        <g class="sprayer-boom">
+          <line x1="320" y1="260" x2="1080" y2="230"></line>
+          <line x1="360" y1="275" x2="520" y2="240"></line>
+          <line x1="880" y1="245" x2="1040" y2="255"></line>
+          <circle cx="320" cy="260" r="10"></circle>
+          <circle cx="1080" cy="230" r="10"></circle>
+        </g>
+        <g class="sprayer-body">
+          <rect x="560" y="220" width="220" height="90" rx="16"></rect>
+          <rect x="590" y="180" width="90" height="55" rx="12"></rect>
+          <rect x="700" y="205" width="95" height="40" rx="10"></rect>
+        </g>
+        <g class="sprayer-wheels">
+          <circle cx="620" cy="320" r="36"></circle>
+          <circle cx="760" cy="320" r="36"></circle>
+        </g>
+      </g>
+      <g class="spray-cones">
+        <polygon points="860,245 940,300 780,320"></polygon>
+        <polygon points="920,250 1020,310 860,330"></polygon>
+        <polygon points="980,255 1100,320 930,340"></polygon>
+      </g>
+      <g class="spray-droplets">
+        <circle cx="890" cy="300" r="6"></circle>
+        <circle cx="930" cy="312" r="5"></circle>
+        <circle cx="970" cy="326" r="4"></circle>
+        <circle cx="1010" cy="338" r="3"></circle>
+      </g>
+      <g class="spray-droplets spray-droplets--tail">
+        <circle cx="1030" cy="344" r="2"></circle>
+        <circle cx="1060" cy="352" r="2"></circle>
+        <circle cx="1090" cy="358" r="2"></circle>
+      </g>
+    </svg>
+  </div>
+  <div class="login-box">
+    <div class="login-header">
+      <div class="robigoo-logo" aria-label="Robigoo">
+        <div class="logo-container">
+          <div class="logo-icon">
+            <svg viewBox="0 0 120 120" focusable="false" xmlns="http://www.w3.org/2000/svg">
+              <!-- Spray mist particles (left side - going down and left) -->
+              <g class="spray-particles spray-particles-left">
+                <circle cx="30" cy="70" r="1" class="spray-drop" />
+                <circle cx="10" cy="85" r="1.2" class="spray-drop" />
+                <circle cx="5" cy="105" r="0.8" class="spray-drop" />
+              </g>
+              
+              <!-- Spray mist particles (right side - going down and right) -->
+              <g class="spray-particles spray-particles-right">
+                <circle cx="90" cy="70" r="1" class="spray-drop" />
+                <circle cx="110" cy="85" r="1.2" class="spray-drop" />
+                <circle cx="115" cy="105" r="0.8" class="spray-drop" />
+              </g>
+              
+              <!-- Main tank body - elegant rounded rectangle -->
+              <g class="sprayer-tank-main">
+                <path d="M 35 25 L 85 25 Q 90 25 90 30 L 90 70 Q 90 75 85 75 L 35 75 Q 30 75 30 70 L 30 30 Q 30 25 35 25 Z" class="tank-fill" />
+                <path d="M 35 25 L 85 25 Q 90 25 90 30 L 90 70 Q 90 75 85 75 L 35 75 Q 30 75 30 70 L 30 30 Q 30 25 35 25 Z" class="tank-outline" />
+              </g>
+              
+              <!-- Tank cap/fill opening -->
+              <g class="tank-cap-main">
+                <rect x="50" y="15" width="20" height="8" rx="2" class="cap-body" />
+                <rect x="48" y="13" width="24" height="3" rx="1" class="cap-rim" />
+              </g>
+              
+              <!-- Horizontal boom arm (spread bar) -->
+              <g class="boom-arm">
+                <line x1="10" y1="52" x2="110" y2="52" stroke-width="3" class="boom-line" />
+                <!-- Boom connection points -->
+                <circle cx="20" cy="52" r="3.5" class="boom-joint" />
+                <circle cx="100" cy="52" r="3.5" class="boom-joint" />
+              </g>
+              
+              <!-- Left side nozzles/sprayers (pointing down) -->
+              <g class="nozzle-group nozzle-left">
+                <!-- Nozzle 1 -->
+                <line x1="25" y1="52" x2="20" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="19" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-1">
+                  <line x1="19" y1="74" x2="15" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+                
+                <!-- Nozzle 2 -->
+                <line x1="35" y1="52" x2="32" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="31" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-2">
+                  <line x1="31" y1="74" x2="28" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+                
+                <!-- Nozzle 3 -->
+                <line x1="45" y1="52" x2="43" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="42" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-3">
+                  <line x1="42" y1="74" x2="40" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+                
+                <!-- Nozzle 4 -->
+                <line x1="15" y1="52" x2="12" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="11" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-4">
+                  <line x1="11" y1="74" x2="5" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+              </g>
+              
+              <!-- Right side nozzles/sprayers (pointing down, mirrored) -->
+              <g class="nozzle-group nozzle-right">
+                <!-- Nozzle 1 -->
+                <line x1="95" y1="52" x2="100" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="101" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-5">
+                  <line x1="101" y1="74" x2="105" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+                
+                <!-- Nozzle 2 -->
+                <line x1="85" y1="52" x2="88" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="89" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-6">
+                  <line x1="89" y1="74" x2="92" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+                
+                <!-- Nozzle 3 -->
+                <line x1="75" y1="52" x2="77" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="78" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-7">
+                  <line x1="78" y1="74" x2="80" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+                
+                <!-- Nozzle 4 -->
+                <line x1="105" y1="52" x2="108" y2="72" stroke-width="1.5" class="nozzle-tube" />
+                <circle cx="109" cy="74" r="1.8" class="nozzle-body" />
+                <g class="mist-trail mist-trail-8">
+                  <line x1="109" y1="74" x2="115" y2="105" stroke-width="0.5" class="mist-line" />
+                </g>
+              </g>
+              
+              <!-- Support legs -->
+              <g class="support-legs">
+                <line x1="42" y1="75" x2="38" y2="95" stroke-width="2" class="leg-line" />
+                <line x1="78" y1="75" x2="82" y2="95" stroke-width="2" class="leg-line" />
+                <line x1="38" y1="95" x2="82" y2="95" stroke-width="2.5" class="leg-base" />
+              </g>
+              
+              <!-- Liquid level indicator inside tank -->
+              <g class="liquid-level" opacity="0.4">
+                <rect x="35" y="50" width="50" height="20" rx="1" class="liquid-fill" />
+              </g>
+              
+              <!-- Decorative highlight/shine effect -->
+              <g class="shine-effect" opacity="0.3">
+                <ellipse cx="50" cy="35" rx="12" ry="8" class="shine" />
+              </g>
+            </svg>
+          </div>
+          
+          <div class="logo-text">
+            <div class="logo-wordmark-container">
+              <span class="logo-wordmark">ROBIGOO</span>
+              <span class="logo-tagline">FIELD SPRAYER CONTROL STATION</span>
+            </div>
+            <span class="logo-version">v. 1.0</span>
+          </div>
+        </div>
+      </div>
+      <div class="login-separator" aria-hidden="true"></div>
+      <p>{{ 'login.subtitle' | translate }}</p>
+    </div>
+
+    <div class="login-language-switcher">
+      <div class="language-label">{{ 'login.languageLabel' | translate }}</div>
+      <div
+        #languageDropdown
+        class="language-select"
+        [class.open]="languageDropdownOpen"
+      >
+        <button
+          type="button"
+          class="language-select__trigger"
+          (click)="toggleLanguageDropdown()"
+          aria-haspopup="listbox"
+          [attr.aria-expanded]="languageDropdownOpen"
+        >
+          <span class="language-flag" [ngClass]="'flag-' + currentLanguage" aria-hidden="true"></span>
+          <span class="language-name">{{ getLanguageName(currentLanguage) }}</span>
+          <span class="language-chevron" aria-hidden="true"></span>
+        </button>
+        <ul
+          *ngIf="languageDropdownOpen"
+          class="language-select__list"
+          role="listbox"
+        >
+          <li
+            *ngFor="let lang of languages"
+            (click)="selectLanguage(lang.code)"
+            role="option"
+            [attr.aria-selected]="lang.code === currentLanguage"
+            [class.active]="lang.code === currentLanguage"
+          >
+            <span class="language-flag" [ngClass]="'flag-' + lang.code" aria-hidden="true"></span>
+            <span class="language-name">{{ lang.nativeName }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="login-form">
+      <div *ngIf="errorKey" class="error-message">{{ errorKey | translate }}</div>
+      <div *ngIf="logoutMessage" class="info-message">{{ logoutMessage }}</div>
+
+      <div class="form-group">
+        <label for="username">{{ 'login.username' | translate }}</label>
+        <input
+          id="username"
+          type="text"
+          [(ngModel)]="username"
+          (keypress)="onKeyPress($event)"
+          [placeholder]="'login.usernamePlaceholder' | translate"
+          [disabled]="loading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">{{ 'login.password' | translate }}</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          (keypress)="onKeyPress($event)"
+          [placeholder]="'login.passwordPlaceholder' | translate"
+          [disabled]="loading"
+        />
+      </div>
+
+      <button class="btn-login" (click)="onLogin()" [disabled]="loading">
+        {{ loading ? ('login.submitting' | translate) : ('login.submit' | translate) }}
+      </button>
+
+      <div class="demo-hint">
+        {{ 'login.demoHint' | translate }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,111 @@
+# ==================== ROBIGOO PROJECT GITIGNORE ====================
+# Backend (.NET / C#)
+# ====================================================================
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.runtimeconfig.json
+*.deps.json
+*.staticwebassets.endpoints.json
+
+# Entity Framework
+Migrations/
+
+# User-specific files
+*.user
+*.userprefs
+*.suo
+*.sln.docstates
+
+# Visual Studio
+.vs/
+.vscode/
+*.CodeAnalysisLog.xml
+*.lastcodeanalysisresult.xml
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Configuration
+appsettings.Development.json
+appsettings.local.json
+app.db-shm
+app.db-wal
+
+# Logs
+*.log
+logs/
+server.log
+bin/Debug/net10.0/
+
+# ====================================================================
+# Frontend (Angular / Node.js)
+# ====================================================================
+Client/node_modules/
+Client/dist/
+Client/.angular/
+Client/npm-debug.log*
+Client/yarn-debug.log*
+Client/yarn-error.log*
+
+# ====================================================================
+# IDE & Editor
+# ====================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ====================================================================
+# Environment files
+# ====================================================================
+.env
+.env.local
+.env.*.local
+
+# ====================================================================
+# OS-specific
+# ====================================================================
+*.orig
+*.bak
+*.tmp
+
+# ====================================================================
+# Package managers
+# ====================================================================
+node_modules/
+package-lock.json
+yarn.lock
+
+# ====================================================================
+# Build artifacts
+# ====================================================================
+dist/
+build/
+
+# ====================================================================
+# Coverage reports
+# ====================================================================
+coverage/
+*.cover
+
+# ====================================================================
+# IDE cache files
+# ====================================================================
+.cache/
+*.cache
+
+# ====================================================================
+# Temporary files
+# ====================================================================
+*.temp
+*.tmp
+temp/
+tmp/

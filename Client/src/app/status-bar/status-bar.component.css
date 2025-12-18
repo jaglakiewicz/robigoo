@@ -1,0 +1,77 @@
+﻿/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Status Bar Component - Responsive Design
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+*/
+
+.status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: auto;
+  min-height: 32px;
+  background: rgba(11, 79, 108, 0.95);
+  display: flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-lg);
+  gap: var(--space-lg);
+  font-size: var(--font-size-xs);
+  color: white;
+  z-index: 1002;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+  backdrop-filter: blur(10px);
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  .status-bar {
+    padding: var(--space-xs) var(--space-md);
+    gap: var(--space-md);
+    font-size: var(--font-size-xs);
+    height: auto;
+  }
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+  font-weight: var(--font-weight-medium);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+.status-indicator.connected {
+  background: #5cb85c;
+}
+
+.status-indicator.disconnected {
+  background: var(--error);
+  animation: none;
+}
+
+.spacer {
+  flex: 1;
+  min-width: 20px;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+

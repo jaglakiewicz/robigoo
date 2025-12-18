@@ -1,0 +1,28 @@
+﻿<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<h3 class="component-title">{{ 'marks.title' | translate }}</h3>
+<p class="component-subtitle">{{ 'marks.description' | translate }}</p>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>{{ 'marks.columns.number' | translate }}</th>
+      <th>{{ 'marks.columns.vehicle' | translate }}</th>
+      <th>{{ 'marks.columns.issued' | translate }}</th>
+      <th>{{ 'marks.columns.expires' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let mark of marks">
+      <td>{{ mark.number }}</td>
+      <td>{{ mark.vehicle }}</td>
+      <td>{{ mark.issued }}</td>
+      <td>{{ mark.expires }}</td>
+    </tr>
+  </tbody>
+</table>
+

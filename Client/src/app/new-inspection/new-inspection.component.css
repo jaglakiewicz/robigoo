@@ -1,0 +1,318 @@
+﻿/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * New Inspection Component - Responsive Design System
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+*/
+
+/* ============================================================
+   ITEM ROWS - RESPONSIVE
+   ============================================================ */
+.item-row {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg-alt);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  flex-wrap: wrap;
+}
+
+.item-row:hover {
+  background: var(--panel-border);
+}
+
+.item-row input[type="text"] {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md) !important;
+  border-radius: var(--radius-md) !important;
+  min-width: 150px;
+}
+
+.item-row label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  white-space: nowrap;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+}
+
+.item-row button {
+  padding: var(--space-sm) var(--space-md) !important;
+  flex-shrink: 0;
+  min-width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile: Stack items */
+@media (max-width: 767px) {
+  .item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .item-row input[type="text"] {
+    min-width: unset;
+  }
+
+  .item-row label {
+    width: 100%;
+  }
+
+  .item-row button {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   STEP INDICATOR - RESPONSIVE
+   ============================================================ */
+.step-indicator {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-xl);
+  border-bottom: 3px solid var(--panel-border);
+  border-radius: 0;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.step {
+  flex: 1 1 auto;
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  border-right: 1px solid var(--panel-border);
+  transition: all var(--transition-fast);
+  background: var(--panel);
+  min-width: 100px;
+  font-size: var(--font-size-sm);
+}
+
+.step:last-child {
+  border-right: none;
+}
+
+.step:hover:not(.completed) {
+  background: var(--bg-alt);
+}
+
+.step.active {
+  background: var(--bg-alt);
+  font-weight: var(--font-weight-semibold);
+  color: var(--accent);
+}
+
+.step.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+
+.step.completed {
+  background: rgba(76, 175, 80, 0.08);
+  color: var(--success);
+}
+
+.step.completed::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--success);
+}
+
+/* Mobile: Stacked steps */
+@media (max-width: 767px) {
+  .step-indicator {
+    flex-direction: column;
+    border-bottom: none;
+    margin-bottom: var(--space-lg);
+  }
+
+  .step {
+    border-right: none;
+    border-bottom: 1px solid var(--panel-border);
+    padding: var(--space-md);
+    min-width: auto;
+  }
+
+  .step:last-child {
+    border-bottom: none;
+  }
+
+  .step.active::after,
+  .step.completed::after {
+    bottom: auto;
+    left: -3px;
+    width: 3px;
+    height: 100%;
+  }
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--panel-border);
+  margin-right: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text);
+  transition: all var(--transition-fast);
+}
+
+.step.active .step-number {
+  background: var(--accent);
+  color: white;
+  transform: scale(1.1);
+}
+
+.step.completed .step-number {
+  background: var(--success);
+  color: white;
+}
+
+.step-label {
+  font-size: var(--font-size-sm);
+  display: block;
+  margin-top: var(--space-xs);
+}
+
+/* ============================================================
+   STEP CONTENT - RESPONSIVE
+   ============================================================ */
+.step-content {
+  padding: var(--space-lg) 0;
+  min-height: 300px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-content h3 {
+  margin: 0 0 var(--space-lg) 0;
+  color: var(--primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.items-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ============================================================
+   NAVIGATION - RESPONSIVE
+   ============================================================ */
+.step-navigation {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--panel-border);
+  flex-wrap: wrap;
+}
+
+/* Mobile: Stack buttons */
+@media (max-width: 767px) {
+  .step-navigation {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .step-navigation button {
+    width: 100%;
+  }
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn-nav {
+  padding: var(--space-sm) var(--space-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.btn-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================================
+   MESSAGES
+   ============================================================ */
+.message {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  border-left: 4px solid;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.success {
+  background: rgba(76, 175, 80, 0.1);
+  color: var(--success);
+  border-left-color: var(--success);
+}
+
+.message.error {
+  background: rgba(244, 67, 54, 0.1);
+  color: var(--error);
+  border-left-color: var(--error);
+}
+
+.message.info {
+  background: rgba(33, 150, 243, 0.1);
+  color: var(--info);
+  border-left-color: var(--info);
+}
+
+
