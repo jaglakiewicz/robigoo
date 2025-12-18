@@ -419,9 +419,6 @@ app.MapDelete("/api/users/{userId}", async (AppDbContext db, HttpContext context
 
 // ==================== ORIGINAL ENDPOINTS ====================
 
-app.MapGet("/api/todos", async (AppDbContext db) =>
-    await db.Todos.OrderByDescending(x => x.Id).ToListAsync());
-
 app.MapGet("/api/inspections", async (AppDbContext db) =>
 {
     var inspections = await db.Inspections
@@ -464,34 +461,6 @@ app.MapPost("/api/inspections", async (AppDbContext db, Server.Models.Inspection
     );
     return Results.Created($"/api/inspections/{inspection.Id}", response);
 });
-
-app.MapPost("/api/todos", async (AppDbContext db, TodoCreateDto dto) =>
-{
-    var item = new Server.Models.TodoItem { Title = dto.Title.Trim() };
-    db.Todos.Add(item);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/todos/{item.Id}", item);
-});
-
-app.MapPut("/api/todos/{id:int}", async (AppDbContext db, int id, TodoUpdateDto dto) =>
-{
-    var item = await db.Todos.FindAsync(id);
-    if (item is null) return Results.NotFound();
-    item.Title = dto.Title.Trim();
-    item.IsDone = dto.IsDone;
-    await db.SaveChangesAsync();
-    return Results.NoContent();
-});
-
-app.MapDelete("/api/todos/{id:int}", async (AppDbContext db, int id) =>
-{
-    var item = await db.Todos.FindAsync(id);
-    if (item is null) return Results.NotFound();
-    db.Todos.Remove(item);
-    await db.SaveChangesAsync();
-    return Results.NoContent();
-});
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

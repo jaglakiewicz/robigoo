@@ -31,7 +31,7 @@ namespace Server.Models
         [Key]
         public long Id { get; set; }
         public long InspectionId { get; set; }
-        public string Description { get; set; }
+        public required string Description { get; set; }
         public bool Passed { get; set; }
 
         public Inspection? Inspection { get; set; }

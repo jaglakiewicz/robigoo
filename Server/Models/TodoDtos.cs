@@ -11,11 +11,5 @@
 
 namespace Server.Models
 {
-    #region DTOs - Todo
-
-    public record TodoCreateDto(string Title);
-    public record TodoUpdateDto(string Title, bool IsDone);
-
-    #endregion
 }
 

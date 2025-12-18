@@ -1,0 +1,55 @@
+<Project>
+
+  <!-- ===============================================
+       CORE PROJECT SETTINGS
+       =============================================== -->
+  
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- ===============================================
+       COMPILER & ANALYZER SETTINGS
+       =============================================== -->
+  
+  <PropertyGroup>
+    <!-- Enable nullable reference types with strict checking -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    
+    <!-- Performance optimizations -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    
+    <!-- Deterministic builds for reproducibility -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- ===============================================
+       ASSEMBLY METADATA
+       =============================================== -->
+  
+  <PropertyGroup>
+    <Company>Robigoo</Company>
+    <Product>Robigoo Inspection Server</Product>
+    <Authors>Development Team</Authors>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <!-- ===============================================
+       BUILD PATHS
+       =============================================== -->
+  
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)\obj\</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(MSBuildProjectDirectory)\bin\</BaseOutputPath>
+  </PropertyGroup>
+
+</Project>

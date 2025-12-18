@@ -30,7 +30,6 @@ namespace Server.Data
 
         #region Properties
 
-        public DbSet<TodoItem> Todos { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
         public DbSet<InspectionItem> InspectionItems { get; set; }
         public DbSet<User> Users { get; set; }

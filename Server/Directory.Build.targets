@@ -1,0 +1,17 @@
+<Project>
+
+  <!-- ===============================================
+       BUILD TARGETS & OPTIMIZATION
+       =============================================== -->
+
+  <!-- Ensure clean output -->
+  <Target Name="CopyDependencies" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Message Text="Build configuration: $(Configuration)" Importance="high" />
+  </Target>
+
+  <!-- Clean intermediate files on full rebuild -->
+  <Target Name="CleanIntermediates" BeforeTargets="Clean">
+    <RemoveDir Directories="$(BaseIntermediateOutputPath)" />
+  </Target>
+
+</Project>

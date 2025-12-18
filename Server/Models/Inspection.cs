@@ -30,8 +30,8 @@ namespace Server.Models
 
         [Key]
         public long Id { get; set; }
-        public string VehiclePlate { get; set; }
-        public string InspectorName { get; set; }
+        public required string VehiclePlate { get; set; }
+        public required string InspectorName { get; set; }
         public DateTime InspectionDate { get; set; }
         public string? Notes { get; set; }
         public List<InspectionItem> Items { get; set; } = new();
