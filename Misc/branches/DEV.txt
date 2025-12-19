@@ -1,1 +1,2 @@
-DEV_0001	Provide SDK-style for ASP.NET (.NET 10)
+DEV_0001	Provide SDK-style for ASP.NET (.NET 10)	19.12.2025
+DEV_0002	Fix master admin rights

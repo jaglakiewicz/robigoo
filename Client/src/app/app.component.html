@@ -4,6 +4,9 @@
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
+<!-- Toast Notifications -->
+<app-toast-notification></app-toast-notification>
+
 <app-login *ngIf="!isLoggedIn" (loginSuccess)="handleLoginSuccess()"></app-login>
 
 <ng-container *ngIf="isLoggedIn">

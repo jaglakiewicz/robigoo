@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { UserService, CreateUserRequest, UserDTO } from '../services/user.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-settings',
@@ -75,8 +76,6 @@ export class SettingsComponent implements OnInit {
     permissionNumber: '',
     role: 'user'
   };
-  createUserError = '';
-  createUserSuccess = false;
   creatingUser = false;
 
   // Password confirmation dialog
@@ -88,9 +87,13 @@ export class SettingsComponent implements OnInit {
   confirmingAction = false;
   deletingUserId: number | null = null;
 
+  // Role change
+  updatingRoleUserId: number | null = null;
+
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -151,55 +154,77 @@ export class SettingsComponent implements OnInit {
     this.userSettingsSuccess = false;
     this.savingSettings = true;
 
-    const updateData = {
-      firstName: this.userSettings.firstName,
-      lastName: this.userSettings.lastName,
+    const currentUser = this.authService.getCurrentUser();
+    const isAdmin = currentUser && currentUser.role === 'admin';
+
+    // Regular users can only edit: email, phone, language, theme
+    // Admins can also edit: firstName, lastName, permissionNumber
+    const updateData: any = {
       email: this.userSettings.email,
       phone: this.userSettings.phone,
-      permissionNumber: this.userSettings.permissionNumber,
       language: this.userSettings.language,
       theme: this.userSettings.theme
     };
 
+    // Only admins can modify firstName, lastName, and permissionNumber
+    if (isAdmin) {
+      updateData.firstName = this.userSettings.firstName;
+      updateData.lastName = this.userSettings.lastName;
+      updateData.permissionNumber = this.userSettings.permissionNumber;
+    }
+
     this.userService.updateProfile(updateData).subscribe(
       (response) => {
         console.log('[Settings] Profile updated:', response);
-        this.userSettingsSuccess = true;
+        this.notificationService.success('Ustawienia zostały pomyślnie zapisane!');
         this.savingSettings = false;
-        setTimeout(() => { this.userSettingsSuccess = false; }, 3000);
 
         // Update current user in auth service
         const currentUser = this.authService.getCurrentUser();
         if (currentUser) {
-          currentUser.firstName = this.userSettings.firstName;
-          currentUser.lastName = this.userSettings.lastName;
+          // Always update these fields
           currentUser.email = this.userSettings.email;
           currentUser.phone = this.userSettings.phone;
-          currentUser.permissionNumber = this.userSettings.permissionNumber;
+          
+          // Update admin-only fields if user is admin
+          if (isAdmin) {
+            currentUser.firstName = this.userSettings.firstName;
+            currentUser.lastName = this.userSettings.lastName;
+            currentUser.permissionNumber = this.userSettings.permissionNumber;
+          }
+          
           localStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
       },
       (error: any) => {
         console.error('[Settings] Error saving settings:', error);
-        this.userSettingsError = error.error?.message || 'Błąd podczas zapisywania ustawień';
+        const errorMsg = error.error?.message || 'Błąd podczas zapisywania ustawień';
+        this.notificationService.error(errorMsg);
         this.savingSettings = false;
       }
     );
   }
 
+  togglePasswordForm(): void {
+    this.showPasswordForm = !this.showPasswordForm;
+    if (!this.showPasswordForm) {
+      // Clear form when closing
+      this.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
+      this.changePasswordError = '';
+    }
+  }
+
   changePassword(): void {
     if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-      this.changePasswordError = 'Hasła nie pasują do siebie';
+      this.notificationService.error('Hasła nie pasują do siebie');
       return;
     }
 
     if (this.passwordForm.newPassword.length < 6) {
-      this.changePasswordError = 'Hasło musi mieć co najmniej 6 znaków';
+      this.notificationService.error('Hasło musi mieć co najmniej 6 znaków');
       return;
     }
 
-    this.changePasswordError = '';
-    this.changePasswordSuccess = false;
     this.changingPassword = true;
 
     this.userService.changePassword({
@@ -208,15 +233,15 @@ export class SettingsComponent implements OnInit {
     }).subscribe(
       (response) => {
         console.log('[Settings] Password changed:', response);
-        this.changePasswordSuccess = true;
+        this.notificationService.success('Hasło zostało zmienione pomyślnie!');
         this.changingPassword = false;
         this.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
         this.showPasswordForm = false;
-        setTimeout(() => { this.changePasswordSuccess = false; }, 3000);
       },
       (error: any) => {
         console.error('[Settings] Error changing password:', error);
-        this.changePasswordError = error.error?.message || 'Błąd podczas zmiany hasła';
+        const errorMsg = error.error?.message || 'Błąd podczas zmiany hasła';
+        this.notificationService.error(errorMsg);
         this.changingPassword = false;
       }
     );
@@ -261,7 +286,30 @@ export class SettingsComponent implements OnInit {
 
   changeTab(tabIndex: number): void {
     console.log('[Settings] Switching to tab:', tabIndex);
+    
+    // Prevent non-admin users from accessing admin tab (tab 2)
+    const currentUser = this.authService.getCurrentUser();
+    if (tabIndex === 2 && (!currentUser || currentUser.role !== 'admin')) {
+      console.warn('[Settings] User does not have permission to access admin tab');
+      return;
+    }
+    
     this.activeTab = tabIndex;
+  }
+
+  getVisibleTabs(): any[] {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser || currentUser.role !== 'admin') {
+      // Non-admin users see only tabs 0 and 1
+      return [this.tabs[0], this.tabs[1]];
+    }
+    // Admin users see all tabs
+    return this.tabs;
+  }
+
+  isCurrentUserAdmin(): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    return currentUser && currentUser.role === 'admin';
   }
 
   toggleCreateUserForm(): void {
@@ -272,6 +320,8 @@ export class SettingsComponent implements OnInit {
   }
 
   resetCreateUserForm(): void {
+    const currentUser = this.authService.getCurrentUser();
+    
     this.newUserForm = {
       login: '',
       password: '',
@@ -280,18 +330,22 @@ export class SettingsComponent implements OnInit {
       email: '',
       phone: '',
       permissionNumber: '',
-      role: 'user'
+      role: (currentUser && currentUser.login !== 'admin') ? 'user' : 'user'
     };
-    this.createUserError = '';
+  }
+
+  canSelectRoleWhenCreating(): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    // Only master admin can select role when creating users
+    return currentUser && currentUser.login === 'admin';
   }
 
   createUser(): void {
     if (!this.newUserForm.login || !this.newUserForm.password || !this.newUserForm.firstName) {
-      this.createUserError = 'Login, hasło i imię są wymagane';
+      this.notificationService.error('Login, hasło i imię są wymagane');
       return;
     }
 
-    this.createUserError = '';
     this.creatingUser = true;
 
     const newUser: CreateUserRequest = {
@@ -308,18 +362,18 @@ export class SettingsComponent implements OnInit {
     this.userService.createUser(newUser).subscribe(
       (response) => {
         console.log('[Settings] User created:', response);
-        this.createUserSuccess = true;
+        this.notificationService.success('Użytkownik został pomyślnie utworzony!');
         this.creatingUser = false;
         this.resetCreateUserForm();
         this.showCreateUserForm = false;
-        setTimeout(() => { this.createUserSuccess = false; }, 3000);
 
         // Reload users list
         this.loadUsers();
       },
       (error: any) => {
         console.error('[Settings] Error creating user:', error);
-        this.createUserError = error.error?.error || error.error?.message || 'Błąd podczas tworzenia użytkownika';
+        const errorMsg = error.error?.error || error.error?.message || 'Błąd podczas tworzenia użytkownika';
+        this.notificationService.error(errorMsg);
         this.creatingUser = false;
       }
     );
@@ -330,7 +384,19 @@ export class SettingsComponent implements OnInit {
   }
 
   canDeleteUser(user: UserDTO): boolean {
-    // Cannot delete admin users
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return false;
+
+    // Cannot delete self
+    if (currentUser.userId === user.userId) return false;
+
+    // Only admins can delete users
+    if (currentUser.role !== 'admin') return false;
+
+    // Master admin (login = admin) can delete anyone
+    if (currentUser.login === 'admin') return true;
+
+    // Regular admin can only delete regular users (not admins)
     return user.role !== 'admin';
   }
 
@@ -359,12 +425,12 @@ export class SettingsComponent implements OnInit {
 
         // Reload users list
         this.loadUsers();
-        this.createUserSuccess = true;
-        setTimeout(() => { this.createUserSuccess = false; }, 3000);
+        this.notificationService.success('Użytkownik został pomyślnie usunięty!');
       },
       (error: any) => {
         console.error('[Settings] Error deleting user:', error);
-        this.confirmDialogError = error.error?.message || error.error?.error || 'Błąd podczas usuwania użytkownika';
+        const errorMsg = error.error?.message || error.error?.error || 'Błąd podczas usuwania użytkownika';
+        this.notificationService.error(errorMsg);
       }
     );
   }
@@ -374,5 +440,57 @@ export class SettingsComponent implements OnInit {
     this.confirmDialogPassword = '';
     this.confirmDialogError = '';
     this.userToConfirm = null;
+  }
+
+  canChangeUserRole(user: UserDTO): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return false;
+
+    // Cannot change own role
+    if (currentUser.userId === user.userId) return false;
+
+    // Only master admin (login = admin) can change roles
+    // Regular admin cannot change roles of existing users
+    if (currentUser.login !== 'admin') return false;
+
+    return true;
+  }
+
+  onRoleChanged(user: UserDTO): void {
+    const currentUser = this.authService.getCurrentUser();
+    
+    // Validation - only master admin can change roles
+    if (!currentUser || currentUser.login !== 'admin') {
+      // Reload user to reset the role
+      this.loadUsers();
+      this.notificationService.error('Tylko master administrator może zmieniać role użytkowników');
+      return;
+    }
+
+    // Validation - check if user can make this change
+    if (!this.canChangeUserRole(user)) {
+      // Reload user to reset the role
+      this.loadUsers();
+      this.notificationService.error('Brak uprawnień do zmiany tej roli');
+      return;
+    }
+
+    this.updatingRoleUserId = user.userId;
+
+    this.userService.updateUserRole(user.userId, user.role).subscribe(
+      (response) => {
+        console.log('[Settings] User role updated:', response);
+        this.notificationService.success(`Rola użytkownika ${user.login} została zmieniona`);
+        this.updatingRoleUserId = null;
+      },
+      (error: any) => {
+        console.error('[Settings] Error updating user role:', error);
+        const errorMsg = error.error?.message || error.error?.error || 'Błąd podczas zmiany roli użytkownika';
+        this.notificationService.error(errorMsg);
+        this.updatingRoleUserId = null;
+        // Reload users to revert the role change
+        this.loadUsers();
+      }
+    );
   }
 }

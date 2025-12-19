@@ -140,6 +140,33 @@
   font-size: var(--font-size-sm);
 }
 
+/* Disabled input styling */
+.disabled-input {
+  background: var(--bg-alt) !important;
+  cursor: not-allowed;
+  /* Inherits readable text color from global disabled input styles */
+}
+
+.field-hint {
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+  font-style: italic;
+  margin-top: 4px;
+}
+.disabled-input:focus {
+  border-color: var(--panel-border) !important;
+  box-shadow: none !important;
+  background: var(--bg-alt) !important;
+}
+
+.field-hint {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+  margin-top: var(--space-xs);
+  font-style: italic;
+}
+
 .users-list {
   margin-top: var(--space-2xl);
 }
@@ -494,6 +521,69 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Role Select Styles */
+.role-select {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  background: var(--bg);
+  color: var(--text);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  min-height: var(--touch-size);
+}
+
+.role-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59, 142, 165, 0.1);
+}
+
+.role-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--bg-alt);
+}
+
+.role-select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.role-hint {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-light);
+  margin-top: var(--space-xs);
+  font-style: italic;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  .action-buttons {
+    justify-content: flex-start;
+  }
+}
+
+/* Button icon styling */
+.btn-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-right: var(--space-xs);
+  vertical-align: middle;
 }
 
 

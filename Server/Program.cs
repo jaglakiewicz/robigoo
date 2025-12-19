@@ -192,6 +192,11 @@ app.MapPost("/api/users", async (AppDbContext db, IPasswordService passwordServi
         return Results.BadRequest(new { error = "Login already exists" });
     }
 
+    // Regular admin can create new users with any role (including admin)
+    // Master admin can also create users with any role
+    // No additional restrictions on role selection during creation
+    var userRole = (dto.Role == "admin") ? "admin" : "user";
+
     var user = new Server.Models.User
     {
         Login = dto.Login,
@@ -201,7 +206,7 @@ app.MapPost("/api/users", async (AppDbContext db, IPasswordService passwordServi
         Email = dto.Email,
         Phone = dto.Phone,
         PermissionNumber = dto.PermissionNumber,
-        Role = dto.Role,
+        Role = userRole,
         IsActive = true,
         CreatedAt = DateTime.UtcNow
     };
@@ -257,20 +262,42 @@ app.MapPut("/api/users/profile", async (AppDbContext db, HttpContext context, Se
         return Results.Unauthorized();
     }
 
+    var currentUser = await db.Users.FindAsync(userId);
+    if (currentUser == null)
+        return Results.NotFound();
+
     var user = await db.Users.FindAsync(userId);
     if (user == null)
         return Results.NotFound();
 
+    // Check if user is admin
+    bool isAdmin = currentUser.Role == "admin";
+
+    // Only admins can modify FirstName, LastName, and PermissionNumber
     if (!string.IsNullOrEmpty(dto.FirstName))
+    {
+        if (!isAdmin)
+            return Results.Forbid();
         user.FirstName = dto.FirstName;
+    }
     if (!string.IsNullOrEmpty(dto.LastName))
+    {
+        if (!isAdmin)
+            return Results.Forbid();
         user.LastName = dto.LastName;
+    }
+    if (!string.IsNullOrEmpty(dto.PermissionNumber))
+    {
+        if (!isAdmin)
+            return Results.Forbid();
+        user.PermissionNumber = dto.PermissionNumber;
+    }
+
+    // All users can modify these fields
     if (!string.IsNullOrEmpty(dto.Email))
         user.Email = dto.Email;
     if (!string.IsNullOrEmpty(dto.Phone))
         user.Phone = dto.Phone;
-    if (!string.IsNullOrEmpty(dto.PermissionNumber))
-        user.PermissionNumber = dto.PermissionNumber;
 
     await db.SaveChangesAsync();
 
@@ -415,6 +442,58 @@ app.MapDelete("/api/users/{userId}", async (AppDbContext db, HttpContext context
     await db.SaveChangesAsync();
 
     return Results.Ok(new { message = $"Uzytkownik '{userToDelete.Login}' zostal usuniety" });
+}).RequireAuthorization().DisableAntiforgery();
+
+// Update user role endpoint - ONLY master admin can change roles
+app.MapPut("/api/users/{userId}/role", async (AppDbContext db, HttpContext context, long userId, Server.Models.UpdateUserRoleDto dto) =>
+{
+    // Get current user ID from claims
+    var userIdClaim = context.User.FindFirst("userId");
+    if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var currentUserId))
+    {
+        return Results.Unauthorized();
+    }
+
+    // Get current user to validate permissions
+    var currentUser = await db.Users.FindAsync(currentUserId);
+    if (currentUser == null)
+        return Results.Unauthorized();
+
+    // Only master admin (login = admin) can change roles
+    if (currentUser.Login != "admin")
+        return Results.BadRequest(new { message = "Tylko master administrator moze zmieniać role użytkowników" });
+
+    // Get the user to update
+    var userToUpdate = await db.Users.FindAsync(userId);
+    if (userToUpdate == null)
+        return Results.NotFound(new { message = "Uzytkownik nie znaleziony" });
+
+    // Prevent changing self role
+    if (currentUserId == userId)
+        return Results.BadRequest(new { message = "Nie mozesz zmienic swojej roli" });
+
+    // Validate role value
+    if (dto.Role != "admin" && dto.Role != "user")
+        return Results.BadRequest(new { message = "Niepoprawna rola. Dozwolone wartosci: 'admin', 'user'" });
+
+    // Update role
+    userToUpdate.Role = dto.Role;
+    await db.SaveChangesAsync();
+
+    var response = new Server.Models.LoginResponseDto
+    {
+        UserId = userToUpdate.Id,
+        Login = userToUpdate.Login,
+        FirstName = userToUpdate.FirstName,
+        LastName = userToUpdate.LastName,
+        Email = userToUpdate.Email,
+        Phone = userToUpdate.Phone,
+        PermissionNumber = userToUpdate.PermissionNumber,
+        Role = userToUpdate.Role,
+        AvatarBase64 = userToUpdate.AvatarData != null ? Convert.ToBase64String(userToUpdate.AvatarData) : null
+    };
+
+    return Results.Ok(response);
 }).RequireAuthorization().DisableAntiforgery();
 
 // ==================== ORIGINAL ENDPOINTS ====================

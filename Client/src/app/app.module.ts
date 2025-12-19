@@ -6,6 +6,7 @@
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -22,12 +23,13 @@ import { TranslatePipe } from './i18n/translate.pipe';
 import { ClientsComponent } from './clients/clients.component';
 import { InspectionMarksComponent } from './inspection-marks/inspection-marks.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { ToastNotificationComponent } from './shared/toast-notification/toast-notification.component';
 import { GenericListComponent } from './shared/components/generic-list/generic-list.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TranslatePipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, GenericListComponent],
-  imports: [BrowserModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TranslatePipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent],
+  imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],

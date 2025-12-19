@@ -131,5 +131,14 @@ namespace Server.Models
         #endregion
     }
 
+    public class UpdateUserRoleDto
+    {
+        #region Properties
+
+        public string Role { get; set; } = string.Empty;
+
+        #endregion
+    }
+
     #endregion
 }

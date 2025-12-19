@@ -2,7 +2,7 @@
 
 <!-- Step Indicator (Tabs) -->
 <div class="step-indicator">
-  <div *ngFor="let tab of tabs; let i = index" 
+  <div *ngFor="let tab of getVisibleTabs(); let i = index" 
        class="step" 
        [class.active]="i === activeTab"
        (click)="changeTab(i)">
@@ -80,12 +80,24 @@
       <!-- Personal Information -->
       <div class="form-group">
         <label>Imię *</label>
-        <input type="text" [(ngModel)]="userSettings.firstName" />
+        <input 
+          type="text" 
+          [(ngModel)]="userSettings.firstName"
+          [disabled]="!isCurrentUserAdmin()"
+          [class.disabled-input]="!isCurrentUserAdmin()"
+        />
+        <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
       </div>
 
       <div class="form-group">
         <label>Nazwisko *</label>
-        <input type="text" [(ngModel)]="userSettings.lastName" />
+        <input 
+          type="text" 
+          [(ngModel)]="userSettings.lastName"
+          [disabled]="!isCurrentUserAdmin()"
+          [class.disabled-input]="!isCurrentUserAdmin()"
+        />
+        <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
       </div>
 
       <div class="form-group">
@@ -100,7 +112,14 @@
 
       <div class="form-group">
         <label>Numer uprawnień</label>
-        <input type="text" [(ngModel)]="userSettings.permissionNumber" placeholder="Wpisz swój numer uprawnień" />
+        <input 
+          type="text" 
+          [(ngModel)]="userSettings.permissionNumber" 
+          placeholder="Wpisz swój numer uprawnień"
+          [disabled]="!isCurrentUserAdmin()"
+          [class.disabled-input]="!isCurrentUserAdmin()"
+        />
+        <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
       </div>
 
       <!-- Password Change Section -->
@@ -163,7 +182,7 @@
     </div>
 
     <!-- Admin Settings Tab -->
-    <div *ngIf="activeTab === 2" class="tab-pane">
+    <div *ngIf="activeTab === 2 && isCurrentUserAdmin()" class="tab-pane">
       <h3>Zarządzanie użytkownikami</h3>
         
         <button class="btn btn-secondary toggle-form-btn" [class.expanded]="showCreateUserForm" (click)="toggleCreateUserForm()">
@@ -212,14 +231,15 @@
 
           <div class="form-group">
             <label>Rola *</label>
-            <select [(ngModel)]="newUserForm.role">
+            <select 
+              [(ngModel)]="newUserForm.role"
+              [disabled]="!canSelectRoleWhenCreating()"
+            >
               <option value="user">Użytkownik</option>
               <option value="admin">Administrator</option>
             </select>
+            <span *ngIf="!canSelectRoleWhenCreating()" class="role-hint">Zwykły administrator może tworzyć tylko zwykłych użytkowników</span>
           </div>
-
-          <div *ngIf="createUserError" class="error-message">{{ createUserError }}</div>
-          <div *ngIf="createUserSuccess" class="success-message">Użytkownik został pomyślnie utworzony!</div>
 
           <button class="btn btn-primary" (click)="createUser()" [disabled]="creatingUser">
             {{ creatingUser ? 'Tworzenie...' : 'Utwórz użytkownika' }}
@@ -244,17 +264,33 @@
                 <td>{{ user.login }}</td>
                 <td>{{ user.firstName }} {{ user.lastName }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.role === 'admin' ? 'Administrator' : 'Użytkownik' }}</td>
                 <td>
-                  <button 
-                    *ngIf="canDeleteUser(user)"
-                    class="btn btn-small btn-danger" 
-                    (click)="openDeleteConfirmDialog(user)"
-                    [disabled]="deletingUserId === user.userId"
+                  <select 
+                    [(ngModel)]="user.role" 
+                    (change)="onRoleChanged(user)"
+                    [disabled]="!canChangeUserRole(user)"
+                    class="role-select"
                   >
-                    Usuń
-                  </button>
-                  <span *ngIf="!canDeleteUser(user)" class="btn-disabled-text">Brak uprawnień</span>
+                    <option value="user">Użytkownik</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button 
+                      *ngIf="canDeleteUser(user)"
+                      class="btn btn-small btn-danger" 
+                      (click)="openDeleteConfirmDialog(user)"
+                      [disabled]="deletingUserId === user.userId"
+                      title="Usuń użytkownika"
+                    >
+                      <svg class="btn-icon" viewBox="0 0 384 512" fill="currentColor">
+                        <path d="M256,42.6666667 L128,42.6666667 L128,7.10542736e-15 L256,7.10542736e-15 L256,42.6666667 Z M170.666667,170.666667 L128,170.666667 L128,341.333333 L170.666667,341.333333 L170.666667,170.666667 Z M256,170.666667 L213.333333,170.666667 L213.333333,341.333333 L256,341.333333 L256,170.666667 Z M384,85.3333333 L384,128 L341.333333,128 L341.333333,426.666667 L42.6666667,426.666667 L42.6666667,128 L0,128 L0,85.3333333 L384,85.3333333 Z M298.666667,128 L85.3333333,128 L85.3333333,384 L298.666667,384 L298.666667,128 Z"/>
+                      </svg>
+                      Usuń
+                    </button>
+                    <span *ngIf="!canDeleteUser(user)" class="btn-disabled-text">Brak uprawnień</span>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -288,6 +324,9 @@
                 (click)="confirmPasswordAction()"
                 [disabled]="confirmingAction"
               >
+                <svg *ngIf="confirmDialogAction === 'delete'" class="btn-icon" viewBox="0 0 384 512" fill="currentColor">
+                  <path d="M256,42.6666667 L128,42.6666667 L128,7.10542736e-15 L256,7.10542736e-15 L256,42.6666667 Z M170.666667,170.666667 L128,170.666667 L128,341.333333 L170.666667,341.333333 L170.666667,170.666667 Z M256,170.666667 L213.333333,170.666667 L213.333333,341.333333 L256,341.333333 L256,170.666667 Z M384,85.3333333 L384,128 L341.333333,128 L341.333333,426.666667 L42.6666667,426.666667 L42.6666667,128 L0,128 L0,85.3333333 L384,85.3333333 Z M298.666667,128 L85.3333333,128 L85.3333333,384 L298.666667,384 L298.666667,128 Z"/>
+                </svg>
                 {{ confirmingAction ? 'Przetwarzanie...' : (confirmDialogAction === 'delete' ? 'Usuń' : 'Potwierdź') }}
               </button>
               <button class="btn btn-secondary" (click)="cancelPasswordConfirmDialog()" [disabled]="confirmingAction">

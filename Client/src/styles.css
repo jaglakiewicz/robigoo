@@ -156,6 +156,26 @@ html, body, app-root {
   transition: background 0.3s, color 0.3s;
 }
 
+/* ============================================================
+   GLOBAL FORM ELEMENTS STYLING
+   ============================================================ */
+/* Global styling for disabled inputs - ensures text remains readable */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background: var(--bg-alt) !important;
+  color: var(--text-light) !important;
+  cursor: not-allowed;
+  opacity: 1 !important;
+  border-color: var(--panel-border) !important;
+}
+
+input:disabled::placeholder,
+textarea:disabled::placeholder {
+  color: var(--text-lighter) !important;
+  opacity: 1;
+}
+
 /* Left collapsible sidebar - thin bar when closed */
 .sidebar {
   position: fixed;

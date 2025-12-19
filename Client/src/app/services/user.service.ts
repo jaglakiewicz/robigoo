@@ -131,5 +131,12 @@ export class UserService {
       body: { password: password }
     });
   }
+
+  /**
+   * Update user role (admin only)
+   */
+  updateUserRole(userId: number, role: string): Observable<UserProfileResponse> {
+    return this.http.put<UserProfileResponse>(`${this.apiUrl}/${userId}/role`, { role: role });
+  }
 }
 
