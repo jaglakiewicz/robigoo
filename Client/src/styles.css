@@ -227,6 +227,10 @@ textarea:disabled::placeholder {
   padding: 0;
 }
 
+.close-btn::before {
+  display: none;
+}
+
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: scale(1.2);
@@ -1049,7 +1053,7 @@ button {
   align-items: center;
   gap: 6px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 button::before {
@@ -1081,9 +1085,10 @@ button:disabled {
 }
 
 button svg {
-  width: 14px;
-  height: 14px;
+  width: auto;
+  height: auto;
   flex-shrink: 0;
+  display: block;
 }
 
 .data-table {

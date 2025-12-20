@@ -1,16 +1,19 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../services/auth.service';
 import { UserService, CreateUserRequest, UserDTO } from '../services/user.service';
 import { NotificationService } from '../services/notification.service';
+import { SVG_ICONS } from '../shared/svg-icons';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   activeTab = 0;
   private editUserListener: any;
+  SVG_ICONS = SVG_ICONS; // Make SVG_ICONS available in template
 
   tabs = [
     { label: 'Ustawienia programu' },
@@ -93,7 +96,8 @@ export class SettingsComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -492,5 +496,9 @@ export class SettingsComponent implements OnInit {
         this.loadUsers();
       }
     );
+  }
+
+  getSafeHtml(html: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 }

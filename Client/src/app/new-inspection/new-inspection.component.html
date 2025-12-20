@@ -42,9 +42,9 @@
       <input type="checkbox" [(ngModel)]="suspensionItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(suspensionItems, i)"><span [innerHTML]="iconRemove"></span></button>
+    <button (click)="removeItem(suspensionItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(suspensionItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button (click)="addItem(suspensionItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div *ngIf="currentStep === 2" class="step-content">
@@ -55,9 +55,9 @@
       <input type="checkbox" [(ngModel)]="alignmentItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(alignmentItems, i)"><span [innerHTML]="iconRemove"></span></button>
+    <button (click)="removeItem(alignmentItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(alignmentItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button (click)="addItem(alignmentItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div *ngIf="currentStep === 3" class="step-content">
@@ -68,9 +68,9 @@
       <input type="checkbox" [(ngModel)]="lightsItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(lightsItems, i)"><span [innerHTML]="iconRemove"></span></button>
+    <button (click)="removeItem(lightsItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(lightsItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button (click)="addItem(lightsItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div *ngIf="currentStep === 4" class="step-content">
@@ -81,24 +81,24 @@
       <input type="checkbox" [(ngModel)]="brakesItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(brakesItems, i)"><span [innerHTML]="iconRemove"></span></button>
+    <button (click)="removeItem(brakesItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(brakesItems)"><span [innerHTML]="iconAdd"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button (click)="addItem(brakesItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div class="step-navigation">
   <button class="btn-back" (click)="previousStep()" [disabled]="currentStep === 0">
-    <span [innerHTML]="iconBack"></span>{{ 'newInspection.actions.back' | translate }}
+    <span [innerHTML]="getSafeHtml(iconBack)"></span>{{ 'newInspection.actions.back' | translate }}
   </button>
   <div class="spacer"></div>
   <button class="btn-next" (click)="nextStep()" [disabled]="currentStep === sections.length - 1">
-    <span [innerHTML]="iconNext"></span>{{ 'newInspection.actions.next' | translate }}
+    <span [innerHTML]="getSafeHtml(iconNext)"></span>{{ 'newInspection.actions.next' | translate }}
   </button>
   <button class="btn-save" (click)="submit()" [disabled]="saving">
-    <span [innerHTML]="iconSave"></span>{{ 'newInspection.actions.save' | translate }}
+    <span [innerHTML]="getSafeHtml(iconSave)"></span>{{ 'newInspection.actions.save' | translate }}
   </button>
   <button class="btn-cancel" (click)="close.emit()">
-    <span [innerHTML]="iconCancel"></span>{{ 'newInspection.actions.cancel' | translate }}
+    <span [innerHTML]="getSafeHtml(iconCancel)"></span>{{ 'newInspection.actions.cancel' | translate }}
   </button>
 </div>
 

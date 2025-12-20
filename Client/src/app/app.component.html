@@ -61,16 +61,8 @@
           <div *ngFor="let t of tabs; let i = index" class="tab" cdkDrag cdkDragLockAxis="x" [class.active]="i === activeIndex" (click)="activateTab(i)">
             <span *ngIf="t.icon" class="tab-icon" [innerHTML]="getSafeHtml(t.icon)"></span>
             <span>{{ t.titleKey | translate }}</span>
-            <button class="tab-action pin" title="Pin/Unpin tab" *ngIf="i === activeIndex || t.pinned" (click)="togglePinTab(i, $event)" [class.pinned]="t.pinned">
-              <svg viewBox="0 0 410 410" fill="currentColor">
-                <path d="M226.291627,7.10542736e-15 L407.374933,180.927147 L377.20832,211.114667 L347.02464,180.954453 L279.749973,248.22912 L260.812373,327.520853 L196.19776,392.125013 L120.76032,316.687573 L30.1691733,407.12512 L7.10542736e-15,407.12512 L7.10542736e-15,376.955947 L90.5898667,286.51712 L15.17696,211.104 L79.7706667,146.510293 L159.0624,127.562453 L226.30336,60.3306667 L196.135467,30.18752 L226.291627,7.10542736e-15 Z M256.481707,90.4859733 L180.708267,166.25024 L101.416533,185.19808 L75.5101867,211.104427 L196.19776,331.792 L222.104107,305.896107 L241.041707,226.59392 L316.845013,150.799787 L256.481707,90.4859733 Z"/>
-              </svg>
-            </button>
-            <button class="tab-action close" title="Close tab" *ngIf="!t.pinned" (click)="closeTab(i); $event.stopPropagation()">
-              <svg viewBox="0 0 244 244" fill="currentColor">
-                <path d="M213.333333,2.84217094e-14 L243.503223,30.1698893 L151.921,121.751 L243.503223,213.333333 L213.333333,243.503223 L121.751,151.921 L30.1698893,243.503223 L2.84217094e-14,213.333333 L91.582,121.751 L2.84217094e-14,30.1698893 L30.1698893,2.84217094e-14 L121.751,91.582 L213.333333,2.84217094e-14 Z"/>
-              </svg>
-            </button>
+            <button class="tab-action pin" title="Pin/Unpin tab" *ngIf="i === activeIndex || t.pinned" (click)="togglePinTab(i, $event)" [class.pinned]="t.pinned" [innerHTML]="getSafeHtml(SVG_ICONS.pinIcon)"></button>
+            <button class="tab-action close" title="Close tab" *ngIf="!t.pinned" (click)="closeTab(i); $event.stopPropagation()" [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></button>
           </div>
         </div>
         <div class="app-toolbar">
