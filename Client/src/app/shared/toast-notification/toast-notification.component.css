@@ -13,21 +13,21 @@
   pointer-events: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-md);
   max-width: 350px;
 }
 
 .toast {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 12px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-size: 13px;
-  line-height: 1.5;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
   cursor: pointer;
-  transition: all 200ms ease;
+  transition: all var(--transition-fast);
   pointer-events: auto;
   animation: slideIn 300ms ease-out;
   white-space: nowrap;
@@ -36,35 +36,35 @@
 }
 
 .toast:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Success Toast */
 .toast-success {
-  background: rgba(76, 175, 80, 0.95);
+  background: rgba(34, 197, 94, 0.95);
   color: #ffffff;
-  border-left: 4px solid #4caf50;
+  border-left: 4px solid var(--success);
 }
 
 /* Error Toast */
 .toast-error {
   background: rgba(244, 67, 54, 0.95);
   color: #ffffff;
-  border-left: 4px solid #f44336;
+  border-left: 4px solid var(--error);
 }
 
 /* Warning Toast */
 .toast-warning {
   background: rgba(255, 152, 0, 0.95);
   color: #ffffff;
-  border-left: 4px solid #ff9800;
+  border-left: 4px solid var(--warning);
 }
 
 /* Info Toast */
 .toast-info {
   background: rgba(33, 150, 243, 0.95);
   color: #ffffff;
-  border-left: 4px solid #2196f3;
+  border-left: 4px solid var(--info);
 }
 
 .toast-icon {
@@ -72,8 +72,8 @@
   align-items: center;
   justify-content: center;
   min-width: 20px;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
 }
 
 .toast-message {
@@ -88,12 +88,12 @@
   background: none;
   border: none;
   color: inherit;
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   cursor: pointer;
-  padding: 0 4px;
+  padding: 0 var(--space-xs);
   margin: 0;
   opacity: 0.7;
-  transition: opacity 200ms ease;
+  transition: opacity var(--transition-fast);
   flex-shrink: 0;
   min-width: 18px;
   height: 18px;
@@ -101,6 +101,12 @@
 
 .toast-close:hover {
   opacity: 1;
+}
+
+.toast-close:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+  border-radius: 2px;
 }
 
 @media (max-width: 600px) {

@@ -23,7 +23,7 @@
 
 .status-pill.active {
   background: rgba(59, 142, 165, 0.15);
-  color: var(--primary);
+  color: var(--accent);
   font-weight: 600;
 }
 

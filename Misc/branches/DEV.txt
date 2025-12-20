@@ -1,3 +1,4 @@
 DEV_0001	Provide SDK-style for ASP.NET (.NET 10)	19.12.2025
 DEV_0002	Fix master admin rights
 DEV_0003	Put SVG resources to external file
+DEV_0004	Adjust accesibility of UI & dark mode correction

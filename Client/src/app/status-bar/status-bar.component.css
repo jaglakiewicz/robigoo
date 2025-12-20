@@ -47,13 +47,13 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #4ade80;
+  background: var(--success);
   animation: pulse 2s infinite;
   flex-shrink: 0;
 }
 
 .status-indicator.connected {
-  background: #5cb85c;
+  background: var(--success-dark);
 }
 
 .status-indicator.disconnected {

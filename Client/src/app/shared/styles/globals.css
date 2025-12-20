@@ -130,7 +130,14 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(59, 142, 165, 0.1);
+  box-shadow: var(--button-focus-shadow);
+}
+
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+  border-color: var(--accent);
+  box-shadow: var(--button-focus-shadow);
 }
 
 input:disabled, textarea:disabled, select:disabled {
@@ -246,7 +253,7 @@ button {
 }
 
 .btn-success:hover {
-  background: #45a049;
+  background: var(--success-dark);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
@@ -255,6 +262,11 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
+}
+
+button:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
 }
 
 button svg {
