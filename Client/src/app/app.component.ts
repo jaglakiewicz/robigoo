@@ -31,6 +31,7 @@ export class AppComponent implements OnDestroy {
   darkMode = false;
   currentUserName = '';
   currentUserLogin = '';
+  currentUserPermissionNumber = '';
   userMenuOpen = false;
   userAvatar: string | null = null;
   userChevronSvg = SVG_ICONS.chevronDown;
@@ -69,6 +70,7 @@ export class AppComponent implements OnDestroy {
         this.currentUserName = `${user.firstName} ${user.lastName}`.trim();
         this.currentUserLogin = user.login;
         this.userAvatar = user.avatarBase64 ? `data:image/jpeg;base64,${user.avatarBase64}` : null;
+        this.currentUserPermissionNumber = user.permissionNumber ?? '';
         this.isLoggedIn = true;
       } else {
         this.isLoggedIn = false;
@@ -76,6 +78,7 @@ export class AppComponent implements OnDestroy {
         this.currentUserLogin = '';
         this.userAvatar = null;
         this.userMenuOpen = false;
+        this.currentUserPermissionNumber = '';
       }
     });
   }
@@ -221,4 +224,5 @@ export class AppComponent implements OnDestroy {
       this.activeIndex = event.currentIndex;
     }
   }
+
 }

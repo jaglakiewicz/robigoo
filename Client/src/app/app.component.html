@@ -15,11 +15,33 @@
   </button>
 
   <div class="sidebar" [class.open]="sidebarOpen">
-    <div class="sidebar-close-row" *ngIf="sidebarOpen">
-      <button class="close-btn" (click)="toggle()" aria-label="Close menu">&times;</button>
+    <div class="sidebar-header" *ngIf="sidebarOpen">
+      <div class="sidebar-header-top">
+        <button class="close-btn" (click)="toggle()" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="user-menu sidebar-user-section" *ngIf="displayUserName" [class.open]="userMenuOpen" #userMenuSection>
+        <span class="user-section-label">{{ 'userMenu.loggedInAs' | translate }}</span>
+        <button type="button" class="user-info-display" [class.active]="userMenuOpen" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen" #userInfoButton>
+          <span class="user-avatar" [ngClass]="{'has-image': userAvatar}" [style.backgroundImage]="userAvatar ? 'url(' + userAvatar + ')' : 'none'">
+            <span *ngIf="!userAvatar" class="avatar-initials">{{ userInitials }}</span>
+          </span>
+          <span class="user-name-text">{{ currentUserLogin }}</span>
+          <span class="user-chevron" [innerHTML]="getSafeHtml(userChevronSvg)"></span>
+        </button>
+        <div class="user-menu-dropdown" *ngIf="userMenuOpen">
+          <div class="user-menu-item user-menu-info">
+            <span class="user-menu-name">{{ displayUserName }}</span>
+            <span *ngIf="currentUserPermissionNumber" class="user-menu-meta">
+              {{ 'userMenu.permissionLabel' | translate }} {{ currentUserPermissionNumber }}
+            </span>
+          </div>
+          <div class="user-menu-item" (click)="editUser()">{{ 'userMenu.edit' | translate }}</div>
+          <div class="user-menu-item" (click)="onLogout()">{{ 'userMenu.logout' | translate }}</div>
+        </div>
+      </div>
     </div>
 
-    <ul class="menu" *ngIf="sidebarOpen">
+    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen">
       <li *ngFor="let item of menuItems" 
           (click)="openTab(item.type, item.titleKey)"
           [class.disabled]="isMasterAdmin() && item.type !== 'settings'"
@@ -33,23 +55,16 @@
 
     <div class="sidebar-footer" *ngIf="sidebarOpen">
       <div class="sidebar-footer-content">
-        <div class="language-switcher">
-          <span class="language-label">{{ 'language.label' | translate }}</span>
-          <div class="language-options">
-            <button
-              *ngFor="let lang of languages"
-              class="language-option"
-              [class.active]="lang.code === currentLanguage"
-              (click)="changeLanguage(lang.code)"
-            >
-              {{ lang.label }}
-            </button>
-          </div>
+        <div class="theme-section">
+          <span class="theme-label">{{ 'theme.toggle' | translate }}</span>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="darkMode" (change)="toggleTheme()">
+            <span class="toggle-slider">
+              <span class="toggle-icon toggle-icon-light">☀️</span>
+              <span class="toggle-icon toggle-icon-dark">🌙</span>
+            </span>
+          </label>
         </div>
-        <button class="theme-toggle" (click)="toggleTheme()">
-          <span>{{ 'theme.toggle' | translate }}</span>
-          <small>{{ ('theme.mode.' + (darkMode ? 'light' : 'dark')) | translate }}</small>
-        </button>
       </div>
     </div>
   </div>
@@ -67,29 +82,6 @@
         </div>
         <div class="app-toolbar">
           <div class="toolbar-spacer"></div>
-          <div class="user-menu" *ngIf="displayUserName" [class.open]="userMenuOpen">
-            <button type="button" class="user-info-display" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen">
-              <span class="user-avatar" [ngClass]="{'has-image': userAvatar}" [style.backgroundImage]="userAvatar ? 'url(' + userAvatar + ')' : 'none'">
-                <span *ngIf="!userAvatar" class="avatar-initials">{{ userInitials }}</span>
-              </span>
-              <span class="user-name-text">{{ displayUserName }}</span>
-              <span class="user-chevron" [innerHTML]="getSafeHtml(userChevronSvg)"></span>
-            </button>
-            <div class="user-menu-dropdown" *ngIf="userMenuOpen">
-              <div class="user-menu-item user-menu-info">
-                <span class="user-menu-label">{{ 'userMenu.loggedInAs' | translate }}</span>
-                <div class="user-menu-chip">
-                  <span class="user-avatar small" [ngClass]="{'has-image': userAvatar}" [style.backgroundImage]="userAvatar ? 'url(' + userAvatar + ')' : 'none'">
-                    <span *ngIf="!userAvatar" class="avatar-initials">{{ userInitials }}</span>
-                  </span>
-                  <span class="user-name">{{ displayUserName }}</span>
-                </div>
-              </div>
-              <div class="user-menu-divider"></div>
-              <div class="user-menu-item" (click)="editUser()">{{ 'userMenu.edit' | translate }}</div>
-              <div class="user-menu-item" (click)="onLogout()">{{ 'userMenu.logout' | translate }}</div>
-            </div>
-          </div>
         </div>
       </div>
 

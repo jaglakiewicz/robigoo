@@ -45,6 +45,7 @@ export const translations: Record<LanguageCode, TranslationTree> = {
     },
     userMenu: {
       loggedInAs: 'Zalogowany jako:',
+      permissionLabel: 'Nr uprawnień',
       edit: 'Edytuj użytkownika',
       logout: 'Wyloguj'
     },
@@ -283,6 +284,7 @@ export const translations: Record<LanguageCode, TranslationTree> = {
     },
     userMenu: {
       loggedInAs: 'Увійшов як:',
+      permissionLabel: 'Номер дозволу',
       edit: 'Редагувати користувача',
       logout: 'Вийти'
     },
