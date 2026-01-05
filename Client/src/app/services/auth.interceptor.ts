@@ -9,13 +9,17 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/c
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { TranslationService } from '../i18n/translation.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private translation: TranslationService
+  ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     
     if (token) {
       req = req.clone({
@@ -27,13 +31,22 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       catchError(error => {
-        // Handle 401 Unauthorized - logout user
-        if (error.status === 401) {
+        // Handle 401 Unauthorized - logout user (except direct login attempts)
+        if (error.status === 401 && !req.url.endsWith('/api/auth/login')) {
           console.warn('[Auth Interceptor] 401 Unauthorized - logging out');
+
+          // Pokaż przy następnym ekranie logowania informację, że sesja wygasła / została przejęta
+          try {
+            const message = this.translation.translate('login.session.terminated');
+            sessionStorage.setItem('logoutMessage', message);
+          } catch {
+            // ignore storage or translation errors
+          }
+
           this.authService.logout();
           window.location.href = '/login';
         }
-        
+
         return throwError(() => error);
       })
     );

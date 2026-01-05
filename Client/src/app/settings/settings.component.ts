@@ -196,8 +196,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
             currentUser.lastName = this.userSettings.lastName;
             currentUser.permissionNumber = this.userSettings.permissionNumber;
           }
-          
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+          sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
       },
       (error: any) => {

@@ -78,7 +78,19 @@ export const translations: Record<LanguageCode, TranslationTree> = {
       demoHint: 'Dane demonstracyjne: admin / admin',
       languageLabel: 'Wybierz język',
       errors: {
-        invalidCredentials: 'Nieprawidłowy login lub hasło'
+        invalidCredentials: 'Nieprawidłowy login lub hasło',
+        sessionActive: 'Dla tego użytkownika istnieje już aktywna sesja.'
+      },
+      session: {
+        terminated: 'Twoja sesja została zakończona, ponieważ zalogowano się na to konto na innym urządzeniu lub ponownie na tym samym.'
+      },
+      sessionConflict: {
+        message: 'Dla tego użytkownika istnieje już aktywna sesja na innym urządzeniu.',
+        confirm: 'Czy chcesz zakończyć tamtą sesję i zalogować się tutaj?',
+        buttons: {
+          takeOver: 'Przejmij sesję',
+          cancel: 'Anuluj'
+        }
       }
     },
     status: {
@@ -317,7 +329,19 @@ export const translations: Record<LanguageCode, TranslationTree> = {
       demoHint: 'Демо дані: admin / admin',
       languageLabel: 'Оберіть мову',
       errors: {
-        invalidCredentials: 'Невірний логін або пароль'
+        invalidCredentials: 'Невірний логін або пароль',
+        sessionActive: 'Для цього користувача вже є активна сесія.'
+      },
+      session: {
+        terminated: 'Вашу сесію завершено, оскільки на цей акаунт увійшли з іншого пристрою або повторно на цьому ж.'
+      },
+      sessionConflict: {
+        message: 'Для цього користувача вже є активна сесія на іншому пристрої.',
+        confirm: 'Завершити ту сесію та увійти тут?',
+        buttons: {
+          takeOver: 'Перехопити сесію',
+          cancel: 'Скасувати'
+        }
       }
     },
     status: {

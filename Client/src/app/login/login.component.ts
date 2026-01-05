@@ -23,6 +23,7 @@ export class LoginComponent implements OnDestroy {
   password = '';
   errorKey = '';
   logoutMessage = '';
+  sessionConflictVisible = false;
   loading = false;
   languages = LANGUAGES;
   currentLanguage: LanguageCode;
@@ -55,15 +56,44 @@ export class LoginComponent implements OnDestroy {
     this.loading = true;
 
     this.authService.login(this.username, this.password).subscribe(
-      (response) => {
+      () => {
         this.loading = false;
         this.loginSuccess.emit();
       },
       (error) => {
-        this.errorKey = 'login.errors.invalidCredentials';
-        this.loading = false;
+        // Konflikt sesji - zapytaj użytkownika, czy chce przejąć istniejącą sesję
+        if (error?.status === 409 && error.error?.error === 'active_session_exists') {
+          this.sessionConflictVisible = true;
+          this.loading = false;
+        } else {
+          this.errorKey = 'login.errors.invalidCredentials';
+          this.loading = false;
+        }
       }
     );
+  }
+
+  confirmSessionTakeover() {
+    this.errorKey = '';
+    this.loading = true;
+
+    this.authService.login(this.username, this.password, { force: true }).subscribe(
+      () => {
+        this.loading = false;
+        this.sessionConflictVisible = false;
+        this.loginSuccess.emit();
+      },
+      () => {
+        this.errorKey = 'login.errors.invalidCredentials';
+        this.loading = false;
+        this.sessionConflictVisible = false;
+      }
+    );
+  }
+
+  cancelSessionTakeover() {
+    this.sessionConflictVisible = false;
+    this.errorKey = 'login.errors.sessionActive';
   }
 
   onKeyPress(event: KeyboardEvent) {

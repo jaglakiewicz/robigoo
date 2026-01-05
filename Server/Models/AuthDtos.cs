@@ -19,6 +19,7 @@ namespace Server.Models
 
         public string Login { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public bool Force { get; set; } = false;
 
         #endregion
     }

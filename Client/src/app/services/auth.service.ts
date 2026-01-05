@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { TranslationService } from '../i18n/translation.service';
 
 export interface LoginResponse {
   token: string;
@@ -45,31 +46,43 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<CurrentUser | null>(this.getCurrentUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private translation: TranslationService) {
+    this.registerSessionTakeoverListener();
+  }
 
   private getCurrentUserFromStorage(): CurrentUser | null {
-    const stored = localStorage.getItem('currentUser');
+    const stored = sessionStorage.getItem('currentUser');
     return stored ? JSON.parse(stored) : null;
   }
 
-  login(login: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { login, password })
+  login(login: string, password: string, options?: { force?: boolean }): Observable<LoginResponse> {
+    const body: any = { login, password };
+    if (options?.force) {
+      body.force = true;
+    }
+
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, body)
       .pipe(
         tap(response => {
           const currentUser: CurrentUser = {
             ...response.user,
             token: response.token
           };
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-          localStorage.setItem('token', response.token);
+          sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+          sessionStorage.setItem('token', response.token);
           this.currentUserSubject.next(currentUser);
+
+          // Jeśli przejmujemy sesję, poinformuj pozostałe zakładki
+          if (options?.force) {
+            this.broadcastSessionTakeover(response.user.login);
+          }
         })
       );
   }
 
   logout(): void {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('currentUser');
+    sessionStorage.removeItem('token');
     this.currentUserSubject.next(null);
   }
 
@@ -78,7 +91,57 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
+  }
+
+  private registerSessionTakeoverListener(): void {
+    if (typeof window === 'undefined' || typeof window.addEventListener === 'undefined') {
+      return;
+    }
+
+    window.addEventListener('storage', (event: StorageEvent) => {
+      if (event.key !== 'robigoo_session_takeover' || !event.newValue) {
+        return;
+      }
+
+      try {
+        const payload = JSON.parse(event.newValue) as { login?: string };
+        const current = this.getCurrentUser();
+        if (!current) {
+          return;
+        }
+
+        // Jeśli komunikat dotyczy innego użytkownika, ignorujemy
+        if (payload.login && payload.login !== current.login) {
+          return;
+        }
+
+        // Sesja została przejęta w innej zakładce – wyloguj się z komunikatem
+        const message = this.translation.translate('login.session.terminated');
+        try {
+          sessionStorage.setItem('logoutMessage', message);
+        } catch {
+          // ignoruj błąd zapisu
+        }
+
+        this.logout();
+        window.location.href = '/login';
+      } catch {
+        // niepoprawny JSON – ignoruj
+      }
+    });
+  }
+
+  private broadcastSessionTakeover(login: string): void {
+    try {
+      const payload = {
+        login,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('robigoo_session_takeover', JSON.stringify(payload));
+    } catch {
+      // brak localStorage lub błąd zapisu – ignorujemy, zostaje fallback na 401
+    }
   }
 
   isAuthenticated(): boolean {

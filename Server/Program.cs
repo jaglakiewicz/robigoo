@@ -51,6 +51,33 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
+
+            var authHeader = context.Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Fail("Missing bearer token");
+                return;
+            }
+
+            var rawToken = authHeader.Substring("Bearer ".Length).Trim();
+
+            var session = await db.UserSessions.FirstOrDefaultAsync(s => s.SessionToken == rawToken && s.IsActive);
+            if (session == null)
+            {
+                context.Fail("Session is not active");
+                return;
+            }
+
+            session.LastActivityAt = DateTime.UtcNow;
+            await db.SaveChangesAsync();
+        }
+    };
 });
 
 builder.Services.AddAuthorization();
@@ -70,12 +97,52 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 var app = builder.Build();
 
+// Helper: verify that the JWT token belongs to an active user session
+static async Task<bool> IsSessionActiveAsync(AppDbContext db, HttpContext context)
+{
+    var authHeader = context.Request.Headers["Authorization"].ToString();
+    if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+    {
+        return false;
+    }
+
+    var rawToken = authHeader.Substring("Bearer ".Length).Trim();
+
+    var session = await db.UserSessions.FirstOrDefaultAsync(s => s.SessionToken == rawToken && s.IsActive);
+    if (session == null)
+    {
+        return false;
+    }
+
+    session.LastActivityAt = DateTime.UtcNow;
+    await db.SaveChangesAsync();
+
+    return true;
+}
+
 // ensure database exists and seed master admin
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
+    // Używamy EnsureCreated, aby nie wchodzić w konflikt z istniejącymi migracjami,
+    // a brakujące tabele (UserSessions) tworzymy ręcznie poniżej.
     db.Database.EnsureCreated();
+
+    // Zapewnij istnienie tabeli UserSessions (jeśli baza powstała wcześniej bez tej tabeli).
+    // SQLite wspiera CREATE TABLE IF NOT EXISTS, więc operacja jest idempotentna.
+    db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""UserSessions"" (
+        ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_UserSessions"" PRIMARY KEY AUTOINCREMENT,
+        ""UserId"" INTEGER NOT NULL,
+        ""SessionToken"" TEXT NOT NULL,
+        ""CreatedAt"" TEXT NOT NULL,
+        ""LastActivityAt"" TEXT NOT NULL,
+        ""IsActive"" INTEGER NOT NULL,
+        CONSTRAINT ""FK_UserSessions_Users_UserId"" FOREIGN KEY (""UserId"") REFERENCES ""Users"" (""Id"") ON DELETE CASCADE
+    );");
+
+    db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_UserSessions_UserId"" ON ""UserSessions"" (""UserId"");");
+    db.Database.ExecuteSqlRaw(@"CREATE UNIQUE INDEX IF NOT EXISTS ""IX_UserSessions_SessionToken"" ON ""UserSessions"" (""SessionToken"");");
 
     // Seed master admin if not exists
     if (!db.Users.Any(u => u.Login == "admin"))
@@ -116,12 +183,60 @@ app.MapPost("/api/auth/login", async (AppDbContext db, IPasswordService password
     {
         return Results.Unauthorized();
     }
+
+    // Check for existing active session for this user
+    var existingSession = await db.UserSessions
+        .Where(s => s.UserId == user.Id && s.IsActive)
+        .OrderByDescending(s => s.LastActivityAt)
+        .FirstOrDefaultAsync();
+
+    if (existingSession != null && !dto.Force)
+    {
+        return Results.Conflict(new
+        {
+            error = "active_session_exists",
+            message = "Dla tego użytkownika istnieje już aktywna sesja.",
+            session = new
+            {
+                createdAt = existingSession.CreatedAt,
+                lastActivityAt = existingSession.LastActivityAt
+            }
+        });
+    }
+
+    // If force takeover requested, deactivate all existing active sessions
+    if (existingSession != null && dto.Force)
+    {
+        var activeSessions = await db.UserSessions
+            .Where(s => s.UserId == user.Id && s.IsActive)
+            .ToListAsync();
+
+        foreach (var s in activeSessions)
+        {
+            s.IsActive = false;
+            s.LastActivityAt = DateTime.UtcNow;
+        }
+    }
     // Update last login
     user.LastLoginAt = DateTime.UtcNow;
-    
+
+    var now = DateTime.UtcNow;
+
     // Generate token
     var token = tokenService.GenerateToken(user.Id, user.Login, user.Role);
-    
+
+    // Create new session record
+    var newSession = new UserSession
+    {
+        UserId = user.Id,
+        SessionToken = token,
+        CreatedAt = now,
+        LastActivityAt = now,
+        IsActive = true
+    };
+
+    db.UserSessions.Add(newSession);
+
     await db.SaveChangesAsync();
 
     var response = new Server.Models.LoginResponseDto
@@ -142,6 +257,11 @@ app.MapPost("/api/auth/login", async (AppDbContext db, IPasswordService password
 
 app.MapGet("/api/auth/me", async (AppDbContext db, HttpContext context) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     var userIdClaim = context.User.FindFirst("userId");
     if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
     {
@@ -170,15 +290,38 @@ app.MapGet("/api/auth/me", async (AppDbContext db, HttpContext context) =>
     return Results.Ok(response);
 }).RequireAuthorization();
 
-app.MapPost("/api/auth/logout", (HttpContext context) =>
+app.MapPost("/api/auth/logout", async (AppDbContext db, HttpContext context) =>
 {
-    // Token will be removed on client side
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    // Mark current session as inactive on the server
+    var authHeader = context.Request.Headers["Authorization"].ToString();
+    if (!string.IsNullOrWhiteSpace(authHeader) && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+    {
+        var rawToken = authHeader.Substring("Bearer ".Length).Trim();
+        var session = await db.UserSessions.FirstOrDefaultAsync(s => s.SessionToken == rawToken && s.IsActive);
+        if (session != null)
+        {
+            session.IsActive = false;
+            session.LastActivityAt = DateTime.UtcNow;
+            await db.SaveChangesAsync();
+        }
+    }
+
     return Results.Ok();
 }).RequireAuthorization();
 
 // ==================== USER MANAGEMENT ENDPOINTS ====================
 app.MapPost("/api/users", async (AppDbContext db, IPasswordService passwordService, HttpContext context, Server.Models.CreateUserDto dto) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     // Check if current user is admin
     var roleClaim = context.User.FindFirst(ClaimTypes.Role);
     if (roleClaim?.Value != "admin")
@@ -231,6 +374,11 @@ app.MapPost("/api/users", async (AppDbContext db, IPasswordService passwordServi
 
 app.MapGet("/api/users", async (AppDbContext db, HttpContext context) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     // Check if current user is admin
     var roleClaim = context.User.FindFirst(ClaimTypes.Role);
     if (roleClaim?.Value != "admin")
@@ -256,6 +404,11 @@ app.MapGet("/api/users", async (AppDbContext db, HttpContext context) =>
 // ==================== USER PROFILE ENDPOINTS ====================
 app.MapPut("/api/users/profile", async (AppDbContext db, HttpContext context, Server.Models.UpdateUserDto dto) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     var userIdClaim = context.User.FindFirst("userId");
     if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
     {
@@ -319,6 +472,11 @@ app.MapPut("/api/users/profile", async (AppDbContext db, HttpContext context, Se
 
 app.MapPost("/api/users/change-password", async (AppDbContext db, IPasswordService passwordService, HttpContext context, Server.Models.ChangePasswordDto dto) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     var userIdClaim = context.User.FindFirst("userId");
     if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
     {
@@ -342,6 +500,11 @@ app.MapPost("/api/users/avatar", async (AppDbContext db, HttpContext context, IF
 {
     try
     {
+        if (!await IsSessionActiveAsync(db, context))
+        {
+            return Results.Unauthorized();
+        }
+
         var userIdClaim = context.User.FindFirst("userId");
         if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
         {
@@ -396,6 +559,11 @@ app.MapPost("/api/users/avatar", async (AppDbContext db, HttpContext context, IF
 // Delete user endpoint - with password confirmation
 app.MapDelete("/api/users/{userId}", async (AppDbContext db, HttpContext context, long userId, [FromBody] Server.Models.ConfirmPasswordDto dto) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     // Get current user ID from claims
     var userIdClaim = context.User.FindFirst("userId");
     if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var currentUserId))
@@ -447,6 +615,11 @@ app.MapDelete("/api/users/{userId}", async (AppDbContext db, HttpContext context
 // Update user role endpoint - ONLY master admin can change roles
 app.MapPut("/api/users/{userId}/role", async (AppDbContext db, HttpContext context, long userId, Server.Models.UpdateUserRoleDto dto) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     // Get current user ID from claims
     var userIdClaim = context.User.FindFirst("userId");
     if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var currentUserId))
@@ -498,8 +671,14 @@ app.MapPut("/api/users/{userId}/role", async (AppDbContext db, HttpContext conte
 
 // ==================== ORIGINAL ENDPOINTS ====================
 
-app.MapGet("/api/inspections", async (AppDbContext db) =>
+// Inspections API - wymaga autoryzacji i aktywnej sesji
+app.MapGet("/api/inspections", async (AppDbContext db, HttpContext context) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     var inspections = await db.Inspections
         .Include(i => i.Items)
         .OrderByDescending(i => i.Id)
@@ -512,11 +691,16 @@ app.MapGet("/api/inspections", async (AppDbContext db) =>
         i.Notes,
         i.Items.Select(it => new Server.Models.InspectionItemDto(it.Description, it.Passed)).ToList()
     ));
-    return response;
-});
+    return Results.Ok(response);
+}).RequireAuthorization();
 
-app.MapPost("/api/inspections", async (AppDbContext db, Server.Models.InspectionCreateDto dto) =>
+app.MapPost("/api/inspections", async (AppDbContext db, HttpContext context, Server.Models.InspectionCreateDto dto) =>
 {
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
     var inspection = new Server.Models.Inspection
     {
         VehiclePlate = dto.VehiclePlate,
@@ -539,7 +723,7 @@ app.MapPost("/api/inspections", async (AppDbContext db, Server.Models.Inspection
         inspection.Items.Select(it => new Server.Models.InspectionItemDto(it.Description, it.Passed)).ToList()
     );
     return Results.Created($"/api/inspections/{inspection.Id}", response);
-});
+}).RequireAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

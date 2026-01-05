@@ -4,7 +4,7 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
@@ -21,7 +21,7 @@ interface MenuItem { type: string; titleKey: string; hintKey: string }
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   sidebarOpen = false;
   tabs: Tab[] = [];
@@ -37,6 +37,7 @@ export class AppComponent implements OnDestroy {
   userChevronSvg = SVG_ICONS.chevronDown;
   SVG_ICONS = SVG_ICONS; // Make SVG_ICONS available in template
   private currentUserSub: Subscription;
+  private sessionHeartbeatId: number | null = null;
 
   menuItems: MenuItem[] = [
     { type: 'new', titleKey: 'menu.newInspection', hintKey: 'menu.newInspectionHint' },
@@ -72,6 +73,7 @@ export class AppComponent implements OnDestroy {
         this.userAvatar = user.avatarBase64 ? `data:image/jpeg;base64,${user.avatarBase64}` : null;
         this.currentUserPermissionNumber = user.permissionNumber ?? '';
         this.isLoggedIn = true;
+        this.startSessionHeartbeat();
       } else {
         this.isLoggedIn = false;
         this.currentUserName = '';
@@ -79,13 +81,21 @@ export class AppComponent implements OnDestroy {
         this.userAvatar = null;
         this.userMenuOpen = false;
         this.currentUserPermissionNumber = '';
+        this.stopSessionHeartbeat();
       }
     });
+  }
+
+  ngOnInit(): void {
+    if (this.isLoggedIn) {
+      this.startSessionHeartbeat();
+    }
   }
 
   ngOnDestroy(): void {
     this.langSub?.unsubscribe();
     this.currentUserSub?.unsubscribe();
+    this.stopSessionHeartbeat();
   }
 
   @HostListener('document:click', ['$event'])
@@ -241,6 +251,45 @@ export class AppComponent implements OnDestroy {
       this.activeIndex = newIndex >= 0 ? newIndex : 0;
     } else {
       this.activeIndex = event.currentIndex;
+    }
+  }
+
+  private startSessionHeartbeat(): void {
+    if (this.sessionHeartbeatId != null) {
+      return;
+    }
+
+    try {
+      this.sessionHeartbeatId = window.setInterval(() => {
+        if (!this.isLoggedIn) {
+          return;
+        }
+
+        // To wywołanie trafi na backend z aktualnym tokenem.
+        // Jeśli sesja została przejęta / unieważniona, backend zwróci 401,
+        // a AuthInterceptor zajmie się wylogowaniem i komunikatem.
+        try {
+          this.authService.me().subscribe({
+            next: () => {},
+            error: () => {}
+          });
+        } catch {
+          // Ignoruj błędy na poziomie przeglądarki
+        }
+      }, 10000); // co 10 sekund
+    } catch {
+      this.sessionHeartbeatId = null;
+    }
+  }
+
+  private stopSessionHeartbeat(): void {
+    if (this.sessionHeartbeatId != null) {
+      try {
+        clearInterval(this.sessionHeartbeatId);
+      } catch {
+        // ignore
+      }
+      this.sessionHeartbeatId = null;
     }
   }
 

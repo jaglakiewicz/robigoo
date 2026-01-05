@@ -728,4 +728,21 @@
       </div>
     </div>
   </div>
+
+  <!-- Session conflict dialog -->
+  <div *ngIf="sessionConflictVisible" class="session-dialog-backdrop" aria-modal="true" role="dialog">
+    <div class="session-dialog">
+      <h2 class="session-dialog__title">{{ 'login.submit' | translate }}</h2>
+      <p class="session-dialog__message">{{ 'login.sessionConflict.message' | translate }}</p>
+      <p class="session-dialog__subtitle">{{ 'login.sessionConflict.confirm' | translate }}</p>
+      <div class="session-dialog__actions">
+        <button type="button" class="btn btn-secondary" (click)="cancelSessionTakeover()">
+          {{ 'login.sessionConflict.buttons.cancel' | translate }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="confirmSessionTakeover()">
+          {{ 'login.sessionConflict.buttons.takeOver' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
