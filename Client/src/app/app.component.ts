@@ -150,6 +150,25 @@ export class AppComponent implements OnDestroy {
     console.log('[AppComponent] Current tabs:', this.tabs);
   }
 
+  /**
+   * Obsługa kliknięcia pozycji menu w sidebarze.
+   * Na małych ekranach (smartfony/tablety) po otwarciu zakładki
+   * dodatkowo zwija sidebar, żeby odsłonić treść.
+   */
+  handleMenuClick(type: string, titleKey: string) {
+    this.openTab(type, titleKey);
+
+    try {
+      const width = window.innerWidth;
+      // Ten sam breakpoint co w głównych stylach (max-width: 600px)
+      if (width && width <= 600) {
+        this.sidebarOpen = false;
+      }
+    } catch {
+      // Jeśli z jakiegoś powodu window nie jest dostępne, po prostu ignorujemy
+    }
+  }
+
   isMasterAdmin(): boolean {
     return this.currentUserLogin === 'admin';
   }

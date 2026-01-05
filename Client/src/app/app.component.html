@@ -43,7 +43,7 @@
 
     <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen">
       <li *ngFor="let item of menuItems" 
-          (click)="openTab(item.type, item.titleKey)"
+          (click)="handleMenuClick(item.type, item.titleKey)"
           [class.disabled]="isMasterAdmin() && item.type !== 'settings'"
           [class.restricted]="isMasterAdmin() && item.type !== 'settings'"
           [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator može koristiti samo Settings' : null">

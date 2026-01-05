@@ -971,6 +971,7 @@ a:focus-visible {
   background: transparent;
 }
 
+/* Tabs row - desktop defaults */
 .tabs {
   display: flex;
   gap: 0;
@@ -980,7 +981,8 @@ a:focus-visible {
   border-radius: 0;
   align-items: center;
   margin-bottom: 0;
-  overflow-x: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   position: relative;
   border-bottom: 1px solid var(--panel-border);
   min-width: 0;
@@ -1288,16 +1290,52 @@ a:focus-visible {
 @media(max-width: 900px) {
   .sidebar { width: 60px; }
   .sidebar.open { width: 240px; }
-  .app-shell.shifted { margin-left: 240px; }
+  /* Keep content slightly shifted but still visible on tablets */
+  .app-shell.shifted { margin-left: 220px; }
   .container h1 { font-size: 22px; }
+
+  /* Slightly smaller tabs on tablets */
+  .tab {
+    padding: 3px 8px;
+    font-size: 12px;
+  }
 }
 
 @media(max-width: 600px) {
   .sidebar { width: 56px; }
   .sidebar.open { width: 100%; }
-  .app-shell.shifted { margin-left: 100%; }
-  .container { padding: 12px; }
+  /* Do not push content completely poza ekran - menu jest nad treścią */
+  .app-shell.shifted { margin-left: 0; }
+  .container { padding: 10px; }
   .container h1 { font-size: 20px; }
+
+  /* Tabs: więcej miejsca poziomego, przewijanie dotykowe */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .tabs::before {
+    width: 80px;
+  }
+
+  .tab {
+    padding: 2px 8px;
+    font-size: 12px;
+    max-width: 180px;
+  }
+
+  .tab span {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .main-area {
+    padding: 10px;
+    border-radius: var(--radius-md);
+  }
 }
 
 .empty-state {

@@ -119,6 +119,11 @@ input, textarea, select {
   font-size: 16px;
 }
 
+/* Ensure native select text matches smaller input base size */
+select {
+  font-size: var(--font-size-base);
+}
+
 /* Mobile-optimized padding */
 @media (max-width: 767px) {
   input, textarea, select {
@@ -163,9 +168,9 @@ label {
    BUTTONS - UNIFIED DESIGN SYSTEM
    ============================================================
    
-   UNIFIED BUTTON SPECIFICATION FOR ALL LABELED BUTTONS:
+  UNIFIED BUTTON SPECIFICATION FOR ALL LABELED BUTTONS:
    
-   ✓ HEIGHT: 48px - All labeled buttons have same height
+  ✓ HEIGHT: var(--touch-size) - All labeled buttons match input height
    ✓ FONT: var(--font-family), var(--font-size-base), var(--font-weight-semibold)
    ✓ ROUNDING: 8px - Beautiful border-radius for modern look
    ✓ BORDER: 1px solid rgba(0, 0, 0, 0.12) - Subtle border
@@ -201,9 +206,9 @@ label {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   
-  /* UNIFIED BUTTON DIMENSIONS */
-  height: 48px;
-  min-height: 48px;
+  /* UNIFIED BUTTON DIMENSIONS (aligned with inputs) */
+  height: var(--touch-size);
+  min-height: var(--touch-size);
   padding: 0 24px;
   
   /* UNIFIED BORDER & ROUNDING */

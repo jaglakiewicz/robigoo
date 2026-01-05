@@ -76,48 +76,50 @@
       </div>
 
       <!-- Personal Information -->
-      <div class="form-group">
-        <label>Imię *</label>
-        <input 
-          type="text" 
-          [(ngModel)]="userSettings.firstName"
-          [disabled]="!isCurrentUserAdmin()"
-          [class.disabled-input]="!isCurrentUserAdmin()"
-        />
-        <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
-      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Imię *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="userSettings.firstName"
+            [disabled]="!isCurrentUserAdmin()"
+            [class.disabled-input]="!isCurrentUserAdmin()"
+          />
+          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+        </div>
 
-      <div class="form-group">
-        <label>Nazwisko *</label>
-        <input 
-          type="text" 
-          [(ngModel)]="userSettings.lastName"
-          [disabled]="!isCurrentUserAdmin()"
-          [class.disabled-input]="!isCurrentUserAdmin()"
-        />
-        <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
-      </div>
+        <div class="form-group">
+          <label>Nazwisko *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="userSettings.lastName"
+            [disabled]="!isCurrentUserAdmin()"
+            [class.disabled-input]="!isCurrentUserAdmin()"
+          />
+          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+        </div>
 
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" [(ngModel)]="userSettings.email" />
-      </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="userSettings.email" />
+        </div>
 
-      <div class="form-group">
-        <label>Telefon</label>
-        <input type="tel" [(ngModel)]="userSettings.phone" />
-      </div>
+        <div class="form-group">
+          <label>Telefon</label>
+          <input type="tel" [(ngModel)]="userSettings.phone" />
+        </div>
 
-      <div class="form-group">
-        <label>Numer uprawnień</label>
-        <input 
-          type="text" 
-          [(ngModel)]="userSettings.permissionNumber" 
-          placeholder="Wpisz swój numer uprawnień"
-          [disabled]="!isCurrentUserAdmin()"
-          [class.disabled-input]="!isCurrentUserAdmin()"
-        />
-        <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+        <div class="form-group">
+          <label>Numer uprawnień</label>
+          <input 
+            type="text" 
+            [(ngModel)]="userSettings.permissionNumber" 
+            placeholder="Wpisz swój numer uprawnień"
+            [disabled]="!isCurrentUserAdmin()"
+            [class.disabled-input]="!isCurrentUserAdmin()"
+          />
+          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+        </div>
       </div>
 
       <!-- Password Change Section -->
@@ -151,22 +153,24 @@
       </div>
 
       <!-- Preferences -->
-      <div class="form-group">
-        <label>Preferowany język</label>
-        <select [(ngModel)]="userSettings.language">
-          <option value="pl">Polski</option>
-          <option value="uk">Ukraiński</option>
-          <option value="en">English</option>
-        </select>
-      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Preferowany język</label>
+          <select [(ngModel)]="userSettings.language">
+            <option value="pl">Polski</option>
+            <option value="uk">Ukraiński</option>
+            <option value="en">English</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label>Motyw</label>
-        <select [(ngModel)]="userSettings.theme">
-          <option value="light">Jasny</option>
-          <option value="dark">Ciemny</option>
-          <option value="auto">Auto</option>
-        </select>
+        <div class="form-group">
+          <label>Motyw</label>
+          <select [(ngModel)]="userSettings.theme">
+            <option value="light">Jasny</option>
+            <option value="dark">Ciemny</option>
+            <option value="auto">Auto</option>
+          </select>
+        </div>
       </div>
 
       <!-- Save Button -->
