@@ -106,7 +106,7 @@
 .toast-close:focus-visible {
   outline: var(--focus-outline-width) solid var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 @media (max-width: 600px) {

@@ -208,7 +208,7 @@ label {
   
   /* UNIFIED BORDER & ROUNDING */
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   
   /* UNIFIED FLEXBOX & SPACING */
   display: inline-flex;

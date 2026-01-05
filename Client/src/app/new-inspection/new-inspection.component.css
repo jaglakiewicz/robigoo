@@ -55,7 +55,7 @@
   border: 1px solid var(--panel-border) !important;
   background: var(--bg-alt);
   color: var(--text);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
 

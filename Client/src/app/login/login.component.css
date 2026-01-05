@@ -877,7 +877,7 @@
 .language-flag {
   width: 22px;
   height: 15px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   background-size: cover;
   background-position: center;
