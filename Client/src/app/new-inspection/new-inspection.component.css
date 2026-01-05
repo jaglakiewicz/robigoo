@@ -5,6 +5,8 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
+@import '../shared/styles/globals.css';
+
 /* ============================================================
    ITEM ROWS - RESPONSIVE
    ============================================================ */
@@ -42,13 +44,30 @@
 }
 
 .item-row button {
-  padding: var(--space-sm) var(--space-md) !important;
-  flex-shrink: 0;
-  min-width: 44px;
+  /* Icon-only button in list - separate from labeled buttons */
+  width: 44px;
   height: 44px;
+  padding: 0 !important;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid var(--panel-border) !important;
+  background: var(--bg-alt);
+  color: var(--text);
+  border-radius: 6px;
+  transition: all var(--transition-fast);
+}
+
+.item-row button:hover {
+  background: var(--panel-border);
+  border-color: var(--text-light) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.item-row button:active {
+  transform: translateY(0);
 }
 
 /* Mobile: Stack items */
@@ -258,19 +277,18 @@
 .spacer {
   flex: 1;
 }
-
-.btn-nav {
-  padding: var(--space-sm) var(--space-lg);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  font-weight: var(--font-weight-medium);
-}
-
-.btn-nav svg {
+/* Navigation buttons - inherits unified styles from globals.css
+   UNIFIED HEIGHT: 44px, font, rounding, hover, border style
+   SVG icons: 18x18px (see below)
+*/
+.btn-nav svg,
+.btn-back svg,
+.btn-next svg,
+.btn-save svg,
+.btn-cancel svg {
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
 }
 
 /* ============================================================

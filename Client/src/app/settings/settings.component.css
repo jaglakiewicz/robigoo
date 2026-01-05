@@ -5,6 +5,8 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
+@import '../shared/styles/globals.css';
+
 .settings-container {
   display: block;
   padding: var(--space-lg);
@@ -402,133 +404,8 @@
   color: var(--text-light);
 }
 
-.btn-small {
-  padding: var(--space-xs) var(--space-sm);
-  font-size: var(--font-size-sm);
-  border-radius: var(--radius-md);
-}
-
-.btn-danger {
-  background-color: var(--error);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
-}
-
-.btn-danger:hover:not(:disabled) {
-  background-color: #c82333;
-}
-
-.btn-danger:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-disabled-text {
-  color: var(--text-light);
-  font-size: var(--font-size-sm);
-}
-
-/* Password Confirmation Dialog */
-.password-confirm-dialog {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.password-confirm-dialog .dialog-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-}
-
-.password-confirm-dialog .dialog-content {
-  position: relative;
-  background: var(--panel);
-  border-radius: var(--radius-md);
-  padding: var(--space-2xl);
-  max-width: 400px;
-  width: 90%;
-  box-shadow: var(--shadow-lg);
-  z-index: 1001;
-}
-
-@media (max-width: 767px) {
-  .password-confirm-dialog .dialog-content {
-    padding: var(--space-lg);
-  }
-}
-
-.password-confirm-dialog .dialog-content h4 {
-  margin-top: 0;
-  margin-bottom: var(--space-md);
-  color: var(--text);
-}
-
-.dialog-info {
-  color: var(--text);
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--space-lg);
-}
-
-.dialog-buttons {
-  display: flex;
-  gap: var(--space-md);
-  justify-content: flex-end;
-  margin-top: var(--space-lg);
-}
-
-@media (max-width: 767px) {
-  .dialog-buttons {
-    flex-direction: column;
-  }
-
-  .dialog-buttons button {
-    width: 100%;
-  }
-}
-
-/* Users Table Actions */
-.users-table td:last-child {
-  text-align: center;
-  white-space: nowrap;
-}
-
-@media (max-width: 767px) {
-  .users-table td:last-child {
-    text-align: left;
-    white-space: normal;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Role Select Styles */
 .role-select {
-  padding: var(--space-xs) var(--space-sm);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-family);
+  padding: var(--space-sm) var(--space-md);
   font-size: var(--font-size-sm);
   background: var(--bg);
   color: var(--text);
@@ -567,7 +444,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 
@@ -577,12 +454,22 @@
   }
 }
 
-/* Button icon styling */
+/* Buttons in settings inherit unified styles from globals.css */
+/* All .btn, .btn-primary, .btn-secondary use:
+   - Height: 44px (mobile: 48px)
+   - Font: var(--font-family), --font-size-base, --font-weight-semibold
+   - Rounding: var(--radius-md)
+   - Border: 1px solid rgba(0, 0, 0, 0.12)
+   - Hover: transform: translateY(-2px), box-shadow
+   - SVG Icon: 18x18px
+*/
+
+/* SVG Icons in buttons */
 .btn-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   display: inline-block;
-  margin-right: var(--space-xs);
+  flex-shrink: 0;
   vertical-align: middle;
 }
 

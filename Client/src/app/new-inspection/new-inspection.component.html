@@ -44,7 +44,7 @@
     </label>
     <button (click)="removeItem(suspensionItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(suspensionItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(suspensionItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div *ngIf="currentStep === 2" class="step-content">
@@ -57,7 +57,7 @@
     </label>
     <button (click)="removeItem(alignmentItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(alignmentItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(alignmentItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div *ngIf="currentStep === 3" class="step-content">
@@ -70,7 +70,7 @@
     </label>
     <button (click)="removeItem(lightsItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(lightsItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(lightsItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div *ngIf="currentStep === 4" class="step-content">
@@ -83,21 +83,21 @@
     </label>
     <button (click)="removeItem(brakesItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
   </div>
-  <button (click)="addItem(brakesItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(brakesItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
 
 <div class="step-navigation">
-  <button class="btn-back" (click)="previousStep()" [disabled]="currentStep === 0">
+  <button class="btn btn-secondary btn-back" (click)="previousStep()" [disabled]="currentStep === 0">
     <span [innerHTML]="getSafeHtml(iconBack)"></span>{{ 'newInspection.actions.back' | translate }}
   </button>
   <div class="spacer"></div>
-  <button class="btn-next" (click)="nextStep()" [disabled]="currentStep === sections.length - 1">
+  <button class="btn btn-secondary btn-next" (click)="nextStep()" [disabled]="currentStep === sections.length - 1">
     <span [innerHTML]="getSafeHtml(iconNext)"></span>{{ 'newInspection.actions.next' | translate }}
   </button>
-  <button class="btn-save" (click)="submit()" [disabled]="saving">
+  <button class="btn btn-success btn-save" (click)="submit()" [disabled]="saving">
     <span [innerHTML]="getSafeHtml(iconSave)"></span>{{ 'newInspection.actions.save' | translate }}
   </button>
-  <button class="btn-cancel" (click)="close.emit()">
+  <button class="btn btn-ghost btn-cancel" (click)="close.emit()">
     <span [innerHTML]="getSafeHtml(iconCancel)"></span>{{ 'newInspection.actions.cancel' | translate }}
   </button>
 </div>

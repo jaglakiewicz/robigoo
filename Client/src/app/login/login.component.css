@@ -5,6 +5,8 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
+@import '../shared/styles/globals.css';
+
 /* ============================================================
    LOGIN CONTAINER - RESPONSIVE
    ============================================================ */
@@ -20,8 +22,10 @@
   justify-content: center;
   z-index: 9999;
   padding: var(--space-lg);
-  overflow: hidden;
   overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  width: 100vw;
 }
 
 /* ============================================================
@@ -30,9 +34,11 @@
 .login-box {
   background: var(--panel);
   border-radius: var(--radius-lg);
-  padding: var(--space-2xl);
+  padding: var(--space-xl);
   width: 100%;
   max-width: 360px;
+  max-height: 100vh;
+  overflow-y: auto;
   box-shadow: var(--shadow-xl);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -992,36 +998,20 @@
 }
 
 /* ============================================================
-   BUTTONS - LOGIN
+   BUTTONS - LOGIN (inherits from unified system in globals.css)
    ============================================================ */
 .btn-login {
-  padding: var(--space-lg);
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: all var(--transition-fast);
+  /* UNIFIED: HEIGHT 48px, ROUNDING 8px, FONT semibold 14px */
+  /* Inherits from globals.css: display flex, gap 8px, padding 0 24px */
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: var(--space-md);
 }
 
-.btn-login:hover:not(:disabled) {
-  background: var(--accent-light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.btn-login:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn-login:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+@media (max-width: 767px) {
+  .btn-login {
+    width: 100%;
+  }
 }
 
 /* ============================================================

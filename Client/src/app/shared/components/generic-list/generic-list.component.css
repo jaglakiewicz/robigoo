@@ -5,6 +5,8 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
+@import '../../styles/globals.css';
+
 .list-container {
   padding: var(--space-lg);
   background: var(--panel);
@@ -90,31 +92,10 @@
 }
 
 .clear-btn {
-  padding: var(--space-sm) var(--space-md);
-  background: var(--bg-alt);
-  color: var(--text);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  transition: all var(--transition-fast);
+  /* Inherits unified button styles from globals.css */
+  /* HEIGHT: 48px, ROUNDING: 8px, PADDING: 0 24px, FONT: semibold 14px */
+  /* HOVER: background, shadow, transform translateY(-3px) */
   align-self: flex-start;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.clear-btn:hover {
-  background: var(--panel-border);
-  border-color: var(--text-light);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-
-.clear-btn:active {
-  transform: translateY(0);
 }
 
 .results-title {

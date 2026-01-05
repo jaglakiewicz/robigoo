@@ -289,7 +289,7 @@ a:focus-visible {
 
 .close-btn {
   background: transparent;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   font-size: 18px;
   cursor: pointer;
@@ -309,6 +309,7 @@ a:focus-visible {
 
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
   transform: scale(1.2);
 }
 
@@ -394,18 +395,6 @@ a:focus-visible {
   color: inherit;
 }
 
-.menu li::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  transition: left 0.5s ease;
-  z-index: 1;
-}
-
 .menu li span:nth-child(2) {
   display: inline;
   font-weight: 500;
@@ -422,10 +411,6 @@ a:focus-visible {
   transform: translateX(2px);
 }
 
-.menu li:hover::before {
-  left: 100%;
-}
-
 .menu li:hover .menu-icon {
   transform: scale(1.15);
   animation: iconPulse 0.6s ease-out;
@@ -440,10 +425,6 @@ a:focus-visible {
 .menu li.disabled:hover {
   background: transparent;
   transform: none;
-}
-
-.menu li.disabled:hover::before {
-  left: -100%;
 }
 
 .menu li.disabled .menu-icon {
@@ -475,7 +456,7 @@ a:focus-visible {
   height: 40px;
   background: var(--primary);
   color: white;
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.15);
   cursor: pointer;
   font-size: 18px;
   display: flex;
@@ -488,6 +469,7 @@ a:focus-visible {
 
 .hamburger:hover {
   background: var(--primary-dark);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-footer {
@@ -526,7 +508,7 @@ a:focus-visible {
   justify-content: center;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   background: transparent;
   color: inherit;
   font-size: 11px;
@@ -540,6 +522,7 @@ a:focus-visible {
 .language-option:hover {
   background: white;
   color: var(--primary);
+  border-color: white;
 }
 
 .language-option::before {
@@ -549,7 +532,7 @@ a:focus-visible {
 .theme-toggle {
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -562,6 +545,7 @@ a:focus-visible {
 
 .theme-toggle:hover {
   background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .theme-toggle span { font-size: 12px; font-weight: 600; }
@@ -646,7 +630,7 @@ a:focus-visible {
 .user-info-display {
   background: var(--panel);
   color: var(--text);
-  border: 1px solid var(--panel-border);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   padding: 3px 12px;
   border-radius: 999px;
   display: flex;
@@ -668,7 +652,7 @@ a:focus-visible {
 
 .user-info-display:hover {
   background: var(--bg);
-  border-color: var(--accent);
+  border-color: rgba(0, 0, 0, 0.2);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
@@ -879,18 +863,6 @@ a:focus-visible {
   height: 32px;
 }
 
-.tab::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.5s ease;
-  z-index: 1;
-}
-
 .tab-icon {
   display: flex;
   align-items: center;
@@ -1007,7 +979,7 @@ a:focus-visible {
 .main-area {
   background: var(--panel);
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
+  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
   padding: 16px;
   flex: 1;
   overflow-y: auto;
@@ -1124,65 +1096,9 @@ a:focus-visible {
   flex: 1;
 }
 
-/* Buttons */
-button {
-  padding: var(--space-sm) var(--space-md);
-  background: var(--accent);
-  color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-weight: 600;
-  transition: all var(--transition-fast);
-  font-size: var(--font-size-sm);
-  font-family: inherit;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  position: relative;
-  overflow: visible;
-}
-
-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-button:hover:not(:disabled) {
-  background: var(--accent-light);
-  border-color: rgba(0, 0, 0, 0.15);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-button:hover::before:not(:disabled) {
-  left: 100%;
-}
-
-button:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
-  box-shadow: var(--button-focus-shadow);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-button svg {
-  width: auto;
-  height: auto;
-  flex-shrink: 0;
-  display: block;
-}
+/* Buttons - Base Styles (delegated to globals.css for label buttons) */
+/* This file inherits unified button styles from globals.css */
+/* Icon-only, tab, and special buttons are defined here */
 
 .data-table {
   width: 100%;
@@ -1456,54 +1372,16 @@ button svg {
   height: 64px;
 }
 
-/* Buttons */
-.btn {
-  padding: var(--space-sm) var(--space-md);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
+/* Buttons - Specific Variants */
+/* All .btn classes inherit unified base styles from globals.css */
 
-.btn-primary {
-  background: var(--accent);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-secondary {
-  background: var(--bg-alt);
-  color: var(--text);
-  border: 1px solid var(--panel-border);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--panel-border);
-  color: var(--accent);
-}
-
-.btn-success {
-  background: var(--success);
-  color: white;
-}
-
-.btn-success:hover {
-  background: var(--success-light);
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-success:focus-visible,
+.btn-error:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: var(--button-focus-shadow);
 }
 
 .btn-error {
@@ -1513,11 +1391,8 @@ button svg {
 
 .btn-error:hover {
   background: #e53935;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-small {
