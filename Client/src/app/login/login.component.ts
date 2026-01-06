@@ -25,6 +25,7 @@ export class LoginComponent implements OnDestroy {
   logoutMessage = '';
   sessionConflictVisible = false;
   loading = false;
+  passwordVisible = false;
   languages = LANGUAGES;
   currentLanguage: LanguageCode;
   languageDropdownOpen = false;
@@ -113,6 +114,10 @@ export class LoginComponent implements OnDestroy {
   selectLanguage(language: LanguageCode) {
     this.changeLanguage(language);
     this.languageDropdownOpen = false;
+  }
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   getLanguageName(language: LanguageCode): string {

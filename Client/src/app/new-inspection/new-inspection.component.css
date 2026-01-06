@@ -189,7 +189,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: var(--panel-border);
   margin-right: var(--space-sm);
   font-size: var(--font-size-sm);

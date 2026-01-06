@@ -13,7 +13,7 @@
   display: inline-flex;
   align-items: center;
   padding: var(--space-xs) var(--space-md);
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--bg-alt);
   font-size: var(--font-size-xs);
   color: var(--text);

@@ -68,14 +68,15 @@ export const translations: Record<LanguageCode, TranslationTree> = {
       notificationsHint: 'Ostatnie alerty systemowe'
     },
     login: {
-      subtitle: 'System Zarządzania Stacją Kontroli Opryskiwaczy',
       username: 'Użytkownik',
       password: 'Hasło',
       usernamePlaceholder: 'login',
       passwordPlaceholder: 'hasło',
+      passwordShow: 'Pokaż hasło',
+      passwordHide: 'Ukryj hasło',
       submit: 'Zaloguj',
       submitting: 'Logowanie...',
-      demoHint: 'Dane demonstracyjne: admin / admin',
+      demoHint: '© Copyright by Wojciech Salamon',
       languageLabel: 'Wybierz język',
       errors: {
         invalidCredentials: 'Nieprawidłowy login lub hasło',
@@ -221,7 +222,6 @@ export const translations: Record<LanguageCode, TranslationTree> = {
     },
     types: {
       title: 'Typy pojazdów / Maszyny opryskujące',
-      description: 'Zarządzaj maszynami opryskującymi i ich parametrami.',
       list: {
         car: 'Samochód osobowy',
         truck: 'Ciężarówka',
@@ -390,14 +390,15 @@ export const translations: Record<LanguageCode, TranslationTree> = {
       notificationsHint: 'Останні події системи'
     },
     login: {
-      subtitle: '\u0421\u0438\u0441\u0442\u0435\u043c\u0430 \u0443\u043f\u0440\u0430\u0432\u043b\u0456\u043d\u043d\u044f \u0441\u0442\u0430\u043d\u0446\u0456\u0454\u044e \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u044e \u043e\u0431\u043f\u0440\u0438\u0441\u043a\u0443\u0432\u0430\u0447\u0456\u0432',
       username: 'Користувач',
       password: 'Пароль',
        usernamePlaceholder: 'login',
       passwordPlaceholder: 'пароль',
+      passwordShow: 'Показати пароль',
+      passwordHide: 'Приховати пароль',
       submit: 'Увійти',
       submitting: 'Вхід...',
-      demoHint: 'Демо дані: admin / admin',
+      demoHint: '© Copyright by Wojciech Salamon',
       languageLabel: 'Оберіть мову',
       errors: {
         invalidCredentials: 'Невірний логін або пароль',

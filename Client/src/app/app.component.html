@@ -80,9 +80,7 @@
             <button class="tab-action close" title="Close tab" *ngIf="!t.pinned" (click)="closeTab(i); $event.stopPropagation()" [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></button>
           </div>
         </div>
-        <div class="app-toolbar">
-          <div class="toolbar-spacer"></div>
-        </div>
+        <div class="app-toolbar"></div>
       </div>
 
       <div class="main-area">

@@ -42,7 +42,15 @@
       <input type="checkbox" [(ngModel)]="suspensionItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(suspensionItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
+    <button
+      class="btn-icon"
+      type="button"
+      (click)="removeItem(suspensionItems, i)"
+      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
+      [attr.title]="'newInspection.actions.removeItem' | translate"
+    >
+      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+    </button>
   </div>
   <button class="btn btn-primary" (click)="addItem(suspensionItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
@@ -55,7 +63,15 @@
       <input type="checkbox" [(ngModel)]="alignmentItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(alignmentItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
+    <button
+      class="btn-icon"
+      type="button"
+      (click)="removeItem(alignmentItems, i)"
+      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
+      [attr.title]="'newInspection.actions.removeItem' | translate"
+    >
+      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+    </button>
   </div>
   <button class="btn btn-primary" (click)="addItem(alignmentItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
@@ -68,7 +84,15 @@
       <input type="checkbox" [(ngModel)]="lightsItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(lightsItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
+    <button
+      class="btn-icon"
+      type="button"
+      (click)="removeItem(lightsItems, i)"
+      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
+      [attr.title]="'newInspection.actions.removeItem' | translate"
+    >
+      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+    </button>
   </div>
   <button class="btn btn-primary" (click)="addItem(lightsItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>
@@ -81,7 +105,15 @@
       <input type="checkbox" [(ngModel)]="brakesItems[i].passed" />
       {{ 'newInspection.labels.pass' | translate }}
     </label>
-    <button (click)="removeItem(brakesItems, i)"><span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span></button>
+    <button
+      class="btn-icon"
+      type="button"
+      (click)="removeItem(brakesItems, i)"
+      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
+      [attr.title]="'newInspection.actions.removeItem' | translate"
+    >
+      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+    </button>
   </div>
   <button class="btn btn-primary" (click)="addItem(brakesItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
 </div>

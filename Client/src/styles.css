@@ -11,18 +11,21 @@
 /* Mobile-first responsive scaling */
 :root {
   /* Base font sizes - mobile first, scales up on larger screens */
-  --font-size-xs: 11px;
+  --font-size-xs: 10px;
   --font-size-sm: 12px;
-  --font-size-base: 13px;
-  --font-size-lg: 15px;
-  --font-size-xl: 17px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
   --font-size-2xl: 22px;
+  --font-size-3xl: 32px;
+  --font-size-4xl: 48px;
 
   /* Unified border radius - consistent across all components */
-  --radius: 8px;
-  --radius-sm: 8px;
-  --radius-md: 8px;
-  --radius-lg: 8px;
+  --radius: 6px;
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
 
   /* Typographic spacing scale */
   --space-xs: 4px;
@@ -33,7 +36,7 @@
   --space-2xl: 32px;
 
   /* Touch target minimum size for mobile */
-  --touch-size: 44px;
+  --touch-size: 36px;
 
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
@@ -63,11 +66,12 @@
 /* Tablet breakpoint - update font sizes */
 @media (min-width: 768px) {
   :root {
-    --font-size-xs: 12px;
+    --font-size-xs: 11px;
     --font-size-sm: 13px;
-    --font-size-base: 14px;
-    --font-size-lg: 16px;
-    --font-size-xl: 18px;
+    --font-size-base: 15px;
+    --font-size-md: 16px;
+    --font-size-lg: 17px;
+    --font-size-xl: 19px;
     --font-size-2xl: 24px;
   }
 }
@@ -75,11 +79,12 @@
 /* Desktop breakpoint - maintain tablet sizes */
 @media (min-width: 1024px) {
   :root {
-    --font-size-xs: 12px;
+    --font-size-xs: 11px;
     --font-size-sm: 13px;
-    --font-size-base: 14px;
-    --font-size-lg: 16px;
-    --font-size-xl: 18px;
+    --font-size-base: 15px;
+    --font-size-md: 16px;
+    --font-size-lg: 17px;
+    --font-size-xl: 19px;
     --font-size-2xl: 24px;
   }
 }
@@ -303,7 +308,7 @@ a:focus-visible {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  font-size: 18px;
+  font-size: var(--font-size-xl);
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -416,7 +421,7 @@ a:focus-visible {
 .menu li span:nth-child(2) {
   display: inline;
   font-weight: 500;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   grid-column: 2;
   grid-row: 1;
 }
@@ -456,7 +461,7 @@ a:focus-visible {
 
 .menu li .hint {
   display: block;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: rgba(255, 255, 255, 0.65);
   margin-top: 0;
   padding-top: 0;
@@ -476,7 +481,7 @@ a:focus-visible {
   color: white;
   border: 1px solid rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--font-size-xl);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -518,7 +523,7 @@ a:focus-visible {
 }
 
 .user-section-label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -547,7 +552,7 @@ a:focus-visible {
 }
 
 .theme-label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   font-weight: 600;
@@ -582,7 +587,7 @@ a:focus-visible {
 
 .toggle-icon {
   position: absolute;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -659,8 +664,11 @@ a:focus-visible {
 .top-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0;
+  row-gap: 0;
+  column-gap: 0;
   position: relative;
+  width: 100%;
 }
 
 .app-toolbar {
@@ -674,7 +682,12 @@ a:focus-visible {
   pointer-events: auto;
   order: auto;
   margin-bottom: 0;
+  margin-left: 0;
   flex-shrink: 0;
+}
+
+.app-toolbar:not(:empty) {
+  margin-left: var(--space-md);
 }
 
 .toolbar-spacer {
@@ -767,7 +780,7 @@ a:focus-visible {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 500;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
@@ -799,7 +812,7 @@ a:focus-visible {
 }
 
 .user-chevron {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   line-height: 1;
   color: var(--text-light);
   transition: transform 0.2s ease;
@@ -860,13 +873,13 @@ a:focus-visible {
 .user-avatar {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: var(--primary);
   color: white;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   text-transform: uppercase;
   background-size: cover;
   background-position: center;
@@ -881,23 +894,23 @@ a:focus-visible {
   background: var(--primary);
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 15px;
+  font-size: var(--font-size-lg);
   text-transform: uppercase;
 }
 
 .user-avatar.small {
   width: 22px;
   height: 22px;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 }
 
 .user-avatar.small .avatar-initials {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 }
 
 .user-name {
@@ -908,7 +921,7 @@ a:focus-visible {
 }
 
 .user-ellipsis {
-  font-size: 18px;
+  font-size: var(--font-size-xl);
   line-height: 1;
   color: var(--text-light);
 }
@@ -919,13 +932,13 @@ a:focus-visible {
 }
 .user-menu-name {
   display: block;
-  font-size: 15px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--text);
 }
 .user-menu-meta {
   display: block;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   color: var(--text-light);
   margin-top: 2px;
   letter-spacing: 0.2px;
@@ -941,21 +954,10 @@ a:focus-visible {
   }
 }
 
-@keyframes slideUpDropdown {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .user-menu-item {
   padding: 10px 14px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   color: var(--text);
   transition: background 0.15s ease;
 }
@@ -988,7 +990,9 @@ a:focus-visible {
   border-bottom: 1px solid var(--panel-border);
   min-width: 0;
   min-height: 32px;
-  flex: 1;
+  flex: 1 1 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tabs::before {
@@ -1023,7 +1027,7 @@ a:focus-visible {
   color: var(--text-light);
   position: relative;
   overflow: hidden;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   margin-right: 2px;
   height: 32px;
 }
@@ -1072,7 +1076,7 @@ a:focus-visible {
   color: inherit;
   padding: 0;
   margin-left: 4px;
-  font-size: 18px;
+  font-size: var(--font-size-xl);
   opacity: 0.6;
   transition: opacity 0.15s, color 0.15s;
   z-index: 10;
@@ -1122,7 +1126,7 @@ a:focus-visible {
   color: inherit;
   padding: 0;
   margin-left: 4px;
-  font-size: 18px;
+  font-size: var(--font-size-xl);
   opacity: 0.7;
   transition: opacity 0.15s;
   z-index: 10;
@@ -1155,7 +1159,7 @@ a:focus-visible {
 
 .main-area h3:not(.component-title) {
   color: var(--primary);
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 12px;
@@ -1163,7 +1167,7 @@ a:focus-visible {
 
 /* Tab component titles */
 .component-title {
-  font-size: 15px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   margin: 0;
   padding: 0;
@@ -1178,7 +1182,7 @@ a:focus-visible {
 .component-subtitle {
   margin: -4px 0 12px 0;
   color: var(--text-light);
-  font-size: 13px;
+  font-size: var(--font-size-base);
 }
 
 .main-area::-webkit-scrollbar {
@@ -1293,12 +1297,12 @@ a:focus-visible {
   .sidebar.open { width: 240px; }
   /* Keep content slightly shifted but still visible on tablets */
   .app-shell.shifted { margin-left: 220px; }
-  .container h1 { font-size: 22px; }
+  .container h1 { font-size: var(--font-size-2xl); }
 
   /* Slightly smaller tabs on tablets */
   .tab {
     padding: 3px 8px;
-    font-size: 12px;
+    font-size: var(--font-size-sm);
   }
 }
 
@@ -1308,7 +1312,7 @@ a:focus-visible {
   /* Do not push content completely poza ekran - menu jest nad treścią */
   .app-shell.shifted { margin-left: 0; }
   .container { padding: 10px; }
-  .container h1 { font-size: 20px; }
+  .container h1 { font-size: var(--font-size-xl); }
 
   /* Tabs: więcej miejsca poziomego, przewijanie dotykowe */
   .tabs {
@@ -1323,7 +1327,7 @@ a:focus-visible {
 
   .tab {
     padding: 2px 8px;
-    font-size: 12px;
+    font-size: var(--font-size-sm);
     max-width: 180px;
   }
 
@@ -1440,7 +1444,7 @@ a:focus-visible {
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: var(--panel-border);
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -1547,7 +1551,7 @@ a:focus-visible {
 .avatar-preview {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 3px solid var(--panel-border);
   display: flex;
   align-items: center;
@@ -1564,7 +1568,7 @@ a:focus-visible {
 
 .avatar-preview.empty {
   color: var(--text-light);
-  font-size: 48px;
+  font-size: var(--font-size-4xl);
 }
 
 .avatar-preview.empty svg {

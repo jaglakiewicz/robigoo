@@ -30,7 +30,7 @@
 .component-title {
   margin: 0 0 var(--space-md) 0;
   color: var(--text);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   display: flex;
   align-items: center;
@@ -66,7 +66,7 @@
 }
 
 .filter-item label {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--text-light);
   text-transform: uppercase;
@@ -77,11 +77,11 @@
   padding: var(--space-sm) var(--space-md) !important;
   border: 1px solid var(--panel-border) !important;
   border-radius: var(--radius-md) !important;
-  font-size: var(--font-size-base) !important;
+  font-size: var(--font-size-md) !important;
   background: var(--bg) !important;
   color: var(--text) !important;
   transition: all var(--transition-fast);
-  min-height: 44px;
+  min-height: var(--touch-size);
 }
 
 .filter-input:focus {
@@ -114,7 +114,7 @@
   background: var(--bg-alt);
   border-radius: var(--radius-md);
   border: 1px dashed var(--panel-border);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
 }
 
 .data-table {
@@ -147,7 +147,7 @@
   padding: var(--space-md);
   border-bottom: 1px solid var(--panel-border);
   color: var(--text);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
 }
 
 .data-table tbody tr {

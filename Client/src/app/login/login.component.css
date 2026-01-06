@@ -482,7 +482,7 @@
 }
 
 .logo-wordmark {
-  font-size: 32px;
+  font-size: var(--font-size-3xl);
   font-weight: 700;
   color: var(--primary);
   letter-spacing: 2px;
@@ -508,13 +508,14 @@
 }
 
 .logo-tagline {
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--text-light);
   text-transform: uppercase;
   letter-spacing: 1.5px;
   animation: slideInTag 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
   word-spacing: 2px;
+  white-space: nowrap;
 }
 
 @keyframes slideInTag {
@@ -537,7 +538,7 @@
   margin-top: var(--space-sm);
   padding: var(--space-xs) var(--space-md);
   background: rgba(59, 142, 165, 0.1);
-  border-radius: 999px;
+  border-radius: var(--radius);
   animation: fadeInVersion 1s ease-out 0.3s both;
 }
 
@@ -877,7 +878,7 @@
 .language-flag {
   width: 22px;
   height: 15px;
-  border-radius: var(--radius-md);
+  border-radius: 3px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   background-size: cover;
   background-position: center;
@@ -934,12 +935,12 @@
   }
 
   .logo-wordmark {
-    font-size: 22px;
+    font-size: var(--font-size-2xl);
     letter-spacing: 1px;
   }
 
   .logo-tagline {
-    font-size: 9px;
+    font-size: var(--font-size-xs);
   }
 
   .login-illustration {
@@ -981,8 +982,46 @@
   color: var(--text) !important;
   font-size: var(--font-size-base) !important;
   transition: all var(--transition-fast);
-  min-height: 44px;
-  font-size: 16px !important;
+  height: 42px;
+  min-height: 42px;
+  font-size: var(--font-size-lg) !important;
+}
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-field input {
+  padding-right: 48px !important;
+}
+.password-toggle {
+  position: absolute;
+  right: var(--space-sm);
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+.password-toggle:hover {
+  color: var(--text);
+}
+.password-toggle:active {
+  transform: scale(0.95);
+}
+.password-toggle:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
 }
 
 .form-group input:focus {
@@ -1006,6 +1045,8 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: var(--space-md);
+  height: 42px;
+  min-height: 42px;
 }
 
 @media (max-width: 767px) {
@@ -1059,7 +1100,7 @@
    HINTS
    ============================================================ */
 .demo-hint {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--text-lighter);
   text-align: center;
   margin-top: var(--space-lg);
@@ -1103,12 +1144,6 @@
   margin: 0 0 var(--space-sm) 0;
   font-size: var(--font-size-sm);
   color: var(--text);
-}
-
-.session-dialog__subtitle {
-  margin: 0 0 var(--space-lg) 0;
-  font-size: var(--font-size-xs);
-  color: var(--text-lighter);
 }
 
 .session-dialog__actions {

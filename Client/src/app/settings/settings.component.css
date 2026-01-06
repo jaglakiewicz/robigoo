@@ -106,7 +106,7 @@
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   font-family: var(--font-family);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
   background: var(--bg);
   color: var(--text);
   transition: all var(--transition-fast);
@@ -150,7 +150,7 @@
 }
 
 .field-hint {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--text-light);
   font-style: italic;
   margin-top: 4px;
@@ -163,7 +163,7 @@
 
 .field-hint {
   display: block;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--text-light);
   margin-top: var(--space-xs);
   font-style: italic;
@@ -222,7 +222,7 @@
   border-right: 1px solid var(--panel-border);
   border-left: 1px solid var(--panel-border);
   color: var(--text);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
 }
 
 .users-table tbody td:first-child {
@@ -276,7 +276,7 @@
     content: attr(data-label);
     font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--text-light);
     margin-right: var(--space-md);
     flex-shrink: 0;
@@ -341,7 +341,7 @@
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   font-family: var(--font-family);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
   background: var(--bg);
   color: var(--text);
   transition: all var(--transition-fast);
@@ -363,7 +363,7 @@
 
 .avatar-info {
   margin-bottom: var(--space-md);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
   color: var(--text);
 }
 
@@ -433,7 +433,7 @@
 
 .role-hint {
   display: block;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--text-light);
   margin-top: var(--space-xs);
   font-style: italic;
@@ -457,7 +457,7 @@
 /* Buttons in settings inherit unified styles from globals.css */
 /* All .btn, .btn-primary, .btn-secondary use:
    - Height: 44px (mobile: 48px)
-   - Font: var(--font-family), --font-size-base, --font-weight-semibold
+  - Font: var(--font-family), --font-size-md, --font-weight-semibold
    - Rounding: var(--radius-md)
    - Border: 1px solid rgba(0, 0, 0, 0.12)
    - Hover: transform: translateY(-2px), box-shadow

@@ -116,7 +116,7 @@ input, textarea, select {
   width: 100%;
   min-height: var(--touch-size);
   /* Prevent zoom on iOS */
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
 
 /* Ensure native select text matches smaller input base size */
@@ -128,7 +128,7 @@ select {
 @media (max-width: 767px) {
   input, textarea, select {
     padding: var(--space-md) var(--space-md);
-    min-height: 44px;
+    min-height: var(--touch-size);
   }
 }
 
@@ -172,7 +172,7 @@ label {
    
   ✓ HEIGHT: var(--touch-size) - All labeled buttons match input height
    ✓ FONT: var(--font-family), var(--font-size-base), var(--font-weight-semibold)
-   ✓ ROUNDING: 8px - Beautiful border-radius for modern look
+  ✓ ROUNDING: 6px - Beautiful border-radius for modern look
    ✓ BORDER: 1px solid rgba(0, 0, 0, 0.12) - Subtle border
    ✓ PADDING: 0 24px - Spacious horizontal padding
    ✓ HOVER STATE: 
@@ -669,8 +669,8 @@ table tbody tr:last-child td {
 /* Touch-friendly interactions */
 @media (hover: none) and (pointer: coarse) {
   button, a, [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: var(--touch-size);
+    min-width: var(--touch-size);
   }
 }
 .text-lg { font-size: var(--font-size-lg); }
@@ -717,7 +717,7 @@ table tbody tr:last-child td {
   display: inline-flex;
   align-items: center;
   padding: var(--space-xs) var(--space-md);
-  border-radius: 999px;
+  border-radius: var(--radius);
   font-size: var(--font-size-xs);
   font-weight: 600;
   background: var(--bg-alt);
@@ -747,7 +747,7 @@ table tbody tr:last-child td {
   height: 20px;
   border: 2px solid var(--panel-border);
   border-top-color: var(--accent);
-  border-radius: 50%;
+  border-radius: var(--radius);
   animation: spin 0.8s linear infinite;
 }
 
