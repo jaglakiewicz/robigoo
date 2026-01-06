@@ -125,9 +125,7 @@ export const translations: Record<LanguageCode, TranslationTree> = {
         vehiclePlate: 'np. ABC-12345',
         inspectorName: 'np. Jan Kowalski',
         notes: 'Dodatkowe informacje...',
-        description: 'Opis',
-        dateFrom: 'Data od',
-        dateTo: 'Data do'
+        description: 'Opis'
       },
       labels: {
         pass: 'Zaliczone'
@@ -209,8 +207,11 @@ export const translations: Record<LanguageCode, TranslationTree> = {
       },
       user: {
         language: 'Język',
-        theme: 'Motyw',
-        notifications: 'Powiadomienia'
+          kindSelfPropelled: 'Samobieżny',
+          kindOther: 'Inny',
+          manufacturer: 'Producent',
+          yearFrom: 'Rok od',
+          yearTo: 'Rok do'
       },
       admin: {
         users: 'Użytkownicy',
@@ -219,13 +220,83 @@ export const translations: Record<LanguageCode, TranslationTree> = {
       }
     },
     types: {
-      title: 'Typy pojazdów',
-      description: 'Zarządzaj typami pojazdów wykorzystywanymi w badaniach.',
+      title: 'Typy pojazdów / Maszyny opryskujące',
+      description: 'Zarządzaj maszynami opryskującymi i ich parametrami.',
       list: {
         car: 'Samochód osobowy',
         truck: 'Ciężarówka',
         motorcycle: 'Motocykl',
         trailer: 'Przyczepa'
+      },
+      machines: {
+        addButton: '+ Dodaj nową maszynę',
+        listTitle: 'Lista maszyn opryskujących',
+        searchPlaceholder: 'Szukaj po numerze, nazwie, producencie...',
+        filters: {
+          type: 'Typ',
+          kind: 'Rodzaj',
+          typeField: 'Polowy',
+          typeGarden: 'Sadowniczy',
+          kindMounted: 'Zawieszany',
+          kindTrailed: 'Przyczepiany',
+          kindSelfPropelled: 'Samobieżny',
+          kindOther: 'Inny'
+        },
+        steps: {
+          basics: 'Dane podstawowe',
+          pump: 'Pompa',
+          tank: 'Zbiornik',
+          control: 'Urządzenia pomiarowo-sterujące',
+          boom: 'Belka polowa opryskiwacza',
+          sections: 'Sekcje',
+          fieldNozzles: 'Rozpylacze polowe',
+          gardenNozzles: 'Rozpylacze sadownicze',
+          fan: 'Wentylator'
+        },
+        fields: {
+          serialNumber: 'Nr seryjny / ewidencyjny',
+          sprayerName: 'Nazwa opryskiwacza',
+          type: 'Typ (polowy / sadowniczy)',
+          kind: 'Rodzaj (zawieszany / przyczepiany / samobieżny / inny)',
+          manufacturer: 'Producent',
+          productionYear: 'Rok produkcji',
+          purchaseDate: 'Data zakupu',
+          pumpType: 'Typ pompy',
+          pumpPiston: 'Tłokowa',
+          pumpDiaphragm: 'Membranowa',
+          pumpOther: 'Inna',
+          pumpOtherType: 'Inny typ pompy',
+          pumpFlowRate: 'Natężenie przepływu [dm³/min]',
+          tankCapacity: 'Pojemność zbiornika [l]',
+          hasFlushing: 'Przepłukiwanie',
+          hasDiluter: 'Rozwadniacz',
+          hasWashingDevice: 'Urządzenie myjące',
+          hasManometer: 'Manometr',
+          hasComputer: 'Komputer',
+          boomWidth: 'Szerokość belki [m]',
+          boomWet: 'Belka mokra',
+          boomDry: 'Belka sucha',
+          boomDampeningMechanism: 'Mechanizm tłumienia belki',
+          sectionCount: 'Liczba sekcji',
+          nozzlesFieldFeatures: 'Rozpylacze polowe – cechy i oznaczenia',
+          nozzlesGardenFeatures: 'Rozpylacze sadownicze – cechy i oznaczenia',
+          fanType: 'Typ wentylatora'
+        },
+        actions: {
+          save: 'Zapisz',
+          cancel: 'Anuluj',
+          discardChanges: 'Odrzuć zmiany',
+          keepEditing: 'Pozostań w edycji',
+          edit: 'Edytuj',
+          yes: 'TAK',
+          no: 'NIE'
+        },
+        messages: {
+          saved: 'Maszyna została zapisana.',
+          error: 'Wystąpił błąd podczas zapisu maszyny.',
+          unsavedTitle: 'Niezapisane zmiany',
+          unsavedText: 'Masz niezapisane zmiany dla bieżącej maszyny. Co chcesz zrobić?'
+        }
       }
     },
     clients: {
@@ -470,13 +541,82 @@ export const translations: Record<LanguageCode, TranslationTree> = {
       }
     },
     types: {
-      title: 'Типи транспортних засобів',
-      description: 'Керуйте типами транспортних засобів для техоглядів.',
+      title: 'Типи ТЗ / Обприскувачі',
+      description: 'Керуйте машинами для обприскування та їх параметрами.',
       list: {
         car: 'Легковий автомобіль',
         truck: 'Вантажівка',
         motorcycle: 'Мотоцикл',
         trailer: 'Причіп'
+      },
+      machines: {
+        addButton: '+ Додати нову машину',
+        listTitle: 'Список машин для обприскування',
+        searchPlaceholder: 'Пошук за номером, назвою, виробником...',
+        filters: {
+          type: 'Тип',
+          kind: 'Різновид',
+          typeField: 'Польовий',
+          typeGarden: 'Садовий',
+          kindMounted: 'Навісний',
+          kindTrailed: 'Причіпний',
+          kindSelfPropelled: 'Самохідний',
+          kindOther: 'Інший'
+        },
+        steps: {
+          basics: 'Основні дані',
+          pump: 'Насос',
+          tank: 'Бак',
+          control: 'Вимірювально-керуючі пристрої',
+          boom: 'Штанга обприскувача',
+          sections: 'Секції',
+          fieldNozzles: 'Польові розпилювачі',
+          gardenNozzles: 'Садові розпилювачі',
+          fan: 'Вентилятор'
+        },
+        fields: {
+          serialNumber: 'Серійний / інвентарний номер',
+          sprayerName: 'Назва обприскувача',
+          type: 'Тип (польовий / садовий)',
+          kind: 'Різновид (навісний / причіпний / самохідний / інший)',
+          manufacturer: 'Виробник',
+          productionYear: 'Рік випуску',
+          purchaseDate: 'Дата купівлі',
+          pumpType: 'Тип насоса',
+          pumpPiston: 'Поршневий',
+          pumpDiaphragm: 'Мембранний',
+          pumpOther: 'Інший',
+          pumpOtherType: 'Інший тип насоса',
+          pumpFlowRate: 'Продуктивність [дм³/хв]',
+          tankCapacity: 'Обʼєм бака [л]',
+          hasFlushing: 'Система промивання',
+          hasDiluter: 'Розчинювач',
+          hasWashingDevice: 'Мийний пристрій',
+          hasManometer: 'Манометр',
+          hasComputer: 'Компʼютер',
+          boomWidth: 'Ширина штанги [м]',
+          boomWet: 'Мокра штанга',
+          boomDry: 'Суха штанга',
+          boomDampeningMechanism: 'Механізм демпфування штанги',
+          sectionCount: 'Кількість секцій',
+          nozzlesFieldFeatures: 'Польові розпилювачі – характеристики та позначення',
+          nozzlesGardenFeatures: 'Садові розпилювачі – характеристики та позначення',
+          fanType: 'Тип вентилятора'
+        },
+        actions: {
+          back: 'Назад',
+          next: 'Далі',
+          save: 'Зберегти',
+          cancel: 'Скасувати',
+          discardChanges: 'Відхилити зміни',
+          keepEditing: 'Залишитись в режимі редагування'
+        },
+        messages: {
+          saved: 'Машину збережено.',
+          error: 'Помилка під час збереження машини.',
+          unsavedTitle: 'Незбережені зміни',
+          unsavedText: 'Є незбережені зміни для поточної машини. Що зробити?'
+        }
       }
     },
     clients: {

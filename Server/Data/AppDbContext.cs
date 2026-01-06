@@ -34,6 +34,7 @@ namespace Server.Data
         public DbSet<InspectionItem> InspectionItems { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserSession> UserSessions { get; set; }
+        public DbSet<Machine> Machines { get; set; }
 
         #endregion
 

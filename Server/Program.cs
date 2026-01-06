@@ -120,13 +120,95 @@ static async Task<bool> IsSessionActiveAsync(AppDbContext db, HttpContext contex
     return true;
 }
 
+// Helper: validate machine DTO
+static string? ValidateMachineDto(MachineCreateUpdateDto dto, bool isCreate)
+{
+    var serial = (dto.SerialNumber ?? string.Empty).Trim();
+    if (string.IsNullOrWhiteSpace(serial))
+        return "Numer seryjny/ewidencyjny jest wymagany";
+
+    if (string.IsNullOrWhiteSpace(dto.SprayerName))
+        return "Nazwa opryskiwacza jest wymagana";
+
+    if (string.IsNullOrWhiteSpace(dto.Type) || (dto.Type != "00" && dto.Type != "01"))
+        return "Nieprawidłowy typ (dozwolone: 00 - polowy, 01 - sadowniczy)";
+
+    if (string.IsNullOrWhiteSpace(dto.Kind) || (dto.Kind != "00" && dto.Kind != "01" && dto.Kind != "02" && dto.Kind != "03"))
+        return "Nieprawidłowy rodzaj (dozwolone: 00, 01, 02, 03)";
+
+    if (string.IsNullOrWhiteSpace(dto.Manufacturer))
+        return "Producent jest wymagany";
+
+    if (!IsFourDigitYear(dto.ProductionYear))
+        return "Rok produkcji musi mieć dokładnie 4 cyfry";
+
+    if (dto.PumpOther && string.IsNullOrWhiteSpace(dto.PumpOtherType))
+        return "Dla pompy 'inna' należy podać typ";
+
+    if (!dto.PumpPiston && !dto.PumpDiaphragm && !dto.PumpOther)
+        return "Należy wybrać co najmniej jeden typ pompy";
+
+    return null;
+}
+
+// Helper: check if string is 4-digit year
+static bool IsFourDigitYear(string? year)
+{
+    if (string.IsNullOrWhiteSpace(year) || year.Length != 4)
+        return false;
+
+    foreach (var ch in year)
+    {
+        if (!char.IsDigit(ch))
+            return false;
+    }
+
+    return true;
+}
+
+// Helper: map Machine entity to detail DTO
+static MachineDetailDto ToMachineDetailDto(Machine m)
+{
+    return new MachineDetailDto
+    {
+        SerialNumber = m.SerialNumber,
+        SprayerName = m.SprayerName,
+        Type = m.Type,
+        Kind = m.Kind,
+        Manufacturer = m.Manufacturer,
+        ProductionYear = m.ProductionYear,
+        PurchaseDate = m.PurchaseDate,
+        PumpPiston = m.PumpPiston,
+        PumpDiaphragm = m.PumpDiaphragm,
+        PumpOther = m.PumpOther,
+        PumpOtherType = m.PumpOtherType,
+        PumpFlowRate = m.PumpFlowRate,
+        TankCapacity = m.TankCapacity,
+        HasFlushing = m.HasFlushing,
+        HasDiluter = m.HasDiluter,
+        HasWashingDevice = m.HasWashingDevice,
+        HasManometer = m.HasManometer,
+        HasComputer = m.HasComputer,
+        BoomWidth = m.BoomWidth,
+        BoomWet = m.BoomWet,
+        BoomDry = m.BoomDry,
+        BoomDampeningMechanism = m.BoomDampeningMechanism,
+        SectionCount = m.SectionCount,
+        NozzlesFieldFeatures = m.NozzlesFieldFeatures,
+        NozzlesGardenFeatures = m.NozzlesGardenFeatures,
+        FanType = m.FanType,
+        CreatedAt = m.CreatedAt,
+        UpdatedAt = m.UpdatedAt
+    };
+}
+
 // ensure database exists and seed master admin
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
     // Używamy EnsureCreated, aby nie wchodzić w konflikt z istniejącymi migracjami,
-    // a brakujące tabele (UserSessions) tworzymy ręcznie poniżej.
+    // a brakujące tabele (UserSessions, Machines) tworzymy ręcznie poniżej.
     db.Database.EnsureCreated();
 
     // Zapewnij istnienie tabeli UserSessions (jeśli baza powstała wcześniej bez tej tabeli).
@@ -143,6 +225,38 @@ using (var scope = app.Services.CreateScope())
 
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_UserSessions_UserId"" ON ""UserSessions"" (""UserId"");");
     db.Database.ExecuteSqlRaw(@"CREATE UNIQUE INDEX IF NOT EXISTS ""IX_UserSessions_SessionToken"" ON ""UserSessions"" (""SessionToken"");");
+
+    // Zapewnij istnienie tabeli Machines (jeśli baza powstała wcześniej bez tej tabeli).
+    db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""Machines"" (
+        ""SerialNumber"" TEXT NOT NULL CONSTRAINT ""PK_Machines"" PRIMARY KEY,
+        ""SprayerName"" TEXT NOT NULL,
+        ""Type"" TEXT NOT NULL,
+        ""Kind"" TEXT NOT NULL,
+        ""Manufacturer"" TEXT NOT NULL,
+        ""ProductionYear"" TEXT NOT NULL,
+        ""PurchaseDate"" TEXT NULL,
+        ""PumpPiston"" INTEGER NOT NULL,
+        ""PumpDiaphragm"" INTEGER NOT NULL,
+        ""PumpOther"" INTEGER NOT NULL,
+        ""PumpOtherType"" TEXT NULL,
+        ""PumpFlowRate"" TEXT NULL,
+        ""TankCapacity"" TEXT NULL,
+        ""HasFlushing"" INTEGER NOT NULL,
+        ""HasDiluter"" INTEGER NOT NULL,
+        ""HasWashingDevice"" INTEGER NOT NULL,
+        ""HasManometer"" INTEGER NOT NULL,
+        ""HasComputer"" INTEGER NOT NULL,
+        ""BoomWidth"" TEXT NULL,
+        ""BoomWet"" INTEGER NOT NULL,
+        ""BoomDry"" INTEGER NOT NULL,
+        ""BoomDampeningMechanism"" INTEGER NOT NULL,
+        ""SectionCount"" INTEGER NULL,
+        ""NozzlesFieldFeatures"" TEXT NULL,
+        ""NozzlesGardenFeatures"" TEXT NULL,
+        ""FanType"" TEXT NULL,
+        ""CreatedAt"" TEXT NOT NULL,
+        ""UpdatedAt"" TEXT NULL
+    );");
 
     // Seed master admin if not exists
     if (!db.Users.Any(u => u.Login == "admin"))
@@ -668,6 +782,267 @@ app.MapPut("/api/users/{userId}/role", async (AppDbContext db, HttpContext conte
 
     return Results.Ok(response);
 }).RequireAuthorization().DisableAntiforgery();
+
+// ==================== MACHINES ENDPOINTS ====================
+
+// Get machines list with filters
+app.MapGet("/api/machines", async (AppDbContext db, HttpContext context,
+    [FromQuery] string? q,
+    [FromQuery] string? type,
+    [FromQuery] string? kind,
+    [FromQuery] string? manufacturer,
+    [FromQuery] string? yearFrom,
+    [FromQuery] string? yearTo) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var queryable = db.Machines.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(q))
+    {
+        var term = q.Trim().ToLowerInvariant();
+        queryable = queryable.Where(m =>
+            m.SerialNumber.ToLower().Contains(term) ||
+            m.SprayerName.ToLower().Contains(term) ||
+            m.Manufacturer.ToLower().Contains(term) ||
+            m.ProductionYear.ToLower().Contains(term));
+    }
+
+    if (!string.IsNullOrWhiteSpace(type))
+    {
+        queryable = queryable.Where(m => m.Type == type);
+    }
+
+    if (!string.IsNullOrWhiteSpace(kind))
+    {
+        queryable = queryable.Where(m => m.Kind == kind);
+    }
+
+    if (!string.IsNullOrWhiteSpace(manufacturer))
+    {
+        var man = manufacturer.Trim().ToLowerInvariant();
+        queryable = queryable.Where(m => m.Manufacturer.ToLower().Contains(man));
+    }
+
+    if (IsFourDigitYear(yearFrom))
+    {
+        queryable = queryable.Where(m => string.Compare(m.ProductionYear, yearFrom, StringComparison.Ordinal) >= 0);
+    }
+
+    if (IsFourDigitYear(yearTo))
+    {
+        queryable = queryable.Where(m => string.Compare(m.ProductionYear, yearTo, StringComparison.Ordinal) <= 0);
+    }
+
+    var list = await queryable
+        .OrderByDescending(m => m.CreatedAt)
+        .Select(m => new MachineListItemDto
+        {
+            SerialNumber = m.SerialNumber,
+            SprayerName = m.SprayerName,
+            Manufacturer = m.Manufacturer,
+            ProductionYear = m.ProductionYear,
+            Type = m.Type,
+            Kind = m.Kind,
+            CreatedAt = m.CreatedAt
+        })
+        .ToListAsync();
+
+    return Results.Ok(list);
+}).RequireAuthorization();
+
+// Get single machine details
+app.MapGet("/api/machines/{serialNumber}", async (AppDbContext db, HttpContext context, string serialNumber) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var machine = await db.Machines.FindAsync(serialNumber);
+    if (machine == null)
+    {
+        return Results.NotFound();
+    }
+
+    var detail = ToMachineDetailDto(machine);
+    return Results.Ok(detail);
+}).RequireAuthorization();
+
+// Create new machine
+app.MapPost("/api/machines", async (AppDbContext db, HttpContext context, [FromBody] MachineCreateUpdateDto dto) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var validationError = ValidateMachineDto(dto, isCreate: true);
+    if (validationError != null)
+    {
+        return Results.BadRequest(new { message = validationError });
+    }
+
+    var normalizedSerial = dto.SerialNumber.Trim();
+
+    if (await db.Machines.AnyAsync(m => m.SerialNumber == normalizedSerial))
+    {
+        return Results.BadRequest(new { message = "Maszyna o podanym numerze już istnieje" });
+    }
+
+    var machine = new Machine
+    {
+        SerialNumber = normalizedSerial,
+        SprayerName = dto.SprayerName.Trim(),
+        Type = dto.Type,
+        Kind = dto.Kind,
+        Manufacturer = dto.Manufacturer.Trim(),
+        ProductionYear = dto.ProductionYear,
+        PurchaseDate = dto.PurchaseDate,
+        PumpPiston = dto.PumpPiston,
+        PumpDiaphragm = dto.PumpDiaphragm,
+        PumpOther = dto.PumpOther,
+        PumpOtherType = string.IsNullOrWhiteSpace(dto.PumpOtherType) ? null : dto.PumpOtherType.Trim(),
+        PumpFlowRate = dto.PumpFlowRate,
+        TankCapacity = dto.TankCapacity,
+        HasFlushing = dto.HasFlushing,
+        HasDiluter = dto.HasDiluter,
+        HasWashingDevice = dto.HasWashingDevice,
+        HasManometer = dto.HasManometer,
+        HasComputer = dto.HasComputer,
+        BoomWidth = dto.BoomWidth,
+        BoomWet = dto.BoomWet,
+        BoomDry = dto.BoomDry,
+        BoomDampeningMechanism = dto.BoomDampeningMechanism,
+        SectionCount = dto.SectionCount,
+        NozzlesFieldFeatures = dto.NozzlesFieldFeatures,
+        NozzlesGardenFeatures = dto.NozzlesGardenFeatures,
+        FanType = dto.FanType,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = null
+    };
+
+    db.Machines.Add(machine);
+    await db.SaveChangesAsync();
+
+    var detail = ToMachineDetailDto(machine);
+    return Results.Created($"/api/machines/{machine.SerialNumber}", detail);
+}).RequireAuthorization();
+
+// Update existing machine
+app.MapPut("/api/machines/{serialNumber}", async (AppDbContext db, HttpContext context, string serialNumber, [FromBody] MachineCreateUpdateDto dto) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    // serialNumber z trasy reprezentuje aktualny numer w bazie (stary),
+    // dto.SerialNumber może zawierać nowy numer po edycji.
+    var machine = await db.Machines.FindAsync(serialNumber);
+    if (machine == null)
+    {
+        return Results.NotFound();
+    }
+
+    var validationError = ValidateMachineDto(dto, isCreate: false);
+    if (validationError != null)
+    {
+        return Results.BadRequest(new { message = validationError });
+    }
+
+    // Zmiana numeru seryjnego / ewidencyjnego z zachowaniem unikalności.
+    // Dla prostoty i pełnej zgodności z SQLite, w przypadku zmiany numeru
+    // tworzymy nową encję z nowym kluczem i usuwamy starą.
+    var newSerial = dto.SerialNumber.Trim();
+    var isSerialChanged = !string.Equals(machine.SerialNumber, newSerial, StringComparison.Ordinal);
+
+    if (isSerialChanged)
+    {
+        var serialExists = await db.Machines.AnyAsync(m => m.SerialNumber == newSerial);
+        if (serialExists)
+        {
+            return Results.BadRequest(new { message = "Maszyna o podanym numerze już istnieje" });
+        }
+
+        var newMachine = new Machine
+        {
+            SerialNumber = newSerial,
+            SprayerName = dto.SprayerName.Trim(),
+            Type = dto.Type,
+            Kind = dto.Kind,
+            Manufacturer = dto.Manufacturer.Trim(),
+            ProductionYear = dto.ProductionYear,
+            PurchaseDate = dto.PurchaseDate,
+            PumpPiston = dto.PumpPiston,
+            PumpDiaphragm = dto.PumpDiaphragm,
+            PumpOther = dto.PumpOther,
+            PumpOtherType = string.IsNullOrWhiteSpace(dto.PumpOtherType) ? null : dto.PumpOtherType.Trim(),
+            PumpFlowRate = dto.PumpFlowRate,
+            TankCapacity = dto.TankCapacity,
+            HasFlushing = dto.HasFlushing,
+            HasDiluter = dto.HasDiluter,
+            HasWashingDevice = dto.HasWashingDevice,
+            HasManometer = dto.HasManometer,
+            HasComputer = dto.HasComputer,
+            BoomWidth = dto.BoomWidth,
+            BoomWet = dto.BoomWet,
+            BoomDry = dto.BoomDry,
+            BoomDampeningMechanism = dto.BoomDampeningMechanism,
+            SectionCount = dto.SectionCount,
+            NozzlesFieldFeatures = dto.NozzlesFieldFeatures,
+            NozzlesGardenFeatures = dto.NozzlesGardenFeatures,
+            FanType = dto.FanType,
+            CreatedAt = machine.CreatedAt,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        db.Machines.Remove(machine);
+        db.Machines.Add(newMachine);
+
+        await db.SaveChangesAsync();
+
+        var newDetail = ToMachineDetailDto(newMachine);
+        return Results.Ok(newDetail);
+    }
+    else
+    {
+        machine.SprayerName = dto.SprayerName.Trim();
+        machine.Type = dto.Type;
+        machine.Kind = dto.Kind;
+        machine.Manufacturer = dto.Manufacturer.Trim();
+        machine.ProductionYear = dto.ProductionYear;
+        machine.PurchaseDate = dto.PurchaseDate;
+        machine.PumpPiston = dto.PumpPiston;
+        machine.PumpDiaphragm = dto.PumpDiaphragm;
+        machine.PumpOther = dto.PumpOther;
+        machine.PumpOtherType = string.IsNullOrWhiteSpace(dto.PumpOtherType) ? null : dto.PumpOtherType.Trim();
+        machine.PumpFlowRate = dto.PumpFlowRate;
+        machine.TankCapacity = dto.TankCapacity;
+        machine.HasFlushing = dto.HasFlushing;
+        machine.HasDiluter = dto.HasDiluter;
+        machine.HasWashingDevice = dto.HasWashingDevice;
+        machine.HasManometer = dto.HasManometer;
+        machine.HasComputer = dto.HasComputer;
+        machine.BoomWidth = dto.BoomWidth;
+        machine.BoomWet = dto.BoomWet;
+        machine.BoomDry = dto.BoomDry;
+        machine.BoomDampeningMechanism = dto.BoomDampeningMechanism;
+        machine.SectionCount = dto.SectionCount;
+        machine.NozzlesFieldFeatures = dto.NozzlesFieldFeatures;
+        machine.NozzlesGardenFeatures = dto.NozzlesGardenFeatures;
+        machine.FanType = dto.FanType;
+        machine.UpdatedAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+
+        var detail = ToMachineDetailDto(machine);
+        return Results.Ok(detail);
+    }
+}).RequireAuthorization();
 
 // ==================== ORIGINAL ENDPOINTS ====================
 

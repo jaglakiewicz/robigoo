@@ -5,8 +5,423 @@
 -->
 
 <h3 class="component-title">{{ 'types.title' | translate }}</h3>
-<p>{{ 'types.description' | translate }}</p>
-<ul>
-  <li *ngFor="let t of types">{{ t | translate }}</li>
-</ul>
+
+<div class="machines-container">
+  <div class="machines-header">
+    <div class="title-block">
+      <p class="subtitle">{{ 'types.description' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <button
+        class="btn btn-secondary"
+        (click)="onEdit()"
+        [disabled]="!currentMachine || isEditMode">
+        {{ 'types.machines.actions.edit' | translate }}
+      </button>
+      <button class="btn btn-primary" (click)="onAddNew()">
+        {{ 'types.machines.addButton' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="machines-layout">
+    <!-- LEFT: LIST -->
+    <div class="machines-list-panel">
+      <h4 class="panel-title">{{ 'types.machines.listTitle' | translate }}</h4>
+
+      <div class="filters-row">
+        <input
+          type="text"
+          class="search-input"
+          [placeholder]="'types.machines.searchPlaceholder' | translate"
+          [ngModel]="searchTerm"
+          (ngModelChange)="onSearchChange($event)" />
+
+        <select [ngModel]="filterType" (ngModelChange)="onFilterTypeChange($event)">
+          <option [ngValue]="null">{{ 'types.machines.filters.type' | translate }}</option>
+          <option value="00">{{ 'types.machines.filters.typeField' | translate }}</option>
+          <option value="01">{{ 'types.machines.filters.typeGarden' | translate }}</option>
+        </select>
+
+        <select [ngModel]="filterKind" (ngModelChange)="onFilterKindChange($event)">
+          <option [ngValue]="null">{{ 'types.machines.filters.kind' | translate }}</option>
+          <option value="00">{{ 'types.machines.filters.kindMounted' | translate }}</option>
+          <option value="01">{{ 'types.machines.filters.kindTrailed' | translate }}</option>
+          <option value="02">{{ 'types.machines.filters.kindSelfPropelled' | translate }}</option>
+          <option value="03">{{ 'types.machines.filters.kindOther' | translate }}</option>
+        </select>
+
+        <button type="button" class="btn btn-ghost btn-filters" (click)="toggleAdvancedFilters()">
+          {{ 'types.machines.filters.advanced' | translate }}
+        </button>
+      </div>
+
+      <div class="filters-advanced" *ngIf="showAdvancedFilters">
+        <input
+          type="text"
+          class="filter-input"
+          [placeholder]="'types.machines.filters.manufacturer' | translate"
+          [ngModel]="filterManufacturer"
+          (ngModelChange)="onFilterManufacturerChange($event)" />
+
+        <input
+          type="text"
+          class="filter-input filter-input-year"
+          [placeholder]="'types.machines.filters.yearFrom' | translate"
+          [ngModel]="filterYearFrom"
+          (ngModelChange)="onFilterYearFromChange($event)" />
+
+        <input
+          type="text"
+          class="filter-input filter-input-year"
+          [placeholder]="'types.machines.filters.yearTo' | translate"
+          [ngModel]="filterYearTo"
+          (ngModelChange)="onFilterYearToChange($event)" />
+      </div>
+
+      <div class="machines-list" *ngIf="!loadingList; else loadingTpl">
+        <div
+          class="machine-card"
+          *ngFor="let m of machines"
+          [class.active]="m.serialNumber === selectedSerialNumber && !isNew"
+          (click)="onSelectMachine(m.serialNumber)">
+          <div class="card-main">
+            <div class="card-title">{{ m.sprayerName }}</div>
+            <div class="card-sub">
+              <span class="card-sub-main">{{ m.serialNumber }} · {{ m.manufacturer }} ·</span>
+              <span class="badge badge-type" *ngIf="m.type === '00'">
+                {{ 'types.machines.filters.typeField' | translate }}
+              </span>
+              <span class="badge badge-type" *ngIf="m.type === '01'">
+                {{ 'types.machines.filters.typeGarden' | translate }}
+              </span>
+              <span class="badge badge-kind" *ngIf="m.kind === '00'">
+                {{ 'types.machines.filters.kindMounted' | translate }}
+              </span>
+              <span class="badge badge-kind" *ngIf="m.kind === '01'">
+                {{ 'types.machines.filters.kindTrailed' | translate }}
+              </span>
+              <span class="badge badge-kind" *ngIf="m.kind === '02'">
+                {{ 'types.machines.filters.kindSelfPropelled' | translate }}
+              </span>
+              <span class="badge badge-kind" *ngIf="m.kind === '03'">
+                {{ 'types.machines.filters.kindOther' | translate }}
+              </span>
+              <span class="card-sub-year">· {{ m.productionYear }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="machines.length === 0" class="empty-state">
+          {{ 'inspections.empty' | translate }}
+        </div>
+      </div>
+
+      <ng-template #loadingTpl>
+        <div class="loading-state">{{ 'inspections.loading' | translate }}</div>
+      </ng-template>
+    </div>
+
+    <!-- RIGHT: DETAIL / EDITOR -->
+    <div class="machines-detail-panel" *ngIf="formModel as form">
+      <div class="detail-header">
+        <div>
+          <div class="detail-title">{{ form.sprayerName || ('types.machines.fields.sprayerName' | translate) }}</div>
+          <div class="detail-sub" *ngIf="!isNew">
+            {{ form.serialNumber }} · {{ form.manufacturer }} · {{ form.productionYear }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div
+          *ngFor="let s of steps; let i = index"
+          class="step"
+          [class.active]="i === currentStep"
+          [class.completed]="i < currentStep"
+          (click)="goToStep(i)">
+          <span class="step-number">{{ i + 1 }}</span>
+          <span class="step-label">{{ s.titleKey | translate }}</span>
+        </div>
+      </div>
+
+      <div class="step-content">
+        <!-- Step 0: Basic data -->
+        <div *ngIf="currentStep === 0" class="form-grid">
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.serialNumber' | translate }}</label>
+            <input
+              type="text"
+              [ngModel]="form.serialNumber"
+              (ngModelChange)="form.serialNumber = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.sprayerName' | translate }}</label>
+            <input
+              type="text"
+              [ngModel]="form.sprayerName"
+              (ngModelChange)="form.sprayerName = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.type' | translate }}</label>
+            <select
+              [ngModel]="form.type"
+              (ngModelChange)="form.type = $event; onFormChange()"
+              [disabled]="!isEditMode">
+              <option value="00">{{ 'types.machines.filters.typeField' | translate }}</option>
+              <option value="01">{{ 'types.machines.filters.typeGarden' | translate }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.kind' | translate }}</label>
+            <select
+              [ngModel]="form.kind"
+              (ngModelChange)="form.kind = $event; onFormChange()"
+              [disabled]="!isEditMode">
+              <option value="00">{{ 'types.machines.filters.kindMounted' | translate }}</option>
+              <option value="01">{{ 'types.machines.filters.kindTrailed' | translate }}</option>
+              <option value="02">{{ 'types.machines.filters.kindSelfPropelled' | translate }}</option>
+              <option value="03">{{ 'types.machines.filters.kindOther' | translate }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.manufacturer' | translate }}</label>
+            <input
+              type="text"
+              [ngModel]="form.manufacturer"
+              (ngModelChange)="form.manufacturer = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.productionYear' | translate }}</label>
+            <input
+              type="text"
+              maxlength="4"
+              [ngModel]="form.productionYear"
+              (ngModelChange)="form.productionYear = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.purchaseDate' | translate }}</label>
+            <input
+              type="date"
+              [ngModel]="form.purchaseDate"
+              (ngModelChange)="form.purchaseDate = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+        </div>
+
+        <!-- Step 1: Pump -->
+        <div *ngIf="currentStep === 1" class="form-grid">
+          <div class="form-group full-width">
+            <label>{{ 'types.machines.fields.pumpType' | translate }}</label>
+            <div class="inline-options">
+              <label>
+                <input
+                  type="radio"
+                  name="pumpType"
+                  [checked]="form.pumpPiston"
+                  (change)="onPumpTypeChange('piston')"
+                  [disabled]="!isEditMode" />
+                {{ 'types.machines.fields.pumpPiston' | translate }}
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="pumpType"
+                  [checked]="form.pumpDiaphragm"
+                  (change)="onPumpTypeChange('diaphragm')"
+                  [disabled]="!isEditMode" />
+                {{ 'types.machines.fields.pumpDiaphragm' | translate }}
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="pumpType"
+                  [checked]="form.pumpOther"
+                  (change)="onPumpTypeChange('other')"
+                  [disabled]="!isEditMode" />
+                {{ 'types.machines.fields.pumpOther' | translate }}
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="form.pumpOther">
+            <label>{{ 'types.machines.fields.pumpOtherType' | translate }}</label>
+            <input
+              type="text"
+              [ngModel]="form.pumpOtherType"
+              (ngModelChange)="form.pumpOtherType = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.pumpFlowRate' | translate }}</label>
+            <input
+              type="number"
+              step="0.1"
+              [ngModel]="form.pumpFlowRate"
+              (ngModelChange)="form.pumpFlowRate = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+        </div>
+
+        <!-- Step 2: Tank -->
+        <div *ngIf="currentStep === 2" class="form-grid">
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.tankCapacity' | translate }}</label>
+            <input
+              type="number"
+              step="1"
+              [ngModel]="form.tankCapacity"
+              (ngModelChange)="form.tankCapacity = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.hasFlushing' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.hasFlushing" (ngModelChange)="form.hasFlushing = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.hasDiluter' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.hasDiluter" (ngModelChange)="form.hasDiluter = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.hasWashingDevice' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.hasWashingDevice" (ngModelChange)="form.hasWashingDevice = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+        </div>
+
+        <!-- Step 3: Control devices -->
+        <div *ngIf="currentStep === 3" class="form-grid">
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.hasManometer' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.hasManometer" (ngModelChange)="form.hasManometer = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.hasComputer' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.hasComputer" (ngModelChange)="form.hasComputer = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+        </div>
+
+        <!-- Step 4: Boom -->
+        <div *ngIf="currentStep === 4" class="form-grid">
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.boomWidth' | translate }}</label>
+            <input
+              type="number"
+              step="0.1"
+              [ngModel]="form.boomWidth"
+              (ngModelChange)="form.boomWidth = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.boomWet' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.boomWet" (ngModelChange)="form.boomWet = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.boomDry' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.boomDry" (ngModelChange)="form.boomDry = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+
+          <div class="form-group full-width inline-options">
+            <label>{{ 'types.machines.fields.boomDampeningMechanism' | translate }}</label>
+            <input type="checkbox" [ngModel]="form.boomDampeningMechanism" (ngModelChange)="form.boomDampeningMechanism = $event; onFormChange()" [disabled]="!isEditMode" />
+          </div>
+        </div>
+
+        <!-- Step 5: Sections -->
+        <div *ngIf="currentStep === 5" class="form-grid">
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.sectionCount' | translate }}</label>
+            <input
+              type="number"
+              step="1"
+              [ngModel]="form.sectionCount"
+              (ngModelChange)="form.sectionCount = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+        </div>
+
+        <!-- Step 6: Field nozzles -->
+        <div *ngIf="currentStep === 6" class="form-grid">
+          <div class="form-group full-width">
+            <label>{{ 'types.machines.fields.nozzlesFieldFeatures' | translate }}</label>
+            <textarea
+              rows="4"
+              [ngModel]="form.nozzlesFieldFeatures"
+              (ngModelChange)="form.nozzlesFieldFeatures = $event; onFormChange()"
+              [disabled]="!isEditMode"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 7: Garden nozzles -->
+        <div *ngIf="currentStep === 7" class="form-grid">
+          <div class="form-group full-width">
+            <label>{{ 'types.machines.fields.nozzlesGardenFeatures' | translate }}</label>
+            <textarea
+              rows="4"
+              [ngModel]="form.nozzlesGardenFeatures"
+              (ngModelChange)="form.nozzlesGardenFeatures = $event; onFormChange()"
+              [disabled]="!isEditMode"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 8: Fan -->
+        <div *ngIf="currentStep === 8" class="form-grid">
+          <div class="form-group">
+            <label>{{ 'types.machines.fields.fanType' | translate }}</label>
+            <input
+              type="text"
+              [ngModel]="form.fanType"
+              (ngModelChange)="form.fanType = $event; onFormChange()"
+              [disabled]="!isEditMode" />
+          </div>
+        </div>
+      </div>
+
+      <div class="step-navigation" *ngIf="isEditMode">
+        <div class="spacer"></div>
+        <button class="btn btn-success btn-save" (click)="save()" [disabled]="saving">
+          {{ 'types.machines.actions.save' | translate }}
+        </button>
+        <button class="btn btn-ghost btn-cancel" (click)="cancelEditing()">
+          {{ 'types.machines.actions.cancel' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unsaved changes dialog -->
+  <div class="unsaved-dialog-backdrop" *ngIf="unsavedDialogVisible">
+    <div class="unsaved-dialog">
+      <h4>{{ 'types.machines.messages.unsavedTitle' | translate }}</h4>
+      <p>{{ 'types.machines.messages.unsavedText' | translate }}</p>
+      <div class="dialog-actions">
+        <button class="btn btn-success" (click)="onUnsavedConfirmSave()">
+          {{ 'types.machines.actions.yes' | translate }}
+        </button>
+        <button class="btn btn-secondary" (click)="onUnsavedConfirmDiscard()">
+          {{ 'types.machines.actions.no' | translate }}
+        </button>
+        <button class="btn btn-ghost" (click)="onUnsavedConfirmCancel()">
+          {{ 'types.machines.actions.cancel' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
