@@ -89,23 +89,25 @@
             <div class="card-title">{{ m.sprayerName }}</div>
             <div class="card-sub">
               <span class="card-sub-main">{{ m.serialNumber }} · {{ m.manufacturer }} ·</span>
-              <span class="badge badge-type" *ngIf="m.type === '00'">
-                {{ 'types.machines.filters.typeField' | translate }}
-              </span>
-              <span class="badge badge-type" *ngIf="m.type === '01'">
-                {{ 'types.machines.filters.typeGarden' | translate }}
-              </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '00'">
-                {{ 'types.machines.filters.kindMounted' | translate }}
-              </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '01'">
-                {{ 'types.machines.filters.kindTrailed' | translate }}
-              </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '02'">
-                {{ 'types.machines.filters.kindSelfPropelled' | translate }}
-              </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '03'">
-                {{ 'types.machines.filters.kindOther' | translate }}
+              <span class="card-badges">
+                <span class="badge badge-type" *ngIf="m.type === '00'">
+                  {{ 'types.machines.filters.typeField' | translate }}
+                </span>
+                <span class="badge badge-type" *ngIf="m.type === '01'">
+                  {{ 'types.machines.filters.typeGarden' | translate }}
+                </span>
+                <span class="badge badge-kind" *ngIf="m.kind === '00'">
+                  {{ 'types.machines.filters.kindMounted' | translate }}
+                </span>
+                <span class="badge badge-kind" *ngIf="m.kind === '01'">
+                  {{ 'types.machines.filters.kindTrailed' | translate }}
+                </span>
+                <span class="badge badge-kind" *ngIf="m.kind === '02'">
+                  {{ 'types.machines.filters.kindSelfPropelled' | translate }}
+                </span>
+                <span class="badge badge-kind" *ngIf="m.kind === '03'">
+                  {{ 'types.machines.filters.kindOther' | translate }}
+                </span>
               </span>
               <span class="card-sub-year">· {{ m.productionYear }}</span>
             </div>
