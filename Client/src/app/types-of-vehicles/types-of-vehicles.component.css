@@ -8,33 +8,93 @@
 
 /* Layout for machines management */
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .machines-container {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  flex: 1;
+  min-height: 0;
+}
+
+.component-title {
+  margin-bottom: 0;
 }
 
 .machines-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: var(--space-md);
+  padding-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--panel-border);
+  border-radius: 0;
+  margin: 0 0 var(--space-sm) 0;
+  flex-wrap: wrap;
 }
 
-.machines-header .subtitle {
-  margin: 0;
-  color: var(--text-light);
-}
-
-.header-actions {
-  display: flex;
+.toolbar-group {
+  display: inline-flex;
+  align-items: stretch;
   gap: var(--space-sm);
+}
+
+.toolbar-group.toolbar-left {
+  justify-content: flex-start;
+}
+
+.toolbar-group.toolbar-right {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.machines-header .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: unset;
+  padding-inline: var(--space-sm) var(--space-md);
+}
+.machines-header .btn-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.machines-header .btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.machines-header .btn-label {
+  flex: 0 0 auto;
+  text-align: left;
+}
+
+.toolbar-separator {
+  width: 0;
+  border-left: 1px solid var(--panel-border);
+  align-self: stretch;
+  min-height: 28px;
+  display: inline-flex;
 }
 
 .machines-layout {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr);
   gap: var(--space-lg);
+  flex: 1;
+  min-height: 0;
 }
 
 .machines-list-panel,
@@ -43,11 +103,14 @@
   border-radius: var(--radius-md);
   border: 1px solid var(--panel-border);
   padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .panel-title {
   margin: 0 0 var(--space-md) 0;
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -81,6 +144,29 @@
   padding-inline: var(--space-sm) !important;
 }
 
+.toggle-form-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  transition: all var(--transition-base);
+}
+
+.toggle-form-btn .toggle-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--transition-base);
+}
+
+.toggle-form-btn.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.toggle-form-btn.expanded {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
 .filters-advanced {
   display: flex;
   flex-wrap: wrap;
@@ -89,16 +175,16 @@
 }
 
 .machines-list {
-  max-height: 480px;
+  flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  min-height: 0;
 }
 
 .machine-card {
   display: flex;
-  align-items: flex-start;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-sm);
   border-radius: var(--radius-sm);
@@ -120,6 +206,9 @@
 .card-main {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  position: relative;
+  padding-right: 120px;
 }
 
 .card-title {
@@ -142,9 +231,13 @@
 }
 
 .card-badges {
+  position: absolute;
+  top: 0;
+  right: 0;
   display: inline-flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 4px;
+  justify-content: flex-end;
 }
 
 .machine-card .badge {
@@ -217,6 +310,27 @@
   grid-column: 1 / -1;
 }
 
+/* Basics step specific layout: 2 + 2 + 3 columns with larger spacing */
+.basics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.basics-grid .form-row {
+  display: grid;
+  column-gap: var(--space-lg);
+  row-gap: var(--space-sm);
+}
+
+.basics-grid .form-row-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.basics-grid .form-row-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .inline-options {
   display: flex;
   flex-wrap: wrap;
@@ -229,6 +343,12 @@
   align-items: center;
   gap: var(--space-xs);
   font-size: var(--font-size-sm);
+}
+
+.step-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .step-navigation {

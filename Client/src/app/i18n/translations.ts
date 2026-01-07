@@ -229,7 +229,7 @@ export const translations: Record<LanguageCode, TranslationTree> = {
         trailer: 'Przyczepa'
       },
       machines: {
-        addButton: '+ Dodaj nową maszynę',
+        addButton: 'Nowy',
         listTitle: 'Lista maszyn opryskujących',
         searchPlaceholder: 'Szukaj po numerze, nazwie, producencie...',
         filters: {
@@ -246,18 +246,19 @@ export const translations: Record<LanguageCode, TranslationTree> = {
           basics: 'Dane podstawowe',
           pump: 'Pompa',
           tank: 'Zbiornik',
-          control: 'Urządzenia pomiarowo-sterujące',
-          boom: 'Belka polowa opryskiwacza',
+          control: 'Urządzenia',
+          boom: 'Belka',
           sections: 'Sekcje',
           fieldNozzles: 'Rozpylacze polowe',
           gardenNozzles: 'Rozpylacze sadownicze',
+          nozzles: 'Rozpylacze',
           fan: 'Wentylator'
         },
         fields: {
           serialNumber: 'Nr seryjny / ewidencyjny',
           sprayerName: 'Nazwa opryskiwacza',
-          type: 'Typ (polowy / sadowniczy)',
-          kind: 'Rodzaj (zawieszany / przyczepiany / samobieżny / inny)',
+          type: 'Typ',
+          kind: 'Rodzaj',
           manufacturer: 'Producent',
           productionYear: 'Rok produkcji',
           purchaseDate: 'Data zakupu',
@@ -288,11 +289,14 @@ export const translations: Record<LanguageCode, TranslationTree> = {
           discardChanges: 'Odrzuć zmiany',
           keepEditing: 'Pozostań w edycji',
           edit: 'Edytuj',
+          delete: 'Usuń',
+          deleteConfirm: 'Czy na pewno chcesz usunąć tę maszynę? Tej operacji nie można cofnąć.',
           yes: 'TAK',
           no: 'NIE'
         },
         messages: {
           saved: 'Maszyna została zapisana.',
+          deleted: 'Maszyna została usunięta.',
           error: 'Wystąpił błąd podczas zapisu maszyny.',
           unsavedTitle: 'Niezapisane zmiany',
           unsavedText: 'Masz niezapisane zmiany dla bieżącej maszyny. Co chcesz zrobić?'
@@ -551,7 +555,7 @@ export const translations: Record<LanguageCode, TranslationTree> = {
         trailer: 'Причіп'
       },
       machines: {
-        addButton: '+ Додати нову машину',
+        addButton: 'Новий',
         listTitle: 'Список машин для обприскування',
         searchPlaceholder: 'Пошук за номером, назвою, виробником...',
         filters: {
@@ -610,10 +614,16 @@ export const translations: Record<LanguageCode, TranslationTree> = {
           save: 'Зберегти',
           cancel: 'Скасувати',
           discardChanges: 'Відхилити зміни',
-          keepEditing: 'Залишитись в режимі редагування'
+          keepEditing: 'Залишитись в режимі редагування',
+          edit: 'Редагувати',
+          delete: 'Видалити',
+          deleteConfirm: 'Видалити цю машину? Дію неможливо скасувати.',
+          yes: 'ТАК',
+          no: 'НІ'
         },
         messages: {
           saved: 'Машину збережено.',
+          deleted: 'Машину видалено.',
           error: 'Помилка під час збереження машини.',
           unsavedTitle: 'Незбережені зміни',
           unsavedText: 'Є незбережені зміни для поточної машини. Що зробити?'

@@ -64,7 +64,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xxl);
   margin-bottom: var(--space-lg);
   font-weight: var(--font-weight-bold);
 }
@@ -114,12 +114,12 @@ input, textarea, select {
   color: var(--text);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   width: 100%;
+  /* Unified with touch target height (outer height = 36px) */
+  height: var(--touch-size);
   min-height: var(--touch-size);
-  /* Prevent zoom on iOS */
-  font-size: var(--font-size-lg);
 }
 
-/* Ensure native select text matches smaller input base size */
+/* Ensure native select text also uses medium size */
 select {
   font-size: var(--font-size-base);
 }
@@ -128,6 +128,7 @@ select {
 @media (max-width: 767px) {
   input, textarea, select {
     padding: var(--space-md) var(--space-md);
+    height: var(--touch-size);
     min-height: var(--touch-size);
   }
 }
@@ -641,7 +642,7 @@ table tbody tr:last-child td {
 .text-bold { font-weight: var(--font-weight-bold); }
 .text-semibold { font-weight: var(--font-weight-semibold); }
 .text-italic { font-style: italic; }
-.text-xs { font-size: var(--font-size-xs); }
+.text-xs { font-size: var(--font-size-sm); }
 .text-sm { font-size: var(--font-size-sm); }
 .text-base { font-size: var(--font-size-base); }
 .text-lg { font-size: var(--font-size-lg); }

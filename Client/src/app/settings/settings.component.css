@@ -39,7 +39,7 @@
 .admin-section h4 {
   margin-bottom: var(--space-lg);
   color: var(--text);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -106,7 +106,7 @@
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   font-family: var(--font-family);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base);
   background: var(--bg);
   color: var(--text);
   transition: all var(--transition-fast);
@@ -222,7 +222,7 @@
   border-right: 1px solid var(--panel-border);
   border-left: 1px solid var(--panel-border);
   color: var(--text);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base);
 }
 
 .users-table tbody td:first-child {
@@ -341,7 +341,7 @@
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   font-family: var(--font-family);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base);
   background: var(--bg);
   color: var(--text);
   transition: all var(--transition-fast);
@@ -363,7 +363,7 @@
 
 .avatar-info {
   margin-bottom: var(--space-md);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base);
   color: var(--text);
 }
 

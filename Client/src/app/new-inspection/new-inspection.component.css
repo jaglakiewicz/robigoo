@@ -99,12 +99,13 @@
   margin-bottom: var(--space-xl);
   border-bottom: 3px solid var(--panel-border);
   border-radius: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   overflow: hidden;
 }
 
 .step {
-  flex: 1 1 auto;
+  /* equal width for all tabs in a row */
+  flex: 1 0 0;
   padding: var(--space-lg) var(--space-md);
   text-align: center;
   cursor: pointer;
@@ -112,7 +113,8 @@
   border-right: 1px solid var(--panel-border);
   transition: all var(--transition-fast);
   background: var(--panel);
-  min-width: 100px;
+  min-width: 0;
+  /* slightly smaller font for step text */
   font-size: var(--font-size-sm);
 }
 
@@ -187,9 +189,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background: var(--panel-border);
   margin-right: var(--space-sm);
   font-size: var(--font-size-sm);

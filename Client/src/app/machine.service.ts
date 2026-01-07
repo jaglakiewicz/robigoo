@@ -104,4 +104,8 @@ export class MachineService extends GenericCrudService<any> {
   updateMachine(serialNumber: string, req: MachineCreateUpdateRequest): Observable<MachineDetail> {
     return this.update(this.endpoint, serialNumber, req) as unknown as Observable<MachineDetail>;
   }
+
+  deleteMachine(serialNumber: string): Observable<void> {
+    return this.delete(this.endpoint, serialNumber);
+  }
 }

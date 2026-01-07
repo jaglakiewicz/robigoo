@@ -15,7 +15,7 @@
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius);
   background: var(--bg-alt);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--text);
   font-weight: 500;
   transition: all var(--transition-fast);
@@ -25,6 +25,11 @@
   background: rgba(59, 142, 165, 0.15);
   color: var(--accent);
   font-weight: 600;
+}
+
+.clients-header-subtitle {
+  font-size: var(--font-size-sm);
+
 }
 
 

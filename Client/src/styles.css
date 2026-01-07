@@ -10,16 +10,13 @@
 
 /* Mobile-first responsive scaling */
 :root {
-  /* Base font sizes - mobile first, scales up on larger screens */
+  /* Canonical font sizes */
   --font-size-xs: 10px;
   --font-size-sm: 12px;
   --font-size-base: 14px;
-  --font-size-md: 15px;
   --font-size-lg: 16px;
   --font-size-xl: 18px;
-  --font-size-2xl: 22px;
-  --font-size-3xl: 32px;
-  --font-size-4xl: 48px;
+  --font-size-xxl: 32px;
 
   /* Unified border radius - consistent across all components */
   --radius: 6px;
@@ -61,32 +58,6 @@
   --transition-fast: 0.15s ease;
   --transition-base: 0.25s ease;
   --transition-slow: 0.35s ease;
-}
-
-/* Tablet breakpoint - update font sizes */
-@media (min-width: 768px) {
-  :root {
-    --font-size-xs: 11px;
-    --font-size-sm: 13px;
-    --font-size-base: 15px;
-    --font-size-md: 16px;
-    --font-size-lg: 17px;
-    --font-size-xl: 19px;
-    --font-size-2xl: 24px;
-  }
-}
-
-/* Desktop breakpoint - maintain tablet sizes */
-@media (min-width: 1024px) {
-  :root {
-    --font-size-xs: 11px;
-    --font-size-sm: 13px;
-    --font-size-base: 15px;
-    --font-size-md: 16px;
-    --font-size-lg: 17px;
-    --font-size-xl: 19px;
-    --font-size-2xl: 24px;
-  }
 }
 
 /* ============================================================
@@ -1297,7 +1268,7 @@ a:focus-visible {
   .sidebar.open { width: 240px; }
   /* Keep content slightly shifted but still visible on tablets */
   .app-shell.shifted { margin-left: 220px; }
-  .container h1 { font-size: var(--font-size-2xl); }
+  .container h1 { font-size: var(--font-size-xxl); }
 
   /* Slightly smaller tabs on tablets */
   .tab {
@@ -1399,7 +1370,8 @@ a:focus-visible {
   border: none;
   background: var(--panel);
   transition: all var(--transition-fast);
-  font-size: var(--font-size-base);
+  /* slightly smaller text for tab/step labels */
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--text);
   display: flex;
@@ -1442,11 +1414,11 @@ a:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background: var(--panel-border);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--text);
   transition: all var(--transition-fast);
@@ -1503,7 +1475,7 @@ a:focus-visible {
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   font-family: inherit;
   background: var(--panel);
   color: var(--text);

@@ -482,7 +482,7 @@
 }
 
 .logo-wordmark {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-xxl);
   font-weight: 700;
   color: var(--primary);
   letter-spacing: 2px;
@@ -935,7 +935,7 @@
   }
 
   .logo-wordmark {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-xxl);
     letter-spacing: 1px;
   }
 
@@ -984,7 +984,7 @@
   transition: all var(--transition-fast);
   height: 42px;
   min-height: 42px;
-  font-size: var(--font-size-lg) !important;
+  font-size: var(--font-size-base) !important;
 }
 .password-field {
   position: relative;

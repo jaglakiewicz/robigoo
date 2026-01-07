@@ -5,10 +5,12 @@
 */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MachineDetail, MachineListItem, MachineService, MachineCreateUpdateRequest } from '../machine.service';
 import { DirtyFormService } from '../shared/services/dirty-form.service';
 import { TranslationService } from '../i18n/translation.service';
 import { NotificationService } from '../services/notification.service';
+import { SVG_ICONS } from '../shared/svg-icons';
 
 interface MachineStep {
   id: number;
@@ -26,8 +28,6 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
   machines: MachineListItem[] = [];
   selectedSerialNumber: string | null = null;
   searchTerm = '';
-  filterType: string | null = null;
-  filterKind: string | null = null;
   filterManufacturer = '';
   filterYearFrom = '';
   filterYearTo = '';
@@ -59,6 +59,9 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
   messageError = false;
   loadingList = false;
   saving = false;
+  deleting = false;
+
+  toolbarIcons!: Record<'add' | 'edit' | 'delete' | 'save' | 'cancel', SafeHtml>;
 
   // Unsaved-changes dialog state
   pendingSerialNumber: string | null = null;
@@ -71,9 +74,40 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
     private machinesService: MachineService,
     private dirtyFormService: DirtyFormService,
     private translations: TranslationService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private sanitizer: DomSanitizer
   ) {
     this.dirtyFormService.registerForm(this.formId);
+    this.toolbarIcons = {
+      add: this.getSafeHtml(SVG_ICONS.iconAdd),
+      edit: this.getSafeHtml(SVG_ICONS.iconEdit),
+      delete: this.getSafeHtml(SVG_ICONS.iconDelete),
+      save: this.getSafeHtml(SVG_ICONS.iconCheck),
+      cancel: this.getSafeHtml(SVG_ICONS.iconCancel)
+    };
+  }
+
+  // Visible steps depend on machine type (field / garden)
+  get visibleSteps(): MachineStep[] {
+    const type = this.formModel?.type;
+    return this.steps.filter(step => {
+      if (step.key === 'fieldNozzles') {
+        // Polowy
+        return !type || type === '00';
+      }
+      if (step.key === 'gardenNozzles') {
+        // Sadowniczy
+        return !type || type === '01';
+      }
+      return true;
+    });
+  }
+
+  getStepTitleKey(step: MachineStep): string {
+    if (step.key === 'fieldNozzles' || step.key === 'gardenNozzles') {
+      return 'types.machines.steps.nozzles';
+    }
+    return step.titleKey;
   }
 
   toggleAdvancedFilters(): void {
@@ -94,8 +128,6 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
     this.loadingList = true;
     this.machinesService.getMachinesList({
       q: this.searchTerm || undefined,
-      type: this.filterType || undefined,
-      kind: this.filterKind || undefined,
       manufacturer: this.filterManufacturer || undefined,
       yearFrom: this.filterYearFrom || undefined,
       yearTo: this.filterYearTo || undefined
@@ -103,6 +135,7 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
       next: list => {
         this.machines = list;
         this.loadingList = false;
+        this.reconcileSelection(list);
       },
       error: () => {
         this.loadingList = false;
@@ -112,16 +145,6 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
 
   onSearchChange(value: string): void {
     this.searchTerm = value;
-    this.loadMachines();
-  }
-
-  onFilterTypeChange(value: string): void {
-    this.filterType = value || null;
-    this.loadMachines();
-  }
-
-  onFilterKindChange(value: string): void {
-    this.filterKind = value || null;
     this.loadMachines();
   }
 
@@ -257,23 +280,55 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
     });
   }
 
+  private reconcileSelection(list: MachineListItem[]): void {
+    if (list.length === 0) {
+      if (!this.isNew) {
+        this.selectedSerialNumber = null;
+        this.currentMachine = null;
+        this.formModel = null;
+      }
+      return;
+    }
+
+    const hasSelected = !!this.selectedSerialNumber && list.some(m => m.serialNumber === this.selectedSerialNumber);
+
+    if (hasSelected) {
+      if (!this.formModel || this.formModel.serialNumber !== this.selectedSerialNumber) {
+        this.loadMachineDetail(this.selectedSerialNumber!);
+      }
+      return;
+    }
+
+    if (this.isEditMode || this.isNew || this.dirtyFormService.isDirty(this.formId)) {
+      return;
+    }
+
+    const firstSerialNumber = list[0].serialNumber;
+    this.loadMachineDetail(firstSerialNumber);
+  }
+
   // Step navigation
 
   goToStep(index: number): void {
-    if (index >= 0 && index < this.steps.length) {
-      this.currentStep = index;
+    const step = this.steps.find(s => s.id === index);
+    if (step) {
+      this.currentStep = step.id;
     }
   }
 
   previousStep(): void {
-    if (this.currentStep > 0) {
-      this.currentStep--;
+    const visible = this.visibleSteps;
+    const currentIndex = visible.findIndex(s => s.id === this.currentStep);
+    if (currentIndex > 0) {
+      this.currentStep = visible[currentIndex - 1].id;
     }
   }
 
   nextStep(): void {
-    if (this.currentStep < this.steps.length - 1) {
-      this.currentStep++;
+    const visible = this.visibleSteps;
+    const currentIndex = visible.findIndex(s => s.id === this.currentStep);
+    if (currentIndex >= 0 && currentIndex < visible.length - 1) {
+      this.currentStep = visible[currentIndex + 1].id;
     }
   }
 
@@ -296,6 +351,18 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
       this.formModel.pumpOtherType = null;
     }
     this.onFormChange();
+  }
+
+  onTypeChange(value: string): void {
+    if (!this.formModel) { return; }
+    this.formModel.type = value;
+    this.onFormChange();
+
+    // Ensure current step is still visible after type change
+    const visible = this.visibleSteps;
+    if (!visible.some(s => s.id === this.currentStep)) {
+      this.currentStep = visible.length ? visible[0].id : 0;
+    }
   }
 
   save(): void {
@@ -358,6 +425,42 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
     }
   }
 
+  onDelete(): void {
+    if (!this.currentMachine || this.isNew || this.deleting) {
+      return;
+    }
+
+    const confirmMessage = this.translations.translate('types.machines.actions.deleteConfirm');
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    this.deleting = true;
+    const serialToDelete = this.currentMachine.serialNumber;
+
+    this.machinesService.deleteMachine(serialToDelete).subscribe({
+      next: () => {
+        this.notificationService.success(this.translations.translate('types.machines.messages.deleted'));
+        this.deleting = false;
+        this.isEditMode = false;
+        this.isNew = false;
+        this.currentMachine = null;
+        this.formModel = null;
+        this.selectedSerialNumber = null;
+        this.messageKey = '';
+        this.messageError = false;
+        this.setDirty(false);
+        this.loadMachines();
+      },
+      error: err => {
+        this.deleting = false;
+        const backendMessage = err?.error?.message as string | undefined;
+        const message = backendMessage || this.translations.translate('types.machines.messages.error');
+        this.notificationService.error(message);
+      }
+    });
+  }
+
   // Unsaved-changes logic
   private openUnsavedDialog(action: 'select' | 'new', targetSerial: string | null): void {
     this.pendingAction = action;
@@ -399,6 +502,10 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
 
   private setDirty(dirty: boolean): void {
     this.dirtyFormService.setDirty(this.formId, dirty);
+  }
+
+  private getSafeHtml(icon: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(icon);
   }
 }
 
