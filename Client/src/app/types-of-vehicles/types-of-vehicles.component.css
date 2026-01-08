@@ -122,8 +122,16 @@
 }
 
 .filters-row .search-input {
-  flex: 1 1 100%;
+  flex: 1 1 auto;
   min-width: 160px;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  align-items: center;
 }
 
 .filters-row input,
@@ -208,36 +216,37 @@
   flex-direction: column;
   width: 100%;
   position: relative;
-  padding-right: 120px;
+  gap: 4px;
+}
+
+.card-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-start;
+  margin-bottom: 2px;
 }
 
 .card-title {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  color: var(--text);
+  line-height: 1.2;
 }
 
-.card-sub {
+.card-info-row {
   font-size: var(--font-size-sm);
   color: var(--text-light);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 4px;
+  line-height: 1.4;
 }
 
-.card-sub-main,
-.card-sub-year {
-  white-space: nowrap;
-}
-
-.card-badges {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: flex-end;
+.separator {
+  color: var(--text-disabled);
+  font-weight: bold;
 }
 
 .machine-card .badge {
@@ -404,5 +413,60 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   STEP INDICATOR - OVERRIDES
+   ============================================================ */
+.step-indicator {
+  /* Rounding on container boundaries */
+  border-radius: var(--radius-md);
+  
+  /* Horizontal scrolling */
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  
+  /* Scrollbar aesthetics */
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-disabled) transparent;
+  
+  /* Ensure content is not obscured */
+  padding-bottom: 2px;
+}
+
+/* Webkit scrollbar styling */
+.step-indicator::-webkit-scrollbar {
+  height: 8px;
+}
+
+.step-indicator::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 0 var(--radius-md);
+}
+
+.step-indicator::-webkit-scrollbar-thumb {
+  background-color: var(--text-disabled);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.step {
+  /* Prevent shrinking too small to force scroll */
+  min-width: 140px;
+  flex: 1 0 auto;
+  
+  /* Top alignment to keep numbers aligned */
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-number {
+  /* Ensure number doesn't shrink */
+  flex-shrink: 0;
+}
+
 
 
