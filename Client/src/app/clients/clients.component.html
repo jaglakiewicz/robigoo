@@ -1,19 +1,19 @@
-﻿<!--
+<!--
   Robigoo
   Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<h3 class="component-title">{{ 'clients.title' | translate }}</h3>
-<p class="component-subtitle">{{ 'clients.description' | translate }}</p>
+<h3 class="component-title">{{ 'clients.title' | text }}</h3>
+<p class="component-subtitle">{{ 'clients.description' | text }}</p>
 
 <table class="data-table">
   <thead>
     <tr>
-      <th>{{ 'clients.columns.name' | translate }}</th>
-      <th>{{ 'clients.columns.document' | translate }}</th>
-      <th>{{ 'clients.columns.vehicle' | translate }}</th>
-      <th>{{ 'clients.columns.status' | translate }}</th>
+      <th>{{ 'clients.columns.name' | text }}</th>
+      <th>{{ 'clients.columns.document' | text }}</th>
+      <th>{{ 'clients.columns.vehicle' | text }}</th>
+      <th>{{ 'clients.columns.status' | text }}</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -28,7 +28,7 @@
           [class.badge-accent]="client.statusKey === 'clients.status.active'"
           [class.badge-neutral]="client.statusKey !== 'clients.status.active'"
         >
-          {{ client.statusKey | translate }}
+          {{ client.statusKey | text }}
         </span>
       </td>
       <td>

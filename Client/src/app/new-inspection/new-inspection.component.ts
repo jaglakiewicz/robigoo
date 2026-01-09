@@ -7,7 +7,7 @@
 import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { InspectionService, InspectionCreateDto } from '../inspection.service';
-import { TranslationService } from '../i18n/translation.service';
+import { TextService } from '../services/text.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 
 interface Section {
@@ -55,7 +55,7 @@ export class NewInspectionComponent {
   iconCancel = SVG_ICONS.iconCancel;
   iconAdd = SVG_ICONS.iconAdd;
 
-  constructor(private svc: InspectionService, private translation: TranslationService, private sanitizer: DomSanitizer) {
+  constructor(private svc: InspectionService, private textService: TextService, private sanitizer: DomSanitizer) {
     this.seedDefaults();
   }
 
@@ -98,24 +98,24 @@ export class NewInspectionComponent {
 
   private seedDefaults() {
     this.suspensionItems = [
-      { description: this.translation.translate('newInspection.defaults.suspension.springs'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.suspension.shocks'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.suspension.controlArms'), passed: true }
+      { description: this.textService.get('newInspection.defaults.suspension.springs'), passed: true },
+      { description: this.textService.get('newInspection.defaults.suspension.shocks'), passed: true },
+      { description: this.textService.get('newInspection.defaults.suspension.controlArms'), passed: true }
     ];
     this.alignmentItems = [
-      { description: this.translation.translate('newInspection.defaults.alignment.camber'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.alignment.caster'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.alignment.toe'), passed: true }
+      { description: this.textService.get('newInspection.defaults.alignment.camber'), passed: true },
+      { description: this.textService.get('newInspection.defaults.alignment.caster'), passed: true },
+      { description: this.textService.get('newInspection.defaults.alignment.toe'), passed: true }
     ];
     this.lightsItems = [
-      { description: this.translation.translate('newInspection.defaults.lights.headlights'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.lights.tailLights'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.lights.turnSignals'), passed: true }
+      { description: this.textService.get('newInspection.defaults.lights.headlights'), passed: true },
+      { description: this.textService.get('newInspection.defaults.lights.tailLights'), passed: true },
+      { description: this.textService.get('newInspection.defaults.lights.turnSignals'), passed: true }
     ];
     this.brakesItems = [
-      { description: this.translation.translate('newInspection.defaults.brakes.front'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.brakes.rear'), passed: true },
-      { description: this.translation.translate('newInspection.defaults.brakes.fluid'), passed: true }
+      { description: this.textService.get('newInspection.defaults.brakes.front'), passed: true },
+      { description: this.textService.get('newInspection.defaults.brakes.rear'), passed: true },
+      { description: this.textService.get('newInspection.defaults.brakes.fluid'), passed: true }
     ];
   }
 

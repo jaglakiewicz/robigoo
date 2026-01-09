@@ -13,7 +13,7 @@
 
 .modal-container {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 6px;
   width: 80%;
   max-width: 800px;
   max-height: 90vh;
@@ -24,7 +24,7 @@
 }
 
 .modal-header {
-  padding: 16px;
+  padding: 18px;
   border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-between;
@@ -45,12 +45,12 @@
 }
 
 .modal-body {
-  padding: 16px;
+  padding: 18px;
   overflow-y: auto;
 }
 
 .modal-footer {
-  padding: 16px;
+  padding: 18px;
   border-top: 1px solid #eee;
   display: flex;
   justify-content: flex-end;
@@ -68,7 +68,7 @@
 .user-cell {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .user-avatar {
@@ -93,12 +93,12 @@
 }
 
 .user-avatar svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
 .history-table th, .history-table td {
-  padding: 8px 12px;
+  padding: 6px 12px;
   text-align: left;
   border: 1px solid #d0d0d0; /* Changed from border-bottom to full border */
 }
@@ -111,7 +111,7 @@
 
 .history-table th {
   background-color: #fafafa;
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
 }
 
 .col-when {
@@ -130,11 +130,11 @@
 }
 
 .btn {
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 6px 18px;
+  border-radius: 6px;
   cursor: pointer;
   border: none;
-  font-weight: 500;
+  font-weight: var(--font-weight-regular);
 }
 
 .btn-secondary {

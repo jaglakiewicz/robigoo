@@ -8,7 +8,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MachineDetail, MachineListItem, MachineService, MachineCreateUpdateRequest } from '../machine.service';
 import { DirtyFormService } from '../shared/services/dirty-form.service';
-import { TranslationService } from '../i18n/translation.service';
+import { TextService } from '../services/text.service';
 import { NotificationService } from '../services/notification.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 
@@ -76,7 +76,7 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
   constructor(
     private machinesService: MachineService,
     private dirtyFormService: DirtyFormService,
-    private translations: TranslationService,
+    private textService: TextService,
     private notificationService: NotificationService,
     private sanitizer: DomSanitizer
   ) {
@@ -404,7 +404,7 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
         this.saving = false;
         this.setDirty(false);
         this.loadMachines();
-        this.notificationService.success(this.translations.translate('types.machines.messages.saved'));
+        this.notificationService.success(this.textService.get('types.machines.messages.saved'));
         if (onSuccess) {
           onSuccess();
         }
@@ -414,7 +414,7 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
         this.messageError = false;
         this.saving = false;
         const backendMessage = err?.error?.message as string | undefined;
-        const message = backendMessage || this.translations.translate('types.machines.messages.error');
+        const message = backendMessage || this.textService.get('types.machines.messages.error');
         this.notificationService.error(message);
       }
     });
@@ -439,7 +439,7 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const confirmMessage = this.translations.translate('types.machines.actions.deleteConfirm');
+    const confirmMessage = this.textService.get('types.machines.actions.deleteConfirm');
     if (!confirm(confirmMessage)) {
       return;
     }
@@ -449,7 +449,7 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
 
     this.machinesService.deleteMachine(serialToDelete).subscribe({
       next: () => {
-        this.notificationService.success(this.translations.translate('types.machines.messages.deleted'));
+        this.notificationService.success(this.textService.get('types.machines.messages.deleted'));
         this.deleting = false;
         this.isEditMode = false;
         this.isNew = false;
@@ -464,7 +464,7 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
       error: err => {
         this.deleting = false;
         const backendMessage = err?.error?.message as string | undefined;
-        const message = backendMessage || this.translations.translate('types.machines.messages.error');
+        const message = backendMessage || this.textService.get('types.machines.messages.error');
         this.notificationService.error(message);
       }
     });

@@ -8,9 +8,7 @@ import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
-import { TranslationService } from './i18n/translation.service';
 import { AuthService } from './services/auth.service';
-import { LANGUAGES, LanguageCode } from './i18n/translations';
 import { SVG_ICONS } from './shared/svg-icons';
 
 interface Tab { id: number; type: string; titleKey: string; icon?: string; pinned?: boolean }
@@ -50,20 +48,12 @@ export class AppComponent implements OnInit, OnDestroy {
     { type: 'settings', titleKey: 'menu.settings', hintKey: 'menu.settingsHint' }
   ];
 
-  languages = LANGUAGES;
-  currentLanguage: LanguageCode;
-  private langSub: Subscription;
-
   iconMap: { [key: string]: string } = SVG_ICONS;
 
-  constructor(private sanitizer: DomSanitizer, private translation: TranslationService, private authService: AuthService) {
+  constructor(private sanitizer: DomSanitizer, private authService: AuthService) {
     const saved = localStorage.getItem('theme');
     this.darkMode = saved === 'dark';
     this.applyTheme();
-    this.currentLanguage = this.translation.currentLanguage;
-    this.langSub = this.translation.language$.subscribe(lang => {
-      this.currentLanguage = lang;
-    });
     
     // Subscribe to auth service for user changes
     this.currentUserSub = this.authService.currentUser$.subscribe(user => {
@@ -93,7 +83,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.langSub?.unsubscribe();
     this.currentUserSub?.unsubscribe();
     this.stopSessionHeartbeat();
   }
@@ -195,10 +184,6 @@ export class AppComponent implements OnInit, OnDestroy {
     if (i < 0 || i >= this.tabs.length) return;
     this.tabs.splice(i,1);
     if (this.activeIndex >= this.tabs.length) this.activeIndex = this.tabs.length - 1;
-  }
-
-  changeLanguage(language: LanguageCode) {
-    this.translation.setLanguage(language);
   }
 
   toggleUserMenu() {

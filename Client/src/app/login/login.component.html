@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   Robigoo
   Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
@@ -653,76 +653,39 @@
       <div class="login-separator" aria-hidden="true"></div>
     </div>
 
-    <div class="login-language-switcher">
-      <div class="language-label">{{ 'login.languageLabel' | translate }}</div>
-      <div
-        #languageDropdown
-        class="language-select"
-        [class.open]="languageDropdownOpen"
-      >
-        <button
-          type="button"
-          class="language-select__trigger"
-          (click)="toggleLanguageDropdown()"
-          aria-haspopup="listbox"
-          [attr.aria-expanded]="languageDropdownOpen"
-        >
-          <span class="language-flag" [ngClass]="'flag-' + currentLanguage" aria-hidden="true"></span>
-          <span class="language-name">{{ getLanguageName(currentLanguage) }}</span>
-          <span class="language-chevron" aria-hidden="true"></span>
-        </button>
-        <ul
-          *ngIf="languageDropdownOpen"
-          class="language-select__list"
-          role="listbox"
-        >
-          <li
-            *ngFor="let lang of languages"
-            (click)="selectLanguage(lang.code)"
-            role="option"
-            [attr.aria-selected]="lang.code === currentLanguage"
-            [class.active]="lang.code === currentLanguage"
-          >
-            <span class="language-flag" [ngClass]="'flag-' + lang.code" aria-hidden="true"></span>
-            <span class="language-name">{{ lang.nativeName }}</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
     <div class="login-form">
-      <div *ngIf="errorKey" class="error-message">{{ errorKey | translate }}</div>
+      <div *ngIf="errorKey" class="error-message">{{ errorKey | text }}</div>
       <div *ngIf="logoutMessage" class="info-message">{{ logoutMessage }}</div>
 
       <div class="form-group">
-        <label for="username">{{ 'login.username' | translate }}</label>
+        <label for="username">{{ 'login.username' | text }}</label>
         <input
           id="username"
           type="text"
           [(ngModel)]="username"
           (keypress)="onKeyPress($event)"
-          [placeholder]="'login.usernamePlaceholder' | translate"
+          [placeholder]="'login.usernamePlaceholder' | text"
           [disabled]="loading"
         />
       </div>
 
       <div class="form-group password-group">
-        <label for="password">{{ 'login.password' | translate }}</label>
+        <label for="password">{{ 'login.password' | text }}</label>
         <div class="password-field">
           <input
             id="password"
             [type]="passwordVisible ? 'text' : 'password'"
             [(ngModel)]="password"
             (keypress)="onKeyPress($event)"
-            [placeholder]="'login.passwordPlaceholder' | translate"
+            [placeholder]="'login.passwordPlaceholder' | text"
             [disabled]="loading"
           />
           <button
             type="button"
             class="password-toggle"
             (click)="togglePasswordVisibility()"
-            [attr.aria-label]="(passwordVisible ? 'login.passwordHide' : 'login.passwordShow') | translate"
-            [attr.title]="(passwordVisible ? 'login.passwordHide' : 'login.passwordShow') | translate"
+            [attr.aria-label]="(passwordVisible ? 'login.passwordHide' : 'login.passwordShow') | text"
+            [attr.title]="(passwordVisible ? 'login.passwordHide' : 'login.passwordShow') | text"
             [attr.aria-pressed]="passwordVisible"
           >
             <svg *ngIf="!passwordVisible" viewBox="0 0 426.666667 341.333333" focusable="false" aria-hidden="true">
@@ -742,11 +705,11 @@
       </div>
 
       <button class="btn btn-login" (click)="onLogin()" [disabled]="loading">
-        {{ loading ? ('login.submitting' | translate) : ('login.submit' | translate) }}
+        {{ loading ? ('login.submitting' | text) : ('login.submit' | text) }}
       </button>
 
       <div class="demo-hint">
-        {{ 'login.demoHint' | translate }}
+        {{ 'login.demoHint' | text }}
       </div>
     </div>
   </div>
@@ -754,15 +717,15 @@
   <!-- Session conflict dialog -->
   <div *ngIf="sessionConflictVisible" class="session-dialog-backdrop" aria-modal="true" role="dialog">
     <div class="session-dialog">
-      <h2 class="session-dialog__title">{{ 'login.submit' | translate }}</h2>
-      <p class="session-dialog__message">{{ 'login.sessionConflict.message' | translate }}</p>
-      <p class="session-dialog__message">{{ 'login.sessionConflict.confirm' | translate }}</p>
+      <h2 class="session-dialog__title">{{ 'login.submit' | text }}</h2>
+      <p class="session-dialog__message">{{ 'login.sessionConflict.message' | text }}</p>
+      <p class="session-dialog__message">{{ 'login.sessionConflict.confirm' | text }}</p>
       <div class="session-dialog__actions">
         <button type="button" class="btn btn-secondary" (click)="cancelSessionTakeover()">
-          {{ 'login.sessionConflict.buttons.cancel' | translate }}
+          {{ 'login.sessionConflict.buttons.cancel' | text }}
         </button>
         <button type="button" class="btn btn-primary" (click)="confirmSessionTakeover()">
-          {{ 'login.sessionConflict.buttons.takeOver' | translate }}
+          {{ 'login.sessionConflict.buttons.takeOver' | text }}
         </button>
       </div>
     </div>

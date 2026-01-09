@@ -9,13 +9,13 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/c
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
-import { TranslationService } from '../i18n/translation.service';
+import { TextService } from './text.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
-    private translation: TranslationService
+    private textService: TextService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -37,7 +37,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
           // Pokaż przy następnym ekranie logowania informację, że sesja wygasła / została przejęta
           try {
-            const message = this.translation.translate('login.session.terminated');
+            const message = this.textService.get('login.session.terminated');
             sessionStorage.setItem('logoutMessage', message);
           } catch {
             // ignore storage or translation errors

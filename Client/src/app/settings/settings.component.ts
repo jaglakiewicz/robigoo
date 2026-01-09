@@ -36,7 +36,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
     email: '',
     phone: '',
     permissionNumber: '',
-    language: 'pl',
     theme: 'light',
     avatar: null as string | null
   };
@@ -161,12 +160,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const currentUser = this.authService.getCurrentUser();
     const isAdmin = currentUser && currentUser.role === 'admin';
 
-    // Regular users can only edit: email, phone, language, theme
+    // Regular users can only edit: email, phone, theme
     // Admins can also edit: firstName, lastName, permissionNumber
     const updateData: any = {
       email: this.userSettings.email,
       phone: this.userSettings.phone,
-      language: this.userSettings.language,
       theme: this.userSettings.theme
     };
 

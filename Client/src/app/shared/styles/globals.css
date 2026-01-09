@@ -58,13 +58,13 @@ body {
    ============================================================ */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
   color: var(--text);
 }
 
 h1 {
-  font-size: var(--font-size-xxl);
+  font-size: var(--font-size-xl);
   margin-bottom: var(--space-lg);
   font-weight: var(--font-weight-bold);
 }
@@ -90,7 +90,7 @@ h5 {
 }
 
 h6 {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   margin-bottom: var(--space-xs);
 }
 
@@ -160,7 +160,7 @@ textarea {
 label {
   display: block;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-xs);
   color: var(--text);
 }
@@ -172,7 +172,7 @@ label {
   UNIFIED BUTTON SPECIFICATION FOR ALL LABELED BUTTONS:
    
   ✓ HEIGHT: var(--touch-size) - All labeled buttons match input height
-   ✓ FONT: var(--font-family), var(--font-size-base), var(--font-weight-semibold)
+   ✓ FONT: var(--font-family), var(--font-size-base), var(--font-weight-regular)
   ✓ ROUNDING: 6px - Beautiful border-radius for modern look
    ✓ BORDER: 1px solid rgba(0, 0, 0, 0.12) - Subtle border
    ✓ PADDING: 0 24px - Spacious horizontal padding
@@ -181,7 +181,7 @@ label {
      - Transform: translateY(-3px) - Lift effect
      - Shadow: var(--shadow-lg) - Prominent shadow
    ✓ SVG ICONS: 18x18px - Consistent icon sizing
-   ✓ GAP: 8px between icon and text
+   ✓ GAP: 6px between icon and text
    
    ICON-ONLY BUTTONS (NOT affected):
    - Tab buttons (.tab-btn, .tab-action)
@@ -205,7 +205,7 @@ label {
 .btn-cancel {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-regular);
   
   /* UNIFIED BUTTON DIMENSIONS (aligned with inputs) */
   height: var(--touch-size);
@@ -220,7 +220,7 @@ label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
   
   /* INTERACTION & TRANSITIONS */
@@ -258,7 +258,6 @@ label {
   background: var(--accent);
   color: white;
   border-color: rgba(0, 0, 0, 0.15);
-  font-weight: var(--font-weight-semibold);
 }
 
 .btn-primary:hover:not(:disabled),
@@ -280,7 +279,7 @@ label {
   background: var(--bg-alt);
   color: var(--text);
   border-color: var(--panel-border);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-regular);
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -301,7 +300,6 @@ label {
   background: var(--success);
   color: white;
   border-color: rgba(0, 0, 0, 0.15);
-  font-weight: var(--font-weight-semibold);
 }
 
 .btn-success:hover:not(:disabled) {
@@ -321,7 +319,6 @@ label {
   background: var(--error);
   color: white;
   border-color: rgba(0, 0, 0, 0.15);
-  font-weight: var(--font-weight-semibold);
 }
 
 .btn-danger:hover:not(:disabled) {
@@ -341,7 +338,7 @@ label {
   background: transparent;
   color: var(--accent);
   border-color: var(--accent);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-regular);
 }
 
 .btn-ghost:hover:not(:disabled) {
@@ -428,7 +425,7 @@ table thead {
 table th {
   padding: var(--space-md);
   text-align: left;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
   color: var(--text);
   text-transform: uppercase;
@@ -485,9 +482,9 @@ table tbody tr:last-child td {
 
   td:before {
     content: attr(data-label);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--text-light);
     margin-right: var(--space-md);
     flex-shrink: 0;
@@ -527,7 +524,7 @@ table tbody tr:last-child td {
 
 .card-title {
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   margin: 0;
 }
@@ -640,7 +637,6 @@ table tbody tr:last-child td {
 .text-right { text-align: right; }
 .text-left { text-align: left; }
 .text-bold { font-weight: var(--font-weight-bold); }
-.text-semibold { font-weight: var(--font-weight-semibold); }
 .text-italic { font-style: italic; }
 .text-xs { font-size: var(--font-size-sm); }
 .text-sm { font-size: var(--font-size-sm); }
@@ -719,8 +715,8 @@ table tbody tr:last-child td {
   align-items: center;
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
   background: var(--bg-alt);
   color: var(--text);
 }
@@ -744,8 +740,8 @@ table tbody tr:last-child td {
 
 .spinner {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border: 2px solid var(--panel-border);
   border-top-color: var(--accent);
   border-radius: var(--radius);

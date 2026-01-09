@@ -19,7 +19,7 @@ import { TypesOfVehiclesComponent } from './types-of-vehicles/types-of-vehicles.
 import { StatisticsComponent } from './statistics/statistics.component';
 import { InspectionsComponent } from './inspections/inspections.component';
 import { SettingsComponent } from './settings/settings.component';
-import { TranslatePipe } from './i18n/translate.pipe';
+import { TextPipe } from './shared/text.pipe';
 import { ClientsComponent } from './clients/clients.component';
 import { InspectionMarksComponent } from './inspection-marks/inspection-marks.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -29,7 +29,7 @@ import { HistoryDialogComponent } from './shared/components/history-dialog/histo
 import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TranslatePipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

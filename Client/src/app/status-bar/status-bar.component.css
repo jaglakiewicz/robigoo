@@ -11,7 +11,7 @@
   left: 0;
   right: 0;
   height: auto;
-  min-height: 32px;
+  min-height: 30px;
   background: rgba(11, 79, 108, 0.95);
   display: flex;
   align-items: center;
@@ -40,12 +40,12 @@
   align-items: center;
   gap: var(--space-xs);
   white-space: nowrap;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
 }
 
 .status-indicator {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: var(--radius);
   background: var(--success);
   animation: pulse 2s infinite;
@@ -63,7 +63,7 @@
 
 .spacer {
   flex: 1;
-  min-width: 20px;
+  min-width: 18px;
 }
 
 @keyframes pulse {

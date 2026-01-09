@@ -1,136 +1,136 @@
-﻿<!--
+<!--
   Robigoo
   Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<h3 class="component-title">{{ 'newInspection.title' | translate }}</h3>
-<div *ngIf="messageKey" class="message">{{ messageKey | translate }}</div>
+<h3 class="component-title">{{ 'newInspection.title' | text }}</h3>
+<div *ngIf="messageKey" class="message">{{ messageKey | text }}</div>
 
 <div class="step-indicator">
   <div *ngFor="let s of sections; let i = index" class="step" [class.active]="i === currentStep" [class.completed]="i < currentStep" (click)="goToStep(i)" style="cursor: pointer;">
     <span class="step-number">{{ i + 1 }}</span>
-    <span class="step-label">{{ s.titleKey | translate }}</span>
+    <span class="step-label">{{ s.titleKey | text }}</span>
   </div>
 </div>
 
 <div *ngIf="currentStep === 0" class="step-content">
-  <h3>{{ 'newInspection.headings.vehicle' | translate }}</h3>
+  <h3>{{ 'newInspection.headings.vehicle' | text }}</h3>
   <div class="form-group">
-    <label>{{ 'newInspection.fields.vehiclePlate' | translate }}</label>
-    <input [(ngModel)]="vehiclePlate" [placeholder]="'newInspection.placeholders.vehiclePlate' | translate" />
+    <label>{{ 'newInspection.fields.vehiclePlate' | text }}</label>
+    <input [(ngModel)]="vehiclePlate" [placeholder]="'newInspection.placeholders.vehiclePlate' | text" />
   </div>
   <div class="form-group">
-    <label>{{ 'newInspection.fields.inspectorName' | translate }}</label>
-    <input [(ngModel)]="inspectorName" [placeholder]="'newInspection.placeholders.inspectorName' | translate" />
+    <label>{{ 'newInspection.fields.inspectorName' | text }}</label>
+    <input [(ngModel)]="inspectorName" [placeholder]="'newInspection.placeholders.inspectorName' | text" />
   </div>
   <div class="form-group">
-    <label>{{ 'newInspection.fields.inspectionDate' | translate }}</label>
+    <label>{{ 'newInspection.fields.inspectionDate' | text }}</label>
     <input type="date" [(ngModel)]="inspectionDate" />
   </div>
   <div class="form-group">
-    <label>{{ 'newInspection.fields.notes' | translate }}</label>
-    <textarea rows="3" [(ngModel)]="notes" [placeholder]="'newInspection.placeholders.notes' | translate"></textarea>
+    <label>{{ 'newInspection.fields.notes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="notes" [placeholder]="'newInspection.placeholders.notes' | text"></textarea>
   </div>
 </div>
 
 <div *ngIf="currentStep === 1" class="step-content">
-  <h3>{{ 'newInspection.headings.suspension' | translate }}</h3>
+  <h3>{{ 'newInspection.headings.suspension' | text }}</h3>
   <div *ngFor="let it of suspensionItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="suspensionItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <input type="text" [(ngModel)]="suspensionItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
     <label>
       <input type="checkbox" [(ngModel)]="suspensionItems[i].passed" />
-      {{ 'newInspection.labels.pass' | translate }}
+      {{ 'newInspection.labels.pass' | text }}
     </label>
     <button
       class="btn-icon"
       type="button"
       (click)="removeItem(suspensionItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
-      [attr.title]="'newInspection.actions.removeItem' | translate"
+      [attr.aria-label]="'newInspection.actions.removeItem' | text"
+      [attr.title]="'newInspection.actions.removeItem' | text"
     >
       <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
     </button>
   </div>
-  <button class="btn btn-primary" (click)="addItem(suspensionItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(suspensionItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
 </div>
 
 <div *ngIf="currentStep === 2" class="step-content">
-  <h3>{{ 'newInspection.headings.alignment' | translate }}</h3>
+  <h3>{{ 'newInspection.headings.alignment' | text }}</h3>
   <div *ngFor="let it of alignmentItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="alignmentItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <input type="text" [(ngModel)]="alignmentItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
     <label>
       <input type="checkbox" [(ngModel)]="alignmentItems[i].passed" />
-      {{ 'newInspection.labels.pass' | translate }}
+      {{ 'newInspection.labels.pass' | text }}
     </label>
     <button
       class="btn-icon"
       type="button"
       (click)="removeItem(alignmentItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
-      [attr.title]="'newInspection.actions.removeItem' | translate"
+      [attr.aria-label]="'newInspection.actions.removeItem' | text"
+      [attr.title]="'newInspection.actions.removeItem' | text"
     >
       <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
     </button>
   </div>
-  <button class="btn btn-primary" (click)="addItem(alignmentItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(alignmentItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
 </div>
 
 <div *ngIf="currentStep === 3" class="step-content">
-  <h3>{{ 'newInspection.headings.lights' | translate }}</h3>
+  <h3>{{ 'newInspection.headings.lights' | text }}</h3>
   <div *ngFor="let it of lightsItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="lightsItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <input type="text" [(ngModel)]="lightsItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
     <label>
       <input type="checkbox" [(ngModel)]="lightsItems[i].passed" />
-      {{ 'newInspection.labels.pass' | translate }}
+      {{ 'newInspection.labels.pass' | text }}
     </label>
     <button
       class="btn-icon"
       type="button"
       (click)="removeItem(lightsItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
-      [attr.title]="'newInspection.actions.removeItem' | translate"
+      [attr.aria-label]="'newInspection.actions.removeItem' | text"
+      [attr.title]="'newInspection.actions.removeItem' | text"
     >
       <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
     </button>
   </div>
-  <button class="btn btn-primary" (click)="addItem(lightsItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(lightsItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
 </div>
 
 <div *ngIf="currentStep === 4" class="step-content">
-  <h3>{{ 'newInspection.headings.brakes' | translate }}</h3>
+  <h3>{{ 'newInspection.headings.brakes' | text }}</h3>
   <div *ngFor="let it of brakesItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="brakesItems[i].description" [placeholder]="'newInspection.placeholders.description' | translate" />
+    <input type="text" [(ngModel)]="brakesItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
     <label>
       <input type="checkbox" [(ngModel)]="brakesItems[i].passed" />
-      {{ 'newInspection.labels.pass' | translate }}
+      {{ 'newInspection.labels.pass' | text }}
     </label>
     <button
       class="btn-icon"
       type="button"
       (click)="removeItem(brakesItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | translate"
-      [attr.title]="'newInspection.actions.removeItem' | translate"
+      [attr.aria-label]="'newInspection.actions.removeItem' | text"
+      [attr.title]="'newInspection.actions.removeItem' | text"
     >
       <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
     </button>
   </div>
-  <button class="btn btn-primary" (click)="addItem(brakesItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | translate }}</button>
+  <button class="btn btn-primary" (click)="addItem(brakesItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
 </div>
 
 <div class="step-navigation">
   <button class="btn btn-secondary btn-back" (click)="previousStep()" [disabled]="currentStep === 0">
-    <span [innerHTML]="getSafeHtml(iconBack)"></span>{{ 'newInspection.actions.back' | translate }}
+    <span [innerHTML]="getSafeHtml(iconBack)"></span>{{ 'newInspection.actions.back' | text }}
   </button>
   <div class="spacer"></div>
   <button class="btn btn-secondary btn-next" (click)="nextStep()" [disabled]="currentStep === sections.length - 1">
-    <span [innerHTML]="getSafeHtml(iconNext)"></span>{{ 'newInspection.actions.next' | translate }}
+    <span [innerHTML]="getSafeHtml(iconNext)"></span>{{ 'newInspection.actions.next' | text }}
   </button>
   <button class="btn btn-success btn-save" (click)="submit()" [disabled]="saving">
-    <span [innerHTML]="getSafeHtml(iconSave)"></span>{{ 'newInspection.actions.save' | translate }}
+    <span [innerHTML]="getSafeHtml(iconSave)"></span>{{ 'newInspection.actions.save' | text }}
   </button>
   <button class="btn btn-ghost btn-cancel" (click)="close.emit()">
-    <span [innerHTML]="getSafeHtml(iconCancel)"></span>{{ 'newInspection.actions.cancel' | translate }}
+    <span [innerHTML]="getSafeHtml(iconCancel)"></span>{{ 'newInspection.actions.cancel' | text }}
   </button>
 </div>
 

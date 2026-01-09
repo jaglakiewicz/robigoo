@@ -31,10 +31,10 @@
   margin: 0 0 var(--space-md) 0;
   color: var(--text);
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   display: flex;
   align-items: center;
-  height: 40px;
+  height: 42px;
   border-bottom: 1px solid var(--panel-border);
   padding: 0;
 }
@@ -67,7 +67,7 @@
 
 .filter-item label {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   color: var(--text-light);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -93,7 +93,7 @@
 
 .clear-btn {
   /* Inherits unified button styles from globals.css */
-  /* HEIGHT: 48px, ROUNDING: 8px, PADDING: 0 24px, FONT: semibold 14px */
+  /* HEIGHT: 42px, ROUNDING: 6px, PADDING: 0 24px, FONT: regular */
   /* HOVER: background, shadow, transform translateY(-3px) */
   align-self: flex-start;
 }
@@ -102,7 +102,7 @@
   margin: 0 0 var(--space-md) 0;
   color: var(--text-light);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -136,7 +136,7 @@
 .data-table th {
   padding: var(--space-md);
   text-align: left;
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   font-size: var(--font-size-sm);
   text-transform: uppercase;
@@ -175,7 +175,7 @@
    ============================================================ */
 input[type="date"] {
   position: relative;
-  padding-right: 38px !important;
+  padding-right: 36px !important;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {

@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   Robigoo
   Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
@@ -20,7 +20,7 @@
         <button class="close-btn" (click)="toggle()" aria-label="Close menu">&times;</button>
       </div>
       <div class="user-menu sidebar-user-section" *ngIf="displayUserName" [class.open]="userMenuOpen" #userMenuSection>
-        <span class="user-section-label">{{ 'userMenu.loggedInAs' | translate }}</span>
+        <span class="user-section-label">{{ 'userMenu.loggedInAs' | text }}</span>
         <button type="button" class="user-info-display" [class.active]="userMenuOpen" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen" #userInfoButton>
           <span class="user-avatar" [ngClass]="{'has-image': userAvatar}" [style.backgroundImage]="userAvatar ? 'url(' + userAvatar + ')' : 'none'">
             <span *ngIf="!userAvatar" class="avatar-initials">{{ userInitials }}</span>
@@ -32,11 +32,11 @@
           <div class="user-menu-item user-menu-info">
             <span class="user-menu-name">{{ displayUserName }}</span>
             <span *ngIf="currentUserPermissionNumber" class="user-menu-meta">
-              {{ 'userMenu.permissionLabel' | translate }} {{ currentUserPermissionNumber }}
+              {{ 'userMenu.permissionLabel' | text }} {{ currentUserPermissionNumber }}
             </span>
           </div>
-          <div class="user-menu-item" (click)="editUser()">{{ 'userMenu.edit' | translate }}</div>
-          <div class="user-menu-item" (click)="onLogout()">{{ 'userMenu.logout' | translate }}</div>
+          <div class="user-menu-item" (click)="editUser()">{{ 'userMenu.edit' | text }}</div>
+          <div class="user-menu-item" (click)="onLogout()">{{ 'userMenu.logout' | text }}</div>
         </div>
       </div>
     </div>
@@ -46,22 +46,22 @@
           (click)="handleMenuClick(item.type, item.titleKey)"
           [class.disabled]="isMasterAdmin() && item.type !== 'settings'"
           [class.restricted]="isMasterAdmin() && item.type !== 'settings'"
-          [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator može koristiti samo Settings' : null">
+          [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator mo�e koristiti samo Settings' : null">
         <span class="menu-icon" [innerHTML]="getSafeHtml(iconMap[item.type])" aria-hidden="true"></span>
-        <span>{{ item.titleKey | translate }}</span>
-        <span class="hint">{{ item.hintKey | translate }}</span>
+        <span>{{ item.titleKey | text }}</span>
+        <span class="hint">{{ item.hintKey | text }}</span>
       </li>
     </ul>
 
     <div class="sidebar-footer" *ngIf="sidebarOpen">
       <div class="sidebar-footer-content">
         <div class="theme-section">
-          <span class="theme-label">{{ 'theme.toggle' | translate }}</span>
+          <span class="theme-label">{{ 'theme.toggle' | text }}</span>
           <label class="toggle-switch">
             <input type="checkbox" [checked]="darkMode" (change)="toggleTheme()">
             <span class="toggle-slider">
-              <span class="toggle-icon toggle-icon-light">☀️</span>
-              <span class="toggle-icon toggle-icon-dark">🌙</span>
+              <span class="toggle-icon toggle-icon-light">??</span>
+              <span class="toggle-icon toggle-icon-dark">??</span>
             </span>
           </label>
         </div>
@@ -75,7 +75,7 @@
         <div class="tabs" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="reorderTabs($event)">
           <div *ngFor="let t of tabs; let i = index" class="tab" cdkDrag cdkDragLockAxis="x" [class.active]="i === activeIndex" (click)="activateTab(i)">
             <span *ngIf="t.icon" class="tab-icon" [innerHTML]="getSafeHtml(t.icon)"></span>
-            <span>{{ t.titleKey | translate }}</span>
+            <span>{{ t.titleKey | text }}</span>
             <button class="tab-action pin" title="Pin/Unpin tab" *ngIf="i === activeIndex || t.pinned" (click)="togglePinTab(i, $event)" [class.pinned]="t.pinned" [innerHTML]="getSafeHtml(SVG_ICONS.pinIcon)"></button>
             <button class="tab-action close" title="Close tab" *ngIf="!t.pinned" (click)="closeTab(i); $event.stopPropagation()" [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></button>
           </div>

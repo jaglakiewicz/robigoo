@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { TranslationService } from '../i18n/translation.service';
+import { TextService } from './text.service';
 
 export interface LoginResponse {
   token: string;
@@ -46,7 +46,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<CurrentUser | null>(this.getCurrentUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient, private translation: TranslationService) {
+  constructor(private http: HttpClient, private textService: TextService) {
     this.registerSessionTakeoverListener();
   }
 
@@ -117,7 +117,7 @@ export class AuthService {
         }
 
         // Sesja została przejęta w innej zakładce – wyloguj się z komunikatem
-        const message = this.translation.translate('login.session.terminated');
+        const message = this.textService.get('login.session.terminated');
         try {
           sessionStorage.setItem('logoutMessage', message);
         } catch {

@@ -10,13 +10,11 @@
 
 /* Mobile-first responsive scaling */
 :root {
-  /* Canonical font sizes */
-  --font-size-xs: 10px;
+  /* Canonical font sizes - 4 sizes only */
   --font-size-sm: 12px;
   --font-size-base: 14px;
-  --font-size-lg: 16px;
-  --font-size-xl: 18px;
-  --font-size-xxl: 32px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
 
   /* Unified border radius - consistent across all components */
   --radius: 6px;
@@ -24,22 +22,20 @@
   --radius-md: var(--radius);
   --radius-lg: var(--radius);
 
-  /* Typographic spacing scale */
-  --space-xs: 4px;
-  --space-sm: 8px;
+  /* Typographic spacing scale - all multiples of 6 */
+  --space-xs: 6px;
+  --space-sm: 6px;
   --space-md: 12px;
-  --space-lg: 16px;
+  --space-lg: 18px;
   --space-xl: 24px;
-  --space-2xl: 32px;
+  --space-2xl: 36px;
 
   /* Touch target minimum size for mobile */
-  --touch-size: 36px;
+  --touch-size: 42px;
 
-  /* Typography */
+  /* Typography - regular and bold only */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
   /* Line heights */
@@ -281,8 +277,8 @@ a:focus-visible {
   color: white;
   font-size: var(--font-size-xl);
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-md);
   transition: all 0.15s ease;
   display: flex;
@@ -318,7 +314,7 @@ a:focus-visible {
 
 /* Scrollbar styling */
 .menu::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .menu::-webkit-scrollbar-track {
@@ -342,28 +338,28 @@ a:focus-visible {
 }
 
 .menu li {
-  padding: 8px 10px;
+  padding: 6px 12px;
   border-radius: var(--radius-md);
   cursor: pointer;
   margin-bottom: 0;
   display: grid;
-  grid-template-columns: 20px 1fr;
+  grid-template-columns: 18px 1fr;
   grid-template-rows: auto auto;
   align-items: start;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.15s ease;
   position: relative;
   white-space: normal;
   overflow: visible;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 8px;
-  margin-bottom: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
 }
 
 .menu li:last-child {
   border-bottom: none;
   margin-bottom: 0;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .menu-icon {
@@ -391,7 +387,7 @@ a:focus-visible {
 
 .menu li span:nth-child(2) {
   display: inline;
-  font-weight: 500;
+  font-weight: var(--font-weight-regular);
   font-size: var(--font-size-base);
   grid-column: 2;
   grid-row: 1;
@@ -444,10 +440,10 @@ a:focus-visible {
 
 .hamburger {
   position: fixed;
-  left: 8px;
-  top: 8px;
-  width: 40px;
-  height: 40px;
+  left: 6px;
+  top: 6px;
+  width: 42px;
+  height: 42px;
   background: var(--primary);
   color: white;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -495,7 +491,7 @@ a:focus-visible {
 
 .user-section-label {
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: rgba(255, 255, 255, 0.6);
@@ -526,7 +522,7 @@ a:focus-visible {
   font-size: var(--font-size-sm);
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
 }
 
 /* Toggle Switch */
@@ -547,7 +543,7 @@ a:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
+  width: 48px;
   height: 24px;
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 999px;
@@ -564,24 +560,24 @@ a:focus-visible {
 }
 
 .toggle-icon-light {
-  left: 4px;
+  left: 6px;
   opacity: 1;
 }
 
 .toggle-icon-dark {
-  right: 4px;
+  right: 6px;
   opacity: 0;
 }
 
 .toggle-slider::before {
   content: '';
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background-color: white;
-  top: 1px;
-  left: 1px;
+  top: 2px;
+  left: 2px;
   transition: left 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 2;
@@ -592,7 +588,7 @@ a:focus-visible {
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
-  left: 22px;
+  left: 26px;
 }
 
 .toggle-switch input:checked + .toggle-slider .toggle-icon-light {
@@ -623,12 +619,12 @@ a:focus-visible {
 }
 
 .container {
-  padding: 16px;
+  padding: 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
   position: relative;
-  gap: 8px;
+  gap: 6px;
   min-height: 0;
 }
 
@@ -693,13 +689,13 @@ a:focus-visible {
   background: rgba(255, 255, 255, 0.08);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 8px 14px;
+  padding: 6px 12px;
   width: 100%;
   max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   border-radius: var(--radius-md);
   transition: background 0.2s ease, border-color 0.2s ease;
 }
@@ -707,7 +703,7 @@ a:focus-visible {
 .sidebar-user-section .user-name-text {
   flex: 1;
   text-align: right;
-  margin: 0 10px 0 0;
+  margin: 0 12px 0 0;
   font-size: var(--font-size-lg);
 }
 
@@ -750,9 +746,9 @@ a:focus-visible {
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: var(--font-size-base);
-  font-weight: 500;
+  font-weight: var(--font-weight-regular);
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
@@ -779,7 +775,7 @@ a:focus-visible {
   flex-shrink: 1;
   display: none;
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
 }
 
 .user-chevron {
@@ -790,8 +786,8 @@ a:focus-visible {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   pointer-events: none;
 }
@@ -842,8 +838,8 @@ a:focus-visible {
 }
 
 .user-avatar {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius);
   background: var(--primary);
   color: white;
@@ -875,13 +871,13 @@ a:focus-visible {
 }
 
 .user-avatar.small {
-  width: 22px;
-  height: 22px;
-  font-size: var(--font-size-xs);
+  width: 24px;
+  height: 24px;
+  font-size: var(--font-size-sm);
 }
 
 .user-avatar.small .avatar-initials {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
 }
 
 .user-name {
@@ -898,18 +894,18 @@ a:focus-visible {
 }
 
 .user-menu-info {
-  padding: 16px 16px 12px 16px;
+  padding: 18px 18px 12px 18px;
   cursor: default;
 }
 .user-menu-name {
   display: block;
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--text);
 }
 .user-menu-meta {
   display: block;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--text-light);
   margin-top: 2px;
   letter-spacing: 0.2px;
@@ -926,7 +922,7 @@ a:focus-visible {
 }
 
 .user-menu-item {
-  padding: 10px 14px;
+  padding: 12px;
   cursor: pointer;
   font-size: var(--font-size-base);
   color: var(--text);
@@ -960,7 +956,7 @@ a:focus-visible {
   position: relative;
   border-bottom: 1px solid var(--panel-border);
   min-width: 0;
-  min-height: 32px;
+  min-height: 36px;
   flex: 1 1 100%;
   width: 100%;
   box-sizing: border-box;
@@ -984,7 +980,7 @@ a:focus-visible {
 
 .tab {
   background: var(--bg-alt);
-  padding: 3px 12px;
+  padding: 6px 12px;
   border: 1px solid var(--panel-border);
   border-bottom: none;
   border-radius: var(--radius-md) var(--radius-md) 0 0;
@@ -999,8 +995,8 @@ a:focus-visible {
   position: relative;
   overflow: hidden;
   font-size: var(--font-size-base);
-  margin-right: 2px;
-  height: 32px;
+  margin-right: 0;
+  height: 36px;
 }
 
 .tab-icon {
@@ -1036,7 +1032,7 @@ a:focus-visible {
 .tab.active {
   background: var(--panel);
   color: var(--text);
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   border-color: var(--panel-border);
 }
 
@@ -1046,7 +1042,7 @@ a:focus-visible {
   cursor: pointer;
   color: inherit;
   padding: 0;
-  margin-left: 4px;
+  margin-left: 6px;
   font-size: var(--font-size-xl);
   opacity: 0.6;
   transition: opacity 0.15s, color 0.15s;
@@ -1062,8 +1058,8 @@ a:focus-visible {
 }
 
 .tab .tab-action svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   display: block;
 }
 
@@ -1096,7 +1092,7 @@ a:focus-visible {
   cursor: pointer;
   color: inherit;
   padding: 0;
-  margin-left: 4px;
+  margin-left: 6px;
   font-size: var(--font-size-xl);
   opacity: 0.7;
   transition: opacity 0.15s;
@@ -1105,8 +1101,8 @@ a:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  min-height: 20px;
+  min-width: 18px;
+  min-height: 18px;
   border-radius: var(--radius-md);
 }
 
@@ -1119,7 +1115,7 @@ a:focus-visible {
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
-  padding: 16px;
+  padding: 18px;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -1131,7 +1127,7 @@ a:focus-visible {
 .main-area h3:not(.component-title) {
   color: var(--primary);
   font-size: var(--font-size-lg);
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   margin-top: 0;
   margin-bottom: 12px;
 }
@@ -1139,25 +1135,25 @@ a:focus-visible {
 /* Tab component titles */
 .component-title {
   font-size: var(--font-size-lg);
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   margin: 0;
   padding: 0;
   display: flex;
   align-items: center;
-  height: 32px;
+  height: 36px;
   border-bottom: 1px solid var(--panel-border);
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .component-subtitle {
-  margin: -4px 0 12px 0;
+  margin: -6px 0 12px 0;
   color: var(--text-light);
   font-size: var(--font-size-base);
 }
 
 .main-area::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .main-area::-webkit-scrollbar-track {
@@ -1180,7 +1176,7 @@ a:focus-visible {
 
 .form-group label {
   display: block;
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-sm);
   color: var(--text);
   font-size: var(--font-size-sm);
@@ -1255,7 +1251,7 @@ a:focus-visible {
 .data-table th {
   background: var(--bg-alt);
   color: var(--text);
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
 }
 
 .data-table tr:hover {
@@ -1268,7 +1264,7 @@ a:focus-visible {
   .sidebar.open { width: 240px; }
   /* Keep content slightly shifted but still visible on tablets */
   .app-shell.shifted { margin-left: 220px; }
-  .container h1 { font-size: var(--font-size-xxl); }
+  .container h1 { font-size: var(--font-size-xl); }
 
   /* Slightly smaller tabs on tablets */
   .tab {
@@ -1282,7 +1278,7 @@ a:focus-visible {
   .sidebar.open { width: 100%; }
   /* Do not push content completely poza ekran - menu jest nad treścią */
   .app-shell.shifted { margin-left: 0; }
-  .container { padding: 10px; }
+  .container { padding: 12px; }
   .container h1 { font-size: var(--font-size-xl); }
 
   /* Tabs: więcej miejsca poziomego, przewijanie dotykowe */
@@ -1297,7 +1293,7 @@ a:focus-visible {
   }
 
   .tab {
-    padding: 2px 8px;
+    padding: 6px;
     font-size: var(--font-size-sm);
     max-width: 180px;
   }
@@ -1309,7 +1305,7 @@ a:focus-visible {
   }
 
   .main-area {
-    padding: 10px;
+    padding: 12px;
     border-radius: var(--radius-md);
   }
 }
@@ -1317,13 +1313,13 @@ a:focus-visible {
 .empty-state {
   text-align: center;
   color: var(--text-light);
-  padding: 40px 0;
+  padding: 42px 0;
   margin: 0;
 }
 
 .inspections-loading {
   text-align: center;
-  padding: 20px;
+  padding: 18px;
   color: var(--text-light);
 }
 
@@ -1339,13 +1335,13 @@ a:focus-visible {
 
 .component-title {
   font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   margin: 0 0 var(--space-lg) 0;
   padding: 0;
   display: flex;
   align-items: center;
-  height: 40px;
+  height: 42px;
   border-bottom: 1px solid var(--panel-border);
 }
 
@@ -1372,7 +1368,7 @@ a:focus-visible {
   transition: all var(--transition-fast);
   /* slightly smaller text for tab/step labels */
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-regular);
   color: var(--text);
   display: flex;
   flex-direction: column;
@@ -1394,7 +1390,7 @@ a:focus-visible {
 .tab-btn.active,
 .step.active {
   background: var(--bg-alt);
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   color: var(--accent);
 }
 
@@ -1414,12 +1410,12 @@ a:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--panel-border);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   transition: all var(--transition-fast);
 }
@@ -1442,7 +1438,7 @@ a:focus-visible {
 
 .tab-pane h3 {
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--accent);
   margin: 0 0 var(--space-lg) 0;
   padding-bottom: var(--space-md);
@@ -1458,7 +1454,7 @@ a:focus-visible {
 
 .form-group label {
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   margin-bottom: var(--space-sm);
   cursor: pointer;
@@ -1573,8 +1569,8 @@ a:focus-visible {
 
 .btn-small {
   padding: var(--space-xs) var(--space-sm);
-  font-size: var(--font-size-xs);
-  min-height: 28px;
+  font-size: var(--font-size-sm);
+  min-height: 30px;
 }
 
 /* Animation */

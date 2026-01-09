@@ -1,4 +1,4 @@
-﻿<h3 class="component-title">{{ 'settings.title' | translate }}</h3>
+<h3 class="component-title">{{ 'settings.title' | text }}</h3>
 
 <!-- Step Indicator (Tabs) -->
 <div class="step-indicator">
@@ -18,7 +18,7 @@
       <h3>Ustawienia programu</h3>
       
       <div class="form-group">
-        <label>Domyślna drukarka</label>
+        <label>Domyslna drukarka</label>
         <select [(ngModel)]="programSettings.defaultPrinter">
           <option value="pdf">PDF</option>
           <option value="hp">HP LaserJet</option>
@@ -36,7 +36,7 @@
       </div>
 
       <div class="form-group">
-        <label>Ścieżka backupu</label>
+        <label>Sciezka backupu</label>
         <input type="text" [(ngModel)]="programSettings.backupPath" />
       </div>
 
@@ -45,7 +45,7 @@
 
     <!-- User Settings Tab -->
     <div *ngIf="activeTab === 1" class="tab-pane">
-      <h3>Ustawienia użytkownika</h3>
+      <h3>Ustawienia uzytkownika</h3>
       
       <!-- Avatar Section -->
       <div class="form-group avatar-section">
@@ -68,24 +68,24 @@
             style="display: none"
           />
           <button class="btn btn-secondary" (click)="avatarInput.click()">
-            Zmień avatar
+            Zmien avatar
           </button>
         </div>
         <div *ngIf="avatarError" class="error-message">{{ avatarError }}</div>
-        <div *ngIf="avatarSuccess" class="success-message">Avatar został pomyślnie przesłany!</div>
+        <div *ngIf="avatarSuccess" class="success-message">Avatar zostal pomyslnie przeslany!</div>
       </div>
 
       <!-- Personal Information -->
       <div class="form-grid">
         <div class="form-group">
-          <label>Imię *</label>
+          <label>Imie *</label>
           <input 
             type="text" 
             [(ngModel)]="userSettings.firstName"
             [disabled]="!isCurrentUserAdmin()"
             [class.disabled-input]="!isCurrentUserAdmin()"
           />
-          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole moze zmienic tylko administrator</span>
         </div>
 
         <div class="form-group">
@@ -96,7 +96,7 @@
             [disabled]="!isCurrentUserAdmin()"
             [class.disabled-input]="!isCurrentUserAdmin()"
           />
-          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole moze zmienic tylko administrator</span>
         </div>
 
         <div class="form-group">
@@ -110,59 +110,50 @@
         </div>
 
         <div class="form-group">
-          <label>Numer uprawnień</label>
+          <label>Numer uprawnien</label>
           <input 
             type="text" 
             [(ngModel)]="userSettings.permissionNumber" 
-            placeholder="Wpisz swój numer uprawnień"
+            placeholder="Wpisz sw�j numer uprawnien"
             [disabled]="!isCurrentUserAdmin()"
             [class.disabled-input]="!isCurrentUserAdmin()"
           />
-          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole moze zmienic tylko administrator</span>
         </div>
       </div>
 
       <!-- Password Change Section -->
       <button class="btn btn-secondary toggle-form-btn" [class.expanded]="showPasswordForm" (click)="togglePasswordForm()">
         <span [innerHTML]="getSafeHtml(SVG_ICONS.chevronUp)"></span>
-        {{ showPasswordForm ? 'Anuluj zmianę hasła' : 'Zmień hasło' }}
+        {{ showPasswordForm ? 'Anuluj zmiane hasla' : 'Zmien haslo' }}
       </button>
 
       <div *ngIf="showPasswordForm" class="password-change-form">
         <div class="form-group">
-          <label>Stare hasło *</label>
-          <input type="password" [(ngModel)]="passwordForm.oldPassword" placeholder="Wpisz stare hasło" />
+          <label>Stare haslo *</label>
+          <input type="password" [(ngModel)]="passwordForm.oldPassword" placeholder="Wpisz stare haslo" />
         </div>
 
         <div class="form-group">
-          <label>Nowe hasło *</label>
-          <input type="password" [(ngModel)]="passwordForm.newPassword" placeholder="Wpisz nowe hasło" />
+          <label>Nowe haslo *</label>
+          <input type="password" [(ngModel)]="passwordForm.newPassword" placeholder="Wpisz nowe haslo" />
         </div>
 
         <div class="form-group">
-          <label>Potwierdź nowe hasło *</label>
-          <input type="password" [(ngModel)]="passwordForm.confirmPassword" placeholder="Powtórz nowe hasło" />
+          <label>Potwierdz nowe haslo *</label>
+          <input type="password" [(ngModel)]="passwordForm.confirmPassword" placeholder="Powt�rz nowe haslo" />
         </div>
 
         <div *ngIf="changePasswordError" class="error-message">{{ changePasswordError }}</div>
-        <div *ngIf="changePasswordSuccess" class="success-message">Hasło zostało zmienione pomyślnie!</div>
+        <div *ngIf="changePasswordSuccess" class="success-message">Haslo zostalo zmienione pomyslnie!</div>
 
         <button class="btn btn-primary" (click)="changePassword()" [disabled]="changingPassword">
-          {{ changingPassword ? 'Zmiana...' : 'Zmień hasło' }}
+          {{ changingPassword ? 'Zmiana...' : 'Zmien haslo' }}
         </button>
       </div>
 
       <!-- Preferences -->
       <div class="form-grid">
-        <div class="form-group">
-          <label>Preferowany język</label>
-          <select [(ngModel)]="userSettings.language">
-            <option value="pl">Polski</option>
-            <option value="uk">Ukraiński</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-
         <div class="form-group">
           <label>Motyw</label>
           <select [(ngModel)]="userSettings.theme">
@@ -175,7 +166,7 @@
 
       <!-- Save Button -->
       <div *ngIf="userSettingsError" class="error-message">{{ userSettingsError }}</div>
-      <div *ngIf="userSettingsSuccess" class="success-message">Ustawienia zostały pomyślnie zapisane!</div>
+      <div *ngIf="userSettingsSuccess" class="success-message">Ustawienia zostaly pomyslnie zapisane!</div>
       <button class="btn btn-primary" (click)="saveUserSettings()" [disabled]="savingSettings">
         {{ savingSettings ? 'Zapisywanie...' : 'Zapisz ustawienia' }}
       </button>
@@ -183,11 +174,11 @@
 
     <!-- Admin Settings Tab -->
     <div *ngIf="activeTab === 2 && isCurrentUserAdmin()" class="tab-pane">
-      <h3>Zarządzanie użytkownikami</h3>
+      <h3>Zarzadzanie uzytkownikami</h3>
         
         <button class="btn btn-secondary toggle-form-btn" [class.expanded]="showCreateUserForm" (click)="toggleCreateUserForm()">
           <span [innerHTML]="getSafeHtml(SVG_ICONS.chevronUp)"></span>
-          {{ showCreateUserForm ? 'Anuluj tworzenie użytkownika' : 'Utwórz nowego użytkownika' }}
+          {{ showCreateUserForm ? 'Anuluj tworzenie uzytkownika' : 'Utw�rz nowego uzytkownika' }}
         </button>
 
         <!-- Create User Form -->
@@ -198,13 +189,13 @@
           </div>
 
           <div class="form-group">
-            <label>Hasło *</label>
-            <input type="password" [(ngModel)]="newUserForm.password" placeholder="Wpisz hasło" />
+            <label>Haslo *</label>
+            <input type="password" [(ngModel)]="newUserForm.password" placeholder="Wpisz haslo" />
           </div>
 
           <div class="form-group">
-            <label>Imię</label>
-            <input type="text" [(ngModel)]="newUserForm.firstName" placeholder="Wpisz imię" />
+            <label>Imie</label>
+            <input type="text" [(ngModel)]="newUserForm.firstName" placeholder="Wpisz imie" />
           </div>
 
           <div class="form-group">
@@ -223,8 +214,8 @@
           </div>
 
           <div class="form-group">
-            <label>Numer uprawnień</label>
-            <input type="text" [(ngModel)]="newUserForm.permissionNumber" placeholder="Wpisz numer uprawnień" />
+            <label>Numer uprawnien</label>
+            <input type="text" [(ngModel)]="newUserForm.permissionNumber" placeholder="Wpisz numer uprawnien" />
           </div>
 
           <div class="form-group">
@@ -233,25 +224,25 @@
               [(ngModel)]="newUserForm.role"
               [disabled]="!canSelectRoleWhenCreating()"
             >
-              <option value="user">Użytkownik</option>
+              <option value="user">Uzytkownik</option>
               <option value="admin">Administrator</option>
             </select>
-            <span *ngIf="!canSelectRoleWhenCreating()" class="role-hint">Zwykły administrator może tworzyć tylko zwykłych użytkowników</span>
+            <span *ngIf="!canSelectRoleWhenCreating()" class="role-hint">Zwykly administrator moze tworzyc tylko zwyklych uzytkownik�w</span>
           </div>
 
           <button class="btn btn-primary" (click)="createUser()" [disabled]="creatingUser">
-            {{ creatingUser ? 'Tworzenie...' : 'Utwórz użytkownika' }}
+            {{ creatingUser ? 'Tworzenie...' : 'Utw�rz uzytkownika' }}
           </button>
         </div>
 
         <!-- Users List -->
         <div class="users-list" *ngIf="users.length > 0">
-          <h5>Lista użytkowników ({{ users.length }})</h5>
+          <h5>Lista uzytkownik�w ({{ users.length }})</h5>
           <table class="users-table">
             <thead>
               <tr>
                 <th>Login</th>
-                <th>Imię i nazwisko</th>
+                <th>Imie i nazwisko</th>
                 <th>Email</th>
                 <th>Rola</th>
                 <th>Akcje</th>
@@ -269,7 +260,7 @@
                     [disabled]="!canChangeUserRole(user)"
                     class="role-select"
                   >
-                    <option value="user">Użytkownik</option>
+                    <option value="user">Uzytkownik</option>
                     <option value="admin">Administrator</option>
                   </select>
                 </td>
@@ -280,12 +271,12 @@
                       class="btn btn-small btn-danger" 
                       (click)="openDeleteConfirmDialog(user)"
                       [disabled]="deletingUserId === user.userId"
-                      title="Usuń użytkownika"
+                      title="Usun uzytkownika"
                     >
                       <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
-                      Usuń
+                      Usun
                     </button>
-                    <span *ngIf="!canDeleteUser(user)" class="btn-disabled-text">Brak uprawnień</span>
+                    <span *ngIf="!canDeleteUser(user)" class="btn-disabled-text">Brak uprawnien</span>
                   </div>
                 </td>
               </tr>
@@ -296,18 +287,18 @@
         <div class="password-confirm-dialog" *ngIf="showPasswordConfirmDialog">
           <div class="dialog-overlay" (click)="cancelPasswordConfirmDialog()"></div>
           <div class="dialog-content">
-            <h4>{{ confirmDialogAction === 'delete' ? 'Potwierdź usunięcie' : 'Potwierdź działanie' }}</h4>
+            <h4>{{ confirmDialogAction === 'delete' ? 'Potwierdz usuniecie' : 'Potwierdz dzialanie' }}</h4>
             <p *ngIf="confirmDialogAction === 'delete' && userToConfirm">
-              Na pewno chcesz usunąć użytkownika <strong>{{ userToConfirm.login }}</strong>?
+              Na pewno chcesz usunac uzytkownika <strong>{{ userToConfirm.login }}</strong>?
             </p>
-            <p class="dialog-info">Wpisz swoje hasło aby potwierdzić:</p>
+            <p class="dialog-info">Wpisz swoje haslo aby potwierdzic:</p>
             
             <div class="form-group">
-              <label>Hasło</label>
+              <label>Haslo</label>
               <input 
                 type="password" 
                 [(ngModel)]="confirmDialogPassword"
-                placeholder="Twoje hasło"
+                placeholder="Twoje haslo"
                 (keyup.enter)="confirmPasswordAction()"
               />
             </div>
@@ -321,7 +312,7 @@
                 [disabled]="confirmingAction"
               >
                 <span *ngIf="confirmDialogAction === 'delete'" [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
-                {{ confirmingAction ? 'Przetwarzanie...' : (confirmDialogAction === 'delete' ? 'Usuń' : 'Potwierdź') }}
+                {{ confirmingAction ? 'Przetwarzanie...' : (confirmDialogAction === 'delete' ? 'Usun' : 'Potwierdz') }}
               </button>
               <button class="btn btn-secondary" (click)="cancelPasswordConfirmDialog()" [disabled]="confirmingAction">
                 Anuluj

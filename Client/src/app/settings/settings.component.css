@@ -26,7 +26,7 @@
 
 .admin-section .component-title {
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold);
   color: var(--accent) !important;
   margin: 0 0 var(--space-lg) 0 !important;
   padding: 0 !important;
@@ -40,7 +40,7 @@
   margin-bottom: var(--space-lg);
   color: var(--text);
   font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
 }
 
 .toggle-form-btn {
@@ -94,7 +94,7 @@
 .create-user-form label {
   display: block;
   margin-bottom: var(--space-xs);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   font-size: var(--font-size-sm);
 }
@@ -153,7 +153,7 @@
   font-size: var(--font-size-sm);
   color: var(--text-light);
   font-style: italic;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .disabled-input:focus {
   border-color: var(--panel-border) !important;
@@ -177,7 +177,7 @@
   margin-bottom: var(--space-lg);
   color: var(--text);
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
 }
 
 .users-table {
@@ -198,7 +198,7 @@
 .users-table thead th {
   padding: var(--space-md);
   text-align: left;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   font-size: var(--font-size-sm);
   text-transform: uppercase;
@@ -274,7 +274,7 @@
 
   .users-table tbody td:before {
     content: attr(data-label);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     font-size: var(--font-size-sm);
     color: var(--text-light);
@@ -330,7 +330,7 @@
 .password-change-form label {
   display: block;
   margin-bottom: var(--space-xs);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   color: var(--text);
   font-size: var(--font-size-sm);
 }
@@ -399,8 +399,8 @@
 }
 
 .avatar-preview.empty svg {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   color: var(--text-light);
 }
 
@@ -457,7 +457,7 @@
 /* Buttons in settings inherit unified styles from globals.css */
 /* All .btn, .btn-primary, .btn-secondary use:
    - Height: 44px (mobile: 48px)
-  - Font: var(--font-family), --font-size-md, --font-weight-semibold
+  - Font: var(--font-family), --font-size-base, --font-weight-bold
    - Rounding: var(--radius-md)
    - Border: 1px solid rgba(0, 0, 0, 0.12)
    - Hover: transform: translateY(-2px), box-shadow

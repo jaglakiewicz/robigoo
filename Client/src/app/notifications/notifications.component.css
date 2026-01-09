@@ -34,7 +34,7 @@
   color: var(--text-lighter);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   white-space: nowrap;
 }
 
@@ -55,7 +55,7 @@
 .notification-actions button {
   padding: var(--space-xs) var(--space-sm);
   font-size: var(--font-size-sm);
-  min-height: 32px;
+  min-height: 30px;
 }
 
 /* Mobile responsive */

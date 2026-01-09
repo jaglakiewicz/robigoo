@@ -1,17 +1,17 @@
-ï»¿<!--
+<!--
   Robigoo
   Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<h3 class="component-title">{{ 'types.title' | translate }}</h3>
+<h3 class="component-title">{{ 'types.title' | text }}</h3>
 
 <div class="machines-container">
   <div class="machines-header">
     <div class="toolbar-group toolbar-left">
       <button class="btn btn-primary" (click)="onAddNew()" [disabled]="deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
-        <span class="btn-label">{{ 'types.machines.addButton' | translate }}</span>
+        <span class="btn-label">{{ 'types.machines.addButton' | text }}</span>
       </button>
       <span class="toolbar-separator" aria-hidden="true"></span>
       <button
@@ -19,7 +19,7 @@
         (click)="onEdit()"
         [disabled]="!currentMachine || isEditMode || deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
-        <span class="btn-label">{{ 'types.machines.actions.edit' | translate }}</span>
+        <span class="btn-label">{{ 'types.machines.actions.edit' | text }}</span>
       </button>
       <span class="toolbar-separator" aria-hidden="true"></span>
       <button
@@ -27,19 +27,19 @@
         (click)="onDelete()"
         [disabled]="!currentMachine || isNew || deleting || saving">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
-        <span class="btn-label">{{ 'types.machines.actions.delete' | translate }}</span>
+        <span class="btn-label">{{ 'types.machines.actions.delete' | text }}</span>
       </button>
     </div>
 
     <div class="toolbar-group toolbar-right" *ngIf="isEditMode">
       <button class="btn btn-primary" (click)="save()" [disabled]="saving || deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.save"></span>
-        <span class="btn-label">{{ 'types.machines.actions.save' | translate }}</span>
+        <span class="btn-label">{{ 'types.machines.actions.save' | text }}</span>
       </button>
       <span class="toolbar-separator" aria-hidden="true"></span>
       <button class="btn btn-primary" (click)="cancelEditing()" [disabled]="deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.cancel"></span>
-        <span class="btn-label">{{ 'types.machines.actions.cancel' | translate }}</span>
+        <span class="btn-label">{{ 'types.machines.actions.cancel' | text }}</span>
       </button>
     </div>
   </div>
@@ -53,7 +53,7 @@
         <input
           type="text"
           class="search-input"
-          [placeholder]="'types.machines.searchPlaceholder' | translate"
+          [placeholder]="'types.machines.searchPlaceholder' | text"
           [ngModel]="searchTerm"
           (ngModelChange)="onSearchChange($event)" />
 
@@ -78,21 +78,21 @@
         <input
           type="text"
           class="filter-input"
-          [placeholder]="'types.machines.filters.manufacturer' | translate"
+          [placeholder]="'types.machines.filters.manufacturer' | text"
           [ngModel]="filterManufacturer"
           (ngModelChange)="onFilterManufacturerChange($event)" />
 
         <input
           type="text"
           class="filter-input filter-input-year"
-          [placeholder]="'types.machines.filters.yearFrom' | translate"
+          [placeholder]="'types.machines.filters.yearFrom' | text"
           [ngModel]="filterYearFrom"
           (ngModelChange)="onFilterYearFromChange($event)" />
 
         <input
           type="text"
           class="filter-input filter-input-year"
-          [placeholder]="'types.machines.filters.yearTo' | translate"
+          [placeholder]="'types.machines.filters.yearTo' | text"
           [ngModel]="filterYearTo"
           (ngModelChange)="onFilterYearToChange($event)" />
       </div>
@@ -106,27 +106,27 @@
           <div class="card-main">
             <div class="card-badges-row">
               <span class="badge badge-type" *ngIf="m.type === '00'">
-                {{ 'types.machines.filters.typeField' | translate }}
+                {{ 'types.machines.filters.typeField' | text }}
               </span>
               <span class="badge badge-type" *ngIf="m.type === '01'">
-                {{ 'types.machines.filters.typeGarden' | translate }}
+                {{ 'types.machines.filters.typeGarden' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="m.kind === '00'">
-                {{ 'types.machines.filters.kindMounted' | translate }}
+                {{ 'types.machines.filters.kindMounted' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="m.kind === '01'">
-                {{ 'types.machines.filters.kindTrailed' | translate }}
+                {{ 'types.machines.filters.kindTrailed' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="m.kind === '02'">
-                {{ 'types.machines.filters.kindSelfPropelled' | translate }}
+                {{ 'types.machines.filters.kindSelfPropelled' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="m.kind === '03'">
-                {{ 'types.machines.filters.kindOther' | translate }}
+                {{ 'types.machines.filters.kindOther' | text }}
               </span>
             </div>
             <div class="card-title">{{ m.serialNumber }}</div>
             <div class="card-info-row">
-              {{ m.manufacturer }} <span class="separator" *ngIf="m.manufacturer && m.sprayerName">Â·</span> {{ m.sprayerName }}
+              {{ m.manufacturer }} <span class="separator" *ngIf="m.manufacturer && m.sprayerName">·</span> {{ m.sprayerName }}
             </div>
             <div class="card-info-row" *ngIf="m.productionYear">
               {{ m.productionYear }}
@@ -134,12 +134,12 @@
           </div>
         </div>
         <div *ngIf="machines.length === 0" class="empty-state">
-          {{ 'inspections.empty' | translate }}
+          {{ 'inspections.empty' | text }}
         </div>
       </div>
 
       <ng-template #loadingTpl>
-        <div class="loading-state">{{ 'inspections.loading' | translate }}</div>
+        <div class="loading-state">{{ 'inspections.loading' | text }}</div>
       </ng-template>
     </div>
 
@@ -147,10 +147,10 @@
     <div class="machines-detail-panel" *ngIf="formModel as form">
       <div class="detail-header">
         <div>
-          <div class="detail-title">{{ form.serialNumber || ('types.machines.fields.serialNumber' | translate) }}</div>
+          <div class="detail-title">{{ form.serialNumber || ('types.machines.fields.serialNumber' | text) }}</div>
           <div class="detail-sub" *ngIf="!isNew">
-             {{ form.sprayerName }} <span class="separator" *ngIf="form.sprayerName && form.manufacturer">Â·</span> 
-             {{ form.manufacturer }} <span class="separator" *ngIf="form.manufacturer && form.productionYear">Â·</span> 
+             {{ form.sprayerName }} <span class="separator" *ngIf="form.sprayerName && form.manufacturer">·</span> 
+             {{ form.manufacturer }} <span class="separator" *ngIf="form.manufacturer && form.productionYear">·</span> 
              {{ form.productionYear }}
           </div>
         </div>
@@ -172,7 +172,7 @@
           [class.completed]="s.id < currentStep"
           (click)="goToStep(s.id)">
           <span class="step-number">{{ i + 1 }}</span>
-          <span class="step-label">{{ getStepTitleKey(s) | translate }}</span>
+          <span class="step-label">{{ getStepTitleKey(s) | text }}</span>
         </div>
       </div>
 
@@ -182,7 +182,7 @@
           <!-- Row 1: Nr seryjny / Nazwa opryskiwacza -->
           <div class="form-row form-row-2">
             <div class="form-group">
-              <label>{{ 'types.machines.fields.serialNumber' | translate }}</label>
+              <label>{{ 'types.machines.fields.serialNumber' | text }}</label>
               <input
                 type="text"
                 [ngModel]="form.serialNumber"
@@ -191,7 +191,7 @@
             </div>
 
             <div class="form-group">
-              <label>{{ 'types.machines.fields.sprayerName' | translate }}</label>
+              <label>{{ 'types.machines.fields.sprayerName' | text }}</label>
               <input
                 type="text"
                 [ngModel]="form.sprayerName"
@@ -203,26 +203,26 @@
           <!-- Row 2: Typ / Rodzaj -->
           <div class="form-row form-row-2">
             <div class="form-group">
-              <label>{{ 'types.machines.fields.type' | translate }}</label>
+              <label>{{ 'types.machines.fields.type' | text }}</label>
               <select
                 [ngModel]="form.type"
                 (ngModelChange)="onTypeChange($event)"
                 [disabled]="!isEditMode">
-                <option value="00">{{ 'types.machines.filters.typeField' | translate }}</option>
-                <option value="01">{{ 'types.machines.filters.typeGarden' | translate }}</option>
+                <option value="00">{{ 'types.machines.filters.typeField' | text }}</option>
+                <option value="01">{{ 'types.machines.filters.typeGarden' | text }}</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label>{{ 'types.machines.fields.kind' | translate }}</label>
+              <label>{{ 'types.machines.fields.kind' | text }}</label>
               <select
                 [ngModel]="form.kind"
                 (ngModelChange)="form.kind = $event; onFormChange()"
                 [disabled]="!isEditMode">
-                <option value="00">{{ 'types.machines.filters.kindMounted' | translate }}</option>
-                <option value="01">{{ 'types.machines.filters.kindTrailed' | translate }}</option>
-                <option value="02">{{ 'types.machines.filters.kindSelfPropelled' | translate }}</option>
-                <option value="03">{{ 'types.machines.filters.kindOther' | translate }}</option>
+                <option value="00">{{ 'types.machines.filters.kindMounted' | text }}</option>
+                <option value="01">{{ 'types.machines.filters.kindTrailed' | text }}</option>
+                <option value="02">{{ 'types.machines.filters.kindSelfPropelled' | text }}</option>
+                <option value="03">{{ 'types.machines.filters.kindOther' | text }}</option>
               </select>
             </div>
           </div>
@@ -230,7 +230,7 @@
           <!-- Row 3: Producent / Rok produkcji / Data zakupu -->
           <div class="form-row form-row-3">
             <div class="form-group">
-              <label>{{ 'types.machines.fields.manufacturer' | translate }}</label>
+              <label>{{ 'types.machines.fields.manufacturer' | text }}</label>
               <input
                 type="text"
                 [ngModel]="form.manufacturer"
@@ -239,7 +239,7 @@
             </div>
 
             <div class="form-group">
-              <label>{{ 'types.machines.fields.productionYear' | translate }}</label>
+              <label>{{ 'types.machines.fields.productionYear' | text }}</label>
               <input
                 type="text"
                 maxlength="4"
@@ -249,7 +249,7 @@
             </div>
 
             <div class="form-group">
-              <label>{{ 'types.machines.fields.purchaseDate' | translate }}</label>
+              <label>{{ 'types.machines.fields.purchaseDate' | text }}</label>
               <input
                 type="date"
                 [ngModel]="form.purchaseDate"
@@ -262,7 +262,7 @@
         <!-- Step 1: Pump -->
         <div *ngIf="currentStep === 1" class="form-grid">
           <div class="form-group full-width">
-            <label>{{ 'types.machines.fields.pumpType' | translate }}</label>
+            <label>{{ 'types.machines.fields.pumpType' | text }}</label>
             <div class="inline-options">
               <label>
                 <input
@@ -271,7 +271,7 @@
                   [checked]="form.pumpPiston"
                   (change)="onPumpTypeChange('piston')"
                   [disabled]="!isEditMode" />
-                {{ 'types.machines.fields.pumpPiston' | translate }}
+                {{ 'types.machines.fields.pumpPiston' | text }}
               </label>
               <label>
                 <input
@@ -280,7 +280,7 @@
                   [checked]="form.pumpDiaphragm"
                   (change)="onPumpTypeChange('diaphragm')"
                   [disabled]="!isEditMode" />
-                {{ 'types.machines.fields.pumpDiaphragm' | translate }}
+                {{ 'types.machines.fields.pumpDiaphragm' | text }}
               </label>
               <label>
                 <input
@@ -289,13 +289,13 @@
                   [checked]="form.pumpOther"
                   (change)="onPumpTypeChange('other')"
                   [disabled]="!isEditMode" />
-                {{ 'types.machines.fields.pumpOther' | translate }}
+                {{ 'types.machines.fields.pumpOther' | text }}
               </label>
             </div>
           </div>
 
           <div class="form-group" *ngIf="form.pumpOther">
-            <label>{{ 'types.machines.fields.pumpOtherType' | translate }}</label>
+            <label>{{ 'types.machines.fields.pumpOtherType' | text }}</label>
             <input
               type="text"
               [ngModel]="form.pumpOtherType"
@@ -304,7 +304,7 @@
           </div>
 
           <div class="form-group">
-            <label>{{ 'types.machines.fields.pumpFlowRate' | translate }}</label>
+            <label>{{ 'types.machines.fields.pumpFlowRate' | text }}</label>
             <input
               type="number"
               step="0.1"
@@ -317,7 +317,7 @@
         <!-- Step 2: Tank -->
         <div *ngIf="currentStep === 2" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.tankCapacity' | translate }}</label>
+            <label>{{ 'types.machines.fields.tankCapacity' | text }}</label>
             <input
               type="number"
               step="1"
@@ -327,17 +327,17 @@
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasFlushing' | translate }}</label>
+            <label>{{ 'types.machines.fields.hasFlushing' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasFlushing" (ngModelChange)="form.hasFlushing = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasDiluter' | translate }}</label>
+            <label>{{ 'types.machines.fields.hasDiluter' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasDiluter" (ngModelChange)="form.hasDiluter = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasWashingDevice' | translate }}</label>
+            <label>{{ 'types.machines.fields.hasWashingDevice' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasWashingDevice" (ngModelChange)="form.hasWashingDevice = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
         </div>
@@ -345,12 +345,12 @@
         <!-- Step 3: Control devices -->
         <div *ngIf="currentStep === 3" class="form-grid">
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasManometer' | translate }}</label>
+            <label>{{ 'types.machines.fields.hasManometer' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasManometer" (ngModelChange)="form.hasManometer = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasComputer' | translate }}</label>
+            <label>{{ 'types.machines.fields.hasComputer' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasComputer" (ngModelChange)="form.hasComputer = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
         </div>
@@ -358,7 +358,7 @@
         <!-- Step 4: Boom -->
         <div *ngIf="currentStep === 4" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.boomWidth' | translate }}</label>
+            <label>{{ 'types.machines.fields.boomWidth' | text }}</label>
             <input
               type="number"
               step="0.1"
@@ -368,17 +368,17 @@
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.boomWet' | translate }}</label>
+            <label>{{ 'types.machines.fields.boomWet' | text }}</label>
             <input type="checkbox" [ngModel]="form.boomWet" (ngModelChange)="form.boomWet = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.boomDry' | translate }}</label>
+            <label>{{ 'types.machines.fields.boomDry' | text }}</label>
             <input type="checkbox" [ngModel]="form.boomDry" (ngModelChange)="form.boomDry = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.boomDampeningMechanism' | translate }}</label>
+            <label>{{ 'types.machines.fields.boomDampeningMechanism' | text }}</label>
             <input type="checkbox" [ngModel]="form.boomDampeningMechanism" (ngModelChange)="form.boomDampeningMechanism = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
         </div>
@@ -386,7 +386,7 @@
         <!-- Step 5: Sections -->
         <div *ngIf="currentStep === 5" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.sectionCount' | translate }}</label>
+            <label>{{ 'types.machines.fields.sectionCount' | text }}</label>
             <input
               type="number"
               step="1"
@@ -399,7 +399,7 @@
         <!-- Step 6: Field nozzles -->
         <div *ngIf="currentStep === 6" class="form-grid">
           <div class="form-group full-width">
-            <label>{{ 'types.machines.fields.nozzlesFieldFeatures' | translate }}</label>
+            <label>{{ 'types.machines.fields.nozzlesFieldFeatures' | text }}</label>
             <textarea
               rows="4"
               [ngModel]="form.nozzlesFieldFeatures"
@@ -411,7 +411,7 @@
         <!-- Step 7: Garden nozzles -->
         <div *ngIf="currentStep === 7" class="form-grid">
           <div class="form-group full-width">
-            <label>{{ 'types.machines.fields.nozzlesGardenFeatures' | translate }}</label>
+            <label>{{ 'types.machines.fields.nozzlesGardenFeatures' | text }}</label>
             <textarea
               rows="4"
               [ngModel]="form.nozzlesGardenFeatures"
@@ -423,7 +423,7 @@
         <!-- Step 8: Fan -->
         <div *ngIf="currentStep === 8" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.fanType' | translate }}</label>
+            <label>{{ 'types.machines.fields.fanType' | text }}</label>
             <input
               type="text"
               [ngModel]="form.fanType"
@@ -439,17 +439,17 @@
   <!-- Unsaved changes dialog -->
   <div class="unsaved-dialog-backdrop" *ngIf="unsavedDialogVisible">
     <div class="unsaved-dialog">
-      <h4>{{ 'types.machines.messages.unsavedTitle' | translate }}</h4>
-      <p>{{ 'types.machines.messages.unsavedText' | translate }}</p>
+      <h4>{{ 'types.machines.messages.unsavedTitle' | text }}</h4>
+      <p>{{ 'types.machines.messages.unsavedText' | text }}</p>
       <div class="dialog-actions">
         <button class="btn btn-success" (click)="onUnsavedConfirmSave()">
-          {{ 'types.machines.actions.yes' | translate }}
+          {{ 'types.machines.actions.yes' | text }}
         </button>
         <button class="btn btn-secondary" (click)="onUnsavedConfirmDiscard()">
-          {{ 'types.machines.actions.no' | translate }}
+          {{ 'types.machines.actions.no' | text }}
         </button>
         <button class="btn btn-ghost" (click)="onUnsavedConfirmCancel()">
-          {{ 'types.machines.actions.cancel' | translate }}
+          {{ 'types.machines.actions.cancel' | text }}
         </button>
       </div>
     </div>
