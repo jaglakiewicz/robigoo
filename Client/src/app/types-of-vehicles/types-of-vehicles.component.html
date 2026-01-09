@@ -154,6 +154,13 @@
              {{ form.productionYear }}
           </div>
         </div>
+        <button
+          *ngIf="!isNew && !isEditMode"
+          class="btn-icon header-btn"
+          (click)="openHistory()"
+          title="Historia zmian">
+          <div [innerHTML]="getSafeHtml(historyIcon)"></div>
+        </button>
       </div>
 
       <!-- Step indicator -->
@@ -447,5 +454,12 @@
       </div>
     </div>
   </div>
+
+  <app-history-dialog
+    *ngIf="showHistoryDialog"
+    entityName="Machine"
+    [entityId]="currentMachine?.serialNumber || ''"
+    (close)="showHistoryDialog = false">
+  </app-history-dialog>
 </div>
 

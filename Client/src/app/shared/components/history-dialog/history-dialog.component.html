@@ -1,0 +1,41 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Historia zmian</h2>
+      <button class="close-btn" (click)="onClose()">&times;</button>
+    </div>
+    
+    <div class="modal-body text-sm">
+      <div *ngIf="loading" class="loading">Ładowanie historii...</div>
+      
+      <div *ngIf="!loading && logs.length === 0" class="no-data">
+        Brak historii zmian.
+      </div>
+
+      <table *ngIf="!loading && logs.length > 0" class="history-table">
+        <thead>
+          <tr>
+            <th>Kiedy</th>
+            <th>Kto</th>
+            <th>Zmiany</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of logs">
+            <td class="col-when">{{ log.when | date:'medium' }}</td>
+            <td class="col-who">
+              <div class="user-cell">
+                <div class="user-avatar" *ngIf="!hasAvatar(log)" [innerHTML]="getSafeHtml(userIcon)"></div>
+                <img class="user-avatar-img" *ngIf="hasAvatar(log)" [src]="getAvatarSrc(log)" alt="Avatar">
+                <span>{{ getUserDisplayName(log) }}</span>
+              </div>
+            </td>
+            <td class="col-changes" [innerHTML]="formatChanges(log.changes)"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Footer removed as per request -->
+  </div>
+</div>

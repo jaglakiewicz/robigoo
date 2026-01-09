@@ -26,6 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddHttpContextAccessor();
 
 // Add authentication services
 builder.Services.AddScoped<IPasswordService, PasswordService>();
@@ -93,7 +94,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlite("Data Source=app.db"));
+    opt.UseSqlite("Data Source=app_v2.db"));
 
 var app = builder.Build();
 
@@ -1098,6 +1099,45 @@ app.MapPost("/api/inspections", async (AppDbContext db, HttpContext context, Ser
         inspection.Items.Select(it => new Server.Models.InspectionItemDto(it.Description, it.Passed)).ToList()
     );
     return Results.Created($"/api/inspections/{inspection.Id}", response);
+}).RequireAuthorization();
+
+// ==================== HISTORY ENDPOINTS ====================
+app.MapGet("/api/History/{entityName}/{entityId}", async (string entityName, string entityId, AppDbContext db, HttpContext context) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    // Join ChangeLogs with Users to get current user details
+    var logs = await db.ChangeLogs
+        .Where(l => l.EntityName == entityName && l.EntityId == entityId)
+        .GroupJoin(
+            db.Users,
+            log => log.Who,
+            user => user.Login,
+            (log, users) => new { log, users }
+        )
+        .SelectMany(
+            x => x.users.DefaultIfEmpty(),
+            (x, user) => new 
+            {
+                x.log.Id,
+                x.log.EntityName,
+                x.log.EntityId,
+                x.log.Changes,
+                x.log.When,
+                Who = x.log.Who,
+                // If user exists, take current data, otherwise null
+                UserFirstName = user != null ? user.FirstName : null,
+                UserLastName = user != null ? user.LastName : null, 
+                UserAvatarData = user != null ? user.AvatarData : null
+            }
+        )
+        .OrderByDescending(l => l.When)
+        .ToListAsync();
+
+    return Results.Ok(logs);
 }).RequireAuthorization();
 
 // Configure the HTTP request pipeline.

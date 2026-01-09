@@ -25,10 +25,11 @@ import { InspectionMarksComponent } from './inspection-marks/inspection-marks.co
 import { NotificationsComponent } from './notifications/notifications.component';
 import { ToastNotificationComponent } from './shared/toast-notification/toast-notification.component';
 import { GenericListComponent } from './shared/components/generic-list/generic-list.component';
+import { HistoryDialogComponent } from './shared/components/history-dialog/history-dialog.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TranslatePipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TranslatePipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

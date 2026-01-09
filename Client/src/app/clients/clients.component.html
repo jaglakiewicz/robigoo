@@ -14,6 +14,7 @@
       <th>{{ 'clients.columns.document' | translate }}</th>
       <th>{{ 'clients.columns.vehicle' | translate }}</th>
       <th>{{ 'clients.columns.status' | translate }}</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -30,7 +31,17 @@
           {{ client.statusKey | translate }}
         </span>
       </td>
+      <td>
+        <button (click)="openHistory(client)" style="cursor: pointer; padding: 4px 8px;">History</button>
+      </td>
     </tr>
   </tbody>
 </table>
+
+<app-history-dialog 
+  *ngIf="showHistoryDialog" 
+  entityName="Client" 
+  [entityId]="selectedHistoryId" 
+  (close)="showHistoryDialog = false">
+</app-history-dialog>
 

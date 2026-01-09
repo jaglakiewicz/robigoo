@@ -58,6 +58,9 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
   messageKey = '';
   messageError = false;
   loadingList = false;
+
+  showHistoryDialog = false;
+  historyIcon = SVG_ICONS.historyIcon;
   saving = false;
   deleting = false;
 
@@ -190,6 +193,12 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
     }
     this.isEditMode = true;
     this.setDirty(false);
+  }
+
+  openHistory(): void {
+    if (this.currentMachine && !this.isNew) {
+      this.showHistoryDialog = true;
+    }
   }
 
   private startNewMachine(): void {

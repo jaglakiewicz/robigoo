@@ -71,6 +71,7 @@
         <th *ngFor="let col of columns" [style.width]="col.width">
           {{ col.label }}
         </th>
+        <th *ngIf="enableHistory" style="width: 80px;">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -78,8 +79,18 @@
         <td *ngFor="let col of columns">
           {{ getColumnValue(item, col) }}
         </td>
+        <td *ngIf="enableHistory" (click)="$event.stopPropagation()">
+            <button (click)="openHistory(item, $event)" style="padding: 4px 8px; cursor: pointer;">History</button>
+        </td>
       </tr>
     </tbody>
   </table>
+
+  <app-history-dialog 
+    *ngIf="showHistoryDialog" 
+    [entityName]="entityName" 
+    [entityId]="selectedHistoryId" 
+    (close)="showHistoryDialog = false">
+  </app-history-dialog>
 </div>
 

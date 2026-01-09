@@ -22,6 +22,11 @@ export class GenericListComponent<T extends { id?: number | string }> implements
   @Input() title: string = '';
   @Input() emptyMessage: string = 'No data available';
   @Input() filterConfig?: { [key: string]: (item: T, value: any) => boolean };
+  @Input() entityName: string = '';
+  @Input() enableHistory: boolean = false;
+
+  showHistoryDialog = false;
+  selectedHistoryId: string = '';
 
   @Output() itemSelected = new EventEmitter<T>();
   @Output() dataLoaded = new EventEmitter<T[]>();
@@ -97,6 +102,15 @@ export class GenericListComponent<T extends { id?: number | string }> implements
       this.filterValues[key] = '';
     });
     this.applyFilters();
+  }
+
+  openHistory(item: T, event: Event) {
+    event.stopPropagation();
+    const anyItem = item as any;
+    if (anyItem.id) {
+      this.selectedHistoryId = anyItem.id.toString();
+      this.showHistoryDialog = true;
+    }
   }
 
   getColumnValue(item: T, column: ColumnConfig): string {
