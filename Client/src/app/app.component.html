@@ -41,12 +41,12 @@
       </div>
     </div>
 
-    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen">
+    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen" appScrollFade>
       <li *ngFor="let item of menuItems" 
           (click)="handleMenuClick(item.type, item.titleKey)"
           [class.disabled]="isMasterAdmin() && item.type !== 'settings'"
           [class.restricted]="isMasterAdmin() && item.type !== 'settings'"
-          [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator može koristiti samo Settings' : null">
+          [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator moï¿½e koristiti samo Settings' : null">
         <span class="menu-icon" [innerHTML]="getSafeHtml(iconMap[item.type])" aria-hidden="true"></span>
         <span>{{ item.titleKey | text }}</span>
         <span class="hint">{{ item.hintKey | text }}</span>
@@ -83,7 +83,7 @@
         <div class="app-toolbar"></div>
       </div>
 
-      <div class="main-area">
+      <div class="main-area" appScrollFade>
         <ng-container *ngIf="tabs.length; else noTabs">
           <ng-container [ngSwitch]="tabs[activeIndex]?.type">
             <app-new-inspection *ngSwitchCase="'new'" (close)="closeTab(activeIndex)"></app-new-inspection>

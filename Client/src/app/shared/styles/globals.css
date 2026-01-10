@@ -15,7 +15,7 @@ html, body, app-root {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: var(--font-family);
+  font-family: var(--font-family, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
   background: var(--bg);
   color: var(--text);
   transition: background var(--transition-base), color var(--transition-base);
@@ -26,6 +26,51 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* ============================================================
+   UNIFIED SCROLLBAR STYLES
+   ============================================================ */
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* On dark backgrounds (sidebar, primary elements) */
+.sidebar ::-webkit-scrollbar-thumb,
+[data-dark-scrollbar] ::-webkit-scrollbar-thumb {
+  background: var(--on-dark-border-strong);
+}
+
+.sidebar ::-webkit-scrollbar-thumb:hover,
+[data-dark-scrollbar] ::-webkit-scrollbar-thumb:hover {
+  background: var(--on-dark-subtle);
+}
+
+.sidebar,
+[data-dark-scrollbar] {
+  scrollbar-color: var(--on-dark-border-strong) transparent;
 }
 
 /* ============================================================
@@ -136,14 +181,13 @@ select {
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: var(--button-focus-shadow);
+  box-shadow: var(--focus-shadow);
 }
 
 input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
+  outline: none;
   border-color: var(--accent);
-  box-shadow: var(--button-focus-shadow);
+  box-shadow: var(--focus-shadow);
 }
 
 input:disabled, textarea:disabled, select:disabled {
@@ -167,29 +211,7 @@ label {
 
 /* ============================================================
    BUTTONS - UNIFIED DESIGN SYSTEM
-   ============================================================
-   
-  UNIFIED BUTTON SPECIFICATION FOR ALL LABELED BUTTONS:
-   
-  ✓ HEIGHT: var(--touch-size) - All labeled buttons match input height
-   ✓ FONT: var(--font-family), var(--font-size-base), var(--font-weight-regular)
-  ✓ ROUNDING: 6px - Beautiful border-radius for modern look
-   ✓ BORDER: 1px solid rgba(0, 0, 0, 0.12) - Subtle border
-   ✓ PADDING: 0 24px - Spacious horizontal padding
-   ✓ HOVER STATE: 
-     - Background: color-light variant
-     - Transform: translateY(-3px) - Lift effect
-     - Shadow: var(--shadow-lg) - Prominent shadow
-   ✓ SVG ICONS: 18x18px - Consistent icon sizing
-   ✓ GAP: 6px between icon and text
-   
-   ICON-ONLY BUTTONS (NOT affected):
-   - Tab buttons (.tab-btn, .tab-action)
-   - Hamburger menu, theme toggle, user menu
-   - Icon-only delete/action buttons in lists
-   
    ============================================================ */
-/* Base unified button styles - applied to ALL labeled action buttons */
 .btn,
 .btn-primary,
 .btn-secondary,
@@ -213,7 +235,7 @@ label {
   padding: 0 24px;
   
   /* UNIFIED BORDER & ROUNDING */
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   
   /* UNIFIED FLEXBOX & SPACING */
@@ -256,20 +278,18 @@ label {
 .btn-primary,
 .btn-login {
   background: var(--accent);
-  color: white;
-  border-color: rgba(0, 0, 0, 0.15);
+  color: var(--text-inverse);
+  border-color: var(--primary-btn-border);
 }
 
 .btn-primary:hover:not(:disabled),
 .btn-login:hover:not(:disabled) {
-  background: var(--accent-light);
-  border-color: rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3);
+  background: var(--primary-hover);
 }
 
 .btn-primary:active:not(:disabled),
 .btn-login:active:not(:disabled) {
-  box-shadow: var(--shadow-md);
+  background: var(--primary-hover);
 }
 
 /* ============================================================
@@ -283,14 +303,13 @@ label {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--panel-border);
-  color: var(--accent);
-  border-color: var(--accent);
-  box-shadow: inset 0 0 15px rgba(59, 142, 165, 0.15);
+  background: var(--bg);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .btn-secondary:active:not(:disabled) {
-  box-shadow: var(--shadow-md);
+  background: var(--bg-alt);
 }
 
 /* ============================================================
@@ -298,18 +317,16 @@ label {
    ============================================================ */
 .btn-success {
   background: var(--success);
-  color: white;
-  border-color: rgba(0, 0, 0, 0.15);
+  color: var(--text-inverse);
+  border-color: var(--success-btn-border);
 }
 
 .btn-success:hover:not(:disabled) {
   background: var(--success-dark);
-  border-color: rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.25);
 }
 
 .btn-success:active:not(:disabled) {
-  box-shadow: var(--shadow-md);
+  background: var(--success-dark);
 }
 
 /* ============================================================
@@ -317,18 +334,16 @@ label {
    ============================================================ */
 .btn-danger {
   background: var(--error);
-  color: white;
-  border-color: rgba(0, 0, 0, 0.15);
+  color: var(--text-inverse);
+  border-color: var(--error-btn-border);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #e53935;
-  border-color: rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.2);
+  background: var(--error-hover);
 }
 
 .btn-danger:active:not(:disabled) {
-  box-shadow: var(--shadow-md);
+  background: var(--error-hover);
 }
 
 /* ============================================================
@@ -342,14 +357,12 @@ label {
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: rgba(59, 142, 165, 0.08);
-  border-color: var(--accent-light);
-  color: var(--accent-light);
-  box-shadow: inset 0 0 12px rgba(59, 142, 165, 0.2);
+  background: var(--primary-surface);
+  color: var(--primary-hover);
 }
 
 .btn-ghost:active:not(:disabled) {
-  background: rgba(59, 142, 165, 0.12);
+  background: var(--primary-surface);
 }
 
 /* ============================================================
@@ -360,7 +373,7 @@ label {
   border-color: transparent;
   color: var(--accent);
   text-decoration: underline;
-  padding: 0 8px;
+  padding: 0 6px;
   height: auto;
   min-height: auto;
 }
@@ -389,7 +402,7 @@ button:disabled,
 }
 
 /* ============================================================
-   FOCUS STATE - UNIFIED
+   FOCUS STATE - UNIFIED (uses inset shadow, won't be clipped)
    ============================================================ */
 button:focus-visible,
 .btn:focus-visible,
@@ -399,9 +412,8 @@ button:focus-visible,
 .btn-danger:focus-visible,
 .btn-ghost:focus-visible,
 .btn-link:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: 2px;
-  border-color: var(--accent);
+  outline: none;
+  box-shadow: var(--focus-shadow);
 }
 
 /* ============================================================
@@ -721,10 +733,10 @@ table tbody tr:last-child td {
   color: var(--text);
 }
 
-.badge-primary { background: rgba(59, 142, 165, 0.15); color: var(--primary); }
-.badge-success { background: rgba(76, 175, 80, 0.15); color: var(--success); }
-.badge-error { background: rgba(244, 67, 54, 0.15); color: var(--error); }
-.badge-warning { background: rgba(255, 152, 0, 0.15); color: var(--warning); }
+.badge-primary { background: var(--primary-surface); color: var(--primary); }
+.badge-success { background: var(--success-surface); color: var(--success); }
+.badge-error { background: var(--error-surface); color: var(--error); }
+.badge-warning { background: var(--warning-surface); color: var(--warning); }
 
 /* Shadows */
 .shadow-sm { box-shadow: var(--shadow-sm); }
@@ -748,3 +760,346 @@ table tbody tr:last-child td {
   animation: spin 0.8s linear infinite;
 }
 
+/* ============================================================
+   UNIFIED HOVER EFFECTS
+   ============================================================
+   
+   DESIGN PRINCIPLE: Subtle, elegant, consistent
+   - No "lift" transforms (too flashy)
+   - Simple background/border darkening
+   - Smooth transitions
+   
+   ============================================================ */
+
+/* Interactive row - for table rows, list items */
+.interactive-row {
+  transition: background-color var(--transition-fast);
+}
+
+.interactive-row:hover {
+  background-color: var(--surface-alt);
+}
+
+/* Interactive card - for cards, panels that respond to hover */
+.interactive-card {
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.interactive-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Interactive card with selection (e.g., machine cards, client cards) */
+.selectable-card {
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.selectable-card:hover {
+  background-color: var(--surface-alt);
+  border-color: var(--primary-border);
+}
+
+.selectable-card.selected {
+  background-color: var(--primary-surface);
+  border-color: var(--primary);
+}
+
+/* Status pill - active state variant */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+  font-size: var(--font-size-sm);
+  color: var(--text);
+  font-weight: var(--font-weight-regular);
+  transition: all var(--transition-fast);
+}
+
+.status-pill.active {
+  background: var(--primary-surface);
+  color: var(--primary);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Message/Alert boxes - unified */
+.message {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius);
+  border-left: 6px solid var(--border-strong);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.message-success,
+.message.success {
+  background: var(--success-surface);
+  color: var(--success-text);
+  border-left-color: var(--success-btn-border);
+}
+
+.message-error,
+.message.error {
+  background: var(--error-surface);
+  color: var(--error-text);
+  border-left-color: var(--error-btn-border);
+}
+
+.message-warning,
+.message.warning {
+  background: var(--warning-surface);
+  color: var(--warning-text);
+  border-left-color: var(--warning-btn-border);
+}
+
+.message-info,
+.message.info {
+  background: var(--primary-surface);
+  color: var(--primary);
+  border-left-color: var(--primary-btn-border);
+}
+
+/* ============================================================
+   DATA TABLE - UNIFIED
+   ============================================================ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-base);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.data-table th {
+  background: var(--bg-alt);
+  color: var(--text);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+}
+
+.data-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.data-table tbody tr:hover {
+  background-color: var(--surface-alt);
+}
+
+/* ============================================================
+   ICON SIZING - UNIFIED
+   ============================================================ */
+.icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.icon-sm {
+  width: 12px;
+  height: 12px;
+}
+
+.icon-lg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ============================================================
+   FORM GROUP - UNIFIED
+   ============================================================ */
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-group label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-xs);
+  color: var(--text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Form grid layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+/* ============================================================
+   PANEL / CARD - UNIFIED
+   ============================================================ */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.panel-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+}
+
+.panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-light);
+}
+
+/* ============================================================
+   DIALOG / MODAL - UNIFIED
+   ============================================================ */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: var(--space-lg);
+  max-width: 480px;
+  width: calc(100% - var(--space-lg) * 2);
+  box-shadow: var(--shadow-lg);
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.dialog-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.dialog-content {
+  margin-bottom: var(--space-lg);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+/* ============================================================
+   SCROLLABLE CONTAINER WITH FADE EFFECT
+   ============================================================ */
+
+/* Base scrollable container with edge fade */
+.scroll-fade {
+  position: relative;
+}
+
+/* Vertical scroll fade - fades top and bottom edges */
+.scroll-fade-y {
+  --fade-size: 48px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--fade-size),
+    black calc(100% - var(--fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--fade-size),
+    black calc(100% - var(--fade-size)),
+    transparent 100%
+  );
+}
+
+/* Horizontal scroll fade - fades left and right edges */
+.scroll-fade-x {
+  --fade-size: 48px;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black var(--fade-size),
+    black calc(100% - var(--fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black var(--fade-size),
+    black calc(100% - var(--fade-size)),
+    transparent 100%
+  );
+}
+
+/* Dynamic fade - only fades where content is hidden */
+.scroll-fade-dynamic {
+  --fade-top: 0;
+  --fade-bottom: 0;
+  --fade-left: 0;
+  --fade-right: 0;
+  --fade-size: 48px;
+}
+
+/* Smaller fade for compact elements */
+.scroll-fade-sm {
+  --fade-size: 24px;
+}
+
+/* Auto-center clickable items in scrollable list */
+.scroll-snap-center {
+  scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+}
+
+.scroll-snap-center > * {
+  scroll-snap-align: center;
+}
+
+.scroll-snap-center-x {
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+}
+
+.scroll-snap-center-x > * {
+  scroll-snap-align: center;
+}

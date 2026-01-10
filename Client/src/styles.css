@@ -1,28 +1,22 @@
 ﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
-/* ============================================================
-   DESIGN SYSTEM - RESPONSIVE VARIABLES
-   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-/* Mobile-first responsive scaling */
 :root {
-  /* Canonical font sizes - 4 sizes only */
   --font-size-sm: 12px;
   --font-size-base: 14px;
   --font-size-lg: 18px;
   --font-size-xl: 24px;
+  --font-size-4xl: 48px;
 
-  /* Unified border radius - consistent across all components */
   --radius: 6px;
   --radius-sm: var(--radius);
   --radius-md: var(--radius);
   --radius-lg: var(--radius);
 
-  /* Typographic spacing scale - all multiples of 6 */
   --space-xs: 6px;
   --space-sm: 6px;
   --space-md: 12px;
@@ -30,201 +24,199 @@
   --space-xl: 24px;
   --space-2xl: 36px;
 
-  /* Touch target minimum size for mobile */
   --touch-size: 42px;
 
-  /* Typography - regular and bold only */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   --font-weight-regular: 400;
   --font-weight-bold: 700;
 
-  /* Line heights */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* Shadows */
   --shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
 
-  /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-base: 0.25s ease;
   --transition-slow: 0.35s ease;
 }
 
-/* ============================================================
-   THEME & COLOR VARIABLES
-   ============================================================ */
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
 :root[data-theme="light"] {
-  /* Primary Colors - Blue/Cyan */
-  --primary: #0b4f6c;
-  --primary-dark: #082f45;
-  --primary-light: #1a6f8f;
+  --primary: hsl(195, 80%, 30%);
+  --primary-hover: hsl(195, 80%, 25%);
+  --primary-surface: hsl(195, 60%, 95%);
+  --primary-border: hsl(195, 50%, 75%);
+  --primary-btn-border: hsl(195, 80%, 22%);
   
-  /* Accent Colors - Cyan */
-  --accent: #3b8ea5;
-  --accent-light: #5ba8ba;
+  --success: hsl(145, 65%, 32%);
+  --success-hover: hsl(145, 65%, 28%);
+  --success-surface: hsl(145, 50%, 94%);
+  --success-border: hsl(145, 40%, 70%);
+  --success-btn-border: hsl(145, 65%, 22%);
+  --success-text: hsl(145, 65%, 28%);
   
-  /* Success/Green Colors - Unified Green Palette */
-  --success: #22c55e;
-  --success-dark: #16a34a;
-  --success-light: #86efac;
+  --warning: hsl(35, 95%, 45%);
+  --warning-hover: hsl(35, 95%, 38%);
+  --warning-surface: hsl(35, 80%, 94%);
+  --warning-border: hsl(35, 60%, 70%);
+  --warning-btn-border: hsl(35, 95%, 32%);
+  --warning-text: hsl(35, 95%, 28%);
   
-  /* Warning Colors */
-  --warning: #ff9800;
-  --warning-light: #ffb74d;
+  --error: hsl(5, 75%, 45%);
+  --error-hover: hsl(5, 75%, 38%);
+  --error-surface: hsl(5, 70%, 95%);
+  --error-border: hsl(5, 50%, 75%);
+  --error-btn-border: hsl(5, 75%, 32%);
+  --error-text: hsl(5, 75%, 38%);
   
-  /* Error Colors */
-  --error: #f44336;
-  --error-light: #ef5350;
+  --bg: hsl(0, 0%, 96%);
+  --bg-alt: hsl(0, 0%, 94%);
+  --surface: hsl(0, 0%, 100%);
+  --surface-alt: hsl(0, 0%, 98%);
   
-  /* Info Colors */
-  --info: #2196f3;
-  --info-light: #64b5f6;
-
-  /* Backgrounds */
-  --bg: #f5f5f5;
-  --bg-alt: #efefef;
-  --bg-elevated: #ffffff;
-  --panel: #ffffff;
-  --panel-border: #d0d0d0;
-
-  /* Text */
-  --text: #1a1a1a;
-  --text-light: #555555;
-  --text-lighter: #888888;
-  --text-disabled: #cccccc;
+  --border: hsl(0, 0%, 80%);
+  --border-light: hsl(0, 0%, 88%);
+  --border-strong: hsl(0, 0%, 70%);
   
-  /* Accessibility - Color Contrast & Focus States */
-  --focus-outline: #0b4f6c;
-  --focus-outline-width: 2px;
-  --focus-outline-offset: 2px;
-  --link-color: #0b4f6c;
-  --link-color-hover: #1a6f8f;
-  --link-color-visited: #5a3c6c;
-  --button-focus-shadow: 0 0 0 3px rgba(11, 79, 108, 0.15);
+  --text: hsl(0, 0%, 15%);
+  --text-secondary: hsl(0, 0%, 35%);
+  --text-muted: hsl(0, 0%, 45%);
+  --text-disabled: hsl(0, 0%, 70%);
+  --text-inverse: hsl(0, 0%, 100%);
+  
+  --focus-ring: hsl(195, 80%, 50%);
+  --focus-ring-offset: hsl(0, 0%, 100%);
+  --overlay: hsla(0, 0%, 0%, 0.5);
+  
+  --on-dark: hsla(0, 0%, 100%, 1);
+  --on-dark-muted: hsla(0, 0%, 100%, 0.65);
+  --on-dark-subtle: hsla(0, 0%, 100%, 0.5);
+  --on-dark-border: hsla(0, 0%, 100%, 0.2);
+  --on-dark-border-strong: hsla(0, 0%, 100%, 0.35);
+  --on-dark-surface: hsla(0, 0%, 100%, 0.08);
+  --on-dark-surface-hover: hsla(0, 0%, 100%, 0.15);
+  --on-dark-shadow: hsla(0, 0%, 0%, 0.2);
+  
+  --shadow-color: 0, 0%, 0%;
+  --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.05);
+  --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.08);
+  --shadow-md: 0 4px 8px hsla(var(--shadow-color), 0.12);
+  --shadow-lg: 0 8px 16px hsla(var(--shadow-color), 0.16);
+  --shadow-xl: 0 16px 32px hsla(var(--shadow-color), 0.20);
+  
+  --panel: var(--surface);
+  --panel-border: var(--border);
+  --bg-elevated: var(--surface);
+  --text-light: var(--text-secondary);
+  --text-lighter: var(--text-muted);
+  --accent: var(--primary);
+  --accent-light: var(--primary-surface);
+  --info: var(--primary);
+  --info-light: var(--primary-surface);
+  --success-dark: var(--success-hover);
+  --success-light: var(--success-surface);
+  --warning-light: var(--warning-surface);
+  --error-light: var(--error-surface);
+  --primary-dark: var(--primary-hover);
+  --primary-light: var(--primary-surface);
+  
+  --focus-shadow: inset 0 0 0 1px var(--primary), inset 0 0 4px var(--primary-surface);
+  --link-color: var(--primary);
+  --link-color-hover: var(--primary-hover);
 }
 
 :root[data-theme="dark"] {
-  /* Primary Colors - Blue/Cyan */
-  --primary: #3a8fa8;
-  --primary-dark: #2a6f88;
-  --primary-light: #5aafca;
+  --primary: hsl(195, 70%, 55%);
+  --primary-hover: hsl(195, 70%, 65%);
+  --primary-surface: hsl(195, 40%, 18%);
+  --primary-border: hsl(195, 35%, 35%);
+  --primary-btn-border: hsl(195, 70%, 42%);
   
-  /* Accent Colors - Cyan */
-  --accent: #5eb8d4;
-  --accent-light: #8ed0e0;
+  --success: hsl(145, 60%, 50%);
+  --success-hover: hsl(145, 60%, 60%);
+  --success-surface: hsl(145, 30%, 16%);
+  --success-border: hsl(145, 25%, 32%);
+  --success-btn-border: hsl(145, 60%, 38%);
+  --success-text: hsl(145, 60%, 55%);
   
-  /* Success/Green Colors - Unified Green Palette */
-  --success: #22c55e;
-  --success-dark: #16a34a;
-  --success-light: #86efac;
+  --warning: hsl(35, 90%, 55%);
+  --warning-hover: hsl(35, 90%, 65%);
+  --warning-surface: hsl(35, 40%, 16%);
+  --warning-border: hsl(35, 30%, 32%);
+  --warning-btn-border: hsl(35, 90%, 42%);
+  --warning-text: hsl(35, 90%, 60%);
   
-  /* Warning Colors */
-  --warning: #ffa726;
-  --warning-light: #ffb74d;
+  --error: hsl(5, 70%, 60%);
+  --error-hover: hsl(5, 70%, 70%);
+  --error-surface: hsl(5, 35%, 16%);
+  --error-border: hsl(5, 30%, 32%);
+  --error-btn-border: hsl(5, 70%, 45%);
+  --error-text: hsl(5, 70%, 65%);
   
-  /* Error Colors */
-  --error: #ef5350;
-  --error-light: #e57373;
+  --bg: hsl(0, 0%, 10%);
+  --bg-alt: hsl(0, 0%, 8%);
+  --surface: hsl(0, 0%, 14%);
+  --surface-alt: hsl(0, 0%, 18%);
   
-  /* Info Colors */
-  --info: #42a5f5;
-  --info-light: #64b5f6;
-
-  /* Backgrounds */
-  --bg: #1e1e1e;
-  --bg-alt: #2a2a2a;
-  --bg-elevated: #323232;
-  --panel: #252525;
-  --panel-border: #3a3a3a;
-
-  /* Text */
-  --text: #e0e0e0;
-  --text-light: #b0b0b0;
-  --text-lighter: #a8a8a8;
-  --text-disabled: #707070;
-
-  /* Accessibility - Color Contrast & Focus States */
-  --focus-outline: #5eb8d4;
-  --focus-outline-width: 2px;
-  --focus-outline-offset: 2px;
-  --link-color: #8ed0e0;
-  --link-color-hover: #aedce8;
-  --link-color-visited: #b380c9;
-  --button-focus-shadow: 0 0 0 3px rgba(94, 184, 212, 0.25);
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+  --border: hsl(0, 0%, 26%);
+  --border-light: hsl(0, 0%, 20%);
+  --border-strong: hsl(0, 0%, 35%);
+  
+  --text: hsl(0, 0%, 90%);
+  --text-secondary: hsl(0, 0%, 70%);
+  --text-muted: hsl(0, 0%, 55%);
+  --text-disabled: hsl(0, 0%, 40%);
+  --text-inverse: hsl(0, 0%, 10%);
+  
+  --focus-ring: hsl(195, 70%, 55%);
+  --focus-ring-offset: hsl(0, 0%, 14%);
+  --overlay: hsla(0, 0%, 0%, 0.7);
+  
+  --on-dark: hsla(0, 0%, 100%, 1);
+  --on-dark-muted: hsla(0, 0%, 100%, 0.65);
+  --on-dark-subtle: hsla(0, 0%, 100%, 0.5);
+  --on-dark-border: hsla(0, 0%, 100%, 0.2);
+  --on-dark-border-strong: hsla(0, 0%, 100%, 0.35);
+  --on-dark-surface: hsla(0, 0%, 100%, 0.08);
+  --on-dark-surface-hover: hsla(0, 0%, 100%, 0.15);
+  --on-dark-shadow: hsla(0, 0%, 0%, 0.3);
+  
+  --shadow-color: 0, 0%, 0%;
+  --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.20);
+  --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.30);
+  --shadow-md: 0 4px 8px hsla(var(--shadow-color), 0.40);
+  --shadow-lg: 0 8px 16px hsla(var(--shadow-color), 0.50);
+  --shadow-xl: 0 16px 32px hsla(var(--shadow-color), 0.60);
+  
+  --panel: var(--surface);
+  --panel-border: var(--border);
+  --bg-elevated: var(--surface);
+  --text-light: var(--text-secondary);
+  --text-lighter: var(--text-muted);
+  --accent: var(--primary);
+  --accent-light: var(--primary-surface);
+  --info: var(--primary);
+  --info-light: var(--primary-surface);
+  --success-dark: var(--success-hover);
+  --success-light: var(--success-surface);
+  --warning-light: var(--warning-surface);
+  --error-light: var(--error-surface);
+  --primary-dark: var(--primary-hover);
+  --primary-light: var(--primary-surface);
+  
+  --focus-shadow: inset 0 0 0 1px var(--primary), inset 0 0 4px var(--primary-surface);
+  --link-color: var(--primary);
+  --link-color-hover: var(--primary-hover);
 }
 
-html, body, app-root {
-  height: 100%;
-  margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  transition: background 0.3s, color 0.3s;
-}
-
-/* ============================================================
-   GLOBAL FORM ELEMENTS STYLING
-   ============================================================ */
-/* Global styling for disabled inputs - ensures text remains readable */
-input:disabled,
-textarea:disabled,
-select:disabled {
-  background: var(--bg-alt) !important;
-  color: var(--text-light) !important;
-  cursor: not-allowed;
-  opacity: 1 !important;
-  border-color: var(--panel-border) !important;
-}
-
-input:disabled::placeholder,
-textarea:disabled::placeholder {
-  color: var(--text-lighter) !important;
-  opacity: 1;
-}
-
-/* Accessibility: Focus visible states for keyboard navigation */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible,
-a:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
-}
-
-/* Interactive elements with proper focus styling */
-a {
-  color: var(--link-color);
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--link-color-hover);
-}
-
-a:visited {
-  color: var(--link-color-visited);
-}
-
-a:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
-  border-radius: var(--radius-sm);
-}
-
-/* Left collapsible sidebar - thin bar when closed */
 .sidebar {
   position: fixed;
   left: 0;
@@ -232,13 +224,13 @@ a:focus-visible {
   height: 100%;
   width: 64px;
   background: var(--primary);
-  color: #fff;
+  color: var(--on-dark);
   padding: 0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 2px 0 8px var(--on-dark-shadow);
   transform: translateX(0);
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: visible;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid var(--on-dark-border);
   display: flex;
   flex-direction: column;
   z-index: 1000;
@@ -265,7 +257,7 @@ a:focus-visible {
 
 .sidebar-close-row {
   padding: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--on-dark-border);
   display: flex;
   justify-content: flex-end;
   flex-shrink: 0;
@@ -273,8 +265,8 @@ a:focus-visible {
 
 .close-btn {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  border: 1px solid var(--on-dark-border);
+  color: var(--on-dark);
   font-size: var(--font-size-xl);
   cursor: pointer;
   width: 42px;
@@ -292,9 +284,8 @@ a:focus-visible {
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: scale(1.2);
+  background: var(--on-dark-surface-hover);
+  border-color: var(--on-dark-border-strong);
 }
 
 .menu {
@@ -312,31 +303,6 @@ a:focus-visible {
   pointer-events: none;
 }
 
-/* Scrollbar styling */
-.menu::-webkit-scrollbar {
-  width: 6px;
-}
-
-.menu::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-sm);
-  transition: background 0.2s ease;
-}
-
-.menu::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-/* Firefox scrollbar */
-.menu {
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-  scrollbar-width: thin;
-}
-
 .menu li {
   padding: 6px 12px;
   border-radius: var(--radius-md);
@@ -351,7 +317,7 @@ a:focus-visible {
   position: relative;
   white-space: normal;
   overflow: visible;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--on-dark-border);
   padding-bottom: 6px;
   margin-bottom: 6px;
 }
@@ -365,9 +331,9 @@ a:focus-visible {
 .menu-icon {
   grid-row: 1 / 3;
   align-self: start;
-  margin-top: 2px;
+  margin-top: 0;
   flex-shrink: 0;
-  transition: all 0.3s ease;
+  transition: color var(--transition-fast);
   position: relative;
   z-index: 2;
   width: 18px;
@@ -397,19 +363,17 @@ a:focus-visible {
 .sidebar.open .menu li .hint { display: block; }
 
 .menu li:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(2px);
+  background: var(--on-dark-border);
 }
 
 .menu li:hover .menu-icon {
-  transform: scale(1.15);
-  animation: iconPulse 0.6s ease-out;
+  color: inherit;
 }
 
 .menu li.disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--on-dark-subtle);
 }
 
 .menu li.disabled:hover {
@@ -429,7 +393,7 @@ a:focus-visible {
 .menu li .hint {
   display: block;
   font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--on-dark-muted);
   margin-top: 0;
   padding-top: 0;
   border-top: none;
@@ -445,8 +409,8 @@ a:focus-visible {
   width: 42px;
   height: 42px;
   background: var(--primary);
-  color: white;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: var(--on-dark);
+  border: 1px solid var(--on-dark-shadow);
   cursor: pointer;
   font-size: var(--font-size-xl);
   display: flex;
@@ -459,7 +423,7 @@ a:focus-visible {
 
 .sidebar-footer {
   padding: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--on-dark-border);
   margin-bottom: 0;
   margin-top: auto;
   display: flex;
@@ -473,7 +437,7 @@ a:focus-visible {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--on-dark-border);
 }
 
 .sidebar-header .user-menu.sidebar-user-section {
@@ -494,7 +458,7 @@ a:focus-visible {
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--on-dark-muted);
   text-align: left;
   display: block;
   width: 100%;
@@ -507,7 +471,7 @@ a:focus-visible {
   flex-direction: column;
   gap: 12px;
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--on-dark-border);
 }
 
 .theme-section {
@@ -515,7 +479,7 @@ a:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--on-dark);
 }
 
 .theme-label {
@@ -545,11 +509,11 @@ a:focus-visible {
   justify-content: center;
   width: 48px;
   height: 24px;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--on-dark-border-strong);
   border-radius: 999px;
   position: relative;
   transition: background-color 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--on-dark-border-strong);
 }
 
 .toggle-icon {
@@ -575,20 +539,20 @@ a:focus-visible {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background-color: white;
-  top: 2px;
-  left: 2px;
+  background-color: var(--on-dark);
+  top: 3px;
+  left: 3px;
   transition: left 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px var(--on-dark-shadow);
   z-index: 2;
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: var(--on-dark-muted);
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
-  left: 26px;
+  left: 27px;
 }
 
 .toggle-switch input:checked + .toggle-slider .toggle-icon-light {
@@ -600,8 +564,8 @@ a:focus-visible {
 }
 
 .toggle-switch:hover .toggle-slider {
-  background-color: rgba(255, 255, 255, 0.4);
-  border-color: rgba(255, 255, 255, 0.5);
+  background-color: var(--on-dark-subtle);
+  border-color: var(--on-dark-subtle);
 }
 
 /* Main content area */
@@ -686,9 +650,9 @@ a:focus-visible {
 
 .sidebar-user-section .user-info-display,
 .sidebar-header .user-info-display {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--on-dark-surface);
+  color: var(--on-dark);
+  border: 1px solid var(--on-dark-border-strong);
   padding: 6px 12px;
   width: 100%;
   max-width: 100%;
@@ -709,13 +673,13 @@ a:focus-visible {
 
 .sidebar-user-section .user-info-display:hover,
 .sidebar-header .user-info-display:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: var(--on-dark-surface-hover);
+  border-color: var(--on-dark-subtle);
 }
 
 .sidebar-user-section .user-chevron,
 .sidebar-header .user-chevron {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--on-dark);
 }
 
 .user-info-display .user-chevron {
@@ -727,9 +691,9 @@ a:focus-visible {
 }
 
 .sidebar-header .user-info-display.active {
-  background: #ffffff;
+  background: var(--surface);
   color: var(--text);
-  border-color: rgba(0, 0, 0, 0.08);
+  border-color: var(--border-light);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -741,7 +705,7 @@ a:focus-visible {
 .user-info-display {
   background: var(--panel);
   color: var(--text);
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border);
   padding: 0 24px;
   border-radius: var(--radius-md);
   display: flex;
@@ -750,7 +714,7 @@ a:focus-visible {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-regular);
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-xs);
   transition: all 0.2s ease;
   white-space: nowrap;
   height: var(--touch-size);
@@ -764,8 +728,8 @@ a:focus-visible {
 
 .user-info-display:hover {
   background: var(--bg);
-  border-color: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
 }
 
 .user-name-text {
@@ -822,14 +786,14 @@ a:focus-visible {
   left: 0;
   right: 0;
   margin: 0;
-  background: #ffffff;
+  background: var(--surface);
   z-index: 1200;
   min-width: 220px;
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-light);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
   animation: slideDownDropdown 0.2s ease forwards;
   padding: 0;
   display: flex;
@@ -842,7 +806,7 @@ a:focus-visible {
   height: 30px;
   border-radius: var(--radius);
   background: var(--primary);
-  color: white;
+  color: var(--on-dark);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -865,7 +829,7 @@ a:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: var(--font-size-lg);
   text-transform: uppercase;
 }
@@ -907,7 +871,7 @@ a:focus-visible {
   display: block;
   font-size: var(--font-size-sm);
   color: var(--text-light);
-  margin-top: 2px;
+  margin-top: 0;
   letter-spacing: 0.2px;
 }
 @keyframes slideDownDropdown {
@@ -956,7 +920,7 @@ a:focus-visible {
   position: relative;
   border-bottom: 1px solid var(--panel-border);
   min-width: 0;
-  min-height: 36px;
+  min-height: 30px;
   flex: 1 1 100%;
   width: 100%;
   box-sizing: border-box;
@@ -969,13 +933,13 @@ a:focus-visible {
   top: 0;
   bottom: 0;
   width: 150px;
-  background: linear-gradient(to right, rgba(245, 245, 245, 0), rgba(245, 245, 245, 1) 100%);
+  background: linear-gradient(to right, transparent, var(--bg) 100%);
   pointer-events: none;
   z-index: 5;
 }
 
 [data-theme=dark] .tabs::before {
-  background: linear-gradient(to right, rgba(30, 30, 30, 0), rgba(30, 30, 30, 1) 100%);
+  background: linear-gradient(to right, transparent, var(--bg) 100%);
 }
 
 .tab {
@@ -996,7 +960,7 @@ a:focus-visible {
   overflow: hidden;
   font-size: var(--font-size-base);
   margin-right: 0;
-  height: 36px;
+  height: 30px;
 }
 
 .tab-icon {
@@ -1079,11 +1043,11 @@ a:focus-visible {
 
 .tab .tab-action:hover {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--surface-alt);
 }
 
 .tab.active .tab-action:hover {
-  background: rgba(0, 0, 0, 0.08);
+  background: var(--bg-alt);
 }
 
 .tab button.close {
@@ -1152,70 +1116,6 @@ a:focus-visible {
   font-size: var(--font-size-base);
 }
 
-.main-area::-webkit-scrollbar {
-  width: 6px;
-}
-
-.main-area::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.main-area::-webkit-scrollbar-thumb {
-  background: var(--panel-border);
-  border-radius: var(--radius-md);
-}
-
-.main-area::-webkit-scrollbar-thumb:hover {
-  background: var(--text-lighter);
-}
-
-/* Forms */
-.form-group {
-  margin-bottom: var(--space-md);
-}
-
-.form-group label {
-  display: block;
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-sm);
-  color: var(--text);
-  font-size: var(--font-size-sm);
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  box-sizing: border-box;
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  background: var(--bg);
-  color: var(--text);
-  font-family: inherit;
-  transition: all var(--transition-fast);
-}
-
-.form-group input:focus-visible,
-.form-group textarea:focus-visible,
-.form-group select:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
-  border-color: var(--accent);
-  background: var(--panel);
-  box-shadow: var(--button-focus-shadow);
-}
-
-/* Backwards compatibility for :focus (when :focus-visible not available) */
-.form-group input:focus:not(:focus-visible),
-.form-group textarea:focus:not(:focus-visible),
-.form-group select:focus:not(:focus-visible) {
-  outline: none;
-  border-color: var(--accent);
-  background: var(--panel);
-  box-shadow: var(--button-focus-shadow);
-}
-
 /* Items row */
 .item-row {
   display: flex;
@@ -1231,33 +1131,6 @@ a:focus-visible {
   flex: 1;
 }
 
-/* Buttons - Base Styles (delegated to globals.css for label buttons) */
-/* This file inherits unified button styles from globals.css */
-/* Icon-only, tab, and special buttons are defined here */
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--font-size-sm);
-}
-
-.data-table th,
-.data-table td {
-  padding: var(--space-sm);
-  text-align: left;
-  border-bottom: 1px solid var(--panel-border);
-}
-
-.data-table th {
-  background: var(--bg-alt);
-  color: var(--text);
-  font-weight: var(--font-weight-bold);
-}
-
-.data-table tr:hover {
-  background: rgba(0, 0, 0, 0.02);
-}
-
 /* Responsive */
 @media(max-width: 900px) {
   .sidebar { width: 60px; }
@@ -1268,7 +1141,7 @@ a:focus-visible {
 
   /* Slightly smaller tabs on tablets */
   .tab {
-    padding: 3px 8px;
+    padding: 6px 12px;
     font-size: var(--font-size-sm);
   }
 }
@@ -1423,7 +1296,7 @@ a:focus-visible {
 .tab-btn.active span,
 .step.active .step-number {
   background: var(--accent);
-  color: white;
+  color: var(--text-inverse);
 }
 
 /* Tab Content */
@@ -1443,65 +1316,6 @@ a:focus-visible {
   margin: 0 0 var(--space-lg) 0;
   padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--panel-border);
-}
-
-/* Form Groups */
-.form-group {
-  margin-bottom: var(--space-md);
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
-  margin-bottom: var(--space-sm);
-  cursor: pointer;
-}
-
-/* Form Inputs */
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="tel"],
-.form-group input[type="number"],
-.form-group input[type="password"],
-.form-group select,
-.form-group textarea {
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-base);
-  font-family: inherit;
-  background: var(--panel);
-  color: var(--text);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group input[type="tel"]:focus,
-.form-group input[type="number"]:focus,
-.form-group input[type="password"]:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(75, 159, 181, 0.1);
-}
-
-.form-group input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  margin-right: var(--space-sm);
-  accent-color: var(--accent);
-}
-
-.form-group input[type="checkbox"] + label {
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 0;
 }
 
 /* Avatar Section */
@@ -1551,20 +1365,17 @@ a:focus-visible {
 .btn-secondary:focus-visible,
 .btn-success:focus-visible,
 .btn-error:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
-  box-shadow: var(--button-focus-shadow);
+  outline: none;
+  box-shadow: var(--focus-shadow);
 }
 
 .btn-error {
   background: var(--error);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .btn-error:hover {
-  background: #e53935;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  background: var(--error-hover);
 }
 
 .btn-small {

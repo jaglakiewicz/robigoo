@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--overlay);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,20 +12,20 @@
 }
 
 .modal-container {
-  background-color: white;
-  border-radius: 6px;
+  background-color: var(--surface);
+  border-radius: var(--radius);
   width: 80%;
   max-width: 800px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   animation: fadeIn 0.2s ease-out;
 }
 
 .modal-header {
   padding: 18px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -33,15 +33,20 @@
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--font-size-lg);
+  color: var(--text);
 }
 
 .close-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: var(--font-size-xl);
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
+}
+
+.close-btn:hover {
+  color: var(--text);
 }
 
 .modal-body {
@@ -51,7 +56,7 @@
 
 .modal-footer {
   padding: 18px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
 }
@@ -59,10 +64,11 @@
 .history-table {
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid var(--border);
 }
 
 .text-sm {
-  font-size: 0.875rem; /* Equivalent to text-sm */
+  font-size: var(--font-size-sm);
 }
 
 .user-cell {
@@ -75,12 +81,12 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: #f0f0f0;
+  background-color: var(--bg-alt);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  color: #666;
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
@@ -100,17 +106,12 @@
 .history-table th, .history-table td {
   padding: 6px 12px;
   text-align: left;
-  border: 1px solid #d0d0d0; /* Changed from border-bottom to full border */
-}
-
-.history-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #d0d0d0; /* Ensure outer border matches */
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
 .history-table th {
-  background-color: #fafafa;
+  background-color: var(--surface-alt);
   font-weight: var(--font-weight-bold);
 }
 
@@ -126,24 +127,25 @@
 .loading, .no-data {
   text-align: center;
   padding: 24px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .btn {
   padding: 6px 18px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   cursor: pointer;
   border: none;
   font-weight: var(--font-weight-regular);
 }
 
 .btn-secondary {
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: var(--bg-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
 .btn-secondary:hover {
-  background-color: #d0d0d0;
+  background-color: var(--border);
 }
 
 @keyframes fadeIn {

@@ -62,8 +62,8 @@
 
 .toggle-form-btn.expanded {
   background: var(--accent);
-  color: #ffffff;
-  border: 1px solid var(--accent);
+  color: var(--text-inverse);
+  border: 1px solid var(--primary-btn-border);
   border-top-left-radius: var(--radius-md);
   border-top-right-radius: var(--radius-md);
   border-bottom-left-radius: 0;
@@ -76,8 +76,8 @@
   border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
   margin: 0;
   margin-top: -1px;
-  border: 1px solid var(--accent);
-  box-shadow: 0 2px 8px rgba(59, 142, 165, 0.15);
+  border: 1px solid var(--primary-btn-border);
+  box-shadow: var(--shadow-sm);
   animation: slideDown var(--transition-base) ease-out;
 }
 
@@ -118,14 +118,14 @@
 .create-user-form select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(59, 142, 165, 0.1);
+  box-shadow: var(--focus-shadow);
   background: var(--panel);
 }
 
 .error-message {
-  background: rgba(244, 67, 54, 0.1);
-  border: 1px solid var(--error);
-  color: var(--error);
+  background: var(--error-surface);
+  border: 1px solid var(--error-btn-border);
+  color: var(--error-text);
   padding: var(--space-md);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-md);
@@ -133,9 +133,9 @@
 }
 
 .success-message {
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid var(--success);
-  color: var(--success);
+  background: var(--success-surface);
+  border: 1px solid var(--success-btn-border);
+  color: var(--success-text);
   padding: var(--space-md);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-md);
@@ -312,8 +312,8 @@
   border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
   margin: 0;
   margin-top: -1px;
-  border: 1px solid var(--accent);
-  box-shadow: 0 2px 8px rgba(59, 142, 165, 0.15);
+  border: 1px solid var(--primary-btn-border);
+  box-shadow: var(--shadow-sm);
   animation: slideDown var(--transition-base) ease-out;
 }
 
@@ -352,7 +352,7 @@
 .password-change-form input:focus {
   outline: none;
   border-color: var(--warning);
-  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+  box-shadow: 0 0 0 3px var(--warning-surface);
   background: var(--panel);
 }
 
@@ -375,8 +375,8 @@
 }
 
 .avatar-preview {
-  width: 80px;
-  height: 80px;
+  width: 78px;
+  height: 78px;
   border-radius: var(--radius-md);
   background: var(--bg-alt);
   display: flex;
@@ -417,7 +417,7 @@
 .role-select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(59, 142, 165, 0.1);
+  box-shadow: var(--focus-shadow);
 }
 
 .role-select:disabled {

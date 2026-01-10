@@ -41,30 +41,30 @@
 
 /* Success Toast */
 .toast-success {
-  background: rgba(34, 197, 94, 0.95);
-  color: #ffffff;
-  border-left: 6px solid var(--success);
+  background: var(--success);
+  color: var(--text-inverse);
+  border-left: 6px solid var(--success-hover);
 }
 
 /* Error Toast */
 .toast-error {
-  background: rgba(244, 67, 54, 0.95);
-  color: #ffffff;
-  border-left: 6px solid var(--error);
+  background: var(--error);
+  color: var(--text-inverse);
+  border-left: 6px solid var(--error-hover);
 }
 
 /* Warning Toast */
 .toast-warning {
-  background: rgba(255, 152, 0, 0.95);
-  color: #ffffff;
-  border-left: 6px solid var(--warning);
+  background: var(--warning);
+  color: var(--text-inverse);
+  border-left: 6px solid var(--warning-hover);
 }
 
 /* Info Toast */
 .toast-info {
-  background: rgba(33, 150, 243, 0.95);
-  color: #ffffff;
-  border-left: 6px solid var(--info);
+  background: var(--primary);
+  color: var(--text-inverse);
+  border-left: 6px solid var(--primary-hover);
 }
 
 .toast-icon {
@@ -104,8 +104,8 @@
 }
 
 .toast-close:focus-visible {
-  outline: var(--focus-outline-width) solid var(--focus-outline);
-  outline-offset: var(--focus-outline-offset);
+  outline: none;
+  box-shadow: var(--focus-shadow);
   border-radius: var(--radius-md);
 }
 

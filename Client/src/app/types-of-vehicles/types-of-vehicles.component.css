@@ -45,7 +45,7 @@
 .toolbar-group {
   display: inline-flex;
   align-items: stretch;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .toolbar-group.toolbar-left {
@@ -81,13 +81,7 @@
   text-align: left;
 }
 
-.toolbar-separator {
-  width: 0;
-  border-left: 1px solid var(--panel-border);
-  align-self: stretch;
-  min-height: 30px;
-  display: inline-flex;
-}
+
 
 .machines-layout {
   display: grid;
@@ -171,8 +165,8 @@
 
 .toggle-form-btn.expanded {
   background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
+  color: var(--text-inverse);
+  border-color: var(--primary-btn-border);
 }
 
 .filters-advanced {
@@ -207,8 +201,8 @@
 }
 
 .machine-card.active {
-  background: rgba(76, 175, 80, 0.08);
-  border-color: var(--success);
+  background: var(--success-surface);
+  border-color: var(--success-btn-border);
 }
 
 .card-main {
@@ -259,14 +253,14 @@
 }
 
 .machine-card .badge-type {
-  border-color: rgba(59, 142, 165, 0.45);
-  background: rgba(59, 142, 165, 0.06);
+  border-color: var(--primary-border);
+  background: var(--primary-surface);
   color: var(--accent);
 }
 
 .machine-card .badge-kind {
-  border-color: rgba(34, 197, 94, 0.45);
-  background: rgba(34, 197, 94, 0.06);
+  border-color: var(--success-border);
+  background: var(--success-surface);
   color: var(--success-dark);
 }
 
@@ -294,20 +288,7 @@
   color: var(--text-light);
 }
 
-.message {
-  margin-bottom: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-sm);
-  background: #c8e6c9;
-  color: #2e7d32;
-  border-left: 6px solid #4caf50;
-}
-
-.message.error {
-  background: #ffcdd2;
-  color: #c62828;
-  border-left-color: #f44336;
-}
+/* message classes are now defined in globals.css */
 
 .form-grid {
   display: grid;
@@ -377,7 +358,7 @@
 .unsaved-dialog-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -391,7 +372,7 @@
   padding: var(--space-lg);
   max-width: 420px;
   width: 100%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-lg);
 }
 
 .unsaved-dialog h4 {
@@ -426,34 +407,13 @@
   overflow-x: auto;
   overflow-y: hidden;
   
-  /* Scrollbar aesthetics */
-  scrollbar-width: thin;
-  scrollbar-color: var(--text-disabled) transparent;
-  
   /* Ensure content is not obscured */
-  padding-bottom: 2px;
-}
-
-/* Webkit scrollbar styling */
-.step-indicator::-webkit-scrollbar {
-  height: 6px;
-}
-
-.step-indicator::-webkit-scrollbar-track {
-  background: transparent;
-  margin: 0 var(--radius-md);
-}
-
-.step-indicator::-webkit-scrollbar-thumb {
-  background-color: var(--text-disabled);
-  border-radius: 6px;
-  border: 2px solid transparent;
-  background-clip: content-box;
+  padding-bottom: 6px;
 }
 
 .step {
   /* Prevent shrinking too small to force scroll */
-  min-width: 140px;
+  min-width: 138px;
   flex: 1 0 auto;
   
   /* Top alignment to keep numbers aligned */

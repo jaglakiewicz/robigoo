@@ -86,9 +86,9 @@
 
 .filter-input:focus {
   outline: none;
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 0 3px rgba(59, 142, 165, 0.1) !important;
-  background: var(--panel) !important;
+  border-color: var(--primary) !important;
+  box-shadow: var(--focus-shadow) !important;
+  background: var(--surface) !important;
 }
 
 .clear-btn {
@@ -163,7 +163,7 @@
 }
 
 .data-row:active {
-  background-color: rgba(59, 142, 165, 0.1);
+  background-color: var(--primary-surface);
 }
 
 .data-table tbody tr:last-child td {

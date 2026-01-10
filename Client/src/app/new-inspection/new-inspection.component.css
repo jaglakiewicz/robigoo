@@ -143,7 +143,7 @@
 }
 
 .step.completed {
-  background: rgba(76, 175, 80, 0.08);
+  background: var(--success-surface);
   color: var(--success);
 }
 
@@ -293,47 +293,7 @@
   flex-shrink: 0;
 }
 
-/* ============================================================
-   MESSAGES
-   ============================================================ */
-.message {
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-md);
-  border-left: 6px solid;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-regular);
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.message.success {
-  background: rgba(76, 175, 80, 0.1);
-  color: var(--success);
-  border-left-color: var(--success);
-}
-
-.message.error {
-  background: rgba(244, 67, 54, 0.1);
-  color: var(--error);
-  border-left-color: var(--error);
-}
-
-.message.info {
-  background: rgba(33, 150, 243, 0.1);
-  color: var(--info);
-  border-left-color: var(--info);
-}
+/* message classes are now defined in globals.css */
 
 /* ============================================================
    DATE INPUT STYLING

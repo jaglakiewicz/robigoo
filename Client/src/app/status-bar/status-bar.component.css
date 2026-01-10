@@ -12,17 +12,16 @@
   right: 0;
   height: auto;
   min-height: 30px;
-  background: rgba(11, 79, 108, 0.95);
+  background: var(--primary);
   display: flex;
   align-items: center;
   padding: var(--space-xs) var(--space-lg);
   gap: var(--space-lg);
   font-size: var(--font-size-sm);
-  color: white;
+  color: var(--text-inverse);
   z-index: 1002;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--primary-hover);
   flex-wrap: wrap;
-  backdrop-filter: blur(10px);
 }
 
 /* Mobile responsive */

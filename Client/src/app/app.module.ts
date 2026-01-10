@@ -27,9 +27,11 @@ import { ToastNotificationComponent } from './shared/toast-notification/toast-no
 import { GenericListComponent } from './shared/components/generic-list/generic-list.component';
 import { HistoryDialogComponent } from './shared/components/history-dialog/history-dialog.component';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { ScrollFadeDirective } from './shared/directives/scroll-fade.directive';
+import { ScrollCenterDirective } from './shared/directives/scroll-center.directive';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, ScrollFadeDirective, ScrollCenterDirective],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
