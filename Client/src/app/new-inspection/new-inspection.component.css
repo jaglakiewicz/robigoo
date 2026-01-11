@@ -7,6 +7,14 @@
 
 @import '../shared/styles/globals.css';
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* ============================================================
    ITEM ROWS - RESPONSIVE
    ============================================================ */
@@ -218,11 +226,14 @@
 }
 
 /* ============================================================
-   STEP CONTENT - RESPONSIVE
+   STEP CONTENT - RESPONSIVE (SPA - scrollable content area)
    ============================================================ */
 .step-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: var(--space-lg) 0;
-  min-height: 300px;
   animation: fadeIn 0.3s ease-in-out;
 }
 

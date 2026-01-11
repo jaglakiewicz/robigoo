@@ -715,12 +715,14 @@
   </div>
 
   <!-- Session conflict dialog -->
-  <div *ngIf="sessionConflictVisible" class="session-dialog-backdrop" aria-modal="true" role="dialog">
-    <div class="session-dialog">
-      <h2 class="session-dialog__title">{{ 'login.submit' | text }}</h2>
-      <p class="session-dialog__message">{{ 'login.sessionConflict.message' | text }}</p>
-      <p class="session-dialog__message">{{ 'login.sessionConflict.confirm' | text }}</p>
-      <div class="session-dialog__actions">
+  <div *ngIf="sessionConflictVisible" class="dialog-backdrop" aria-modal="true" role="dialog">
+    <div class="dialog">
+      <h2 class="dialog__title">{{ 'login.submit' | text }}</h2>
+      <div class="dialog__body">
+        <p>{{ 'login.sessionConflict.message' | text }}</p>
+        <p>{{ 'login.sessionConflict.confirm' | text }}</p>
+      </div>
+      <div class="dialog__actions">
         <button type="button" class="btn btn-secondary" (click)="cancelSessionTakeover()">
           {{ 'login.sessionConflict.buttons.cancel' | text }}
         </button>

@@ -315,6 +315,7 @@
                 {{ confirmingAction ? 'Przetwarzanie...' : (confirmDialogAction === 'delete' ? 'Usun' : 'Potwierdz') }}
               </button>
               <button class="btn btn-secondary" (click)="cancelPasswordConfirmDialog()" [disabled]="confirmingAction">
+                <span *ngIf="SVG_ICONS.cancel" [innerHTML]="getSafeHtml(SVG_ICONS.cancel)" style="color: inherit;"></span>
                 Anuluj
               </button>
             </div>

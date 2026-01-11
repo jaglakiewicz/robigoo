@@ -1,4 +1,14 @@
-﻿/*
+﻿/* Separator pionowy do info o maszynie (card-info-row, detail-sub) */
+.vertical-separator {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background: var(--border, #ccc);
+  margin: 0 8px;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
  * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
@@ -13,6 +23,7 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .machines-container {
@@ -32,13 +43,12 @@
   align-items: center;
   justify-content: flex-start;
   gap: var(--space-md);
-  padding-top: var(--space-sm);
+  margin-top: var(--space-md);
   padding-bottom: var(--space-sm);
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--panel-border);
   border-radius: 0;
-  margin: 0 0 var(--space-sm) 0;
+  margin-bottom: var(--space-sm);
   flex-wrap: wrap;
 }
 
@@ -81,6 +91,17 @@
   text-align: left;
 }
 
+/* Icon-only square button */
+.btn-icon-only {
+  width: var(--touch-size);
+  height: var(--touch-size);
+  padding: 0;
+}
+
+.btn-icon-only svg {
+  width: 18px;
+  height: 18px;
+}
 
 
 .machines-layout {
@@ -201,8 +222,8 @@
 }
 
 .machine-card.active {
-  background: var(--success-surface);
-  border-color: var(--success-btn-border);
+  background: var(--primary-surface);
+  border-color: var(--primary-btn-border);
 }
 
 .card-main {
@@ -239,8 +260,12 @@
 }
 
 .separator {
-  color: var(--text-disabled);
-  font-weight: bold;
+  display: inline-block;
+  width: 1px;
+  height: 12px;
+  background: var(--border);
+  margin: 0 var(--space-sm);
+  vertical-align: middle;
 }
 
 .machine-card .badge {
@@ -353,40 +378,6 @@
 
 .spacer {
   flex: 1;
-}
-
-.unsaved-dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.unsaved-dialog {
-  background: var(--panel);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--panel-border);
-  padding: var(--space-lg);
-  max-width: 420px;
-  width: 100%;
-  box-shadow: var(--shadow-lg);
-}
-
-.unsaved-dialog h4 {
-  margin: 0 0 var(--space-sm) 0;
-}
-
-.unsaved-dialog p {
-  margin: 0 0 var(--space-md) 0;
-}
-
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-sm);
 }
 
 @media (max-width: 900px) {

@@ -65,26 +65,28 @@
     {{ emptyMessage }}
   </div>
 
-  <table *ngIf="filtered.length > 0" class="data-table">
-    <thead>
-      <tr>
-        <th *ngFor="let col of columns" [style.width]="col.width">
-          {{ col.label }}
-        </th>
-        <th *ngIf="enableHistory" style="width: 80px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of filtered" (click)="selectItem(item)" class="data-row">
-        <td *ngFor="let col of columns">
-          {{ getColumnValue(item, col) }}
-        </td>
-        <td *ngIf="enableHistory" (click)="$event.stopPropagation()">
-            <button (click)="openHistory(item, $event)" style="padding: 4px 8px; cursor: pointer;">History</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div *ngIf="filtered.length > 0" class="table-scroll-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of columns" [style.width]="col.width">
+            {{ col.label }}
+          </th>
+          <th *ngIf="enableHistory" style="width: 80px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filtered" (click)="selectItem(item)" class="data-row">
+          <td *ngFor="let col of columns">
+            {{ getColumnValue(item, col) }}
+          </td>
+          <td *ngIf="enableHistory" (click)="$event.stopPropagation()">
+              <button (click)="openHistory(item, $event)" style="padding: 4px 8px; cursor: pointer;">History</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <app-history-dialog 
     *ngIf="showHistoryDialog" 

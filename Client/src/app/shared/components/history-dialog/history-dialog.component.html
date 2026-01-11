@@ -1,18 +1,18 @@
-<div class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h2>Historia zmian</h2>
-      <button class="close-btn" (click)="onClose()">&times;</button>
+<div class="dialog-backdrop dialog-backdrop--dismissible" (click)="onBackdropClick($event)">
+  <div class="dialog dialog--lg" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <h2 class="dialog__title">Historia zmian</h2>
+      <button class="dialog__close" (click)="onClose()" aria-label="Zamknij">&times;</button>
     </div>
     
-    <div class="modal-body text-sm" appScrollFade>
+    <div class="dialog__body dialog__body--scroll" appScrollFade>
       <div *ngIf="loading" class="loading">Ładowanie historii...</div>
       
       <div *ngIf="!loading && logs.length === 0" class="no-data">
         Brak historii zmian.
       </div>
 
-      <table *ngIf="!loading && logs.length > 0" class="history-table">
+      <table *ngIf="!loading && logs.length > 0" class="data-table text-sm">
         <thead>
           <tr>
             <th>Kiedy</th>
@@ -35,7 +35,5 @@
         </tbody>
       </table>
     </div>
-    
-    <!-- Footer removed as per request -->
   </div>
 </div>

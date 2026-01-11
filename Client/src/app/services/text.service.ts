@@ -22,7 +22,7 @@ const TEXTS: TextTree = {
     empty: 'Brak otwartych kart. Użyj menu, aby rozpocząć.'
   },
   userMenu: {
-    loggedInAs: 'Zalogowany jako:',
+    loggedInAs: 'Zalogowany jako',
     permissionLabel: 'Nr uprawnień',
     edit: 'Edytuj użytkownika',
     logout: 'Wyloguj'
@@ -32,8 +32,8 @@ const TEXTS: TextTree = {
     newInspectionHint: 'Utwórz nowy protokół badania',
     inspections: 'Wszystkie badania',
     inspectionsHint: 'Przeglądaj i filtruj wyniki badań',
-    types: 'Typy pojazdów',
-    typesHint: 'Zarządzaj kategoriami pojazdów',
+    types: 'Ewidencja opryskiwaczy',
+    typesHint: 'Dodawaj i edytuj opryskiwacze',
     stats: 'Statystyki',
     statsHint: 'Podgląd wyników i trendów',
     settings: 'Ustawienia',
@@ -194,7 +194,7 @@ const TEXTS: TextTree = {
     }
   },
   types: {
-    title: 'Typy pojazdów / Maszyny opryskujące',
+    title: 'Opryskiwacze',
     list: {
       car: 'Samochód osobowy',
       truck: 'Ciężarówka',
@@ -202,8 +202,8 @@ const TEXTS: TextTree = {
       trailer: 'Przyczepa'
     },
     machines: {
-      addButton: 'Nowy',
-      listTitle: 'Lista maszyn opryskujących',
+      addButton: 'Nowy opryskiwacz',
+      listTitle: 'Lista opryskiwaczy',
       searchPlaceholder: 'Szukaj po numerze, nazwie, producencie...',
       filters: {
         type: 'Typ',
@@ -267,15 +267,15 @@ const TEXTS: TextTree = {
         edit: 'Edytuj',
         delete: 'Usuń',
         deleteConfirm: 'Czy na pewno chcesz usunąć tę maszynę? Tej operacji nie można cofnąć.',
-        yes: 'TAK',
-        no: 'NIE'
+        yes: 'Tak',
+        no: 'Nie'
       },
       messages: {
-        saved: 'Maszyna została zapisana.',
-        deleted: 'Maszyna została usunięta.',
-        error: 'Wystąpił błąd podczas zapisu maszyny.',
+        saved: 'Opryskiwacz został zapisany.',
+        deleted: 'Opryskiwacz został usunięty.',
+        error: 'Wystąpił błąd podczas zapisu opryskiwacza.',
         unsavedTitle: 'Niezapisane zmiany',
-        unsavedText: 'Masz niezapisane zmiany dla bieżącej maszyny. Co chcesz zrobić?'
+        unsavedText: 'Masz niezapisane zmiany dla bieżącego opryskiwacza. Co zamierzasz zrobić?'
       }
     }
   },

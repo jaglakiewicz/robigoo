@@ -4,5 +4,13 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* small card-like rows */
 

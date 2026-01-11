@@ -7,6 +7,94 @@
 
 @import '../shared/styles/globals.css';
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Step indicator - fixed at top */
+.step-indicator {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-bottom: var(--space-md);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-alt);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.step:hover {
+  background: var(--panel-border);
+}
+
+.step.active {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+.step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+.step.active .step-number {
+  background: var(--on-dark-surface);
+}
+
+.step-label {
+  font-size: var(--font-size-sm);
+}
+
+/* Step content - scrollable area for SPA layout */
+.step-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-lg) 0;
+}
+
+.tab-pane {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-pane h3 {
+  margin: 0 0 var(--space-lg) 0;
+  color: var(--primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
 .settings-container {
   display: block;
   padding: var(--space-lg);
@@ -124,7 +212,7 @@
 
 .error-message {
   background: var(--error-surface);
-  border: 1px solid var(--error-btn-border);
+  border: 1px solid var(--error-border);
   color: var(--error-text);
   padding: var(--space-md);
   border-radius: var(--radius-md);
@@ -134,7 +222,7 @@
 
 .success-message {
   background: var(--success-surface);
-  border: 1px solid var(--success-btn-border);
+  border: 1px solid var(--success-border);
   color: var(--success-text);
   padding: var(--space-md);
   border-radius: var(--radius-md);

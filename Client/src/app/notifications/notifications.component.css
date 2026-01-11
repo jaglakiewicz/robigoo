@@ -5,6 +5,14 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .notification-card {
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);

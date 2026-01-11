@@ -49,6 +49,12 @@ export class HistoryDialogComponent implements OnInit {
     this.close.emit();
   }
 
+  onBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.onClose();
+    }
+  }
+
   getSafeHtml(icon: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(icon);
   }

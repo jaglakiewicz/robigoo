@@ -190,9 +190,31 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
   box-shadow: var(--focus-shadow);
 }
 
-input:disabled, textarea:disabled, select:disabled {
+input:disabled, 
+textarea:disabled, 
+select:disabled,
+input[type="text"]:disabled,
+input[type="number"]:disabled,
+input[type="email"]:disabled,
+input[type="password"]:disabled,
+input[type="date"]:disabled,
+input[type="time"]:disabled,
+input[type="datetime-local"]:disabled,
+input[type="search"]:disabled,
+input[type="tel"]:disabled,
+input[type="url"]:disabled {
   background: var(--bg-alt);
   color: var(--text-disabled);
+  cursor: not-allowed;
+  opacity: 1; /* Override browser default opacity */
+  -webkit-text-fill-color: var(--text-disabled); /* For WebKit browsers */
+}
+
+/* Disabled date/time picker icon */
+input[type="date"]:disabled::-webkit-calendar-picker-indicator,
+input[type="time"]:disabled::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]:disabled::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -731,12 +753,13 @@ table tbody tr:last-child td {
   font-weight: var(--font-weight-bold);
   background: var(--bg-alt);
   color: var(--text);
+  border: 1px solid var(--border);
 }
 
-.badge-primary { background: var(--primary-surface); color: var(--primary); }
-.badge-success { background: var(--success-surface); color: var(--success); }
-.badge-error { background: var(--error-surface); color: var(--error); }
-.badge-warning { background: var(--warning-surface); color: var(--warning); }
+.badge-primary { background: var(--primary-surface); color: var(--primary); border-color: var(--primary-border); }
+.badge-success { background: var(--success-surface); color: var(--success); border-color: var(--success-border); }
+.badge-error { background: var(--error-surface); color: var(--error); border-color: var(--error-border); }
+.badge-warning { background: var(--warning-surface); color: var(--warning); border-color: var(--warning-border); }
 
 /* Shadows */
 .shadow-sm { box-shadow: var(--shadow-sm); }
@@ -816,6 +839,7 @@ table tbody tr:last-child td {
   font-size: var(--font-size-sm);
   color: var(--text);
   font-weight: var(--font-weight-regular);
+  border: 1px solid var(--border);
   transition: all var(--transition-fast);
 }
 
@@ -823,6 +847,7 @@ table tbody tr:last-child td {
   background: var(--primary-surface);
   color: var(--primary);
   font-weight: var(--font-weight-bold);
+  border-color: var(--primary-border);
 }
 
 /* Message/Alert boxes - unified */
@@ -867,15 +892,29 @@ table tbody tr:last-child td {
    ============================================================ */
 .data-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: var(--font-size-base);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 
 .data-table th,
 .data-table td {
   padding: var(--space-sm) var(--space-md);
   text-align: left;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+  border-right: none;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .data-table th {
@@ -980,51 +1019,6 @@ table tbody tr:last-child td {
 }
 
 /* ============================================================
-   DIALOG / MODAL - UNIFIED
-   ============================================================ */
-.dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--overlay);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.dialog {
-  background: var(--surface);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  padding: var(--space-lg);
-  max-width: 480px;
-  width: calc(100% - var(--space-lg) * 2);
-  box-shadow: var(--shadow-lg);
-}
-
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-md);
-}
-
-.dialog-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-}
-
-.dialog-content {
-  margin-bottom: var(--space-lg);
-}
-
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-sm);
-}
-
-/* ============================================================
    SCROLLABLE CONTAINER WITH FADE EFFECT
    ============================================================ */
 
@@ -1102,4 +1096,150 @@ table tbody tr:last-child td {
 
 .scroll-snap-center-x > * {
   scroll-snap-align: center;
+}
+
+/* ============================================================
+   DIALOG / MODAL - UNIFIED
+   ============================================================ */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: var(--space-lg);
+}
+
+/* Dismissible dialogs - can be closed by clicking backdrop */
+.dialog-backdrop--dismissible {
+  cursor: pointer;
+}
+
+.dialog-backdrop--dismissible .dialog {
+  cursor: default;
+}
+
+.dialog {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: var(--space-lg);
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  animation: dialogSlideUp 0.25s ease-out;
+}
+
+.dialog--sm {
+  max-width: 360px;
+}
+
+.dialog--lg {
+  max-width: 720px;
+  max-height: calc(100vh - var(--space-xl) * 2);
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog--xl {
+  max-width: 900px;
+  max-height: calc(100vh - var(--space-xl) * 2);
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.dialog__title {
+  margin: 0 0 var(--space-md) 0;
+  padding-bottom: var(--space-md);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.dialog__header .dialog__title {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.dialog__close {
+  background: none;
+  border: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xl);
+  line-height: 1;
+  border-radius: var(--radius);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.dialog__close:hover {
+  color: var(--text);
+  background: var(--bg-alt);
+}
+
+.dialog__body {
+  color: var(--text);
+  font-size: var(--font-size-base);
+}
+
+.dialog__body p {
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.dialog__body p:last-child {
+  margin-bottom: 0;
+}
+
+.dialog__body--scroll {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+@keyframes dialogSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

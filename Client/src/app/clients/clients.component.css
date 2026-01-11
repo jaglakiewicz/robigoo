@@ -6,7 +6,11 @@
 
 /* Clients component styles */
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* status-pill is now defined in globals.css */

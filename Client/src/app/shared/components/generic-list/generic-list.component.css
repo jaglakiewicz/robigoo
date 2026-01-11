@@ -7,11 +7,24 @@
 
 @import '../../styles/globals.css';
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .list-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   padding: var(--space-lg);
   background: var(--panel);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
 @media (max-width: 767px) {
@@ -115,6 +128,15 @@
   border-radius: var(--radius-md);
   border: 1px dashed var(--panel-border);
   font-size: var(--font-size-base);
+  flex-shrink: 0;
+}
+
+/* Scrollable table wrapper for SPA layout */
+.table-scroll-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .data-table {
