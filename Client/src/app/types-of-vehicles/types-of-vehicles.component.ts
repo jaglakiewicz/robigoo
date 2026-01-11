@@ -71,6 +71,9 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
   private pendingAction: 'select' | 'new' | null = null;
   unsavedDialogVisible = false;
 
+  // Delete confirmation dialog state
+  deleteDialogVisible = false;
+
   private readonly formId = 'machines-detail';
 
   constructor(
@@ -439,8 +442,13 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const confirmMessage = this.textService.get('types.machines.actions.deleteConfirm');
-    if (!confirm(confirmMessage)) {
+    this.deleteDialogVisible = true;
+  }
+
+  onDeleteConfirm(): void {
+    this.deleteDialogVisible = false;
+    
+    if (!this.currentMachine || this.deleting) {
       return;
     }
 
@@ -468,6 +476,10 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
         this.notificationService.error(message);
       }
     });
+  }
+
+  onDeleteCancel(): void {
+    this.deleteDialogVisible = false;
   }
 
   // Unsaved-changes logic

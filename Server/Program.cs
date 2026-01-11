@@ -1045,6 +1045,26 @@ app.MapPut("/api/machines/{serialNumber}", async (AppDbContext db, HttpContext c
     }
 }).RequireAuthorization();
 
+// Delete machine
+app.MapDelete("/api/machines/{serialNumber}", async (AppDbContext db, HttpContext context, string serialNumber) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var machine = await db.Machines.FindAsync(serialNumber);
+    if (machine == null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Machines.Remove(machine);
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+}).RequireAuthorization();
+
 // ==================== ORIGINAL ENDPOINTS ====================
 
 // Inspections API - wymaga autoryzacji i aktywnej sesji

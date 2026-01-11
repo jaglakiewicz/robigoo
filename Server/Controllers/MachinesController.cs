@@ -205,6 +205,22 @@ namespace Server.Controllers
             return Ok(ToDetailDto(machine));
         }
 
+        /// <summary>
+        /// Usunięcie maszyny.
+        /// </summary>
+        [HttpDelete("{serialNumber}")]
+        public async Task<IActionResult> DeleteMachine(string serialNumber)
+        {
+            var machine = await _context.Machines.FindAsync(serialNumber);
+            if (machine == null)
+                return NotFound();
+
+            _context.Machines.Remove(machine);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         #endregion
 
         #region Methods - Private

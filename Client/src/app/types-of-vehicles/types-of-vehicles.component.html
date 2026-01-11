@@ -453,6 +453,24 @@
     </div>
   </div>
 
+  <!-- Delete confirmation dialog -->
+  <div class="dialog-backdrop" *ngIf="deleteDialogVisible">
+    <div class="dialog">
+      <h4 class="dialog__title">{{ 'types.machines.messages.deleteTitle' | text }}</h4>
+      <div class="dialog__body">
+        <p>{{ 'types.machines.actions.deleteConfirm' | text }}</p>
+      </div>
+      <div class="dialog__actions">
+        <button class="btn btn-danger" (click)="onDeleteConfirm()">
+          {{ 'types.machines.actions.yes' | text }}
+        </button>
+        <button class="btn btn-secondary" (click)="onDeleteCancel()">
+          {{ 'types.machines.actions.cancel' | text }}
+        </button>
+      </div>
+    </div>
+  </div>
+
   <app-history-dialog
     *ngIf="showHistoryDialog"
     entityName="Machine"

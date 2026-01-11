@@ -275,7 +275,8 @@ const TEXTS: TextTree = {
         deleted: 'Opryskiwacz został usunięty.',
         error: 'Wystąpił błąd podczas zapisu opryskiwacza.',
         unsavedTitle: 'Niezapisane zmiany',
-        unsavedText: 'Masz niezapisane zmiany dla bieżącego opryskiwacza. Co zamierzasz zrobić?'
+        unsavedText: 'Masz niezapisane zmiany dla bieżącego opryskiwacza. Co zamierzasz zrobić?',
+        deleteTitle: 'Potwierdzenie usunięcia'
       }
     }
   },

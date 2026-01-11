@@ -1,0 +1,197 @@
+<Window x:Class="RobigooLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ROBIGOO Launcher" 
+        Height="300" Width="558"
+        MinHeight="300" MinWidth="558"
+        Background="#F5F5F5"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Icon="icon.ico">
+    
+    <Window.Resources>
+        <Style x:Key="RoundedButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="18,0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Geometry x:Key="PlayIcon">M8,5.14V19.14L19,12.14L8,5.14Z</Geometry>
+        <Geometry x:Key="StopIcon">M6,6H18V18H6V6Z</Geometry>
+        <Geometry x:Key="GlobeIcon">M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z</Geometry>
+        <Geometry x:Key="ConsoleIcon">M20,19V7H4V19H20M20,3A2,2 0 0,1 22,5V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V5C2,3.89 2.9,3 4,3H20M13,17V15H18V17H13M9.58,13L5.57,9H8.4L11.7,12.3C12.09,12.69 12.09,13.33 11.7,13.72L8.42,17H5.59L9.58,13Z</Geometry>
+    </Window.Resources>
+    
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header with SVG icon -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,18">
+            <Viewbox Width="42" Height="42" Margin="0,0,12,0">
+                <Canvas Width="120" Height="120">
+                    <!-- Tank -->
+                    <Rectangle Canvas.Left="36" Canvas.Top="20" Width="48" Height="52" RadiusX="10" RadiusY="10" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="2.6"/>
+                    <!-- Cap -->
+                    <Rectangle Canvas.Left="52" Canvas.Top="14" Width="16" Height="7" RadiusX="3" RadiusY="3" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="2.6"/>
+                    <!-- Liquid level -->
+                    <Rectangle Canvas.Left="42" Canvas.Top="48" Width="36" Height="14" RadiusX="6" RadiusY="6" Fill="#23647a" Opacity="0.18"/>
+                    <!-- Shine -->
+                    <Path Data="M 46 30 C 48 24, 56 22, 62 24 C 54 26, 50 30, 48 36 C 46 34, 45 32, 46 30 Z" Fill="#e6f3f7" Opacity="0.22"/>
+                    <!-- Frame / 3-point hitch -->
+                    <Path Data="M 44 72 L 60 86 L 76 72" Stroke="#23647a" StrokeThickness="2.6"/>
+                    <Path Data="M 44 72 L 36 84" Stroke="#23647a" StrokeThickness="2.6"/>
+                    <Path Data="M 76 72 L 84 84" Stroke="#23647a" StrokeThickness="2.6"/>
+                    <Path Data="M 60 72 L 60 86" Stroke="#23647a" StrokeThickness="2.6"/>
+                    <Ellipse Canvas.Left="33.6" Canvas.Top="81.6" Width="4.8" Height="4.8" Fill="#23647a"/>
+                    <Ellipse Canvas.Left="81.6" Canvas.Top="81.6" Width="4.8" Height="4.8" Fill="#23647a"/>
+                    <Ellipse Canvas.Left="57.8" Canvas.Top="83.8" Width="4.4" Height="4.4" Fill="#23647a"/>
+                    <!-- Boom top -->
+                    <Path Data="M 10 44 L 52 44 L 68 44 L 110 44" Stroke="#23647a" StrokeThickness="4"/>
+                    <!-- Boom bottom -->
+                    <Path Data="M 12 50 L 52 50 L 68 50 L 108 50" Stroke="#23647a" StrokeThickness="3.5"/>
+                    <!-- End markers -->
+                    <Ellipse Canvas.Left="6.8" Canvas.Top="40.8" Width="6.4" Height="6.4" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.5"/>
+                    <Ellipse Canvas.Left="106.8" Canvas.Top="40.8" Width="6.4" Height="6.4" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.5"/>
+                    <!-- Hinges -->
+                    <Rectangle Canvas.Left="50" Canvas.Top="41" Width="6" Height="12" RadiusX="2" RadiusY="2" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.5"/>
+                    <Rectangle Canvas.Left="64" Canvas.Top="41" Width="6" Height="12" RadiusX="2" RadiusY="2" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.5"/>
+                    <Ellipse Canvas.Left="51.2" Canvas.Top="45.2" Width="3.6" Height="3.6" Fill="#23647a"/>
+                    <Ellipse Canvas.Left="65.2" Canvas.Top="45.2" Width="3.6" Height="3.6" Fill="#23647a"/>
+                    <!-- Truss braces -->
+                    <Path Data="M 18 50 L 26 44 L 34 50 L 42 44 L 50 50" Stroke="#23647a" StrokeThickness="1.6" Opacity="0.95"/>
+                    <Path Data="M 70 50 L 78 44 L 86 50 L 94 44 L 102 50" Stroke="#23647a" StrokeThickness="1.6" Opacity="0.95"/>
+                    <!-- Nozzle clamps -->
+                    <Rectangle Canvas.Left="20" Canvas.Top="48.2" Width="4" Height="3.6" RadiusX="1" RadiusY="1" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.2"/>
+                    <Rectangle Canvas.Left="36" Canvas.Top="48.2" Width="4" Height="3.6" RadiusX="1" RadiusY="1" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.2"/>
+                    <Rectangle Canvas.Left="58" Canvas.Top="48.2" Width="4" Height="3.6" RadiusX="1" RadiusY="1" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.2"/>
+                    <Rectangle Canvas.Left="80" Canvas.Top="48.2" Width="4" Height="3.6" RadiusX="1" RadiusY="1" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.2"/>
+                    <Rectangle Canvas.Left="96" Canvas.Top="48.2" Width="4" Height="3.6" RadiusX="1" RadiusY="1" Fill="#4b9bbd" Stroke="#23647a" StrokeThickness="1.2"/>
+                    <!-- Nozzle stems -->
+                    <Line X1="22" Y1="52" X2="22" Y2="58" Stroke="#23647a" StrokeThickness="2"/>
+                    <Line X1="38" Y1="52" X2="38" Y2="58" Stroke="#23647a" StrokeThickness="2"/>
+                    <Line X1="60" Y1="52" X2="60" Y2="58" Stroke="#23647a" StrokeThickness="2"/>
+                    <Line X1="82" Y1="52" X2="82" Y2="58" Stroke="#23647a" StrokeThickness="2"/>
+                    <Line X1="98" Y1="52" X2="98" Y2="58" Stroke="#23647a" StrokeThickness="2"/>
+                    <!-- Nozzle tips -->
+                    <Ellipse Canvas.Left="19.9" Canvas.Top="57.9" Width="4.2" Height="4.2" Fill="#23647a"/>
+                    <Ellipse Canvas.Left="35.9" Canvas.Top="57.9" Width="4.2" Height="4.2" Fill="#23647a"/>
+                    <Ellipse Canvas.Left="57.9" Canvas.Top="57.9" Width="4.2" Height="4.2" Fill="#23647a"/>
+                    <Ellipse Canvas.Left="79.9" Canvas.Top="57.9" Width="4.2" Height="4.2" Fill="#23647a"/>
+                    <Ellipse Canvas.Left="95.9" Canvas.Top="57.9" Width="4.2" Height="4.2" Fill="#23647a"/>
+                    <!-- Spray cones -->
+                    <Path Data="M 22 62 L 15 98 L 29 98 Z" Fill="#4b9bbd" Opacity="0.22"/>
+                    <Path Data="M 38 62 L 31 100 L 45 100 Z" Fill="#4b9bbd" Opacity="0.22"/>
+                    <Path Data="M 60 62 L 52 102 L 68 102 Z" Fill="#4b9bbd" Opacity="0.22"/>
+                    <Path Data="M 82 62 L 75 100 L 89 100 Z" Fill="#4b9bbd" Opacity="0.22"/>
+                    <Path Data="M 98 62 L 91 98 L 105 98 Z" Fill="#4b9bbd" Opacity="0.22"/>
+                </Canvas>
+            </Viewbox>
+            <TextBlock VerticalAlignment="Center" FontFamily="Segoe UI">
+                <Run Text="ROBIGOO" FontSize="24" FontWeight="Bold" Foreground="#0D6986"/>
+                <Run Text=" Launcher" FontSize="24" Foreground="#262626"/>
+            </TextBlock>
+        </StackPanel>
+        
+        <!-- Separator -->
+        <Rectangle Grid.Row="1" Height="1" Fill="#CCCCCC" Margin="0,0,0,18"/>
+        
+        <!-- Status -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="6" Padding="18,12" Margin="0,0,0,18">
+            <StackPanel Orientation="Horizontal">
+                <Ellipse x:Name="StatusDot" Width="12" Height="12" Fill="#CCCCCC" Margin="0,0,12,0"/>
+                <!-- Spinner (hidden by default) -->
+                <Border x:Name="Spinner" Width="18" Height="18" Margin="0,0,12,0" Visibility="Collapsed">
+                    <Border.RenderTransform>
+                        <RotateTransform x:Name="SpinnerRotate" CenterX="9" CenterY="9"/>
+                    </Border.RenderTransform>
+                    <Border.Triggers>
+                        <EventTrigger RoutedEvent="Border.Loaded">
+                            <BeginStoryboard x:Name="SpinnerStoryboard">
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation Storyboard.TargetName="SpinnerRotate" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:1"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Border.Triggers>
+                    <Ellipse Stroke="#0D6986" StrokeThickness="2" StrokeDashArray="3,2" Width="18" Height="18"/>
+                </Border>
+                <TextBlock x:Name="StatusText" Text="Serwer zatrzymany" Foreground="#595959" FontSize="12" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+        
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <Button x:Name="BtnToggle" Style="{StaticResource RoundedButton}" 
+                    Background="#3D8577" Foreground="White" BorderBrush="#327A6C"
+                    Click="BtnToggle_Click" Margin="0,0,12,0" Width="168">
+                <StackPanel Orientation="Horizontal">
+                    <Path x:Name="BtnToggleIcon" Data="{StaticResource PlayIcon}" Fill="White" Width="18" Height="18" Stretch="Uniform" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="BtnToggleText" Text="Uruchom serwer" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="BtnBrowser" Style="{StaticResource RoundedButton}"
+                    Background="#0D6986" Foreground="White" BorderBrush="#0A5570"
+                    Click="BtnBrowser_Click" IsEnabled="False" Margin="0,0,12,0" Width="198">
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource GlobeIcon}" Fill="White" Width="18" Height="18" Stretch="Uniform" Margin="0,0,6,0"/>
+                    <TextBlock Text="Otwórz w przeglądarce" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="BtnLogs" Style="{StaticResource RoundedButton}"
+                    Background="#EEEEEE" Foreground="#333333" BorderBrush="#CCCCCC"
+                    Click="BtnLogs_Click" Width="90">
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource ConsoleIcon}" Fill="#333333" Width="18" Height="18" Stretch="Uniform" Margin="0,0,6,0"/>
+                    <TextBlock Text="Logi" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        
+        <!-- Logs Panel -->
+        <Border x:Name="LogsPanel" Grid.Row="4" Visibility="Collapsed" Background="White" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="6" Margin="0,18,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Logi serwera" FontWeight="Bold" FontSize="12" Margin="18,12,18,6" Foreground="#262626"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <TextBox x:Name="LogsBox" IsReadOnly="True" TextWrapping="Wrap" Background="Transparent" BorderThickness="0" 
+                             Foreground="#595959" FontFamily="Consolas" FontSize="12" Padding="18,0,18,18"/>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+        
+        <!-- Copyright - always visible -->
+        <TextBlock Grid.Row="5" Text="© 2025 Wojciech Salamon" Foreground="#999999" FontSize="12" HorizontalAlignment="Center" Margin="0,18,0,0"/>
+    </Grid>
+</Window>
