@@ -1,0 +1,34 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="numeric-input" [class.disabled]="disabled">
+  <input
+    type="text"
+    [value]="value ?? ''"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    (input)="onInputChange($event)"
+    (blur)="onTouched()" />
+  
+  <div class="spinner-buttons">
+    <button 
+      type="button" 
+      class="spinner-btn spinner-up" 
+      (mousedown)="increment(); $event.preventDefault()"
+      [disabled]="disabled || (value !== null && value >= max)"
+      tabindex="-1">
+      <span [innerHTML]="chevronUpIcon"></span>
+    </button>
+    <button 
+      type="button" 
+      class="spinner-btn spinner-down" 
+      (mousedown)="decrement(); $event.preventDefault()"
+      [disabled]="disabled || (value !== null && value <= min)"
+      tabindex="-1">
+      <span [innerHTML]="chevronDownIcon"></span>
+    </button>
+  </div>
+</div>

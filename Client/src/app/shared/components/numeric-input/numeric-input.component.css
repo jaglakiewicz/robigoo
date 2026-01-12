@@ -1,0 +1,95 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+*/
+
+.numeric-input {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.numeric-input input {
+  flex: 1;
+  height: var(--touch-size);
+  padding: var(--space-sm) var(--space-md);
+  padding-right: 40px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  color: var(--text);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.numeric-input input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.numeric-input.disabled input {
+  background: var(--bg-alt);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.spinner-buttons {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  bottom: 1px;
+  display: flex;
+  flex-direction: column;
+  width: 28px;
+  border-left: 1px solid var(--border);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  overflow: hidden;
+}
+
+.spinner-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-alt);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--text-muted);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.spinner-btn:hover:not(:disabled) {
+  background: var(--primary-surface);
+  color: var(--primary);
+}
+
+.spinner-btn:active:not(:disabled) {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+.spinner-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.spinner-up {
+  border-bottom: 1px solid var(--border);
+}
+
+.spinner-btn span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+}
+
+.spinner-btn svg {
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+}

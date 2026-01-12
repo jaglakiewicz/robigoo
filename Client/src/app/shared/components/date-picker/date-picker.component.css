@@ -1,0 +1,227 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+*/
+
+.date-picker {
+  position: relative;
+  width: 100%;
+}
+
+.picker-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: var(--touch-size);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  font-size: var(--font-size-base);
+  color: var(--text);
+}
+
+.picker-trigger:hover:not(.disabled) {
+  border-color: var(--primary);
+}
+
+.date-picker.open .picker-trigger {
+  border-color: var(--primary);
+}
+
+.date-picker.disabled .picker-trigger {
+  background: var(--bg-alt);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.picker-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.picker-value.placeholder {
+  color: var(--text-muted);
+}
+
+.clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: var(--bg-alt);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  position: relative;
+  z-index: 1;
+}
+
+.clear-btn:hover {
+  background: var(--error-surface);
+  color: var(--error);
+}
+
+.picker-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.picker-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.picker-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 280px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  animation: dropdownSlide 0.15s ease-out;
+  padding: var(--space-md);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.nav-btn:hover {
+  background: var(--bg-alt);
+  border-color: var(--primary);
+}
+
+.nav-btn span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+}
+
+.nav-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.month-year {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-muted);
+}
+
+.day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--text);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.day:hover:not(:disabled):not(.selected) {
+  background: var(--bg-alt);
+}
+
+.day:focus {
+  outline: none;
+}
+
+.day.other-month {
+  color: var(--text-muted);
+}
+
+.day.today {
+  font-weight: var(--font-weight-bold);
+  color: var(--primary);
+}
+
+.day.selected {
+  background: var(--primary);
+  color: var(--text-inverse);
+  font-weight: var(--font-weight-bold);
+}
+
+.day:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  opacity: 0.4;
+}

@@ -1,0 +1,51 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="date-picker" [class.open]="isOpen" [class.disabled]="disabled">
+  <div class="picker-trigger" (click)="toggle()">
+    <span class="picker-value" [class.placeholder]="!value">{{ displayValue }}</span>
+    <button 
+      *ngIf="value && !disabled" 
+      type="button" 
+      class="clear-btn" 
+      (click)="clearDate($event)"
+      tabindex="-1">
+      ×
+    </button>
+    <span class="picker-icon" [innerHTML]="calendarIcon"></span>
+  </div>
+  
+  <div class="picker-dropdown" *ngIf="isOpen">
+    <div class="calendar-header">
+      <button type="button" class="nav-btn" (click)="prevMonth()" tabindex="-1">
+        <span [innerHTML]="chevronLeftIcon"></span>
+      </button>
+      <span class="month-year">{{ monthYearLabel }}</span>
+      <button type="button" class="nav-btn" (click)="nextMonth()" tabindex="-1">
+        <span [innerHTML]="chevronRightIcon"></span>
+      </button>
+    </div>
+    
+    <div class="calendar-grid">
+      <div class="weekday" *ngFor="let day of weekDays">{{ day }}</div>
+      
+      <ng-container *ngFor="let week of weeks">
+        <button
+          type="button"
+          *ngFor="let date of week"
+          class="day"
+          [class.other-month]="!isCurrentMonth(date)"
+          [class.selected]="isSelected(date)"
+          [class.today]="isToday(date)"
+          [disabled]="isDisabledDate(date)"
+          (click)="selectDate(date)"
+          tabindex="-1">
+          {{ date.getDate() }}
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</div>

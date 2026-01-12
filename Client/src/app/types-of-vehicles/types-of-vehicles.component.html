@@ -177,7 +177,7 @@
         <div *ngIf="currentStep === 0" class="basics-grid">
           <!-- Row 1: Nr seryjny / Nazwa opryskiwacza -->
           <div class="form-row form-row-2">
-            <div class="form-group">
+            <div class="form-group required">
               <label>{{ 'types.machines.fields.serialNumber' | text }}</label>
               <input
                 type="text"
@@ -186,7 +186,7 @@
                 [disabled]="!isEditMode" />
             </div>
 
-            <div class="form-group">
+            <div class="form-group required">
               <label>{{ 'types.machines.fields.sprayerName' | text }}</label>
               <input
                 type="text"
@@ -198,34 +198,30 @@
 
           <!-- Row 2: Typ / Rodzaj -->
           <div class="form-row form-row-2">
-            <div class="form-group">
+            <div class="form-group required">
               <label>{{ 'types.machines.fields.type' | text }}</label>
-              <select
+              <app-custom-select
+                [options]="typeOptions"
                 [ngModel]="form.type"
                 (ngModelChange)="onTypeChange($event)"
                 [disabled]="!isEditMode">
-                <option value="00">{{ 'types.machines.filters.typeField' | text }}</option>
-                <option value="01">{{ 'types.machines.filters.typeGarden' | text }}</option>
-              </select>
+              </app-custom-select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group required">
               <label>{{ 'types.machines.fields.kind' | text }}</label>
-              <select
+              <app-custom-select
+                [options]="kindOptions"
                 [ngModel]="form.kind"
                 (ngModelChange)="form.kind = $event; onFormChange()"
                 [disabled]="!isEditMode">
-                <option value="00">{{ 'types.machines.filters.kindMounted' | text }}</option>
-                <option value="01">{{ 'types.machines.filters.kindTrailed' | text }}</option>
-                <option value="02">{{ 'types.machines.filters.kindSelfPropelled' | text }}</option>
-                <option value="03">{{ 'types.machines.filters.kindOther' | text }}</option>
-              </select>
+              </app-custom-select>
             </div>
           </div>
 
           <!-- Row 3: Producent / Rok produkcji / Data zakupu -->
           <div class="form-row form-row-3">
-            <div class="form-group">
+            <div class="form-group required">
               <label>{{ 'types.machines.fields.manufacturer' | text }}</label>
               <input
                 type="text"
@@ -234,23 +230,25 @@
                 [disabled]="!isEditMode" />
             </div>
 
-            <div class="form-group">
+            <div class="form-group required">
               <label>{{ 'types.machines.fields.productionYear' | text }}</label>
-              <input
-                type="text"
-                maxlength="4"
+              <app-numeric-input
+                [min]="1900"
+                [max]="2100"
+                [step]="1"
                 [ngModel]="form.productionYear"
                 (ngModelChange)="form.productionYear = $event; onFormChange()"
-                [disabled]="!isEditMode" />
+                [disabled]="!isEditMode">
+              </app-numeric-input>
             </div>
 
             <div class="form-group">
               <label>{{ 'types.machines.fields.purchaseDate' | text }}</label>
-              <input
-                type="date"
+              <app-date-picker
                 [ngModel]="form.purchaseDate"
                 (ngModelChange)="form.purchaseDate = $event; onFormChange()"
-                [disabled]="!isEditMode" />
+                [disabled]="!isEditMode">
+              </app-date-picker>
             </div>
           </div>
         </div>

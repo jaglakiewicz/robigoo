@@ -1,0 +1,124 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+*/
+
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+
+.select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  height: var(--touch-size);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  font-size: var(--font-size-base);
+  color: var(--text);
+}
+
+.select-trigger:hover:not(.disabled) {
+  border-color: var(--primary);
+}
+
+.custom-select.open .select-trigger {
+  border-color: var(--primary);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.custom-select.disabled .select-trigger {
+  background: var(--bg-alt);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.select-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.select-value.placeholder {
+  color: var(--text-muted);
+}
+
+.select-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.select-chevron svg {
+  width: 12px;
+  height: 12px;
+}
+
+.custom-select.open .select-chevron {
+  transform: rotate(180deg);
+}
+
+.select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--primary);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  animation: dropdownSlide 0.15s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.select-option {
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  font-size: var(--font-size-base);
+  color: var(--text);
+}
+
+.select-option:hover {
+  background: var(--bg-alt);
+}
+
+.select-option.selected {
+  background: var(--primary-surface);
+  color: var(--primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.select-option:last-child {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}

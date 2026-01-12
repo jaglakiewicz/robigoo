@@ -11,6 +11,7 @@ import { DirtyFormService } from '../shared/services/dirty-form.service';
 import { TextService } from '../services/text.service';
 import { NotificationService } from '../services/notification.service';
 import { SVG_ICONS } from '../shared/svg-icons';
+import { SelectOption } from '../shared/components/custom-select/custom-select.component';
 
 interface MachineStep {
   id: number;
@@ -76,6 +77,10 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
 
   private readonly formId = 'machines-detail';
 
+  // Select options
+  typeOptions: SelectOption[] = [];
+  kindOptions: SelectOption[] = [];
+
   constructor(
     private machinesService: MachineService,
     private dirtyFormService: DirtyFormService,
@@ -121,7 +126,21 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initSelectOptions();
     this.loadMachines();
+  }
+
+  private initSelectOptions(): void {
+    this.typeOptions = [
+      { value: '00', label: this.textService.get('types.machines.filters.typeField') },
+      { value: '01', label: this.textService.get('types.machines.filters.typeGarden') }
+    ];
+    this.kindOptions = [
+      { value: '00', label: this.textService.get('types.machines.filters.kindMounted') },
+      { value: '01', label: this.textService.get('types.machines.filters.kindTrailed') },
+      { value: '02', label: this.textService.get('types.machines.filters.kindSelfPropelled') },
+      { value: '03', label: this.textService.get('types.machines.filters.kindOther') }
+    ];
   }
 
   ngOnDestroy(): void {
