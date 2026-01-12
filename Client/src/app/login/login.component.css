@@ -186,7 +186,7 @@
 /* Boom arm styling */
 .boom-arm {
   animation: boomSway 3.5s ease-in-out infinite;
-  transform-origin: 60px 52px;
+  transform-origin: 60px 47px;
 }
 
 .boom-line {
@@ -399,6 +399,44 @@
   stroke: currentColor;
   stroke-linecap: round;
   opacity: 0.8;
+}
+
+.leg-joint {
+  fill: currentColor;
+  opacity: 0.9;
+}
+
+/* Boom hinge and truss styling */
+.boom-hinge {
+  fill: currentColor;
+  opacity: 0.8;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.boom-hinge-dot {
+  fill: currentColor;
+  opacity: 0.9;
+}
+
+.boom-truss {
+  stroke: currentColor;
+  opacity: 0.7;
+}
+
+/* Nozzle clamp styling */
+.nozzle-clamp {
+  fill: currentColor;
+  opacity: 0.8;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+
+/* Mist cone styling (spray cones) */
+.mist-cone {
+  fill: currentColor;
+  opacity: 0.22;
+  stroke: none;
 }
 
 @keyframes legStand {

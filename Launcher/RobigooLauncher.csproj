@@ -7,7 +7,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>Robigoo</AssemblyName>
     <Nullable>enable</Nullable>
-    <OutputPath>..\</OutputPath>
+    <OutputPath>Bin\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
