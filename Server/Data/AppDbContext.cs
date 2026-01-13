@@ -42,6 +42,7 @@ namespace Server.Data
         public DbSet<UserSession> UserSessions { get; set; }
         public DbSet<Machine> Machines { get; set; }
         public DbSet<ChangeLog> ChangeLogs { get; set; }
+        public DbSet<LoginAttempt> LoginAttempts { get; set; }
 
         #endregion
 

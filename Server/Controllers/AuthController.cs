@@ -62,7 +62,7 @@ namespace Server.Controllers
             user.LastLoginAt = DateTime.UtcNow;
             _context.SaveChanges();
 
-            var token = _tokenService.GenerateToken(user.Id, user.Login, user.Role);
+            var token = _tokenService.GenerateAccessToken(user.Id, user.Login, user.Role);
             var response = new
             {
                 token = token,

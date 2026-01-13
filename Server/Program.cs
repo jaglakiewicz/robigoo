@@ -12,10 +12,12 @@ using Server.Models;
 using Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 #endregion
 
@@ -24,17 +26,26 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddHttpContextAccessor();
 
 // Add authentication services
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ISecurityAuditService, SecurityAuditService>();
 
-// Add JWT Authentication
-var jwtKey = "SuperSecretKeyForJWTTokenGenerationThisIsVeryLongAndSecure2025!";
-var key = Encoding.ASCII.GetBytes(jwtKey);
+// Get JWT configuration from appsettings
+var jwtKey = builder.Configuration["Jwt:Key"] 
+    ?? throw new InvalidOperationException("JWT Key not configured. Set Jwt:Key in appsettings.json");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Robigoo";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "RobigooUsers";
+var key = Encoding.UTF8.GetBytes(jwtKey);
+
+// Validate key length
+if (key.Length < 32)
+{
+    throw new InvalidOperationException("JWT Key must be at least 256 bits (32 characters)");
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,8 +58,10 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false,
+        ValidateIssuer = true,
+        ValidIssuer = jwtIssuer,
+        ValidateAudience = true,
+        ValidAudience = jwtAudience,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
@@ -86,17 +99,102 @@ builder.Services.AddAuthorization();
 // Add Antiforgery service  
 builder.Services.AddAntiforgery();
 
-// Allow Angular dev server (or other clients) to call the API
+// Configure CORS with security restrictions
+var allowedOrigins = builder.Configuration.GetSection("Security:AllowedOrigins").Get<string[]>() 
+    ?? new[] { "http://localhost:4200" };
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            // More permissive in development
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        }
+        else
+        {
+            // Restrictive in production
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                  .AllowCredentials();
+        }
+    });
+});
+
+// Configure Rate Limiting
+var loginPermitLimit = builder.Configuration.GetValue<int>("RateLimiting:LoginPermitLimit", 5);
+var loginWindowMinutes = builder.Configuration.GetValue<int>("RateLimiting:LoginWindowMinutes", 1);
+var generalPermitLimit = builder.Configuration.GetValue<int>("RateLimiting:GeneralPermitLimit", 100);
+var generalWindowMinutes = builder.Configuration.GetValue<int>("RateLimiting:GeneralWindowMinutes", 1);
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    
+    // Rate limiter for login endpoint
+    options.AddFixedWindowLimiter("login", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(loginWindowMinutes);
+        opt.PermitLimit = loginPermitLimit;
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
+    
+    // General rate limiter for API
+    options.AddFixedWindowLimiter("general", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(generalWindowMinutes);
+        opt.PermitLimit = generalPermitLimit;
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 2;
+    });
+    
+    // Global fallback
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                Window = TimeSpan.FromMinutes(1),
+                PermitLimit = 200,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
+    });
 });
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite("Data Source=app_v2.db"));
 
 var app = builder.Build();
+
+// Security Headers Middleware
+app.Use(async (context, next) =>
+{
+    // Content Security Policy
+    context.Response.Headers.Append("Content-Security-Policy", 
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'");
+    
+    // Prevent MIME type sniffing
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    
+    // Clickjacking protection
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    
+    // XSS Protection (legacy browsers)
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    
+    // Referrer Policy
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    
+    // Permissions Policy
+    context.Response.Headers.Append("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+    
+    await next();
+});
 
 // Helper: verify that the JWT token belongs to an active user session
 static async Task<bool> IsSessionActiveAsync(AppDbContext db, HttpContext context)
@@ -218,14 +316,39 @@ using (var scope = app.Services.CreateScope())
         ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_UserSessions"" PRIMARY KEY AUTOINCREMENT,
         ""UserId"" INTEGER NOT NULL,
         ""SessionToken"" TEXT NOT NULL,
+        ""RefreshToken"" TEXT NULL,
+        ""RefreshTokenExpiresAt"" TEXT NULL,
         ""CreatedAt"" TEXT NOT NULL,
         ""LastActivityAt"" TEXT NOT NULL,
         ""IsActive"" INTEGER NOT NULL,
+        ""IpAddress"" TEXT NULL,
+        ""UserAgent"" TEXT NULL,
         CONSTRAINT ""FK_UserSessions_Users_UserId"" FOREIGN KEY (""UserId"") REFERENCES ""Users"" (""Id"") ON DELETE CASCADE
     );");
 
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_UserSessions_UserId"" ON ""UserSessions"" (""UserId"");");
     db.Database.ExecuteSqlRaw(@"CREATE UNIQUE INDEX IF NOT EXISTS ""IX_UserSessions_SessionToken"" ON ""UserSessions"" (""SessionToken"");");
+    db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_UserSessions_RefreshToken"" ON ""UserSessions"" (""RefreshToken"");");
+
+    // Add new columns to UserSessions if they don't exist (migration for existing databases)
+    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""RefreshToken"" TEXT NULL;"); } catch { }
+    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""RefreshTokenExpiresAt"" TEXT NULL;"); } catch { }
+    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""IpAddress"" TEXT NULL;"); } catch { }
+    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""UserAgent"" TEXT NULL;"); } catch { }
+
+    // Create LoginAttempts table for security auditing
+    db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""LoginAttempts"" (
+        ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_LoginAttempts"" PRIMARY KEY AUTOINCREMENT,
+        ""Login"" TEXT NOT NULL,
+        ""IpAddress"" TEXT NULL,
+        ""UserAgent"" TEXT NULL,
+        ""Success"" INTEGER NOT NULL,
+        ""FailureReason"" TEXT NULL,
+        ""AttemptedAt"" TEXT NOT NULL
+    );");
+
+    db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_LoginAttempts_Login"" ON ""LoginAttempts"" (""Login"");");
+    db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_LoginAttempts_AttemptedAt"" ON ""LoginAttempts"" (""AttemptedAt"");");
 
     // Zapewnij istnienie tabeli Machines (jeśli baza powstała wcześniej bez tej tabeli).
     db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""Machines"" (
@@ -284,19 +407,56 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors();
 
+// Add Rate Limiting middleware
+app.UseRateLimiter();
+
 // Add authentication and authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 
-// ==================== AUTH ENDPOINTS ====================
-app.MapPost("/api/auth/login", async (AppDbContext db, IPasswordService passwordService, ITokenService tokenService, Server.Models.LoginDto dto) =>
+// Helper: Get client IP address
+static string? GetClientIpAddress(HttpContext context)
 {
+    var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+    if (!string.IsNullOrEmpty(forwardedFor))
+    {
+        return forwardedFor.Split(',').FirstOrDefault()?.Trim();
+    }
+    return context.Connection.RemoteIpAddress?.ToString();
+}
+
+// ==================== AUTH ENDPOINTS ====================
+app.MapPost("/api/auth/login", async (AppDbContext db, IPasswordService passwordService, ITokenService tokenService, ISecurityAuditService auditService, HttpContext context, Server.Models.LoginDto dto) =>
+{
+    var ipAddress = GetClientIpAddress(context);
+    var userAgent = context.Request.Headers["User-Agent"].FirstOrDefault();
+
+    // Check if locked out
+    if (await auditService.IsLockedOutAsync(dto.Login, ipAddress))
+    {
+        await auditService.LogLoginAttemptAsync(dto.Login, ipAddress, userAgent, false, "Account locked out");
+        return Results.Json(new { message = "Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za chwilę." }, statusCode: 429);
+    }
+
     var user = await db.Users.FirstOrDefaultAsync(u => u.Login == dto.Login && u.IsActive);
     
-    if (user == null || !passwordService.VerifyPassword(dto.Password, user.PasswordHash))
+    if (user == null)
     {
+        await auditService.LogLoginAttemptAsync(dto.Login, ipAddress, userAgent, false, "User not found");
         return Results.Unauthorized();
+    }
+
+    if (!passwordService.VerifyPassword(dto.Password, user.PasswordHash))
+    {
+        await auditService.LogLoginAttemptAsync(dto.Login, ipAddress, userAgent, false, "Invalid password");
+        return Results.Unauthorized();
+    }
+
+    // Upgrade password hash if using legacy algorithm
+    if (passwordService.NeedsRehash(user.PasswordHash))
+    {
+        user.PasswordHash = passwordService.HashPassword(dto.Password);
     }
 
     // Check for existing active session for this user
@@ -332,29 +492,38 @@ app.MapPost("/api/auth/login", async (AppDbContext db, IPasswordService password
             s.LastActivityAt = DateTime.UtcNow;
         }
     }
+
     // Update last login
     user.LastLoginAt = DateTime.UtcNow;
 
     var now = DateTime.UtcNow;
 
-    // Generate token
-    var token = tokenService.GenerateToken(user.Id, user.Login, user.Role);
+    // Generate tokens
+    var accessToken = tokenService.GenerateAccessToken(user.Id, user.Login, user.Role);
+    var refreshToken = tokenService.GenerateRefreshToken();
 
     // Create new session record
     var newSession = new UserSession
     {
         UserId = user.Id,
-        SessionToken = token,
+        SessionToken = accessToken,
+        RefreshToken = refreshToken,
+        RefreshTokenExpiresAt = now.AddDays(tokenService.GetRefreshTokenExpirationDays()),
         CreatedAt = now,
         LastActivityAt = now,
-        IsActive = true
+        IsActive = true,
+        IpAddress = ipAddress?.Substring(0, Math.Min(ipAddress.Length, 50)),
+        UserAgent = userAgent?.Substring(0, Math.Min(userAgent.Length, 500))
     };
 
     db.UserSessions.Add(newSession);
 
+    // Log successful login
+    await auditService.LogLoginAttemptAsync(dto.Login, ipAddress, userAgent, true);
+
     await db.SaveChangesAsync();
 
-    var response = new Server.Models.LoginResponseDto
+    var userResponse = new Server.Models.LoginResponseDto
     {
         UserId = user.Id,
         Login = user.Login,
@@ -367,7 +536,78 @@ app.MapPost("/api/auth/login", async (AppDbContext db, IPasswordService password
         AvatarBase64 = user.AvatarData != null ? Convert.ToBase64String(user.AvatarData) : null
     };
 
-    return Results.Ok(new { token, user = response });
+    var tokenResponse = new Server.Models.TokenResponseDto
+    {
+        AccessToken = accessToken,
+        RefreshToken = refreshToken,
+        ExpiresIn = tokenService.GetAccessTokenExpirationMinutes() * 60
+    };
+
+    // Return in format compatible with existing frontend (token field for backward compatibility)
+    return Results.Ok(new { 
+        token = accessToken, 
+        refreshToken = refreshToken,
+        expiresIn = tokenResponse.ExpiresIn,
+        user = userResponse 
+    });
+}).RequireRateLimiting("login");
+
+// Refresh token endpoint
+app.MapPost("/api/auth/refresh", async (AppDbContext db, ITokenService tokenService, HttpContext context, [FromBody] Server.Models.RefreshTokenDto dto) =>
+{
+    // Validate the expired access token to get claims
+    var principal = tokenService.GetPrincipalFromExpiredToken(dto.AccessToken);
+    if (principal == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var userIdClaim = principal.FindFirst("userId");
+    if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+    {
+        return Results.Unauthorized();
+    }
+
+    // Find session with matching refresh token
+    var session = await db.UserSessions
+        .Include(s => s.User)
+        .FirstOrDefaultAsync(s => 
+            s.UserId == userId && 
+            s.RefreshToken == dto.RefreshToken && 
+            s.IsActive &&
+            s.RefreshTokenExpiresAt > DateTime.UtcNow);
+
+    if (session == null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var user = session.User;
+    if (!user.IsActive)
+    {
+        return Results.Unauthorized();
+    }
+
+    var now = DateTime.UtcNow;
+
+    // Generate new tokens
+    var newAccessToken = tokenService.GenerateAccessToken(user.Id, user.Login, user.Role);
+    var newRefreshToken = tokenService.GenerateRefreshToken();
+
+    // Update session
+    session.SessionToken = newAccessToken;
+    session.RefreshToken = newRefreshToken;
+    session.RefreshTokenExpiresAt = now.AddDays(tokenService.GetRefreshTokenExpirationDays());
+    session.LastActivityAt = now;
+
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new
+    {
+        token = newAccessToken,
+        refreshToken = newRefreshToken,
+        expiresIn = tokenService.GetAccessTokenExpirationMinutes() * 60
+    });
 });
 
 app.MapGet("/api/auth/me", async (AppDbContext db, HttpContext context) =>
@@ -442,6 +682,13 @@ app.MapPost("/api/users", async (AppDbContext db, IPasswordService passwordServi
     if (roleClaim?.Value != "admin")
     {
         return Results.Forbid();
+    }
+
+    // Validate password strength
+    var passwordValidation = passwordService.ValidatePasswordStrength(dto.Password);
+    if (!passwordValidation.IsValid)
+    {
+        return Results.BadRequest(new { error = string.Join(". ", passwordValidation.Errors) });
     }
 
     // Check if login already exists
@@ -603,12 +850,19 @@ app.MapPost("/api/users/change-password", async (AppDbContext db, IPasswordServi
         return Results.NotFound();
 
     if (!passwordService.VerifyPassword(dto.OldPassword, user.PasswordHash))
-        return Results.BadRequest(new { message = "Stare haslo jest niepoprawne" });
+        return Results.BadRequest(new { message = "Stare hasło jest niepoprawne" });
+
+    // Validate new password strength
+    var passwordValidation = passwordService.ValidatePasswordStrength(dto.NewPassword);
+    if (!passwordValidation.IsValid)
+    {
+        return Results.BadRequest(new { message = string.Join(". ", passwordValidation.Errors) });
+    }
 
     user.PasswordHash = passwordService.HashPassword(dto.NewPassword);
     await db.SaveChangesAsync();
 
-    return Results.Ok(new { message = "Haslo zostalo zmienione" });
+    return Results.Ok(new { message = "Hasło zostało zmienione" });
 }).RequireAuthorization();
 
 app.MapPost("/api/users/avatar", async (AppDbContext db, HttpContext context, IFormFile file) =>

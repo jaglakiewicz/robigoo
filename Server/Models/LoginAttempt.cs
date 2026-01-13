@@ -9,29 +9,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Models
 {
-    public class UserSession
+    /// <summary>
+    /// Tracks login attempts for security auditing and brute-force protection.
+    /// </summary>
+    public class LoginAttempt
     {
         public long Id { get; set; }
-        public long UserId { get; set; }
         
-        [MaxLength(2000)]
-        public string SessionToken { get; set; } = string.Empty;
-        
-        [MaxLength(256)]
-        public string? RefreshToken { get; set; }
-        
-        public DateTime? RefreshTokenExpiresAt { get; set; }
-        
-        public DateTime CreatedAt { get; set; }
-        public DateTime LastActivityAt { get; set; }
-        public bool IsActive { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Login { get; set; } = string.Empty;
         
         [MaxLength(50)]
         public string? IpAddress { get; set; }
         
         [MaxLength(500)]
         public string? UserAgent { get; set; }
-
-        public User User { get; set; } = null!;
+        
+        public bool Success { get; set; }
+        
+        [MaxLength(255)]
+        public string? FailureReason { get; set; }
+        
+        public DateTime AttemptedAt { get; set; } = DateTime.UtcNow;
     }
 }

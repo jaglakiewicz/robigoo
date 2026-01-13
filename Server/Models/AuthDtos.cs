@@ -141,5 +141,36 @@ namespace Server.Models
         #endregion
     }
 
+    public class RefreshTokenDto
+    {
+        #region Properties
+
+        public string AccessToken { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+
+        #endregion
+    }
+
+    public class TokenResponseDto
+    {
+        #region Properties
+
+        public string AccessToken { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
+        public int ExpiresIn { get; set; }
+
+        #endregion
+    }
+
+    public class AuthResponseDto
+    {
+        #region Properties
+
+        public TokenResponseDto Token { get; set; } = new();
+        public LoginResponseDto User { get; set; } = new();
+
+        #endregion
+    }
+
     #endregion
 }
