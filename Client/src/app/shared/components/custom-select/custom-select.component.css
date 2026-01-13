@@ -28,8 +28,9 @@
 .select-trigger:hover:not(.disabled) { border-color: var(--primary); }
 
 .select-trigger:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+  outline: none;
 }
 
 .custom-select.open .select-trigger {

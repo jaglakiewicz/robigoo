@@ -183,14 +183,15 @@ button:disabled,
 button:focus-visible,
 .btn:focus-visible,
 [class*="btn-"]:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-  box-shadow: none;
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--focus-shadow);
 }
 
 /* High contrast focus for buttons on dark backgrounds (sidebar) */
 .sidebar button:focus-visible,
 .sidebar .btn:focus-visible {
-  outline: 2px solid var(--on-dark);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--on-dark);
+  box-shadow: inset 0 0 0 1px var(--on-dark);
 }

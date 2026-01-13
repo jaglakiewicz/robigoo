@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
  * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
@@ -20,11 +20,11 @@ interface MachineStep {
 }
 
 @Component({
-  selector: 'app-types-of-vehicles',
-  templateUrl: './types-of-vehicles.component.html',
-  styleUrls: ['./types-of-vehicles.component.css']
+  selector: 'app-crop-sprayers',
+  templateUrl: './crop-sprayers.component.html',
+  styleUrls: ['./crop-sprayers.component.css']
 })
-export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
+export class CropSprayersComponent implements OnInit, OnDestroy {
   // List
   machines: MachineListItem[] = [];
   selectedSerialNumber: string | null = null;
@@ -548,4 +548,3 @@ export class TypesOfVehiclesComponent implements OnInit, OnDestroy {
     return this.sanitizer.bypassSecurityTrustHtml(icon);
   }
 }
-

@@ -41,7 +41,7 @@
   left: 0;
   top: 0;
   height: 100%;
-  width: 64px;
+  width: 60px;
   background: var(--primary);
   color: var(--on-dark);
   padding: 0;
@@ -333,7 +333,7 @@
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
-  left: 27px;
+  left: 24px;
 }
 
 .toggle-switch input:checked + .toggle-slider .toggle-icon-light { opacity: 0; }
@@ -353,7 +353,7 @@
    APP SHELL & MAIN CONTENT
    ============================================================ */
 .app-shell {
-  margin-left: 64px;
+  margin-left: 60px;
   transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;

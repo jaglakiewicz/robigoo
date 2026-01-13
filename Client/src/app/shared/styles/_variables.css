@@ -22,13 +22,14 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* Spacing */
+  /* Spacing - 6px grid */
   --space-xs: 6px;
   --space-sm: 6px;
   --space-md: 12px;
   --space-lg: 18px;
   --space-xl: 24px;
   --space-2xl: 36px;
+  --space-3xl: 48px;
 
   /* Border Radius */
   --radius: 6px;
@@ -162,7 +163,7 @@
   --primary-dark: var(--primary-hover);
   --primary-light: var(--primary-surface);
   
-  --focus-shadow: 0 0 0 2px var(--focus-ring-offset), 0 0 0 4px var(--focus-ring);
+  --focus-shadow: inset 0 0 0 1px var(--primary);
   --link-color: var(--primary);
   --link-color-hover: var(--primary-hover);
 }
@@ -282,7 +283,7 @@
   --primary-dark: var(--primary-hover);
   --primary-light: var(--primary-surface);
   
-  --focus-shadow: 0 0 0 2px var(--focus-ring-offset), 0 0 0 4px var(--focus-ring);
+  --focus-shadow: inset 0 0 0 1px var(--primary);
   --link-color: var(--primary);
   --link-color-hover: var(--primary-hover);
 }

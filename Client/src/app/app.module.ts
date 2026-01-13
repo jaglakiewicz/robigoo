@@ -15,7 +15,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { NewInspectionComponent } from './new-inspection/new-inspection.component';
-import { TypesOfVehiclesComponent } from './types-of-vehicles/types-of-vehicles.component';
+import { CropSprayersComponent } from './crop-sprayers/crop-sprayers.component';
 import { StatisticsComponent } from './statistics/statistics.component';
 import { InspectionsComponent } from './inspections/inspections.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -34,7 +34,7 @@ import { ScrollFadeDirective } from './shared/directives/scroll-fade.directive';
 import { ScrollCenterDirective } from './shared/directives/scroll-center.directive';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, TypesOfVehiclesComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
