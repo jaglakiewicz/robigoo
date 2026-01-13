@@ -1,9 +1,8 @@
 /*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Toast Notification Component - Floating notifications
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Toast Notification Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
 .toasts-container {
   position: fixed;
@@ -35,32 +34,26 @@
   text-overflow: ellipsis;
 }
 
-.toast:hover {
-  box-shadow: var(--shadow-lg);
-}
+.toast:hover { box-shadow: var(--shadow-lg); }
 
-/* Success Toast */
 .toast-success {
   background: var(--success);
   color: var(--text-inverse);
   border-left: 6px solid var(--success-hover);
 }
 
-/* Error Toast */
 .toast-error {
   background: var(--error);
   color: var(--text-inverse);
   border-left: 6px solid var(--error-hover);
 }
 
-/* Warning Toast */
 .toast-warning {
   background: var(--warning);
   color: var(--text-inverse);
   border-left: 6px solid var(--warning-hover);
 }
 
-/* Info Toast */
 .toast-info {
   background: var(--primary);
   color: var(--text-inverse);
@@ -99,9 +92,7 @@
   height: 18px;
 }
 
-.toast-close:hover {
-  opacity: 1;
-}
+.toast-close:hover { opacity: 1; }
 
 .toast-close:focus-visible {
   outline: none;
@@ -116,19 +107,10 @@
     left: 12px;
     max-width: none;
   }
-
-  .toast {
-    max-width: 100%;
-  }
+  .toast { max-width: 100%; }
 }
 
 @keyframes slideIn {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }

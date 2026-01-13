@@ -1,8 +1,10 @@
-/* History Dialog - Component Specific Styles */
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * History Dialog Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
-.text-sm {
-  font-size: var(--font-size-sm);
-}
+.text-sm { font-size: var(--font-size-sm); }
 
 .user-cell {
   display: flex;
@@ -31,19 +33,10 @@
   flex-shrink: 0;
 }
 
-.user-avatar svg {
-  width: 18px;
-  height: 18px;
-}
+.user-avatar svg { width: 18px; height: 18px; }
 
-.col-when {
-  width: 180px;
-  white-space: nowrap;
-}
-
-.col-who {
-  width: 150px;
-}
+.col-when { width: 180px; white-space: nowrap; }
+.col-who { width: 150px; }
 
 .loading, .no-data {
   text-align: center;
