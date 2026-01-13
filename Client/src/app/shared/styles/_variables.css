@@ -47,88 +47,87 @@
 
 /* ============================================================
    LIGHT THEME
-   Professional Design System with Character
-   Harmonious palette for agricultural control station
+   "Subtle Violet" - Professional with a hint of character
+   Blue with subtle violet undertone, calm and modern
    WCAG 2.1 AA/AAA Compliant
    ============================================================ */
 :root[data-theme="light"] {
   /* 
-   * PRIMARY - Refined Slate Blue (professional with character)
-   * Hue 210, moderate saturation - interesting but not loud
+   * PRIMARY - Blue with subtle violet shift
+   * Hue 222 - just a touch toward violet
+   * Low-medium saturation for calm feel
    */
-  --primary: hsl(210, 55%, 45%);
-  --primary-hover: hsl(210, 58%, 38%);
-  --primary-surface: hsl(210, 35%, 96%);
-  --primary-border: hsl(210, 30%, 78%);
-  --primary-btn-border: hsl(210, 60%, 35%);
+  --primary: hsl(222, 42%, 45%);
+  --primary-hover: hsl(222, 45%, 38%);
+  --primary-surface: hsl(222, 28%, 96%);
+  --primary-border: hsl(222, 20%, 78%);
+  --primary-btn-border: hsl(222, 48%, 35%);
   
   /* 
-   * SUCCESS - Teal Green (harmonizes with blue primary)
-   * Shifted toward cyan for cohesion with primary
+   * SUCCESS - Soft Teal
    */
-  --success: hsl(162, 50%, 38%);
-  --success-hover: hsl(162, 52%, 32%);
-  --success-surface: hsl(162, 30%, 96%);
-  --success-border: hsl(162, 25%, 75%);
-  --success-btn-border: hsl(162, 55%, 28%);
-  --success-text: hsl(162, 55%, 30%);
+  --success: hsl(165, 45%, 38%);
+  --success-hover: hsl(165, 48%, 32%);
+  --success-surface: hsl(165, 28%, 96%);
+  --success-border: hsl(165, 22%, 75%);
+  --success-btn-border: hsl(165, 50%, 28%);
+  --success-text: hsl(165, 50%, 30%);
   
   /* 
-   * WARNING - Golden Amber (warm complement)
+   * WARNING - Muted Amber
    */
-  --warning: hsl(38, 80%, 48%);
-  --warning-hover: hsl(38, 82%, 40%);
-  --warning-surface: hsl(42, 55%, 96%);
-  --warning-border: hsl(38, 50%, 78%);
-  --warning-btn-border: hsl(38, 85%, 36%);
-  --warning-text: hsl(32, 75%, 32%);
+  --warning: hsl(38, 68%, 48%);
+  --warning-hover: hsl(38, 70%, 40%);
+  --warning-surface: hsl(42, 42%, 96%);
+  --warning-border: hsl(38, 38%, 78%);
+  --warning-btn-border: hsl(38, 72%, 36%);
+  --warning-text: hsl(32, 62%, 30%);
   
   /* 
-   * ERROR - Warm Coral Red (harmonizes with palette)
-   * Shifted slightly toward orange for warmth
+   * ERROR - Soft Rose
    */
-  --error: hsl(358, 58%, 52%);
-  --error-hover: hsl(358, 60%, 44%);
-  --error-surface: hsl(358, 45%, 97%);
-  --error-border: hsl(358, 38%, 82%);
-  --error-btn-border: hsl(358, 62%, 42%);
-  --error-text: hsl(358, 58%, 42%);
+  --error: hsl(352, 52%, 50%);
+  --error-hover: hsl(352, 55%, 42%);
+  --error-surface: hsl(352, 38%, 97%);
+  --error-border: hsl(352, 30%, 82%);
+  --error-btn-border: hsl(352, 58%, 40%);
+  --error-text: hsl(352, 52%, 42%);
   
   /* 
-   * BACKGROUNDS - Warm neutral with subtle blue undertone
+   * BACKGROUNDS - Neutral with very subtle cool tint
    */
-  --bg: hsl(210, 12%, 96%);
-  --bg-alt: hsl(210, 10%, 93%);
+  --bg: hsl(220, 12%, 96%);
+  --bg-alt: hsl(220, 10%, 93%);
   --surface: hsl(0, 0%, 100%);
-  --surface-alt: hsl(210, 10%, 98%);
+  --surface-alt: hsl(220, 8%, 98%);
   
   /* 
-   * BORDERS - Soft, harmonious
+   * BORDERS
    */
-  --border: hsl(210, 10%, 82%);
-  --border-light: hsl(210, 8%, 88%);
-  --border-strong: hsl(210, 12%, 70%);
+  --border: hsl(220, 10%, 82%);
+  --border-light: hsl(220, 8%, 88%);
+  --border-strong: hsl(220, 12%, 70%);
   
   /* 
-   * TEXT - Warm dark for readability
+   * TEXT
    */
-  --text: hsl(210, 20%, 20%);
-  --text-secondary: hsl(210, 12%, 42%);
-  --text-muted: hsl(210, 8%, 52%);
-  --text-disabled: hsl(210, 6%, 62%);
+  --text: hsl(222, 18%, 18%);
+  --text-secondary: hsl(220, 10%, 42%);
+  --text-muted: hsl(220, 8%, 52%);
+  --text-disabled: hsl(220, 6%, 62%);
   --text-inverse: hsl(0, 0%, 100%);
   
   /* 
-   * DISABLED STATE - Clear distinction
+   * DISABLED STATE
    */
-  --disabled-bg: hsl(210, 8%, 94%);
-  --disabled-border: hsl(210, 6%, 82%);
-  --disabled-text: hsl(210, 5%, 55%);
+  --disabled-bg: hsl(220, 8%, 94%);
+  --disabled-border: hsl(220, 6%, 82%);
+  --disabled-text: hsl(220, 5%, 55%);
   
   /* Focus & Interaction */
-  --focus-ring: hsl(205, 50%, 50%);
+  --focus-ring: hsl(222, 50%, 52%);
   --focus-ring-offset: hsl(0, 0%, 100%);
-  --overlay: hsla(210, 25%, 15%, 0.5);
+  --overlay: hsla(222, 20%, 15%, 0.5);
 
   --on-dark: hsla(0, 0%, 100%, 1);
   --on-dark-muted: hsla(0, 0%, 100%, 0.65);
@@ -139,7 +138,7 @@
   --on-dark-surface-hover: hsla(0, 0%, 100%, 0.15);
   --on-dark-shadow: hsla(0, 0%, 0%, 0.2);
   
-  --shadow-color: 210, 15%, 10%;
+  --shadow-color: 220, 15%, 10%;
   --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.04);
   --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.06);
   --shadow-md: 0 4px 8px hsla(var(--shadow-color), 0.08);
@@ -170,85 +169,85 @@
 
 /* ============================================================
    DARK THEME
-   Professional Design System with Character
-   Harmonious palette for agricultural control station
+   "Subtle Violet" - Professional with a hint of character
+   Blue with subtle violet undertone, calm and modern
    WCAG 2.1 AA/AAA Compliant
    ============================================================ */
 :root[data-theme="dark"] {
   /* 
-   * PRIMARY - Refined Slate Blue (brighter for dark)
+   * PRIMARY - Blue with subtle violet shift (brighter for dark)
    */
-  --primary: hsl(210, 58%, 58%);
-  --primary-hover: hsl(210, 60%, 65%);
-  --primary-surface: hsl(210, 35%, 16%);
-  --primary-border: hsl(210, 25%, 32%);
-  --primary-btn-border: hsl(210, 62%, 48%);
+  --primary: hsl(222, 48%, 58%);
+  --primary-hover: hsl(222, 50%, 65%);
+  --primary-surface: hsl(222, 28%, 15%);
+  --primary-border: hsl(222, 18%, 30%);
+  --primary-btn-border: hsl(222, 52%, 48%);
   
   /* 
-   * SUCCESS - Teal Green (harmonizes with blue primary)
+   * SUCCESS - Soft Teal
    */
-  --success: hsl(162, 48%, 48%);
-  --success-hover: hsl(162, 50%, 55%);
-  --success-surface: hsl(162, 28%, 14%);
-  --success-border: hsl(162, 20%, 28%);
-  --success-btn-border: hsl(162, 52%, 38%);
-  --success-text: hsl(162, 50%, 55%);
+  --success: hsl(165, 42%, 48%);
+  --success-hover: hsl(165, 45%, 55%);
+  --success-surface: hsl(165, 25%, 13%);
+  --success-border: hsl(165, 18%, 26%);
+  --success-btn-border: hsl(165, 48%, 38%);
+  --success-text: hsl(165, 45%, 55%);
   
   /* 
-   * WARNING - Golden Amber
+   * WARNING - Muted Amber
    */
-  --warning: hsl(38, 75%, 55%);
-  --warning-hover: hsl(38, 78%, 62%);
-  --warning-surface: hsl(38, 38%, 14%);
-  --warning-border: hsl(38, 28%, 28%);
-  --warning-btn-border: hsl(38, 80%, 44%);
-  --warning-text: hsl(40, 70%, 60%);
+  --warning: hsl(38, 65%, 55%);
+  --warning-hover: hsl(38, 68%, 62%);
+  --warning-surface: hsl(38, 35%, 13%);
+  --warning-border: hsl(38, 25%, 26%);
+  --warning-btn-border: hsl(38, 70%, 44%);
+  --warning-text: hsl(40, 60%, 60%);
   
   /* 
-   * ERROR - Warm Coral Red
+   * ERROR - Soft Rose
    */
-  --error: hsl(358, 55%, 60%);
-  --error-hover: hsl(358, 58%, 68%);
-  --error-surface: hsl(358, 32%, 14%);
-  --error-border: hsl(358, 24%, 28%);
-  --error-btn-border: hsl(358, 58%, 50%);
-  --error-text: hsl(358, 55%, 68%);
+  --error: hsl(352, 50%, 58%);
+  --error-hover: hsl(352, 52%, 65%);
+  --error-surface: hsl(352, 28%, 14%);
+  --error-border: hsl(352, 20%, 26%);
+  --error-btn-border: hsl(352, 55%, 48%);
+  --error-text: hsl(352, 50%, 65%);
   
   /* 
-   * BACKGROUNDS - Deep slate with subtle warmth
+   * BACKGROUNDS - Deep slate with subtle cool tint
    */
-  --bg: hsl(215, 18%, 12%);
-  --bg-alt: hsl(215, 20%, 9%);
-  --surface: hsl(215, 15%, 16%);
-  --surface-alt: hsl(215, 14%, 20%);
+  --bg: hsl(220, 16%, 11%);
+  --bg-alt: hsl(220, 18%, 8%);
+  --surface: hsl(220, 14%, 15%);
+  --surface-alt: hsl(220, 12%, 19%);
   
   /* 
-   * BORDERS - Soft, harmonious
+   * BORDERS
    */
-  --border: hsl(215, 12%, 28%);
-  --border-light: hsl(215, 10%, 22%);
-  --border-strong: hsl(215, 12%, 38%);
+  --border: hsl(220, 10%, 26%);
+  --border-light: hsl(220, 8%, 20%);
+  --border-strong: hsl(220, 10%, 36%);
   
   /* 
-   * TEXT - Warm light for readability
+   * TEXT
    */
-  --text: hsl(210, 12%, 94%);
-  --text-secondary: hsl(210, 8%, 70%);
-  --text-muted: hsl(210, 6%, 55%);
-  --text-disabled: hsl(210, 5%, 45%);
-  --text-inverse: hsl(215, 18%, 12%);
+  --text: hsl(220, 12%, 93%);
+  --text-secondary: hsl(220, 8%, 68%);
+  --text-muted: hsl(220, 6%, 54%);
+  --text-disabled: hsl(220, 5%, 44%);
+  --text-inverse: hsl(220, 16%, 11%);
 
   /* 
-   * DISABLED STATE - Clear distinction
+   * DISABLED STATE
    */
-  --disabled-bg: hsl(215, 12%, 13%);
-  --disabled-border: hsl(215, 8%, 22%);
-  --disabled-text: hsl(210, 5%, 48%);
+  --disabled-bg: hsl(220, 12%, 12%);
+  --disabled-border: hsl(220, 8%, 22%);
+  --disabled-text: hsl(220, 5%, 46%);
 
   /* Focus & Interaction */
-  --focus-ring: hsl(205, 55%, 55%);
-  --focus-ring-offset: hsl(215, 15%, 16%);
-  --overlay: hsla(215, 30%, 5%, 0.8);
+  --focus-ring: hsl(222, 55%, 58%);
+  --focus-ring-offset: hsl(220, 14%, 15%);
+  --overlay: hsla(220, 25%, 5%, 0.8);
   
   --on-dark: hsla(0, 0%, 100%, 1);
   --on-dark-muted: hsla(0, 0%, 100%, 0.65);
@@ -259,7 +258,7 @@
   --on-dark-surface-hover: hsla(0, 0%, 100%, 0.15);
   --on-dark-shadow: hsla(0, 0%, 0%, 0.3);
   
-  --shadow-color: 215, 25%, 5%;
+  --shadow-color: 220, 25%, 5%;
   --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.18);
   --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.25);
   --shadow-md: 0 4px 8px hsla(var(--shadow-color), 0.32);
