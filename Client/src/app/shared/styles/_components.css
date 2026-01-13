@@ -284,6 +284,11 @@
   background: var(--bg-alt);
 }
 
+.dialog__close:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .dialog__body {
   color: var(--text);
   font-size: var(--font-size-base);
@@ -351,6 +356,12 @@
 .step:hover:not(.active),
 .tab-btn:hover:not(.active) {
   background: var(--bg-alt);
+}
+
+.step:focus-visible,
+.tab-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
 }
 
 .step.active,

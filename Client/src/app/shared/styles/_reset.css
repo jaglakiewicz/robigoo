@@ -95,6 +95,52 @@ p {
 }
 
 /* ============================================================
+   LINKS - WCAG Compliant
+   ============================================================ */
+a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   SELECTION - High contrast
+   ============================================================ */
+::selection {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+/* ============================================================
+   HIGH CONTRAST MODE SUPPORT
+   ============================================================ */
+@media (prefers-contrast: high) {
+  :root[data-theme="light"] {
+    --border: hsl(210, 10%, 50%);
+    --border-light: hsl(210, 10%, 60%);
+    --border-strong: hsl(210, 10%, 40%);
+    --text-muted: hsl(210, 8%, 35%);
+  }
+  
+  :root[data-theme="dark"] {
+    --border: hsl(220, 10%, 50%);
+    --border-light: hsl(220, 10%, 40%);
+    --border-strong: hsl(220, 10%, 60%);
+    --text-muted: hsl(210, 8%, 70%);
+  }
+}
+
+/* ============================================================
    RESPONSIVE BREAKPOINTS
    ============================================================ */
 @media (max-width: 767px) {
@@ -103,4 +149,18 @@ p {
 
 @media (min-width: 768px) {
   body { font-size: var(--font-size-base); }
+}
+
+/* ============================================================
+   REDUCED MOTION PREFERENCE
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

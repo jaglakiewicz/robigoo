@@ -177,11 +177,20 @@ button:disabled,
 }
 
 /* ============================================================
-   FOCUS STATE
+   FOCUS STATE - WCAG 2.4.7 Compliant
+   Visible focus indicator with 3:1 contrast minimum
    ============================================================ */
 button:focus-visible,
 .btn:focus-visible,
 [class*="btn-"]:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-shadow);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* High contrast focus for buttons on dark backgrounds (sidebar) */
+.sidebar button:focus-visible,
+.sidebar .btn:focus-visible {
+  outline: 2px solid var(--on-dark);
+  outline-offset: 2px;
 }

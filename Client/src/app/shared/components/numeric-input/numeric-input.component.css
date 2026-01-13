@@ -24,13 +24,27 @@
 }
 
 .numeric-input input:focus {
-  outline: none;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
   border-color: var(--primary);
 }
 
 .numeric-input.disabled input {
-  background: var(--bg-alt);
-  color: var(--text-disabled);
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  border-color: var(--disabled-border);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.numeric-input.disabled .spinner-buttons {
+  border-left-color: var(--disabled-border);
+  border-left-style: dashed;
+}
+
+.numeric-input.disabled .spinner-btn {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
   cursor: not-allowed;
 }
 
@@ -68,6 +82,11 @@
 .spinner-btn:active:not(:disabled) {
   background: var(--primary);
   color: var(--text-inverse);
+}
+
+.spinner-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
 }
 
 .spinner-btn:disabled {

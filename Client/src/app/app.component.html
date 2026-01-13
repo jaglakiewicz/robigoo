@@ -10,6 +10,9 @@
 <app-login *ngIf="!isLoggedIn" (loginSuccess)="handleLoginSuccess()"></app-login>
 
 <ng-container *ngIf="isLoggedIn">
+  <!-- Skip Link for keyboard users -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <button class="hamburger" *ngIf="!sidebarOpen" (click)="toggle()" aria-label="Open menu">
     &#9776;
   </button>
@@ -41,15 +44,20 @@
       </div>
     </div>
 
-    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen" appScrollFade>
+    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen" appScrollFade role="navigation" aria-label="Main menu">
       <li *ngFor="let item of menuItems" 
+          role="menuitem"
+          tabindex="0"
           (click)="handleMenuClick(item.type, item.titleKey)"
+          (keydown.enter)="handleMenuClick(item.type, item.titleKey)"
+          (keydown.space)="handleMenuClick(item.type, item.titleKey); $event.preventDefault()"
           [class.disabled]="isMasterAdmin() && item.type !== 'settings'"
           [class.restricted]="isMasterAdmin() && item.type !== 'settings'"
-          [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator mo�e koristiti samo Settings' : null">
-        <span class="menu-icon" [innerHTML]="getSafeHtml(iconMap[item.type])" aria-hidden="true"></span>
+          [attr.aria-disabled]="isMasterAdmin() && item.type !== 'settings'"
+          [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator może koristiti samo Settings' : null">
+        <span class="menu-icon" aria-hidden="true" [innerHTML]="getSafeHtml(iconMap[item.type])"></span>
         <span>{{ item.titleKey | text }}</span>
-        <span class="hint">{{ item.hintKey | text }}</span>
+        <span class="hint" aria-hidden="true">{{ item.hintKey | text }}</span>
       </li>
     </ul>
 
@@ -72,18 +80,37 @@
   <div class="app-shell" [class.shifted]="sidebarOpen">
     <div class="container">
       <div class="top-bar">
-        <div class="tabs" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="reorderTabs($event)">
-          <div *ngFor="let t of tabs; let i = index" class="tab" cdkDrag cdkDragLockAxis="x" [class.active]="i === activeIndex" (click)="activateTab(i)">
-            <span *ngIf="t.icon" class="tab-icon" [innerHTML]="getSafeHtml(t.icon)"></span>
+        <div class="tabs" role="tablist" aria-label="Open programs" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="reorderTabs($event)">
+          <div *ngFor="let t of tabs; let i = index" 
+               class="tab" 
+               role="tab"
+               [attr.aria-selected]="i === activeIndex"
+               [attr.tabindex]="i === activeIndex ? 0 : -1"
+               cdkDrag 
+               cdkDragLockAxis="x" 
+               [class.active]="i === activeIndex" 
+               (click)="activateTab(i)"
+               (keydown.enter)="activateTab(i)"
+               (keydown.space)="activateTab(i); $event.preventDefault()">
+            <span *ngIf="t.icon" class="tab-icon" aria-hidden="true" [innerHTML]="getSafeHtml(t.icon)"></span>
             <span>{{ t.titleKey | text }}</span>
-            <button class="tab-action pin" title="Pin/Unpin tab" *ngIf="i === activeIndex || t.pinned" (click)="togglePinTab(i, $event)" [class.pinned]="t.pinned" [innerHTML]="getSafeHtml(SVG_ICONS.pinIcon)"></button>
-            <button class="tab-action close" title="Close tab" *ngIf="!t.pinned" (click)="closeTab(i); $event.stopPropagation()" [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></button>
+            <button class="tab-action pin" 
+                    [attr.aria-label]="t.pinned ? 'Unpin tab' : 'Pin tab'" 
+                    *ngIf="i === activeIndex || t.pinned" 
+                    (click)="togglePinTab(i, $event)" 
+                    [class.pinned]="t.pinned" 
+                    [innerHTML]="getSafeHtml(SVG_ICONS.pinIcon)"></button>
+            <button class="tab-action close" 
+                    aria-label="Close tab" 
+                    *ngIf="!t.pinned" 
+                    (click)="closeTab(i); $event.stopPropagation()" 
+                    [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></button>
           </div>
         </div>
         <div class="app-toolbar"></div>
       </div>
 
-      <div class="main-area" appScrollFade>
+      <div class="main-area" appScrollFade id="main-content" role="main">
         <ng-container *ngIf="tabs.length; else noTabs">
           <ng-container [ngSwitch]="tabs[activeIndex]?.type">
             <app-new-inspection *ngSwitchCase="'new'" (close)="closeTab(activeIndex)"></app-new-inspection>

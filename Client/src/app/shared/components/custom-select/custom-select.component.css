@@ -27,6 +27,11 @@
 
 .select-trigger:hover:not(.disabled) { border-color: var(--primary); }
 
+.select-trigger:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .custom-select.open .select-trigger {
   border-color: var(--primary);
   border-bottom-left-radius: 0;
@@ -34,9 +39,15 @@
 }
 
 .custom-select.disabled .select-trigger {
-  background: var(--bg-alt);
-  color: var(--text-disabled);
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  border-color: var(--disabled-border);
+  border-style: dashed;
   cursor: not-allowed;
+}
+
+.custom-select.disabled .select-chevron {
+  color: var(--disabled-text);
 }
 
 .select-value {
@@ -94,6 +105,12 @@
 }
 
 .select-option:hover { background: var(--bg-alt); }
+
+.select-option:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+  background: var(--bg-alt);
+}
 
 .select-option.selected {
   background: var(--primary-surface);

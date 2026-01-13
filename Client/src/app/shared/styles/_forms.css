@@ -23,17 +23,32 @@ input, textarea, select {
 
 input:focus, textarea:focus, select:focus,
 input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: var(--focus-shadow);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+  border-color: var(--primary);
 }
 
 input:disabled, textarea:disabled, select:disabled {
-  background: var(--bg-alt);
-  color: var(--text-disabled);
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
   cursor: not-allowed;
   opacity: 1;
-  -webkit-text-fill-color: var(--text-disabled);
+  -webkit-text-fill-color: var(--disabled-text);
+  border-color: var(--disabled-border);
+  border-style: dashed;
+}
+
+/* Read-only style for displaying data (more readable than disabled) */
+input[readonly], textarea[readonly] {
+  background: var(--surface-alt);
+  color: var(--text);
+  cursor: default;
+  border-color: var(--border-light);
+}
+
+input[readonly]:focus, textarea[readonly]:focus {
+  border-color: var(--border);
+  outline: none;
 }
 
 textarea {
@@ -77,11 +92,9 @@ input[type="radio"] {
   box-sizing: border-box !important;
 }
 
-input[type="radio"]:focus,
-input[type="radio"]:focus-visible,
-input[type="radio"]:active {
-  outline: none !important;
-  box-shadow: none !important;
+input[type="radio"]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 input[type="radio"]:hover:not(:disabled) {
@@ -106,10 +119,14 @@ input[type="radio"]:checked::after {
 }
 
 input[type="radio"]:disabled {
-  background: var(--bg-alt) !important;
-  border-color: var(--border-light) !important;
+  background: var(--disabled-bg) !important;
+  border-color: var(--disabled-border) !important;
+  border-style: dashed !important;
   cursor: not-allowed;
-  opacity: 0.6;
+}
+
+input[type="radio"]:disabled:checked::after {
+  background: var(--disabled-text);
 }
 
 /* ============================================================
@@ -139,11 +156,9 @@ input[type="checkbox"] {
   box-sizing: border-box !important;
 }
 
-input[type="checkbox"]:focus,
-input[type="checkbox"]:focus-visible,
-input[type="checkbox"]:active {
-  outline: none !important;
-  box-shadow: none !important;
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 input[type="checkbox"]:hover:not(:disabled) {
@@ -168,10 +183,16 @@ input[type="checkbox"]:checked::after {
 }
 
 input[type="checkbox"]:disabled {
-  background: var(--bg-alt) !important;
-  border-color: var(--border-light) !important;
+  background: var(--disabled-bg) !important;
+  border-color: var(--disabled-border) !important;
+  border-style: dashed !important;
   cursor: not-allowed;
-  opacity: 0.6;
+}
+
+input[type="checkbox"]:disabled:checked {
+  background: var(--disabled-text) !important;
+  border-color: var(--disabled-text) !important;
+  border-style: solid !important;
 }
 
 /* ============================================================

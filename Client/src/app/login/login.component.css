@@ -686,7 +686,7 @@
   .login-container { padding: var(--space-md); align-items: flex-start; }
   .login-box { padding: var(--space-xl) var(--space-lg); margin-top: var(--space-2xl); }
   .logo-container { gap: var(--space-md); }
-  .logo-icon { width: 80px; height: 80px; }
+  .logo-icon { width: 100px; height: 100px; }
   .logo-wordmark { font-size: var(--font-size-xl); letter-spacing: 1px; }
   .logo-tagline { font-size: var(--font-size-sm); }
   .login-illustration { top: 8%; width: 150%; transform: translate(-50%, 2%); opacity: 0.22; }

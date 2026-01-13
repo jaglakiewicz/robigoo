@@ -11,6 +11,29 @@
 @import './app/shared/styles/globals.css';
 
 /* ============================================================
+   SKIP LINK (Accessibility)
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--primary);
+  color: var(--text-inverse);
+  padding: var(--space-md) var(--space-lg);
+  z-index: 10000;
+  text-decoration: none;
+  font-weight: var(--font-weight-bold);
+  border-radius: 0 0 var(--radius) 0;
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--text-inverse);
+  outline-offset: 2px;
+}
+
+/* ============================================================
    SIDEBAR
    ============================================================ */
 .sidebar {
@@ -75,6 +98,11 @@
 .close-btn:hover {
   background: var(--on-dark-surface-hover);
   border-color: var(--on-dark-border-strong);
+}
+
+.close-btn:focus-visible {
+  outline: 2px solid var(--on-dark);
+  outline-offset: 2px;
 }
 
 /* ============================================================
@@ -163,6 +191,12 @@
   background: transparent;
 }
 
+/* Menu item focus state */
+.menu li:focus-visible {
+  outline: 2px solid var(--on-dark);
+  outline-offset: -2px;
+}
+
 .menu li .hint {
   display: block;
   font-size: var(--font-size-sm);
@@ -192,6 +226,15 @@
   border-radius: var(--radius-md);
   transition: all 0.15s;
   z-index: 1002;
+}
+
+.hamburger:hover {
+  background: var(--primary-hover);
+}
+
+.hamburger:focus-visible {
+  outline: 2px solid var(--on-dark);
+  outline-offset: 2px;
 }
 
 .sidebar-footer {
@@ -299,6 +342,11 @@
 .toggle-switch:hover .toggle-slider {
   background-color: var(--on-dark-subtle);
   border-color: var(--on-dark-subtle);
+}
+
+.toggle-switch:focus-within .toggle-slider {
+  outline: 2px solid var(--on-dark);
+  outline-offset: 2px;
 }
 
 /* ============================================================
@@ -492,6 +540,17 @@
   opacity: 1;
 }
 
+/* Tab focus state */
+.tab:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.tab .tab-action:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
 /* ============================================================
    USER MENU
    ============================================================ */
@@ -573,6 +632,16 @@
   background: var(--bg);
   border-color: var(--border-strong);
   box-shadow: var(--shadow-sm);
+}
+
+.user-info-display:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.sidebar-user-section .user-info-display:focus-visible,
+.sidebar-header .user-info-display:focus-visible {
+  outline-color: var(--on-dark);
 }
 
 .user-name-text {
@@ -705,6 +774,12 @@
 }
 
 .user-menu-item:hover {
+  background: var(--bg-alt);
+}
+
+.user-menu-item:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
   background: var(--bg-alt);
 }
 
