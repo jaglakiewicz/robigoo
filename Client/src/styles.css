@@ -357,8 +357,7 @@
   border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
   padding: 18px;
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 0;
