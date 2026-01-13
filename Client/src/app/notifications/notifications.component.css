@@ -1,9 +1,10 @@
 ﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Notifications Component - Responsive Design
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Notifications Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+@import '../shared/styles/globals.css';
 
 :host {
   display: flex;
@@ -13,6 +14,9 @@
   overflow: hidden;
 }
 
+/* ============================================================
+   NOTIFICATION CARDS
+   ============================================================ */
 .notification-card {
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
@@ -66,24 +70,8 @@
   min-height: 30px;
 }
 
-/* Mobile responsive */
 @media (max-width: 767px) {
-  .notification-card {
-    padding: var(--space-md);
-  }
-
-  .notification-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .notification-actions {
-    width: 100%;
-  }
-
-  .notification-actions button {
-    flex: 1;
-    min-width: 80px;
-  }
+  .notification-header { flex-direction: column; align-items: flex-start; }
+  .notification-actions { width: 100%; }
+  .notification-actions button { flex: 1; min-width: 80px; }
 }
-

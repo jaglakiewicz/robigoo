@@ -1,22 +1,10 @@
-﻿/* Separator pionowy do info o maszynie (card-info-row, detail-sub) */
-.vertical-separator {
-  display: inline-block;
-  width: 1px;
-  height: 1em;
-  background: var(--border, #ccc);
-  margin: 0 8px;
-  vertical-align: middle;
-  opacity: 0.7;
-}
-/*
+﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Types of Vehicles (Crop Sprayers) Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
 @import '../shared/styles/globals.css';
-
-/* Layout for machines management */
 
 :host {
   display: flex;
@@ -26,6 +14,9 @@
   overflow: hidden;
 }
 
+/* ============================================================
+   MACHINES LAYOUT
+   ============================================================ */
 .machines-container {
   display: flex;
   flex-direction: column;
@@ -45,9 +36,6 @@
   gap: var(--space-md);
   margin-top: var(--space-md);
   padding-bottom: var(--space-sm);
-  background: transparent;
-  border: none;
-  border-radius: 0;
   margin-bottom: var(--space-sm);
   flex-wrap: wrap;
 }
@@ -58,14 +46,8 @@
   gap: var(--space-md);
 }
 
-.toolbar-group.toolbar-left {
-  justify-content: flex-start;
-}
-
-.toolbar-group.toolbar-right {
-  margin-left: auto;
-  justify-content: flex-end;
-}
+.toolbar-group.toolbar-left { justify-content: flex-start; }
+.toolbar-group.toolbar-right { margin-left: auto; justify-content: flex-end; }
 
 .machines-header .btn {
   display: inline-flex;
@@ -74,6 +56,7 @@
   min-width: unset;
   padding-inline: var(--space-sm) var(--space-md);
 }
+
 .machines-header .btn-icon {
   width: 18px;
   height: 18px;
@@ -82,28 +65,13 @@
   align-items: center;
   justify-content: center;
 }
-.machines-header .btn-icon svg {
-  width: 18px;
-  height: 18px;
-}
-.machines-header .btn-label {
-  flex: 0 0 auto;
-  text-align: left;
-}
 
-/* Icon-only square button */
-.btn-icon-only {
-  width: var(--touch-size);
-  height: var(--touch-size);
-  padding: 0;
-}
+.machines-header .btn-icon svg { width: 18px; height: 18px; }
+.machines-header .btn-label { flex: 0 0 auto; text-align: left; }
 
-.btn-icon-only svg {
-  width: 18px;
-  height: 18px;
-}
-
-
+/* ============================================================
+   TWO-COLUMN LAYOUT
+   ============================================================ */
 .machines-layout {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr);
@@ -129,18 +97,9 @@
   font-weight: var(--font-weight-bold);
 }
 
-.filters-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
-.filters-row .search-input {
-  flex: 1 1 auto;
-  min-width: 160px;
-}
-
+/* ============================================================
+   FILTERS
+   ============================================================ */
 .filters-row {
   display: flex;
   flex-wrap: nowrap;
@@ -154,18 +113,11 @@
   padding: var(--space-xs) var(--space-sm);
 }
 
-.filters-row .filter-input {
-  flex: 1 1 140px;
-}
+.filters-row .search-input { flex: 1 1 auto; min-width: 160px; }
+.filters-row .filter-input { flex: 1 1 140px; }
+.filters-row .filter-input-year { max-width: 90px; }
 
-.filters-row .filter-input-year {
-  max-width: 90px;
-}
-
-.btn-filters {
-  margin-left: auto;
-  padding-inline: var(--space-sm) !important;
-}
+.btn-filters { margin-left: auto; padding-inline: var(--space-sm) !important; }
 
 .toggle-form-btn {
   display: inline-flex;
@@ -180,9 +132,7 @@
   transition: transform var(--transition-base);
 }
 
-.toggle-form-btn.expanded .toggle-icon {
-  transform: rotate(180deg);
-}
+.toggle-form-btn.expanded .toggle-icon { transform: rotate(180deg); }
 
 .toggle-form-btn.expanded {
   background: var(--accent);
@@ -197,6 +147,9 @@
   margin-bottom: var(--space-md);
 }
 
+/* ============================================================
+   MACHINES LIST
+   ============================================================ */
 .machines-list {
   flex: 1;
   overflow-y: auto;
@@ -209,7 +162,7 @@
 .machine-card {
   display: flex;
   gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-sm);
+  padding: var(--space-sm);
   border-radius: var(--radius-sm);
   border: 1px solid var(--panel-border);
   cursor: pointer;
@@ -239,7 +192,6 @@
   flex-wrap: wrap;
   gap: 6px;
   justify-content: flex-start;
-  margin-bottom: 0;
 }
 
 .card-title {
@@ -257,15 +209,6 @@
   align-items: center;
   gap: 6px;
   line-height: 1.4;
-}
-
-.separator {
-  display: inline-block;
-  width: 1px;
-  height: 12px;
-  background: var(--border);
-  margin: 0 var(--space-sm);
-  vertical-align: middle;
 }
 
 .machine-card .badge {
@@ -289,13 +232,9 @@
   color: var(--success-dark);
 }
 
-.empty-state,
-.loading-state {
-  padding: var(--space-md) 0;
-  text-align: center;
-  color: var(--text-light);
-}
-
+/* ============================================================
+   DETAIL PANEL
+   ============================================================ */
 .detail-header {
   display: flex;
   justify-content: space-between;
@@ -313,19 +252,9 @@
   color: var(--text-light);
 }
 
-/* message classes are now defined in globals.css */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-md);
-}
-
-.form-group.full-width {
-  grid-column: 1 / -1;
-}
-
-/* Basics step specific layout: 2 + 2 + 3 columns with larger spacing */
+/* ============================================================
+   FORM LAYOUT - BASICS STEP
+   ============================================================ */
 .basics-grid {
   display: flex;
   flex-direction: column;
@@ -338,13 +267,8 @@
   row-gap: var(--space-sm);
 }
 
-.basics-grid .form-row-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.basics-grid .form-row-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
+.basics-grid .form-row-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.basics-grid .form-row-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 .step-content {
   flex: 1;
@@ -362,48 +286,26 @@
   border-top: 1px solid var(--panel-border);
 }
 
-.spacer {
-  flex: 1;
-}
-
-@media (max-width: 900px) {
-  .machines-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* ============================================================
-   STEP INDICATOR - OVERRIDES
+   STEP INDICATOR OVERRIDES
    ============================================================ */
 .step-indicator {
-  /* Rounding on container boundaries */
   border-radius: var(--radius-md);
-  
-  /* Horizontal scrolling */
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
-  
-  /* Ensure content is not obscured */
   padding-bottom: 6px;
 }
 
 .step {
-  /* Prevent shrinking too small to force scroll */
   min-width: 138px;
   flex: 1 0 auto;
-  
-  /* Top alignment to keep numbers aligned */
   justify-content: flex-start;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-.step-number {
-  /* Ensure number doesn't shrink */
-  flex-shrink: 0;
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .machines-layout { grid-template-columns: 1fr; }
 }
-
-
-

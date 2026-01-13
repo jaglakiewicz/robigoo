@@ -1,0 +1,106 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * CSS Reset & Base Styles
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: var(--line-height-normal);
+  transition: background var(--transition-base), color var(--transition-base);
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text);
+}
+
+h1 { font-size: var(--font-size-xl); margin-bottom: var(--space-lg); }
+h2 { font-size: var(--font-size-xl); margin-bottom: var(--space-lg); }
+h3 { font-size: var(--font-size-lg); margin-bottom: var(--space-md); }
+h4 { font-size: var(--font-size-base); margin-bottom: var(--space-sm); }
+h5, h6 { font-size: var(--font-size-sm); margin-bottom: var(--space-xs); }
+
+p {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--text-light);
+  line-height: var(--line-height-normal);
+}
+
+/* ============================================================
+   SCROLLBAR STYLES
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.sidebar ::-webkit-scrollbar-thumb,
+[data-dark-scrollbar] ::-webkit-scrollbar-thumb {
+  background: var(--on-dark-border-strong);
+}
+
+.sidebar ::-webkit-scrollbar-thumb:hover,
+[data-dark-scrollbar] ::-webkit-scrollbar-thumb:hover {
+  background: var(--on-dark-subtle);
+}
+
+.sidebar,
+[data-dark-scrollbar] {
+  scrollbar-color: var(--on-dark-border-strong) transparent;
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+   ============================================================ */
+@media (max-width: 767px) {
+  body { font-size: var(--font-size-sm); }
+}
+
+@media (min-width: 768px) {
+  body { font-size: var(--font-size-base); }
+}

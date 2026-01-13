@@ -1,10 +1,11 @@
 ﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Clients Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
-/* Clients component styles */
+@import '../shared/styles/globals.css';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -12,8 +13,6 @@
   min-height: 0;
   overflow: hidden;
 }
-
-/* status-pill is now defined in globals.css */
 
 .clients-header-subtitle {
   font-size: var(--font-size-sm);

@@ -1,9 +1,8 @@
 ﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Generic List Component - Responsive Design System
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Generic List Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
 @import '../../styles/globals.css';
 
@@ -28,9 +27,7 @@
 }
 
 @media (max-width: 767px) {
-  .list-container {
-    padding: var(--space-md);
-  }
+  .list-container { padding: var(--space-md); }
 }
 
 .loading-message {
@@ -52,6 +49,9 @@
   padding: 0;
 }
 
+/* ============================================================
+   FILTERS
+   ============================================================ */
 .filters-section {
   margin-bottom: var(--space-xl);
   padding-bottom: var(--space-lg);
@@ -65,11 +65,8 @@
   margin-bottom: var(--space-md);
 }
 
-/* Mobile: Stack filters */
 @media (max-width: 767px) {
-  .filters-grid {
-    grid-template-columns: 1fr;
-  }
+  .filters-grid { grid-template-columns: 1fr; }
 }
 
 .filter-item {
@@ -93,23 +90,16 @@
   font-size: var(--font-size-base) !important;
   background: var(--bg) !important;
   color: var(--text) !important;
-  transition: all var(--transition-fast);
   min-height: var(--touch-size);
 }
 
 .filter-input:focus {
-  outline: none;
   border-color: var(--primary) !important;
   box-shadow: var(--focus-shadow) !important;
   background: var(--surface) !important;
 }
 
-.clear-btn {
-  /* Inherits unified button styles from globals.css */
-  /* HEIGHT: 42px, ROUNDING: 6px, PADDING: 0 24px, FONT: regular */
-  /* HOVER: background, shadow, transform translateY(-3px) */
-  align-self: flex-start;
-}
+.clear-btn { align-self: flex-start; }
 
 .results-title {
   margin: 0 0 var(--space-md) 0;
@@ -120,18 +110,9 @@
   letter-spacing: 0.3px;
 }
 
-.empty-message {
-  padding: var(--space-2xl) var(--space-lg);
-  text-align: center;
-  color: var(--text-lighter);
-  background: var(--bg-alt);
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--panel-border);
-  font-size: var(--font-size-base);
-  flex-shrink: 0;
-}
-
-/* Scrollable table wrapper for SPA layout */
+/* ============================================================
+   TABLE
+   ============================================================ */
 .table-scroll-wrapper {
   flex: 1;
   min-height: 0;
@@ -180,34 +161,6 @@
   cursor: pointer;
 }
 
-.data-row:hover {
-  background-color: var(--bg-alt);
-}
-
-.data-row:active {
-  background-color: var(--primary-surface);
-}
-
-.data-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* ============================================================
-   DATE INPUT STYLING
-   ============================================================ */
-input[type="date"] {
-  position: relative;
-  padding-right: 36px !important;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%236F6F6F" viewBox="0 0 384 384"><path d="M384,1.42108547e-14 L384,384 L1.42108547e-14,384 L1.42108547e-14,1.42108547e-14 L384,1.42108547e-14 Z M341.333333,128 L42.6666667,128 L42.6666667,341.333333 L341.333333,341.333333 L341.333333,128 Z M128,256 L128,298.666667 L85.3333333,298.666667 L85.3333333,256 L128,256 Z M213.333333,256 L213.333333,298.666667 L170.666667,298.666667 L170.666667,256 L213.333333,256 Z M298.666667,256 L298.666667,298.666667 L256,298.666667 L256,256 L298.666667,256 Z M128,170.666667 L128,213.333333 L85.3333333,213.333333 L85.3333333,170.666667 L128,170.666667 Z M213.333333,170.666667 L213.333333,213.333333 L170.666667,213.333333 L170.666667,170.666667 L213.333333,170.666667 Z M298.666667,170.666667 L298.666667,213.333333 L256,213.333333 L256,170.666667 L298.666667,170.666667 Z M341.333333,42.6666667 L42.6666667,42.6666667 L42.6666667,85.3333333 L341.333333,85.3333333 L341.333333,42.6666667 Z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 18px 18px;
-  width: 24px;
-  height: 24px;
-}
-
-
+.data-row:hover { background-color: var(--bg-alt); }
+.data-row:active { background-color: var(--primary-surface); }
+.data-table tbody tr:last-child td { border-bottom: none; }

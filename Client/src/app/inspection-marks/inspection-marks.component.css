@@ -1,8 +1,10 @@
 ﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Inspection Marks Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+@import '../shared/styles/globals.css';
 
 :host {
   display: flex;
@@ -11,6 +13,3 @@
   min-height: 0;
   overflow: hidden;
 }
-
-/* Uses shared data table styles */
-

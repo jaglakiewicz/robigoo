@@ -1,9 +1,8 @@
 ﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * New Inspection Component - Responsive Design System
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * New Inspection Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
 @import '../shared/styles/globals.css';
 
@@ -16,7 +15,7 @@
 }
 
 /* ============================================================
-   ITEM ROWS - RESPONSIVE
+   ITEM ROWS
    ============================================================ */
 .item-row {
   display: flex;
@@ -30,9 +29,7 @@
   flex-wrap: wrap;
 }
 
-.item-row:hover {
-  background: var(--panel-border);
-}
+.item-row:hover { background: var(--panel-border); }
 
 .item-row input[type="text"] {
   flex: 1;
@@ -52,7 +49,6 @@
 }
 
 .item-row button {
-  /* Icon-only button in list - separate from labeled buttons */
   width: 42px;
   height: 42px;
   padding: 0 !important;
@@ -70,163 +66,17 @@
 .item-row button:hover {
   background: var(--panel-border);
   border-color: var(--text-light) !important;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
 }
 
-.item-row button:active {
-  transform: translateY(0);
-}
-
-/* Mobile: Stack items */
 @media (max-width: 767px) {
-  .item-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .item-row input[type="text"] {
-    min-width: unset;
-  }
-
-  .item-row label {
-    width: 100%;
-  }
-
-  .item-row button {
-    width: 100%;
-  }
+  .item-row { flex-direction: column; align-items: stretch; }
+  .item-row input[type="text"] { min-width: unset; }
+  .item-row label { width: 100%; }
+  .item-row button { width: 100%; }
 }
 
 /* ============================================================
-   STEP INDICATOR - RESPONSIVE
-   ============================================================ */
-.step-indicator {
-  display: flex;
-  gap: 0;
-  margin-bottom: var(--space-xl);
-  border-bottom: 3px solid var(--panel-border);
-  border-radius: 0;
-  flex-wrap: nowrap;
-  overflow: hidden;
-}
-
-.step {
-  /* equal width for all tabs in a row */
-  flex: 1 0 0;
-  padding: var(--space-lg) var(--space-md);
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-  border-right: 1px solid var(--panel-border);
-  transition: all var(--transition-fast);
-  background: var(--panel);
-  min-width: 0;
-  /* slightly smaller font for step text */
-  font-size: var(--font-size-sm);
-}
-
-.step:last-child {
-  border-right: none;
-}
-
-.step:hover:not(.completed) {
-  background: var(--bg-alt);
-}
-
-.step.active {
-  background: var(--bg-alt);
-  font-weight: var(--font-weight-bold);
-  color: var(--accent);
-}
-
-.step.active::after {
-  content: '';
-  position: absolute;
-  bottom: -3px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--accent);
-}
-
-.step.completed {
-  background: var(--success-surface);
-  color: var(--success);
-}
-
-.step.completed::after {
-  content: '';
-  position: absolute;
-  bottom: -3px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--success);
-}
-
-/* Mobile: Stacked steps */
-@media (max-width: 767px) {
-  .step-indicator {
-    flex-direction: column;
-    border-bottom: none;
-    margin-bottom: var(--space-lg);
-  }
-
-  .step {
-    border-right: none;
-    border-bottom: 1px solid var(--panel-border);
-    padding: var(--space-md);
-    min-width: auto;
-  }
-
-  .step:last-child {
-    border-bottom: none;
-  }
-
-  .step.active::after,
-  .step.completed::after {
-    bottom: auto;
-    left: -3px;
-    width: 3px;
-    height: 100%;
-  }
-}
-
-.step-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--panel-border);
-  margin-right: var(--space-sm);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
-  transition: all var(--transition-fast);
-}
-
-.step.active .step-number {
-  background: var(--accent);
-  color: white;
-  transform: scale(1.1);
-}
-
-.step.completed .step-number {
-  background: var(--success);
-  color: white;
-}
-
-.step-label {
-  font-size: var(--font-size-sm);
-  display: block;
-  margin-top: var(--space-xs);
-}
-
-/* ============================================================
-   STEP CONTENT - RESPONSIVE (SPA - scrollable content area)
+   STEP CONTENT
    ============================================================ */
 .step-content {
   flex: 1;
@@ -238,14 +88,8 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .step-content h3 {
@@ -262,7 +106,7 @@
 }
 
 /* ============================================================
-   NAVIGATION - RESPONSIVE
+   NAVIGATION
    ============================================================ */
 .step-navigation {
   display: flex;
@@ -275,25 +119,11 @@
   flex-wrap: wrap;
 }
 
-/* Mobile: Stack buttons */
 @media (max-width: 767px) {
-  .step-navigation {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .step-navigation button {
-    width: 100%;
-  }
+  .step-navigation { flex-direction: column; gap: var(--space-md); }
+  .step-navigation button { width: 100%; }
 }
 
-.spacer {
-  flex: 1;
-}
-/* Navigation buttons - inherits unified styles from globals.css
-   UNIFIED HEIGHT: 44px, font, rounding, hover, border style
-   SVG icons: 18x18px (see below)
-*/
 .btn-nav svg,
 .btn-back svg,
 .btn-next svg,
@@ -303,26 +133,3 @@
   height: 18px;
   flex-shrink: 0;
 }
-
-/* message classes are now defined in globals.css */
-
-/* ============================================================
-   DATE INPUT STYLING
-   ============================================================ */
-input[type="date"] {
-  position: relative;
-  padding-right: 36px !important;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%236F6F6F" viewBox="0 0 384 384"><path d="M384,1.42108547e-14 L384,384 L1.42108547e-14,384 L1.42108547e-14,1.42108547e-14 L384,1.42108547e-14 Z M341.333333,128 L42.6666667,128 L42.6666667,341.333333 L341.333333,341.333333 L341.333333,128 Z M128,256 L128,298.666667 L85.3333333,298.666667 L85.3333333,256 L128,256 Z M213.333333,256 L213.333333,298.666667 L170.666667,298.666667 L170.666667,256 L213.333333,256 Z M298.666667,256 L298.666667,298.666667 L256,298.666667 L256,256 L298.666667,256 Z M128,170.666667 L128,213.333333 L85.3333333,213.333333 L85.3333333,170.666667 L128,170.666667 Z M213.333333,170.666667 L213.333333,213.333333 L170.666667,213.333333 L170.666667,170.666667 L213.333333,170.666667 Z M298.666667,170.666667 L298.666667,213.333333 L256,213.333333 L256,170.666667 L298.666667,170.666667 Z M341.333333,42.6666667 L42.6666667,42.6666667 L42.6666667,85.3333333 L341.333333,85.3333333 L341.333333,42.6666667 Z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 18px 18px;
-  width: 24px;
-  height: 24px;
-}
-
-
-

@@ -1,0 +1,181 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Utility Classes
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+/* ============================================================
+   SPACING
+   ============================================================ */
+.mt-xs { margin-top: var(--space-xs) !important; }
+.mt-sm { margin-top: var(--space-sm) !important; }
+.mt-md { margin-top: var(--space-md) !important; }
+.mt-lg { margin-top: var(--space-lg) !important; }
+.mt-xl { margin-top: var(--space-xl) !important; }
+
+.mb-xs { margin-bottom: var(--space-xs) !important; }
+.mb-sm { margin-bottom: var(--space-sm) !important; }
+.mb-md { margin-bottom: var(--space-md) !important; }
+.mb-lg { margin-bottom: var(--space-lg) !important; }
+.mb-xl { margin-bottom: var(--space-xl) !important; }
+
+.p-xs { padding: var(--space-xs) !important; }
+.p-sm { padding: var(--space-sm) !important; }
+.p-md { padding: var(--space-md) !important; }
+.p-lg { padding: var(--space-lg) !important; }
+.p-xl { padding: var(--space-xl) !important; }
+
+.px-xs { padding-left: var(--space-xs) !important; padding-right: var(--space-xs) !important; }
+.px-sm { padding-left: var(--space-sm) !important; padding-right: var(--space-sm) !important; }
+.px-md { padding-left: var(--space-md) !important; padding-right: var(--space-md) !important; }
+.px-lg { padding-left: var(--space-lg) !important; padding-right: var(--space-lg) !important; }
+
+.gap-xs { gap: var(--space-xs) !important; }
+.gap-sm { gap: var(--space-sm) !important; }
+.gap-md { gap: var(--space-md) !important; }
+.gap-lg { gap: var(--space-lg) !important; }
+.gap-xl { gap: var(--space-xl) !important; }
+
+/* ============================================================
+   FLEXBOX
+   ============================================================ */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.spacer { flex: 1; }
+
+/* ============================================================
+   GRID
+   ============================================================ */
+.grid { display: grid; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+@media (max-width: 1023px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .grid-2, .grid-3, .grid-auto { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   TEXT
+   ============================================================ */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+.text-bold { font-weight: var(--font-weight-bold); }
+.text-italic { font-style: italic; }
+
+.text-xs { font-size: var(--font-size-sm); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+
+.text-primary { color: var(--primary); }
+.text-accent { color: var(--accent); }
+.text-success { color: var(--success); }
+.text-error { color: var(--error); }
+.text-warning { color: var(--warning); }
+.text-muted { color: var(--text-lighter); }
+
+/* ============================================================
+   DISPLAY
+   ============================================================ */
+.hidden { display: none !important; }
+.visible { display: block !important; }
+.inline { display: inline !important; }
+.inline-block { display: inline-block !important; }
+.block { display: block !important; }
+
+/* ============================================================
+   OVERFLOW
+   ============================================================ */
+.overflow-auto { overflow: auto; }
+.overflow-hidden { overflow: hidden; }
+
+/* ============================================================
+   WIDTH
+   ============================================================ */
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.max-w-sm { max-width: 24rem; }
+.max-w-md { max-width: 28rem; }
+.max-w-lg { max-width: 32rem; }
+
+/* ============================================================
+   BORDERS
+   ============================================================ */
+.border { border: 1px solid var(--panel-border); }
+.border-top { border-top: 1px solid var(--panel-border); }
+.border-bottom { border-bottom: 1px solid var(--panel-border); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+
+/* ============================================================
+   SHADOWS
+   ============================================================ */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+
+/* ============================================================
+   OPACITY
+   ============================================================ */
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+
+/* ============================================================
+   RESPONSIVE UTILITIES
+   ============================================================ */
+@media (max-width: 767px) {
+  .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 768px) {
+  .show-mobile { display: none !important; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  button, a, [role="button"] {
+    min-height: var(--touch-size);
+    min-width: var(--touch-size);
+  }
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

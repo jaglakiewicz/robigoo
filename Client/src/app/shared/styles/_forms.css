@@ -1,0 +1,274 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Form Elements
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+/* ============================================================
+   TEXT INPUTS, TEXTAREAS, SELECTS
+   ============================================================ */
+input, textarea, select {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--text);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  width: 100%;
+  height: var(--touch-size);
+  min-height: var(--touch-size);
+}
+
+input:focus, textarea:focus, select:focus,
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-shadow);
+}
+
+input:disabled, textarea:disabled, select:disabled {
+  background: var(--bg-alt);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  opacity: 1;
+  -webkit-text-fill-color: var(--text-disabled);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  height: auto;
+}
+
+label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-xs);
+  color: var(--text);
+}
+
+/* ============================================================
+   RADIO BUTTONS
+   ============================================================ */
+input[type="radio"] {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 50% !important;
+  background: var(--panel) !important;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box !important;
+}
+
+input[type="radio"]:focus,
+input[type="radio"]:focus-visible,
+input[type="radio"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input[type="radio"]:hover:not(:disabled) {
+  border-color: var(--primary) !important;
+}
+
+input[type="radio"]:checked {
+  border-color: var(--primary) !important;
+  background: var(--panel) !important;
+}
+
+input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50% !important;
+  background: var(--primary);
+}
+
+input[type="radio"]:disabled {
+  background: var(--bg-alt) !important;
+  border-color: var(--border-light) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================================
+   CHECKBOXES
+   ============================================================ */
+input[type="checkbox"] {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  background: var(--panel) !important;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box !important;
+}
+
+input[type="checkbox"]:focus,
+input[type="checkbox"]:focus-visible,
+input[type="checkbox"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input[type="checkbox"]:hover:not(:disabled) {
+  border-color: var(--primary) !important;
+}
+
+input[type="checkbox"]:checked {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 9px;
+  border: solid var(--text-inverse);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="checkbox"]:disabled {
+  background: var(--bg-alt) !important;
+  border-color: var(--border-light) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================================
+   FORM GROUPS & LAYOUTS
+   ============================================================ */
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-group label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-xs);
+  color: var(--text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+/* Radio/Checkbox Groups */
+.radio-group,
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.radio-group.horizontal,
+.checkbox-group.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.radio-label,
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--text);
+  user-select: none;
+}
+
+.inline-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.inline-options label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-base) !important;
+  font-weight: var(--font-weight-regular) !important;
+  cursor: pointer;
+  margin-bottom: 0 !important;
+}
+
+/* Required Field Indicator */
+label.required::after,
+.form-group.required > label::after {
+  content: ' *';
+  color: var(--error);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Date Input */
+input[type="date"] {
+  position: relative;
+  padding-right: 36px !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%236F6F6F" viewBox="0 0 384 384"><path d="M384,0 L384,384 L0,384 L0,0 L384,0 Z M341.333,128 L42.667,128 L42.667,341.333 L341.333,341.333 L341.333,128 Z M128,256 L128,298.667 L85.333,298.667 L85.333,256 L128,256 Z M213.333,256 L213.333,298.667 L170.667,298.667 L170.667,256 L213.333,256 Z M298.667,256 L298.667,298.667 L256,298.667 L256,256 L298.667,256 Z M128,170.667 L128,213.333 L85.333,213.333 L85.333,170.667 L128,170.667 Z M213.333,170.667 L213.333,213.333 L170.667,213.333 L170.667,170.667 L213.333,170.667 Z M298.667,170.667 L298.667,213.333 L256,213.333 L256,170.667 L298.667,170.667 Z M341.333,42.667 L42.667,42.667 L42.667,85.333 L341.333,85.333 L341.333,42.667 Z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+  width: 24px;
+  height: 24px;
+}

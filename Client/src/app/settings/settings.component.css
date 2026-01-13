@@ -1,9 +1,8 @@
 ﻿/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Settings Component - Responsive Design System
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Settings Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
 @import '../shared/styles/globals.css';
 
@@ -15,7 +14,9 @@
   overflow: hidden;
 }
 
-/* Step indicator - fixed at top */
+/* ============================================================
+   STEP INDICATOR (SETTINGS VARIANT)
+   ============================================================ */
 .step-indicator {
   display: flex;
   gap: var(--space-md);
@@ -35,9 +36,7 @@
   transition: all var(--transition-fast);
 }
 
-.step:hover {
-  background: var(--panel-border);
-}
+.step:hover { background: var(--panel-border); }
 
 .step.active {
   background: var(--primary);
@@ -56,15 +55,12 @@
   font-weight: var(--font-weight-bold);
 }
 
-.step.active .step-number {
-  background: var(--on-dark-surface);
-}
+.step.active .step-number { background: var(--on-dark-surface); }
+.step-label { font-size: var(--font-size-sm); }
 
-.step-label {
-  font-size: var(--font-size-sm);
-}
-
-/* Step content - scrollable area for SPA layout */
+/* ============================================================
+   STEP CONTENT
+   ============================================================ */
 .step-content {
   flex: 1;
   min-height: 0;
@@ -78,14 +74,8 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .tab-pane h3 {
@@ -101,11 +91,12 @@
 }
 
 @media (max-width: 767px) {
-  .settings-container {
-    padding: var(--space-md);
-  }
+  .settings-container { padding: var(--space-md); }
 }
 
+/* ============================================================
+   ADMIN SECTION
+   ============================================================ */
 .admin-section {
   margin-top: var(--space-2xl);
   padding-top: var(--space-lg);
@@ -131,6 +122,9 @@
   font-weight: var(--font-weight-bold);
 }
 
+/* ============================================================
+   TOGGLE FORM BUTTON
+   ============================================================ */
 .toggle-form-btn {
   display: inline-flex;
   align-items: center;
@@ -144,9 +138,7 @@
   transition: transform var(--transition-base);
 }
 
-.toggle-form-btn.expanded .toggle-icon {
-  transform: rotate(180deg);
-}
+.toggle-form-btn.expanded .toggle-icon { transform: rotate(180deg); }
 
 .toggle-form-btn.expanded {
   background: var(--accent);
@@ -158,7 +150,11 @@
   border-bottom-right-radius: 0;
 }
 
-.create-user-form {
+/* ============================================================
+   CREATE USER FORM
+   ============================================================ */
+.create-user-form,
+.password-change-form {
   background: var(--panel);
   padding: var(--space-lg);
   border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
@@ -169,26 +165,22 @@
   animation: slideDown var(--transition-base) ease-out;
 }
 
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 767px) {
-  .create-user-form {
-    padding: var(--space-md);
-  }
+  .create-user-form,
+  .password-change-form { padding: var(--space-md); }
 }
 
-.create-user-form .form-group {
-  margin-bottom: var(--space-md);
-}
-
-.create-user-form label {
-  display: block;
-  margin-bottom: var(--space-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
-  font-size: var(--font-size-sm);
-}
+.create-user-form .form-group,
+.password-change-form .form-group { margin-bottom: var(--space-md); }
 
 .create-user-form input,
-.create-user-form select {
+.create-user-form select,
+.password-change-form input {
   width: 100%;
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--panel-border);
@@ -198,18 +190,26 @@
   background: var(--bg);
   color: var(--text);
   transition: all var(--transition-fast);
-  box-sizing: border-box;
   min-height: var(--touch-size);
 }
 
 .create-user-form input:focus,
-.create-user-form select:focus {
+.create-user-form select:focus,
+.password-change-form input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: var(--focus-shadow);
   background: var(--panel);
 }
 
+.password-change-form input:focus {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 3px var(--warning-surface);
+}
+
+/* ============================================================
+   MESSAGES
+   ============================================================ */
 .error-message {
   background: var(--error-surface);
   border: 1px solid var(--error-border);
@@ -230,26 +230,21 @@
   font-size: var(--font-size-sm);
 }
 
-/* Disabled input styling */
+/* ============================================================
+   DISABLED INPUT & HINTS
+   ============================================================ */
 .disabled-input {
   background: var(--bg-alt) !important;
   cursor: not-allowed;
-  /* Inherits readable text color from global disabled input styles */
 }
 
-.field-hint {
-  font-size: var(--font-size-sm);
-  color: var(--text-light);
-  font-style: italic;
-  margin-top: 6px;
-}
 .disabled-input:focus {
   border-color: var(--panel-border) !important;
   box-shadow: none !important;
-  background: var(--bg-alt) !important;
 }
 
-.field-hint {
+.field-hint,
+.role-hint {
   display: block;
   font-size: var(--font-size-sm);
   color: var(--text-light);
@@ -257,6 +252,9 @@
   font-style: italic;
 }
 
+/* ============================================================
+   USERS LIST & TABLE
+   ============================================================ */
 .users-list {
   margin-top: var(--space-2xl);
 }
@@ -283,7 +281,7 @@
   border-bottom: 1px solid var(--panel-border);
 }
 
-.users-table thead th {
+.users-table th {
   padding: var(--space-md);
   text-align: left;
   font-weight: var(--font-weight-bold);
@@ -292,58 +290,29 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-right: 1px solid var(--panel-border);
-  border-left: 1px solid var(--panel-border);
-  border-top: 1px solid var(--panel-border);
 }
 
-.users-table thead th:first-child {
-  border-left: 1px solid var(--panel-border);
-}
+.users-table th:last-child { border-right: none; }
 
-.users-table thead th:last-child {
-  border-right: none;
-}
-
-.users-table tbody td {
+.users-table td {
   padding: var(--space-md);
   border-bottom: 1px solid var(--panel-border);
   border-right: 1px solid var(--panel-border);
-  border-left: 1px solid var(--panel-border);
   color: var(--text);
   font-size: var(--font-size-base);
 }
 
-.users-table tbody td:first-child {
-  border-left: 1px solid var(--panel-border);
-}
-
-.users-table tbody td:last-child {
-  border-right: none;
-}
-
-.users-table tbody tr:hover {
-  background: var(--bg-alt);
-}
-
-.users-table tbody tr:last-child td {
-  border-bottom: 1px solid var(--panel-border);
-}
+.users-table td:last-child { border-right: none; }
+.users-table tbody tr:hover { background: var(--bg-alt); }
+.users-table tbody tr:last-child td { border-bottom: none; }
 
 @media (max-width: 767px) {
-  .users-table,
-  .users-table thead,
-  .users-table tbody,
-  .users-table th,
-  .users-table td,
-  .users-table tr {
+  .users-table, .users-table thead, .users-table tbody,
+  .users-table th, .users-table td, .users-table tr {
     display: block;
     width: 100%;
   }
-
-  .users-table thead {
-    display: none;
-  }
-
+  .users-table thead { display: none; }
   .users-table tbody tr {
     margin-bottom: var(--space-lg);
     border: 1px solid var(--panel-border);
@@ -351,7 +320,6 @@
     padding: var(--space-md);
     background: var(--panel);
   }
-
   .users-table tbody td {
     border: none;
     display: flex;
@@ -359,92 +327,19 @@
     padding: var(--space-sm) 0;
     border-bottom: 1px solid var(--panel-border);
   }
-
   .users-table tbody td:before {
     content: attr(data-label);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     font-size: var(--font-size-sm);
     color: var(--text-light);
-    margin-right: var(--space-md);
-    flex-shrink: 0;
   }
-
-  .users-table tbody td:last-child {
-    border-bottom: none;
-  }
+  .users-table tbody td:last-child { border-bottom: none; }
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-md);
-}
-
-@media (max-width: 1023px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 767px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Password Change Form Styles */
-.password-change-form {
-  background: var(--panel);
-  padding: var(--space-lg);
-  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
-  margin: 0;
-  margin-top: -1px;
-  border: 1px solid var(--primary-btn-border);
-  box-shadow: var(--shadow-sm);
-  animation: slideDown var(--transition-base) ease-out;
-}
-
-@media (max-width: 767px) {
-  .password-change-form {
-    padding: var(--space-md);
-  }
-}
-
-.password-change-form .form-group {
-  margin-bottom: var(--space-md);
-}
-
-.password-change-form label {
-  display: block;
-  margin-bottom: var(--space-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
-  font-size: var(--font-size-sm);
-}
-
-.password-change-form input {
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  background: var(--bg);
-  color: var(--text);
-  transition: all var(--transition-fast);
-  box-sizing: border-box;
-  min-height: var(--touch-size);
-}
-
-.password-change-form input:focus {
-  outline: none;
-  border-color: var(--warning);
-  box-shadow: 0 0 0 3px var(--warning-surface);
-  background: var(--panel);
-}
-
-/* Avatar Section */
+/* ============================================================
+   AVATAR SECTION
+   ============================================================ */
 .avatar-section {
   margin-bottom: var(--space-2xl);
 }
@@ -492,6 +387,9 @@
   color: var(--text-light);
 }
 
+/* ============================================================
+   ROLE SELECT
+   ============================================================ */
 .role-select {
   padding: var(--space-sm) var(--space-md);
   font-size: var(--font-size-sm);
@@ -519,15 +417,9 @@
   color: var(--text);
 }
 
-.role-hint {
-  display: block;
-  font-size: var(--font-size-sm);
-  color: var(--text-light);
-  margin-top: var(--space-xs);
-  font-style: italic;
-}
-
-/* Action Buttons Container */
+/* ============================================================
+   ACTION BUTTONS
+   ============================================================ */
 .action-buttons {
   display: flex;
   align-items: center;
@@ -537,22 +429,9 @@
 }
 
 @media (max-width: 767px) {
-  .action-buttons {
-    justify-content: flex-start;
-  }
+  .action-buttons { justify-content: flex-start; }
 }
 
-/* Buttons in settings inherit unified styles from globals.css */
-/* All .btn, .btn-primary, .btn-secondary use:
-   - Height: 44px (mobile: 48px)
-  - Font: var(--font-family), --font-size-base, --font-weight-bold
-   - Rounding: var(--radius-md)
-   - Border: 1px solid rgba(0, 0, 0, 0.12)
-   - Hover: transform: translateY(-2px), box-shadow
-   - SVG Icon: 18x18px
-*/
-
-/* SVG Icons in buttons */
 .btn-icon {
   width: 18px;
   height: 18px;
@@ -560,7 +439,3 @@
   flex-shrink: 0;
   vertical-align: middle;
 }
-
-
-
-

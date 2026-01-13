@@ -1,8 +1,8 @@
 /*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
-*/
+ * Custom Select Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
 
 .custom-select {
   position: relative;
@@ -25,9 +25,7 @@
   color: var(--text);
 }
 
-.select-trigger:hover:not(.disabled) {
-  border-color: var(--primary);
-}
+.select-trigger:hover:not(.disabled) { border-color: var(--primary); }
 
 .custom-select.open .select-trigger {
   border-color: var(--primary);
@@ -49,9 +47,7 @@
   pointer-events: none;
 }
 
-.select-value.placeholder {
-  color: var(--text-muted);
-}
+.select-value.placeholder { color: var(--text-muted); }
 
 .select-chevron {
   display: flex;
@@ -65,14 +61,8 @@
   pointer-events: none;
 }
 
-.select-chevron svg {
-  width: 12px;
-  height: 12px;
-}
-
-.custom-select.open .select-chevron {
-  transform: rotate(180deg);
-}
+.select-chevron svg { width: 12px; height: 12px; }
+.custom-select.open .select-chevron { transform: rotate(180deg); }
 
 .select-dropdown {
   position: absolute;
@@ -91,14 +81,8 @@
 }
 
 @keyframes dropdownSlide {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .select-option {
@@ -109,9 +93,7 @@
   color: var(--text);
 }
 
-.select-option:hover {
-  background: var(--bg-alt);
-}
+.select-option:hover { background: var(--bg-alt); }
 
 .select-option.selected {
   background: var(--primary-surface);
@@ -119,6 +101,4 @@
   font-weight: var(--font-weight-bold);
 }
 
-.select-option:last-child {
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-}
+.select-option:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }

@@ -1,0 +1,187 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Button Styles
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+/* ============================================================
+   BASE BUTTON STYLES
+   ============================================================ */
+.btn,
+button[class*="btn-"] {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  height: var(--touch-size);
+  min-height: var(--touch-size);
+  padding: 0 24px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Default button (no variant) */
+.btn {
+  background: var(--bg-alt);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: var(--text-muted);
+}
+
+.btn svg,
+button[class*="btn-"] svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* ============================================================
+   PRIMARY BUTTON
+   ============================================================ */
+.btn-primary,
+.btn-login {
+  background: var(--accent);
+  color: var(--text-inverse);
+  border-color: var(--primary-btn-border);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-login:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-btn-border);
+}
+
+/* ============================================================
+   SECONDARY BUTTON
+   ============================================================ */
+.btn-secondary {
+  background: var(--bg-alt);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: var(--text-muted);
+  color: var(--primary);
+}
+
+/* ============================================================
+   SUCCESS BUTTON
+   ============================================================ */
+.btn-success {
+  background: var(--success);
+  color: var(--text-inverse);
+  border-color: var(--success-btn-border);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: var(--success-dark);
+  border-color: var(--success-btn-border);
+}
+
+/* ============================================================
+   DANGER BUTTON
+   ============================================================ */
+.btn-danger {
+  background: var(--error);
+  color: var(--text-inverse);
+  border-color: var(--error-btn-border);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--error-hover);
+  border-color: var(--error-btn-border);
+}
+
+/* ============================================================
+   GHOST BUTTON
+   ============================================================ */
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--primary-border);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--primary-surface);
+  color: var(--primary-hover);
+  border-color: var(--primary);
+}
+
+/* ============================================================
+   LINK BUTTON
+   ============================================================ */
+.btn-link {
+  background: transparent;
+  border-color: transparent;
+  color: var(--accent);
+  text-decoration: underline;
+  padding: 0 6px;
+  height: auto;
+  min-height: auto;
+}
+
+.btn-link:hover:not(:disabled) {
+  color: var(--accent-light);
+}
+
+/* ============================================================
+   SMALL BUTTON
+   ============================================================ */
+.btn-small {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  min-height: 30px;
+  height: 30px;
+}
+
+/* ============================================================
+   ICON-ONLY BUTTON
+   ============================================================ */
+.btn-icon-only {
+  width: var(--touch-size);
+  height: var(--touch-size);
+  padding: 0;
+}
+
+.btn-icon-only svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================================
+   DISABLED STATE
+   ============================================================ */
+button:disabled,
+.btn:disabled,
+[class*="btn-"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  pointer-events: none;
+}
+
+/* ============================================================
+   FOCUS STATE
+   ============================================================ */
+button:focus-visible,
+.btn:focus-visible,
+[class*="btn-"]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-shadow);
+}
