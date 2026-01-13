@@ -80,6 +80,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   // Select options
   typeOptions: SelectOption[] = [];
   kindOptions: SelectOption[] = [];
+  pumpTypeOptions: SelectOption[] = [];
 
   constructor(
     private machinesService: MachineService,
@@ -140,6 +141,11 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       { value: '01', label: this.textService.get('types.machines.filters.kindTrailed') },
       { value: '02', label: this.textService.get('types.machines.filters.kindSelfPropelled') },
       { value: '03', label: this.textService.get('types.machines.filters.kindOther') }
+    ];
+    this.pumpTypeOptions = [
+      { value: 'piston', label: this.textService.get('types.machines.fields.pumpPiston') },
+      { value: 'diaphragm', label: this.textService.get('types.machines.fields.pumpDiaphragm') },
+      { value: 'other', label: this.textService.get('types.machines.fields.pumpOther') }
     ];
   }
 
@@ -372,7 +378,14 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.setDirty(true);
   }
 
-  onPumpTypeChange(type: 'piston' | 'diaphragm' | 'other'): void {
+  get selectedPumpType(): string {
+    if (!this.formModel) { return 'piston'; }
+    if (this.formModel.pumpDiaphragm) { return 'diaphragm'; }
+    if (this.formModel.pumpOther) { return 'other'; }
+    return 'piston';
+  }
+
+  onPumpTypeChange(type: string): void {
     if (!this.formModel) { return; }
     // Ekskluzywny wybór jednego typu pompy
     this.formModel.pumpPiston = type === 'piston';

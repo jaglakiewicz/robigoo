@@ -35,7 +35,7 @@
   justify-content: flex-start;
   gap: var(--space-md);
   margin-top: 0;
-  padding-bottom: var(--space-sm);
+  padding-bottom: var(--space-md);
   margin-bottom: var(--space-md);
   flex-wrap: wrap;
   border-bottom: 1px solid var(--panel-border);

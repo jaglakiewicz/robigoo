@@ -254,57 +254,38 @@
         </div>
 
         <!-- Step 1: Pump -->
-        <div *ngIf="currentStep === 1" class="form-grid">
-          <div class="form-group full-width">
-            <label>{{ 'types.machines.fields.pumpType' | text }}</label>
-            <div class="inline-options">
-              <label>
-                <input
-                  type="radio"
-                  name="pumpType"
-                  [checked]="form.pumpPiston"
-                  (change)="onPumpTypeChange('piston')"
-                  [disabled]="!isEditMode" />
-                {{ 'types.machines.fields.pumpPiston' | text }}
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="pumpType"
-                  [checked]="form.pumpDiaphragm"
-                  (change)="onPumpTypeChange('diaphragm')"
-                  [disabled]="!isEditMode" />
-                {{ 'types.machines.fields.pumpDiaphragm' | text }}
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="pumpType"
-                  [checked]="form.pumpOther"
-                  (change)="onPumpTypeChange('other')"
-                  [disabled]="!isEditMode" />
-                {{ 'types.machines.fields.pumpOther' | text }}
-              </label>
+        <div *ngIf="currentStep === 1" class="basics-grid">
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label>{{ 'types.machines.fields.pumpType' | text }}</label>
+              <app-custom-select
+                [options]="pumpTypeOptions"
+                [ngModel]="selectedPumpType"
+                (ngModelChange)="onPumpTypeChange($event)"
+                [disabled]="!isEditMode">
+              </app-custom-select>
+            </div>
+
+            <div class="form-group" *ngIf="formModel?.pumpOther">
+              <label>{{ 'types.machines.fields.pumpOtherType' | text }}</label>
+              <input
+                type="text"
+                [ngModel]="form.pumpOtherType"
+                (ngModelChange)="form.pumpOtherType = $event; onFormChange()"
+                [disabled]="!isEditMode" />
             </div>
           </div>
 
-          <div class="form-group" *ngIf="form.pumpOther">
-            <label>{{ 'types.machines.fields.pumpOtherType' | text }}</label>
-            <input
-              type="text"
-              [ngModel]="form.pumpOtherType"
-              (ngModelChange)="form.pumpOtherType = $event; onFormChange()"
-              [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group">
-            <label>{{ 'types.machines.fields.pumpFlowRate' | text }}</label>
-            <input
-              type="number"
-              step="0.1"
-              [ngModel]="form.pumpFlowRate"
-              (ngModelChange)="form.pumpFlowRate = $event; onFormChange()"
-              [disabled]="!isEditMode" />
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label>{{ 'types.machines.fields.pumpFlowRate' | text }}</label>
+              <input
+                type="number"
+                step="0.1"
+                [ngModel]="form.pumpFlowRate"
+                (ngModelChange)="form.pumpFlowRate = $event; onFormChange()"
+                [disabled]="!isEditMode" />
+            </div>
           </div>
         </div>
 
