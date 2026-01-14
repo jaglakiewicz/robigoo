@@ -32,9 +32,10 @@ import { DatePickerComponent } from './shared/components/date-picker/date-picker
 import { AuthInterceptor } from './services/auth.interceptor';
 import { ScrollFadeDirective } from './shared/directives/scroll-fade.directive';
 import { ScrollCenterDirective } from './shared/directives/scroll-center.directive';
+import { FilterPanelComponent } from './shared/components/filter-panel/filter-panel.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, FilterPanelComponent],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

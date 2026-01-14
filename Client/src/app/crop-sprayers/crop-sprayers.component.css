@@ -104,49 +104,14 @@
    ============================================================ */
 .filters-row {
   display: flex;
-  flex-wrap: nowrap;
   gap: var(--space-sm);
   margin-bottom: var(--space-md);
   align-items: center;
 }
 
-.filters-row input,
-.filters-row select {
-  padding: var(--space-xs) var(--space-sm);
-}
-
-.filters-row .search-input { flex: 1 1 auto; min-width: 156px; }
-.filters-row .filter-input { flex: 1 1 138px; }
-.filters-row .filter-input-year { max-width: 90px; }
-
-.btn-filters { margin-left: auto; padding-inline: var(--space-sm) !important; }
-
-.toggle-form-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  transition: all var(--transition-base);
-}
-
-.toggle-form-btn .toggle-icon {
-  width: 18px;
-  height: 18px;
-  transition: transform var(--transition-base);
-}
-
-.toggle-form-btn.expanded .toggle-icon { transform: rotate(180deg); }
-
-.toggle-form-btn.expanded {
-  background: var(--accent);
-  color: var(--text-inverse);
-  border-color: var(--primary-btn-border);
-}
-
-.filters-advanced {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
+.filters-row .search-input {
+  flex: 1;
+  min-width: 0;
 }
 
 /* ============================================================
@@ -159,6 +124,13 @@
   flex-direction: column;
   gap: var(--space-xs);
   min-height: 0;
+  transition: filter var(--transition-fast), opacity var(--transition-fast);
+}
+
+.machines-list.blurred {
+  filter: blur(2px);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .machine-card {

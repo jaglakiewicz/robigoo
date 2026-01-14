@@ -216,7 +216,11 @@ const TEXTS: TextTree = {
         kindOther: 'Inny',
         manufacturer: 'Producent',
         yearFrom: 'Rok od',
-        yearTo: 'Rok do'
+        yearTo: 'Rok do',
+        allTypes: 'Wszystkie typy',
+        allKinds: 'Wszystkie rodzaje',
+        clear: 'Wyczyść',
+        apply: 'Zastosuj'
       },
       steps: {
         basics: 'Dane podstawowe',

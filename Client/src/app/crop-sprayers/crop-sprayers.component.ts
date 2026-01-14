@@ -12,6 +12,7 @@ import { TextService } from '../services/text.service';
 import { NotificationService } from '../services/notification.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { SelectOption } from '../shared/components/custom-select/custom-select.component';
+import { FilterField, FilterValues } from '../shared/components/filter-panel/filter-panel.component';
 
 interface MachineStep {
   id: number;
@@ -29,10 +30,11 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   machines: MachineListItem[] = [];
   selectedSerialNumber: string | null = null;
   searchTerm = '';
-  filterManufacturer = '';
-  filterYearFrom = '';
-  filterYearTo = '';
-  showAdvancedFilters = false;
+
+  // Filter panel configuration
+  filterFields: FilterField[] = [];
+  filterValues: FilterValues = {};
+  filterPanelOpen = false;
 
   // Detail / form
   currentMachine: MachineDetail | null = null;
@@ -122,13 +124,54 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     return step.titleKey;
   }
 
-  toggleAdvancedFilters(): void {
-    this.showAdvancedFilters = !this.showAdvancedFilters;
-  }
-
   ngOnInit(): void {
     this.initSelectOptions();
+    this.initFilterFields();
     this.loadMachines();
+  }
+
+  private initFilterFields(): void {
+    this.filterFields = [
+      {
+        key: 'type',
+        label: this.textService.get('types.machines.fields.type'),
+        type: 'select',
+        placeholder: this.textService.get('types.machines.filters.allTypes'),
+        options: [
+          { value: '00', label: this.textService.get('types.machines.filters.typeField') },
+          { value: '01', label: this.textService.get('types.machines.filters.typeGarden') }
+        ]
+      },
+      {
+        key: 'kind',
+        label: this.textService.get('types.machines.fields.kind'),
+        type: 'select',
+        placeholder: this.textService.get('types.machines.filters.allKinds'),
+        options: [
+          { value: '00', label: this.textService.get('types.machines.filters.kindMounted') },
+          { value: '01', label: this.textService.get('types.machines.filters.kindTrailed') },
+          { value: '02', label: this.textService.get('types.machines.filters.kindSelfPropelled') },
+          { value: '03', label: this.textService.get('types.machines.filters.kindOther') }
+        ]
+      },
+      {
+        key: 'manufacturer',
+        label: this.textService.get('types.machines.fields.manufacturer'),
+        type: 'text',
+        placeholder: this.textService.get('types.machines.filters.manufacturer')
+      },
+      {
+        key: 'productionYear',
+        label: this.textService.get('types.machines.fields.productionYear'),
+        type: 'range',
+        rangeFromKey: 'yearFrom',
+        rangeToKey: 'yearTo',
+        rangeFromPlaceholder: this.textService.get('types.machines.filters.yearFrom'),
+        rangeToPlaceholder: this.textService.get('types.machines.filters.yearTo'),
+        min: 1900,
+        max: 2100
+      }
+    ];
   }
 
   private initSelectOptions(): void {
@@ -159,9 +202,11 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.loadingList = true;
     this.machinesService.getMachinesList({
       q: this.searchTerm || undefined,
-      manufacturer: this.filterManufacturer || undefined,
-      yearFrom: this.filterYearFrom || undefined,
-      yearTo: this.filterYearTo || undefined
+      type: this.filterValues['type'] || undefined,
+      kind: this.filterValues['kind'] || undefined,
+      manufacturer: this.filterValues['manufacturer'] || undefined,
+      yearFrom: this.filterValues['yearFrom'] || undefined,
+      yearTo: this.filterValues['yearTo'] || undefined
     }).subscribe({
       next: list => {
         this.machines = list;
@@ -179,19 +224,18 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.loadMachines();
   }
 
-  onFilterManufacturerChange(value: string): void {
-    this.filterManufacturer = value;
+  onFilterChange(values: FilterValues): void {
+    this.filterValues = values;
     this.loadMachines();
   }
 
-  onFilterYearFromChange(value: string): void {
-    this.filterYearFrom = value;
+  onFilterClear(): void {
+    this.filterValues = {};
     this.loadMachines();
   }
 
-  onFilterYearToChange(value: string): void {
-    this.filterYearTo = value;
-    this.loadMachines();
+  onFilterPanelOpenChange(isOpen: boolean): void {
+    this.filterPanelOpen = isOpen;
   }
 
   onAddNew(): void {
@@ -557,7 +601,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.dirtyFormService.setDirty(this.formId, dirty);
   }
 
-  private getSafeHtml(icon: string): SafeHtml {
+  getSafeHtml(icon: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(icon);
   }
 }

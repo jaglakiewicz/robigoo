@@ -1,0 +1,141 @@
+<!--
+  Robigoo - Reusable Filter Panel
+  Copyright (c) 2025 Wojciech Salamon
+-->
+
+<div class="filter-panel" [class.open]="isOpen">
+  <!-- Toggle Button -->
+  <button
+    type="button"
+    class="btn btn-secondary filter-toggle-btn"
+    [class.active]="isOpen"
+    [class.has-filters]="activeFilterCount > 0"
+    (click)="toggle()">
+    <svg class="filter-icon" viewBox="0 0 426.666667 426.666667" aria-hidden="true">
+      <path fill="currentColor" d="M3.55271368e-14,1.42108547e-14 L191.565013,234.666667 L192,234.666667 L192,384 L234.666667,384 L234.666667,234.666667 L426.666667,1.42108547e-14 L3.55271368e-14,1.42108547e-14 Z M214.448,192 L211.81248,192 L89.9076267,42.6666667 L336.630187,42.6666667 L214.448,192 Z" />
+    </svg>
+    <span class="filter-badge" *ngIf="activeFilterCount > 0">{{ activeFilterCount }}</span>
+  </button>
+
+  <!-- Dropdown Panel - connected to button -->
+  <div class="filter-dropdown" *ngIf="isOpen" (click)="$event.stopPropagation()">
+    <div class="filter-body">
+      <ng-container *ngFor="let field of fields">
+        <!-- Text Input -->
+        <div class="filter-field" *ngIf="field.type === 'text'">
+          <label class="filter-label">{{ field.label }}</label>
+          <input
+            type="text"
+            [placeholder]="field.placeholder || ''"
+            [value]="getFieldValue(field.key)"
+            (input)="onFieldChange(field.key, $any($event.target).value)" />
+        </div>
+
+        <!-- Number Input -->
+        <div class="filter-field" *ngIf="field.type === 'number'">
+          <label class="filter-label">{{ field.label }}</label>
+          <app-numeric-input
+            [placeholder]="field.placeholder || ''"
+            [min]="field.min ?? -Infinity"
+            [max]="field.max ?? Infinity"
+            [step]="field.step || 1"
+            [ngModel]="getFieldValue(field.key)"
+            (ngModelChange)="onFieldChange(field.key, $event)">
+          </app-numeric-input>
+        </div>
+
+        <!-- Custom Select (matching app-custom-select design) -->
+        <div class="filter-field" *ngIf="field.type === 'select'">
+          <label class="filter-label">{{ field.label }}</label>
+          <div class="custom-select" [class.open]="openSelectKey === field.key">
+            <div class="select-trigger" (click)="toggleSelect(field.key)">
+              <span class="select-value" [class.placeholder]="!hasValue(field.key)">
+                {{ getSelectedLabel(field) }}
+              </span>
+              <span class="select-chevron">
+                <svg viewBox="0 0 243.626667 151.893333" width="16" height="16">
+                  <path d="M121.813333 151.893333 0 30.2933333 30.2933333 0 121.813333 91.7333333 213.333333 0 243.626667 30.2933333 121.813333 151.893333" fill="currentColor"/>
+                </svg>
+              </span>
+            </div>
+            <div class="select-dropdown" *ngIf="openSelectKey === field.key">
+              <div
+                class="select-option"
+                [class.selected]="!hasValue(field.key)"
+                (click)="selectOption(field.key, '')">
+                {{ field.placeholder || 'Wszystkie' }}
+              </div>
+              <div
+                class="select-option"
+                *ngFor="let opt of field.options"
+                [class.selected]="getFieldValue(field.key) === opt.value"
+                (click)="selectOption(field.key, opt.value)">
+                {{ opt.label }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Input -->
+        <div class="filter-field" *ngIf="field.type === 'date'">
+          <label class="filter-label">{{ field.label }}</label>
+          <input
+            type="date"
+            [value]="getFieldValue(field.key)"
+            (change)="onFieldChange(field.key, $any($event.target).value)" />
+        </div>
+
+        <!-- Checkbox -->
+        <div class="filter-field filter-field-checkbox" *ngIf="field.type === 'checkbox'">
+          <label class="filter-checkbox-label">
+            <input
+              type="checkbox"
+              [checked]="getFieldValue(field.key)"
+              (change)="onFieldChange(field.key, $any($event.target).checked)" />
+            <span>{{ field.label }}</span>
+          </label>
+        </div>
+
+        <!-- Range (From - To) -->
+        <div class="filter-field" *ngIf="field.type === 'range'">
+          <label class="filter-label">{{ field.label }}</label>
+          <div class="filter-range-inputs">
+            <app-numeric-input
+              [placeholder]="field.rangeFromPlaceholder || 'Od'"
+              [min]="field.min ?? -Infinity"
+              [max]="field.max ?? Infinity"
+              [step]="field.step || 1"
+              [ngModel]="getRangeValue(field.rangeFromKey || field.key + 'From')"
+              (ngModelChange)="onRangeChange(field.rangeFromKey || field.key + 'From', field.rangeToKey || field.key + 'To', true, $event)">
+            </app-numeric-input>
+            <span class="filter-range-separator">–</span>
+            <app-numeric-input
+              [placeholder]="field.rangeToPlaceholder || 'Do'"
+              [min]="field.min ?? -Infinity"
+              [max]="field.max ?? Infinity"
+              [step]="field.step || 1"
+              [ngModel]="getRangeValue(field.rangeToKey || field.key + 'To')"
+              (ngModelChange)="onRangeChange(field.rangeFromKey || field.key + 'From', field.rangeToKey || field.key + 'To', false, $event)">
+            </app-numeric-input>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="filter-footer">
+      <button
+        *ngIf="showClearButton && activeFilterCount > 0"
+        type="button"
+        class="btn btn-secondary"
+        (click)="clearFilters()">
+        {{ clearButtonLabel }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="applyFilters()">
+        {{ applyButtonLabel }}
+      </button>
+    </div>
+  </div>
+</div>

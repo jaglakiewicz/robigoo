@@ -49,7 +49,10 @@ namespace Server.Controllers
         public async Task<ActionResult<IEnumerable<MachineListItemDto>>> GetMachines(
             [FromQuery] string? q,
             [FromQuery] string? type,
-            [FromQuery] string? kind)
+            [FromQuery] string? kind,
+            [FromQuery] string? manufacturer,
+            [FromQuery] string? yearFrom,
+            [FromQuery] string? yearTo)
         {
             var query = _context.Machines.AsQueryable();
 
@@ -71,6 +74,22 @@ namespace Server.Controllers
             if (!string.IsNullOrWhiteSpace(kind))
             {
                 query = query.Where(m => m.Kind == kind);
+            }
+
+            if (!string.IsNullOrWhiteSpace(manufacturer))
+            {
+                var manufacturerTerm = manufacturer.Trim().ToLowerInvariant();
+                query = query.Where(m => m.Manufacturer.ToLower().Contains(manufacturerTerm));
+            }
+
+            if (!string.IsNullOrWhiteSpace(yearFrom) && YearRegex.IsMatch(yearFrom))
+            {
+                query = query.Where(m => string.Compare(m.ProductionYear, yearFrom) >= 0);
+            }
+
+            if (!string.IsNullOrWhiteSpace(yearTo) && YearRegex.IsMatch(yearTo))
+            {
+                query = query.Where(m => string.Compare(m.ProductionYear, yearTo) <= 0);
             }
 
             var result = await query
