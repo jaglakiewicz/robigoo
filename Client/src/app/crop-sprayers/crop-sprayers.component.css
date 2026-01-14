@@ -75,7 +75,7 @@
    ============================================================ */
 .machines-layout {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr);
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 2.5fr);
   gap: var(--space-lg);
   flex: 1;
   min-height: 0;
