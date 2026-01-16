@@ -1,0 +1,78 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Entity Detail Panel Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+@import '../../styles/globals.css';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.entity-detail-panel {
+  background: var(--panel);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: visible;
+  flex: 1;
+}
+
+/* ============================================================
+   DETAIL HEADER
+   ============================================================ */
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  gap: var(--space-md);
+}
+
+.detail-header-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-sub {
+  font-size: var(--font-size-sm);
+  color: var(--text-light);
+  margin-top: var(--space-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-header-actions {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   DETAIL CONTENT
+   ============================================================ */
+.detail-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}

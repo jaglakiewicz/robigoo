@@ -1,0 +1,34 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Step Indicator Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+@import '../../styles/globals.css';
+
+:host {
+  display: block;
+}
+
+/* Component-specific overrides */
+.step-indicator {
+  border-radius: var(--radius-md);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: var(--space-xs);
+}
+
+.step {
+  min-width: 138px;
+  flex: 1 0 auto;
+  justify-content: flex-start;
+}
+
+.step.clickable {
+  cursor: pointer;
+}
+
+.step:not(.clickable) {
+  cursor: default;
+}

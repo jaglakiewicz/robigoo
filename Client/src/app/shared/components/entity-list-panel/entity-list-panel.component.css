@@ -1,0 +1,98 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Entity List Panel Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+@import '../../styles/globals.css';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.entity-list-panel {
+  background: var(--panel);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: visible;
+  flex: 1;
+}
+
+.panel-title {
+  margin: 0 0 var(--space-md) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ============================================================
+   FILTERS
+   ============================================================ */
+.filters-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  align-items: center;
+}
+
+.filters-row .search-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================================
+   ENTITY LIST
+   ============================================================ */
+.entity-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-height: 0;
+  transition: filter var(--transition-fast), opacity var(--transition-fast);
+}
+
+.entity-list.blurred {
+  filter: blur(2px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Generic entity card styles */
+.entity-card {
+  display: flex;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--panel-border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.entity-card:hover {
+  background: var(--bg-alt);
+  border-color: var(--accent-light);
+}
+
+.entity-card.active {
+  background: var(--primary-surface);
+  border-color: var(--primary-btn-border);
+}
+
+/* ============================================================
+   STATES
+   ============================================================ */
+.empty-state,
+.loading-state {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--text-light);
+  font-size: var(--font-size-base);
+}

@@ -13,8 +13,9 @@ import { NotificationService } from '../services/notification.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { SelectOption } from '../shared/components/custom-select/custom-select.component';
 import { FilterField, FilterValues } from '../shared/components/filter-panel/filter-panel.component';
+import { Step } from '../shared/components/step-indicator/step-indicator.component';
 
-interface MachineStep {
+interface SprayerStep {
   id: number;
   key: string;
   titleKey: string;
@@ -27,7 +28,7 @@ interface MachineStep {
 })
 export class CropSprayersComponent implements OnInit, OnDestroy {
   // List
-  machines: MachineListItem[] = [];
+  sprayers: MachineListItem[] = [];
   selectedSerialNumber: string | null = null;
   searchTerm = '';
 
@@ -37,14 +38,14 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   filterPanelOpen = false;
 
   // Detail / form
-  currentMachine: MachineDetail | null = null;
+  currentSprayer: MachineDetail | null = null;
   formModel: MachineCreateUpdateRequest | null = null;
   isNew = false;
   isEditMode = false;
   private originalSerialNumber: string | null = null;
 
   // Steps
-  steps: MachineStep[] = [
+  steps: SprayerStep[] = [
     { id: 0, key: 'basics', titleKey: 'types.machines.steps.basics' },
     { id: 1, key: 'pump', titleKey: 'types.machines.steps.pump' },
     { id: 2, key: 'tank', titleKey: 'types.machines.steps.tank' },
@@ -77,7 +78,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   // Delete confirmation dialog state
   deleteDialogVisible = false;
 
-  private readonly formId = 'machines-detail';
+  private readonly formId = 'sprayers-detail';
 
   // Select options
   typeOptions: SelectOption[] = [];
@@ -85,7 +86,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   pumpTypeOptions: SelectOption[] = [];
 
   constructor(
-    private machinesService: MachineService,
+    private sprayersService: MachineService,
     private dirtyFormService: DirtyFormService,
     private textService: TextService,
     private notificationService: NotificationService,
@@ -101,8 +102,8 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     };
   }
 
-  // Visible steps depend on machine type (field / garden)
-  get visibleSteps(): MachineStep[] {
+  // Visible steps depend on sprayer type (field / garden)
+  get visibleSteps(): SprayerStep[] {
     const type = this.formModel?.type;
     return this.steps.filter(step => {
       if (step.key === 'fieldNozzles') {
@@ -117,7 +118,16 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     });
   }
 
-  getStepTitleKey(step: MachineStep): string {
+  /** Convert visible steps to the format expected by step-indicator component */
+  get stepsForIndicator(): Step[] {
+    return this.visibleSteps.map(step => ({
+      id: step.id,
+      key: step.key,
+      label: this.textService.get(this.getStepTitleKey(step))
+    }));
+  }
+
+  getStepTitleKey(step: SprayerStep): string {
     if (step.key === 'fieldNozzles' || step.key === 'gardenNozzles') {
       return 'types.machines.steps.nozzles';
     }
@@ -127,7 +137,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initSelectOptions();
     this.initFilterFields();
-    this.loadMachines();
+    this.loadSprayers();
   }
 
   private initFilterFields(): void {
@@ -198,9 +208,9 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   // List handling
 
-  loadMachines(): void {
+  loadSprayers(): void {
     this.loadingList = true;
-    this.machinesService.getMachinesList({
+    this.sprayersService.getMachinesList({
       q: this.searchTerm || undefined,
       type: this.filterValues['type'] || undefined,
       kind: this.filterValues['kind'] || undefined,
@@ -209,7 +219,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       yearTo: this.filterValues['yearTo'] || undefined
     }).subscribe({
       next: list => {
-        this.machines = list;
+        this.sprayers = list;
         this.loadingList = false;
         this.reconcileSelection(list);
       },
@@ -221,17 +231,17 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   onSearchChange(value: string): void {
     this.searchTerm = value;
-    this.loadMachines();
+    this.loadSprayers();
   }
 
   onFilterChange(values: FilterValues): void {
     this.filterValues = values;
-    this.loadMachines();
+    this.loadSprayers();
   }
 
   onFilterClear(): void {
     this.filterValues = {};
-    this.loadMachines();
+    this.loadSprayers();
   }
 
   onFilterPanelOpenChange(isOpen: boolean): void {
@@ -243,10 +253,10 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       this.openUnsavedDialog('new', null);
       return;
     }
-    this.startNewMachine();
+    this.startNewSprayer();
   }
 
-  onSelectMachine(serialNumber: string): void {
+  onSelectSprayer(serialNumber: string): void {
     if (serialNumber === this.selectedSerialNumber && !this.isNew) {
       return;
     }
@@ -256,11 +266,11 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loadMachineDetail(serialNumber);
+    this.loadSprayerDetail(serialNumber);
   }
 
   onEdit(): void {
-    if (!this.currentMachine || this.isEditMode) {
+    if (!this.currentSprayer || this.isEditMode) {
       return;
     }
     this.isEditMode = true;
@@ -268,17 +278,17 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   }
 
   openHistory(): void {
-    if (this.currentMachine && !this.isNew) {
+    if (this.currentSprayer && !this.isNew) {
       this.showHistoryDialog = true;
     }
   }
 
-  private startNewMachine(): void {
+  private startNewSprayer(): void {
     this.isNew = true;
     this.isEditMode = true;
     this.originalSerialNumber = null;
     this.selectedSerialNumber = null;
-    this.currentMachine = null;
+    this.currentSprayer = null;
     this.currentStep = 0;
     this.messageKey = '';
     this.messageError = false;
@@ -313,16 +323,16 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.setDirty(false);
   }
 
-  private loadMachineDetail(serialNumber: string): void {
+  private loadSprayerDetail(serialNumber: string): void {
     this.isNew = false;
     this.isEditMode = false;
     this.selectedSerialNumber = serialNumber;
     this.currentStep = 0;
     this.messageKey = '';
     this.messageError = false;
-    this.machinesService.getMachine(serialNumber).subscribe({
+    this.sprayersService.getMachine(serialNumber).subscribe({
       next: detail => {
-        this.currentMachine = detail;
+        this.currentSprayer = detail;
         this.originalSerialNumber = detail.serialNumber;
         this.formModel = {
           serialNumber: detail.serialNumber,
@@ -365,7 +375,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     if (list.length === 0) {
       if (!this.isNew) {
         this.selectedSerialNumber = null;
-        this.currentMachine = null;
+        this.currentSprayer = null;
         this.formModel = null;
       }
       return;
@@ -375,7 +385,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
     if (hasSelected) {
       if (!this.formModel || this.formModel.serialNumber !== this.selectedSerialNumber) {
-        this.loadMachineDetail(this.selectedSerialNumber!);
+        this.loadSprayerDetail(this.selectedSerialNumber!);
       }
       return;
     }
@@ -385,7 +395,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     }
 
     const firstSerialNumber = list[0].serialNumber;
-    this.loadMachineDetail(firstSerialNumber);
+    this.loadSprayerDetail(firstSerialNumber);
   }
 
   // Step navigation
@@ -468,12 +478,12 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
     const req: MachineCreateUpdateRequest = { ...this.formModel };
     const obs = this.isNew
-      ? this.machinesService.createMachine(req)
-      : this.machinesService.updateMachine(this.originalSerialNumber ?? this.formModel.serialNumber, req);
+      ? this.sprayersService.createMachine(req)
+      : this.sprayersService.updateMachine(this.originalSerialNumber ?? this.formModel.serialNumber, req);
 
     obs.subscribe({
       next: detail => {
-        this.currentMachine = detail;
+        this.currentSprayer = detail;
         this.isNew = false;
         this.isEditMode = false;
         this.originalSerialNumber = detail.serialNumber;
@@ -482,7 +492,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         this.messageError = false;
         this.saving = false;
         this.setDirty(false);
-        this.loadMachines();
+        this.loadSprayers();
         this.notificationService.success(this.textService.get('types.machines.messages.saved'));
         if (onSuccess) {
           onSuccess();
@@ -502,19 +512,19 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   cancelEditing(): void {
     if (this.isNew) {
       this.formModel = null;
-      this.currentMachine = null;
+      this.currentSprayer = null;
       this.isNew = false;
       this.isEditMode = false;
       this.setDirty(false);
     }
-    else if (this.currentMachine) {
+    else if (this.currentSprayer) {
       // Przywróć ostatni stan z API
-      this.loadMachineDetail(this.currentMachine.serialNumber);
+      this.loadSprayerDetail(this.currentSprayer.serialNumber);
     }
   }
 
   onDelete(): void {
-    if (!this.currentMachine || this.isNew || this.deleting) {
+    if (!this.currentSprayer || this.isNew || this.deleting) {
       return;
     }
 
@@ -524,26 +534,26 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   onDeleteConfirm(): void {
     this.deleteDialogVisible = false;
     
-    if (!this.currentMachine || this.deleting) {
+    if (!this.currentSprayer || this.deleting) {
       return;
     }
 
     this.deleting = true;
-    const serialToDelete = this.currentMachine.serialNumber;
+    const serialToDelete = this.currentSprayer.serialNumber;
 
-    this.machinesService.deleteMachine(serialToDelete).subscribe({
+    this.sprayersService.deleteMachine(serialToDelete).subscribe({
       next: () => {
         this.notificationService.success(this.textService.get('types.machines.messages.deleted'));
         this.deleting = false;
         this.isEditMode = false;
         this.isNew = false;
-        this.currentMachine = null;
+        this.currentSprayer = null;
         this.formModel = null;
         this.selectedSerialNumber = null;
         this.messageKey = '';
         this.messageError = false;
         this.setDirty(false);
-        this.loadMachines();
+        this.loadSprayers();
       },
       error: err => {
         this.deleting = false;
@@ -588,9 +598,9 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   private runPendingAction(): void {
     if (this.pendingAction === 'new') {
-      this.startNewMachine();
+      this.startNewSprayer();
     } else if (this.pendingAction === 'select' && this.pendingSerialNumber) {
-      this.loadMachineDetail(this.pendingSerialNumber);
+      this.loadSprayerDetail(this.pendingSerialNumber);
     }
 
     this.pendingAction = null;

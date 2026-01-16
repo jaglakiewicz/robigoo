@@ -1,0 +1,56 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="entity-list-panel">
+  <h4 class="panel-title" *ngIf="title">{{ title }}</h4>
+
+  <div class="filters-row">
+    <input
+      type="text"
+      class="search-input"
+      [placeholder]="searchPlaceholder"
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearchChange($event)" />
+
+    <app-filter-panel
+      *ngIf="filterFields.length > 0"
+      [fields]="filterFields"
+      [values]="filterValues"
+      [clearButtonLabel]="clearButtonLabel"
+      [applyButtonLabel]="applyButtonLabel"
+      (valuesChange)="onFilterChange($event)"
+      (filterClear)="onFilterClear()"
+      (openChange)="onFilterPanelOpenChange($event)">
+    </app-filter-panel>
+  </div>
+
+  <div 
+    class="entity-list" 
+    [class.blurred]="blurOnFilterOpen && filterPanelOpen" 
+    *ngIf="!loading; else loadingTpl"
+    appScrollFade 
+    appScrollCenter 
+    [itemSelector]="'.' + itemClass">
+    
+    <div
+      *ngFor="let item of items; trackBy: trackByFn"
+      [class]="itemClass"
+      [class.active]="isSelected(item)"
+      (click)="onItemClick(item)">
+      <ng-container 
+        *ngTemplateOutlet="itemTemplate; context: { $implicit: item, selected: isSelected(item) }">
+      </ng-container>
+    </div>
+
+    <div *ngIf="items.length === 0" class="empty-state">
+      {{ emptyMessage }}
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading-state">{{ loadingMessage }}</div>
+  </ng-template>
+</div>

@@ -1,0 +1,24 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div 
+  class="step-indicator" 
+  appScrollFade 
+  [horizontal]="true" 
+  appScrollCenter 
+  [horizontal]="true" 
+  [itemSelector]="'.step'">
+  <div
+    *ngFor="let step of steps; let i = index; trackBy: trackByFn"
+    class="step"
+    [class.active]="isActive(step)"
+    [class.completed]="isCompleted(step)"
+    [class.clickable]="clickable"
+    (click)="onStepClick(step)">
+    <span class="step-number">{{ getStepNumber(i) }}</span>
+    <span class="step-label">{{ step.label }}</span>
+  </div>
+</div>

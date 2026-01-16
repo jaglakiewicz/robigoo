@@ -1,0 +1,15 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="master-detail-layout" [class]="containerClass">
+  <div class="master-panel">
+    <ng-content select="[master]"></ng-content>
+  </div>
+  
+  <div class="detail-panel">
+    <ng-content select="[detail]"></ng-content>
+  </div>
+</div>

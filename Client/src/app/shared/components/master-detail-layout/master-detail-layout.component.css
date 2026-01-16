@@ -1,0 +1,38 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Master-Detail Layout Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+@import '../../styles/globals.css';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.master-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 2.5fr);
+  gap: var(--space-lg);
+  flex: 1;
+  min-height: 0;
+}
+
+.master-panel,
+.detail-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 894px) {
+  .master-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}

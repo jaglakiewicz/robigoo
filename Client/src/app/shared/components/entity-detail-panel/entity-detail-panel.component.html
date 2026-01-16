@@ -1,0 +1,30 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="entity-detail-panel">
+  <div class="detail-header">
+    <div class="detail-header-content">
+      <div class="detail-title">{{ displayTitle }}</div>
+      <div class="detail-sub" *ngIf="subtitle && !isNew">{{ subtitle }}</div>
+    </div>
+    
+    <div class="detail-header-actions">
+      <ng-container *ngTemplateOutlet="headerActionsTemplate"></ng-container>
+      
+      <button
+        *ngIf="showHistory"
+        class="btn btn-secondary btn-icon-only"
+        [title]="historyButtonTitle"
+        (click)="onHistoryClick()">
+        <span [innerHTML]="historyIcon" style="color: inherit;"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-content">
+    <ng-content></ng-content>
+  </div>
+</div>

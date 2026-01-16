@@ -5,43 +5,374 @@
 -->
 
 <h3 class="component-title">{{ 'clients.title' | text }}</h3>
-<p class="component-subtitle">{{ 'clients.description' | text }}</p>
 
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>{{ 'clients.columns.name' | text }}</th>
-      <th>{{ 'clients.columns.document' | text }}</th>
-      <th>{{ 'clients.columns.vehicle' | text }}</th>
-      <th>{{ 'clients.columns.status' | text }}</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let client of clients">
-      <td>{{ client.name }}</td>
-      <td>{{ client.document }}</td>
-      <td>{{ client.vehicle }}</td>
-      <td>
-        <span
-          class="badge"
-          [class.badge-accent]="client.statusKey === 'clients.status.active'"
-          [class.badge-neutral]="client.statusKey !== 'clients.status.active'"
-        >
-          {{ client.statusKey | text }}
+<div class="clients-container">
+  <app-entity-toolbar>
+    <ng-container left>
+      <button class="btn btn-success" (click)="onAddNew()" [disabled]="deleting">
+        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
+        <span class="btn-label">{{ 'clients.addButton' | text }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="onEdit()"
+        [disabled]="!currentClient || isEditMode || deleting">
+        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
+        <span class="btn-label">{{ 'clients.actions.edit' | text }}</span>
+      </button>
+      <button
+        class="btn btn-danger"
+        (click)="onDelete()"
+        [disabled]="!currentClient || isNew || deleting || saving">
+        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
+        <span class="btn-label">{{ 'clients.actions.delete' | text }}</span>
+      </button>
+    </ng-container>
+
+    <ng-container right *ngIf="isEditMode">
+      <button class="btn btn-primary" (click)="save()" [disabled]="saving || deleting">
+        <span class="btn-icon" aria-hidden="true">
+          <svg fill="currentColor" viewBox="0 0 342 342" width="16" height="16">
+            <path d="M243.498667,0 L341.333333,97.8346667 L341.333333,341.333333 L0,341.333333 L0,0 L243.498667,0 Z M213.333333,234.666667 L128,234.666667 L128,298.688 L213.333333,298.688 L213.333333,234.666667 Z M85.3333333,42.6666667 L42.6666667,42.6666667 L42.6666667,298.666667 L85.3333333,298.666667 L85.3333333,192 L256,192 L256,298.666667 L298.666667,298.666667 L298.666667,115.498667 L256,72.8533333 L256,149.333333 L85.3333333,149.333333 L85.3333333,42.6666667 Z M213.333333,42.6666667 L128,42.6666667 L128,106.688 L213.333333,106.688 L213.333333,42.6666667 Z"/>
+          </svg>
         </span>
-      </td>
-      <td>
-        <button (click)="openHistory(client)" style="cursor: pointer; padding: 4px 8px;">History</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+        <span class="btn-label">{{ 'clients.actions.save' | text }}</span>
+      </button>
+      <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="deleting">
+        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.cancel" style="color: inherit;"></span>
+        <span class="btn-label">{{ 'clients.actions.cancel' | text }}</span>
+      </button>
+    </ng-container>
+  </app-entity-toolbar>
 
+  <div class="clients-layout">
+    <!-- LEFT: LIST -->
+    <div class="clients-list-panel">
+      <h4 class="panel-title">{{ 'clients.listTitle' | text }}</h4>
+
+      <div class="filters-row">
+        <input
+          type="text"
+          class="search-input"
+          [placeholder]="'clients.searchPlaceholder' | text"
+          [ngModel]="searchTerm"
+          (ngModelChange)="onSearchChange($event)" />
+
+        <app-filter-panel
+          [fields]="filterFields"
+          [values]="filterValues"
+          [clearButtonLabel]="'clients.filters.clear' | text"
+          [applyButtonLabel]="'clients.filters.apply' | text"
+          (valuesChange)="onFilterChange($event)"
+          (filterClear)="onFilterClear()"
+          (openChange)="onFilterPanelOpenChange($event)">
+        </app-filter-panel>
+      </div>
+
+      <div class="clients-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.client-card'">
+        <div
+          class="client-card"
+          *ngFor="let c of clients"
+          [class.active]="c.id === selectedClientId && !isNew"
+          (click)="onSelectClient(c.id)">
+          <div class="card-main">
+            <div class="card-badges-row">
+              <span class="badge badge-type" *ngIf="c.clientType === 'person'">
+                {{ 'clients.filters.typePerson' | text }}
+              </span>
+              <span class="badge badge-type badge-company" *ngIf="c.clientType === 'company'">
+                {{ 'clients.filters.typeCompany' | text }}
+              </span>
+            </div>
+            <div class="card-title">{{ c.displayName }}</div>
+            <div class="card-info-row" *ngIf="c.city || c.nip">
+              <span *ngIf="c.city">{{ c.city }}</span>
+              <span *ngIf="c.city && c.nip" class="vertical-separator"></span>
+              <span *ngIf="c.nip">NIP: {{ c.nip }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="clients.length === 0" class="empty-state">
+          {{ 'clients.empty' | text }}
+        </div>
+      </div>
+
+      <ng-template #loadingTpl>
+        <div class="loading-state">{{ 'clients.loading' | text }}</div>
+      </ng-template>
+    </div>
+
+    <!-- RIGHT: DETAIL / EDITOR -->
+    <div class="clients-detail-panel" *ngIf="formModel as form">
+      <div class="detail-header">
+        <div>
+          <div class="detail-title">{{ displayName }}</div>
+          <div class="detail-sub" *ngIf="!isNew && displayAddress">
+            {{ displayAddress }}
+          </div>
+        </div>
+        <div class="header-actions" *ngIf="!isNew && !isEditMode">
+          <button
+            class="btn btn-secondary btn-icon-only"
+            [title]="'clients.fields.mapPreview' | text"
+            (click)="openMapDialog()">
+            <span [innerHTML]="getSafeHtml(mapIcon)" style="color: inherit;"></span>
+          </button>
+          <button
+            class="btn btn-secondary btn-icon-only"
+            title="Historia zmian"
+            (click)="openHistory()">
+            <span [innerHTML]="getSafeHtml(historyIcon)" style="color: inherit;"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step indicator -->
+      <app-step-indicator
+        [steps]="stepsForIndicator"
+        [currentStepId]="currentStep"
+        (stepClick)="goToStep($event)">
+      </app-step-indicator>
+
+      <div class="step-content">
+        <!-- Step 0: Basic data -->
+        <div *ngIf="currentStep === 0" class="basics-grid">
+          <!-- Row 1: Client type -->
+          <div class="form-row form-row-1">
+            <div class="form-group required">
+              <label>{{ 'clients.fields.clientType' | text }}</label>
+              <app-custom-select
+                [options]="clientTypeOptions"
+                [ngModel]="form.clientType"
+                (ngModelChange)="onClientTypeChange($event)"
+                [disabled]="!isEditMode">
+              </app-custom-select>
+            </div>
+          </div>
+
+          <!-- Person fields -->
+          <ng-container *ngIf="form.clientType === 'person'">
+            <div class="form-row form-row-2">
+              <div class="form-group required">
+                <label>{{ 'clients.fields.firstName' | text }}</label>
+                <input
+                  type="text"
+                  [ngModel]="form.firstName"
+                  (ngModelChange)="form.firstName = $event; onFormChange()"
+                  [disabled]="!isEditMode" />
+              </div>
+
+              <div class="form-group required">
+                <label>{{ 'clients.fields.lastName' | text }}</label>
+                <input
+                  type="text"
+                  [ngModel]="form.lastName"
+                  (ngModelChange)="form.lastName = $event; onFormChange()"
+                  [disabled]="!isEditMode" />
+              </div>
+            </div>
+
+            <div class="form-row form-row-2">
+              <div class="form-group">
+                <label>{{ 'clients.fields.pesel' | text }}</label>
+                <input
+                  type="text"
+                  [ngModel]="form.pesel"
+                  (ngModelChange)="form.pesel = $event; onFormChange()"
+                  [disabled]="!isEditMode"
+                  maxlength="11" />
+              </div>
+
+              <div class="form-group">
+                <label>{{ 'clients.fields.nip' | text }}</label>
+                <input
+                  type="text"
+                  [ngModel]="form.nip"
+                  (ngModelChange)="form.nip = $event; onFormChange()"
+                  [disabled]="!isEditMode"
+                  maxlength="10" />
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Company fields -->
+          <ng-container *ngIf="form.clientType === 'company'">
+            <div class="form-row form-row-1">
+              <div class="form-group required">
+                <label>{{ 'clients.fields.companyName' | text }}</label>
+                <input
+                  type="text"
+                  [ngModel]="form.companyName"
+                  (ngModelChange)="form.companyName = $event; onFormChange()"
+                  [disabled]="!isEditMode" />
+              </div>
+            </div>
+
+            <div class="form-row form-row-2">
+              <div class="form-group required">
+                <label>{{ 'clients.fields.nip' | text }}</label>
+                <input
+                  type="text"
+                  [ngModel]="form.nip"
+                  (ngModelChange)="form.nip = $event; onFormChange()"
+                  [disabled]="!isEditMode"
+                  maxlength="10" />
+              </div>
+
+              <div class="form-group">
+                <label>{{ 'clients.fields.regon' | text }}</label>
+                <input
+                  type="text"
+                  [ngModel]="form.regon"
+                  (ngModelChange)="form.regon = $event; onFormChange()"
+                  [disabled]="!isEditMode"
+                  maxlength="14" />
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Step 1: Address -->
+        <div *ngIf="currentStep === 1" class="basics-grid">
+          <div class="form-row form-row-2">
+            <div class="form-group required">
+              <label>{{ 'clients.fields.voivodeship' | text }}</label>
+              <app-custom-select
+                [options]="voivodeshipOptions"
+                [ngModel]="form.voivodeship"
+                (ngModelChange)="form.voivodeship = $event; onFormChange()"
+                [disabled]="!isEditMode">
+              </app-custom-select>
+            </div>
+
+            <div class="form-group required">
+              <label>{{ 'clients.fields.city' | text }}</label>
+              <input
+                type="text"
+                [ngModel]="form.city"
+                (ngModelChange)="form.city = $event; onFormChange()"
+                [disabled]="!isEditMode" />
+            </div>
+          </div>
+
+          <div class="form-row form-row-2">
+            <div class="form-group required">
+              <label>{{ 'clients.fields.zipCode' | text }}</label>
+              <input
+                type="text"
+                [ngModel]="form.zipCode"
+                (ngModelChange)="form.zipCode = $event; onFormChange()"
+                [disabled]="!isEditMode"
+                placeholder="00-000" />
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'clients.fields.street' | text }}</label>
+              <input
+                type="text"
+                [ngModel]="form.street"
+                (ngModelChange)="form.street = $event; onFormChange()"
+                [disabled]="!isEditMode" />
+            </div>
+          </div>
+
+          <div class="form-row form-row-3">
+            <div class="form-group required">
+              <label>{{ 'clients.fields.buildingNumber' | text }}</label>
+              <input
+                type="text"
+                [ngModel]="form.buildingNumber"
+                (ngModelChange)="form.buildingNumber = $event; onFormChange()"
+                [disabled]="!isEditMode" />
+            </div>
+
+            <div class="form-group">
+              <label>{{ 'clients.fields.apartmentNumber' | text }}</label>
+              <input
+                type="text"
+                [ngModel]="form.apartmentNumber"
+                (ngModelChange)="form.apartmentNumber = $event; onFormChange()"
+                [disabled]="!isEditMode" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Crop Sprayers -->
+        <div *ngIf="currentStep === 2" class="basics-grid">
+          <div class="empty-tab-placeholder">
+            <p>{{ 'clients.sprayersPlaceholder' | text }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state when no client selected -->
+    <div class="clients-detail-panel clients-empty-panel" *ngIf="!formModel">
+      <div class="empty-state-center">
+        <p>{{ 'clients.selectOrAdd' | text }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- History Dialog -->
 <app-history-dialog 
-  *ngIf="showHistoryDialog" 
+  *ngIf="showHistoryDialog && currentClient" 
   entityName="Client" 
-  [entityId]="selectedHistoryId" 
+  [entityId]="currentClient.id" 
   (close)="showHistoryDialog = false">
 </app-history-dialog>
+
+<!-- Unsaved Changes Dialog -->
+<app-confirm-dialog
+  *ngIf="unsavedDialogVisible"
+  [title]="'clients.messages.unsavedTitle' | text"
+  [message]="'clients.messages.unsavedText' | text"
+  [confirmLabel]="'clients.actions.save' | text"
+  [cancelLabel]="'clients.actions.cancel' | text"
+  [discardLabel]="'clients.actions.discard' | text"
+  (confirm)="onUnsavedConfirmSave()"
+  (discard)="onUnsavedConfirmDiscard()"
+  (cancel)="onUnsavedConfirmCancel()">
+</app-confirm-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<app-confirm-dialog
+  *ngIf="deleteDialogVisible"
+  [title]="'clients.messages.deleteTitle' | text"
+  [message]="'clients.messages.deleteText' | text"
+  [confirmLabel]="'clients.actions.delete' | text"
+  [cancelLabel]="'clients.actions.cancel' | text"
+  (confirm)="onDeleteConfirm()"
+  (cancel)="onDeleteCancel()">
+</app-confirm-dialog>
+
+<!-- Map Dialog -->
+<div class="dialog-backdrop dialog-backdrop--dismissible" *ngIf="showMapDialog" (click)="onMapBackdropClick($event)">
+  <div class="dialog dialog--lg" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <h2 class="dialog__title">{{ 'clients.fields.mapPreview' | text }}</h2>
+      <button class="dialog__close" (click)="closeMapDialog()" aria-label="Zamknij">&times;</button>
+    </div>
+    <div class="dialog__body dialog__body--scroll">
+      <div class="map-address-info" *ngIf="displayAddress">
+        <strong>{{ 'clients.steps.address' | text }}:</strong> {{ displayAddress }}
+      </div>
+      <div class="map-container" *ngIf="hasValidAddress; else noAddressDialog">
+        <iframe
+          class="map-iframe"
+          [src]="mapUrl"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+      <ng-template #noAddressDialog>
+        <div class="map-not-found">
+          <p>{{ 'clients.messages.mapNotFound' | text }}</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
 

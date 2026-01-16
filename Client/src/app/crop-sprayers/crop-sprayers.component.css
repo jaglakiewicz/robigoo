@@ -15,9 +15,9 @@
 }
 
 /* ============================================================
-   MACHINES LAYOUT
+   SPRAYERS LAYOUT
    ============================================================ */
-.machines-container {
+.sprayers-container {
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -29,51 +29,10 @@
   margin-bottom: 0;
 }
 
-.machines-header {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--space-md);
-  margin-top: 0;
-  padding-bottom: var(--space-md);
-  margin-bottom: var(--space-md);
-  flex-wrap: wrap;
-  border-bottom: 1px solid var(--panel-border);
-}
-
-.toolbar-group {
-  display: inline-flex;
-  align-items: stretch;
-  gap: var(--space-md);
-}
-
-.toolbar-group.toolbar-left { justify-content: flex-start; }
-.toolbar-group.toolbar-right { margin-left: auto; justify-content: flex-end; }
-
-.machines-header .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  min-width: unset;
-  padding-inline: var(--space-sm) var(--space-md);
-}
-
-.machines-header .btn-icon {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.machines-header .btn-icon svg { width: 18px; height: 18px; }
-.machines-header .btn-label { flex: 0 0 auto; text-align: left; }
-
 /* ============================================================
    TWO-COLUMN LAYOUT
    ============================================================ */
-.machines-layout {
+.sprayers-layout {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) minmax(0, 2.5fr);
   gap: var(--space-lg);
@@ -81,8 +40,8 @@
   min-height: 0;
 }
 
-.machines-list-panel,
-.machines-detail-panel {
+.sprayers-list-panel,
+.sprayers-detail-panel {
   background: var(--panel);
   border-radius: var(--radius-md);
   border: 1px solid var(--panel-border);
@@ -115,9 +74,9 @@
 }
 
 /* ============================================================
-   MACHINES LIST
+   SPRAYERS LIST
    ============================================================ */
-.machines-list {
+.sprayers-list {
   flex: 1;
   overflow-y: auto;
   display: flex;
@@ -127,13 +86,13 @@
   transition: filter var(--transition-fast), opacity var(--transition-fast);
 }
 
-.machines-list.blurred {
+.sprayers-list.blurred {
   filter: blur(2px);
   opacity: 0.5;
   pointer-events: none;
 }
 
-.machine-card {
+.sprayer-card {
   display: flex;
   gap: var(--space-xs);
   padding: var(--space-sm);
@@ -143,12 +102,12 @@
   transition: all var(--transition-fast);
 }
 
-.machine-card:hover {
+.sprayer-card:hover {
   background: var(--bg-alt);
   border-color: var(--accent-light);
 }
 
-.machine-card.active {
+.sprayer-card.active {
   background: var(--primary-surface);
   border-color: var(--primary-btn-border);
 }
@@ -185,7 +144,7 @@
   line-height: 1.4;
 }
 
-.machine-card .badge {
+.sprayer-card .badge {
   padding: 0 var(--space-xs);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
@@ -194,13 +153,13 @@
   background: var(--bg-elevated);
 }
 
-.machine-card .badge-type {
+.sprayer-card .badge-type {
   border-color: var(--primary-border);
   background: var(--primary-surface);
   color: var(--accent);
 }
 
-.machine-card .badge-kind {
+.sprayer-card .badge-kind {
   border-color: var(--success-border);
   background: var(--success-surface);
   color: var(--success-dark);
@@ -261,25 +220,8 @@
 }
 
 /* ============================================================
-   STEP INDICATOR OVERRIDES
-   ============================================================ */
-.step-indicator {
-  border-radius: var(--radius-md);
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: var(--space-xs);
-}
-
-.step {
-  min-width: 138px;
-  flex: 1 0 auto;
-  justify-content: flex-start;
-}
-
-/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 894px) {
-  .machines-layout { grid-template-columns: 1fr; }
+  .sprayers-layout { grid-template-columns: 1fr; }
 }

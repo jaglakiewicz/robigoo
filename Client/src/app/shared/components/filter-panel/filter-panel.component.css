@@ -277,14 +277,65 @@
 }
 
 /* ============================================================
-   BACKDROP OVERLAY
+   MOBILE BACKDROP
    ============================================================ */
 .filter-backdrop {
-  position: absolute;
-  top: calc(100% + var(--space-xs));
-  left: calc(-1 * var(--space-md));
-  right: calc(-1 * var(--space-md));
-  bottom: calc(-1 * 100vh);
-  z-index: 999;
-  pointer-events: none;
+  display: none;
+}
+
+/* ============================================================
+   RESPONSIVE - Mobile bottom sheet
+   ============================================================ */
+@media (max-width: 600px) {
+  .filter-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: var(--overlay);
+    z-index: 999;
+    animation: backdropFadeIn 0.2s ease-out;
+  }
+
+  @keyframes backdropFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .filter-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: none;
+    min-width: auto;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    z-index: 1000;
+    animation: slideUp 0.25s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .filter-body {
+    max-height: 60vh;
+    padding: var(--space-lg);
+  }
+
+  .filter-footer {
+    padding: var(--space-md) var(--space-lg);
+    padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .filter-footer .btn {
+    flex: 1;
+  }
 }

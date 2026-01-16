@@ -17,6 +17,9 @@
     <span class="filter-badge" *ngIf="activeFilterCount > 0">{{ activeFilterCount }}</span>
   </button>
 
+  <!-- Mobile Backdrop -->
+  <div class="filter-backdrop" *ngIf="isOpen" (click)="toggle()"></div>
+
   <!-- Dropdown Panel - connected to button -->
   <div class="filter-dropdown" *ngIf="isOpen" (click)="$event.stopPropagation()">
     <div class="filter-body">

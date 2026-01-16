@@ -287,6 +287,63 @@ const TEXTS: TextTree = {
   clients: {
     title: 'Klienci',
     description: 'Zarządzaj kartoteką klientów i ich flotą.',
+    listTitle: 'Lista klientów',
+    addButton: 'Dodaj klienta',
+    searchPlaceholder: 'Szukaj klienta...',
+    selectOrAdd: 'Wybierz klienta z listy lub dodaj nowego',
+    empty: 'Brak klientów',
+    loading: 'Ładowanie...',
+    addressSection: 'Adres',
+    sprayersPlaceholder: 'Lista opryskiwaczy klienta zostanie dodana w przyszłej wersji.',
+    steps: {
+      basics: 'Dane podstawowe',
+      address: 'Adres',
+      sprayers: 'Opryskiwacze'
+    },
+    fields: {
+      clientType: 'Typ klienta',
+      firstName: 'Imię',
+      lastName: 'Nazwisko',
+      pesel: 'PESEL',
+      companyName: 'Nazwa firmy',
+      nip: 'NIP',
+      regon: 'REGON',
+      voivodeship: 'Województwo',
+      city: 'Miasto',
+      street: 'Ulica',
+      buildingNumber: 'Nr budynku',
+      apartmentNumber: 'Nr lokalu',
+      zipCode: 'Kod pocztowy',
+      newClient: 'Nowy klient',
+      mapPreview: 'Podgląd lokalizacji',
+      mapPlaceholder: 'Wprowadź pełny adres, aby wyświetlić mapę'
+    },
+    filters: {
+      allTypes: 'Wszystkie typy',
+      typePerson: 'Osoba fizyczna',
+      typeCompany: 'Firma',
+      city: 'Miasto',
+      clear: 'Wyczyść',
+      apply: 'Zastosuj'
+    },
+    actions: {
+      edit: 'Edytuj',
+      delete: 'Usuń',
+      save: 'Zapisz',
+      cancel: 'Anuluj',
+      discard: 'Odrzuć'
+    },
+    messages: {
+      saved: 'Klient został zapisany.',
+      deleted: 'Klient został usunięty.',
+      error: 'Wystąpił błąd podczas operacji.',
+      unsavedTitle: 'Niezapisane zmiany',
+      unsavedText: 'Masz niezapisane zmiany. Co zamierzasz zrobić?',
+      deleteTitle: 'Potwierdzenie usunięcia',
+      deleteText: 'Czy na pewno chcesz usunąć tego klienta?',
+      mapNotFound: 'Podany adres nie został odnaleziony w Google Maps. Uzupełnij dane adresowe (miasto, ulica, numer budynku), aby wyświetlić lokalizację.',
+      requiredAddressFields: 'Wypełnij wymagane pola adresowe'
+    },
     columns: {
       name: 'Nazwa',
       document: 'Nr dokumentu',

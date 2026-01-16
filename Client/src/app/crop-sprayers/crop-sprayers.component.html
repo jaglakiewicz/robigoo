@@ -6,9 +6,9 @@
 
 <h3 class="component-title">{{ 'types.title' | text }}</h3>
 
-<div class="machines-container">
-  <div class="machines-header">
-    <div class="toolbar-group toolbar-left">
+<div class="sprayers-container">
+  <app-entity-toolbar>
+    <ng-container left>
       <button class="btn btn-success" (click)="onAddNew()" [disabled]="deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
         <span class="btn-label">{{ 'types.machines.addButton' | text }}</span>
@@ -16,20 +16,20 @@
       <button
         class="btn btn-primary"
         (click)="onEdit()"
-        [disabled]="!currentMachine || isEditMode || deleting">
+        [disabled]="!currentSprayer || isEditMode || deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
         <span class="btn-label">{{ 'types.machines.actions.edit' | text }}</span>
       </button>
       <button
         class="btn btn-danger"
         (click)="onDelete()"
-        [disabled]="!currentMachine || isNew || deleting || saving">
+        [disabled]="!currentSprayer || isNew || deleting || saving">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
         <span class="btn-label">{{ 'types.machines.actions.delete' | text }}</span>
       </button>
-    </div>
+    </ng-container>
 
-    <div class="toolbar-group toolbar-right" *ngIf="isEditMode">
+    <ng-container right *ngIf="isEditMode">
       <button class="btn btn-primary" (click)="save()" [disabled]="saving || deleting">
         <span class="btn-icon" aria-hidden="true">
           <svg fill="currentColor" viewBox="0 0 342 342" width="16" height="16">
@@ -42,12 +42,12 @@
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.cancel" style="color: inherit;"></span>
         <span class="btn-label">{{ 'types.machines.actions.cancel' | text }}</span>
       </button>
-    </div>
-  </div>
+    </ng-container>
+  </app-entity-toolbar>
 
-  <div class="machines-layout">
+  <div class="sprayers-layout">
     <!-- LEFT: LIST -->
-    <div class="machines-list-panel">
+    <div class="sprayers-list-panel">
       <h4 class="panel-title">Lista opryskiwaczy</h4>
 
       <div class="filters-row">
@@ -69,40 +69,40 @@
         </app-filter-panel>
       </div>
 
-      <div class="machines-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.machine-card'">
+      <div class="sprayers-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.sprayer-card'">
         <div
-          class="machine-card"
-          *ngFor="let m of machines"
-          [class.active]="m.serialNumber === selectedSerialNumber && !isNew"
-          (click)="onSelectMachine(m.serialNumber)">
+          class="sprayer-card"
+          *ngFor="let s of sprayers"
+          [class.active]="s.serialNumber === selectedSerialNumber && !isNew"
+          (click)="onSelectSprayer(s.serialNumber)">
           <div class="card-main">
             <div class="card-badges-row">
-              <span class="badge badge-type" *ngIf="m.type === '00'">
+              <span class="badge badge-type" *ngIf="s.type === '00'">
                 {{ 'types.machines.filters.typeField' | text }}
               </span>
-              <span class="badge badge-type" *ngIf="m.type === '01'">
+              <span class="badge badge-type" *ngIf="s.type === '01'">
                 {{ 'types.machines.filters.typeGarden' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '00'">
+              <span class="badge badge-kind" *ngIf="s.kind === '00'">
                 {{ 'types.machines.filters.kindMounted' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '01'">
+              <span class="badge badge-kind" *ngIf="s.kind === '01'">
                 {{ 'types.machines.filters.kindTrailed' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '02'">
+              <span class="badge badge-kind" *ngIf="s.kind === '02'">
                 {{ 'types.machines.filters.kindSelfPropelled' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="m.kind === '03'">
+              <span class="badge badge-kind" *ngIf="s.kind === '03'">
                 {{ 'types.machines.filters.kindOther' | text }}
               </span>
             </div>
-            <div class="card-title">{{ m.serialNumber }}</div>
+            <div class="card-title">{{ s.serialNumber }}</div>
             <div class="card-info-row">
-              {{ m.manufacturer }}<span *ngIf="m.manufacturer && m.sprayerName" class="vertical-separator"></span>{{ m.sprayerName }}<span *ngIf="(m.manufacturer || m.sprayerName) && m.productionYear" class="vertical-separator"></span>{{ m.productionYear }}
+              {{ s.manufacturer }}<span *ngIf="s.manufacturer && s.sprayerName" class="vertical-separator"></span>{{ s.sprayerName }}<span *ngIf="(s.manufacturer || s.sprayerName) && s.productionYear" class="vertical-separator"></span>{{ s.productionYear }}
             </div>
           </div>
         </div>
-        <div *ngIf="machines.length === 0" class="empty-state">
+        <div *ngIf="sprayers.length === 0" class="empty-state">
           {{ 'inspections.empty' | text }}
         </div>
       </div>
@@ -113,7 +113,7 @@
     </div>
 
     <!-- RIGHT: DETAIL / EDITOR -->
-    <div class="machines-detail-panel" *ngIf="formModel as form">
+    <div class="sprayers-detail-panel" *ngIf="formModel as form">
       <div class="detail-header">
         <div>
           <div class="detail-title">{{ form.serialNumber || ('types.machines.fields.serialNumber' | text) }}</div>
@@ -131,17 +131,11 @@
       </div>
 
       <!-- Step indicator -->
-      <div class="step-indicator" appScrollFade [horizontal]="true" appScrollCenter [horizontal]="true" [itemSelector]="'.step'">
-        <div
-          *ngFor="let s of visibleSteps; let i = index"
-          class="step"
-          [class.active]="s.id === currentStep"
-          [class.completed]="s.id < currentStep"
-          (click)="goToStep(s.id)">
-          <span class="step-number">{{ i + 1 }}</span>
-          <span class="step-label">{{ getStepTitleKey(s) | text }}</span>
-        </div>
-      </div>
+      <app-step-indicator
+        [steps]="stepsForIndicator"
+        [currentStepId]="currentStep"
+        (stepClick)="goToStep($event)">
+      </app-step-indicator>
 
       <div class="step-content">
         <!-- Step 0: Basic data -->
@@ -424,7 +418,7 @@
   <app-history-dialog
     *ngIf="showHistoryDialog"
     entityName="Machine"
-    [entityId]="currentMachine?.serialNumber || ''"
+    [entityId]="currentSprayer?.serialNumber || ''"
     (close)="showHistoryDialog = false">
   </app-history-dialog>
 </div>
