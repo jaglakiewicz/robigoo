@@ -41,6 +41,7 @@ namespace Server.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserSession> UserSessions { get; set; }
         public DbSet<Machine> Machines { get; set; }
+        public DbSet<Client> Clients { get; set; }
         public DbSet<ChangeLog> ChangeLogs { get; set; }
         public DbSet<LoginAttempt> LoginAttempts { get; set; }
 

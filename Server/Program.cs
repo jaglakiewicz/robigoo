@@ -1336,6 +1336,251 @@ app.MapDelete("/api/machines/{serialNumber}", async (AppDbContext db, HttpContex
     return Results.NoContent();
 }).RequireAuthorization();
 
+// ==================== CLIENTS (CUSTOMERS) ENDPOINTS ====================
+
+// Get clients list with filters
+app.MapGet("/api/clients", async (AppDbContext db, HttpContext context,
+    [FromQuery] string? q,
+    [FromQuery] string? clientType,
+    [FromQuery] string? city) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var queryable = db.Clients.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(q))
+    {
+        var term = q.Trim().ToLowerInvariant();
+        queryable = queryable.Where(c =>
+            c.DisplayName.ToLower().Contains(term) ||
+            (c.City != null && c.City.ToLower().Contains(term)) ||
+            (c.Nip != null && c.Nip.Contains(term)) ||
+            (c.Pesel != null && c.Pesel.Contains(term)) ||
+            (c.FirstName != null && c.FirstName.ToLower().Contains(term)) ||
+            (c.LastName != null && c.LastName.ToLower().Contains(term)) ||
+            (c.CompanyName != null && c.CompanyName.ToLower().Contains(term)));
+    }
+
+    if (!string.IsNullOrWhiteSpace(clientType))
+    {
+        queryable = queryable.Where(c => c.ClientType == clientType);
+    }
+
+    if (!string.IsNullOrWhiteSpace(city))
+    {
+        var cityTerm = city.Trim().ToLowerInvariant();
+        queryable = queryable.Where(c => c.City != null && c.City.ToLower().Contains(cityTerm));
+    }
+
+    var clients = await queryable
+        .OrderByDescending(c => c.CreatedAt)
+        .ToListAsync();
+
+    var result = clients.Select(c => new ClientListItemDto
+    {
+        Id = c.Id,
+        ClientType = c.ClientType,
+        DisplayName = c.DisplayName,
+        FirstName = c.FirstName,
+        LastName = c.LastName,
+        Pesel = c.Pesel,
+        CompanyName = c.CompanyName,
+        Nip = c.Nip,
+        Regon = c.Regon,
+        Voivodeship = c.Voivodeship,
+        City = c.City,
+        Street = c.Street,
+        BuildingNumber = c.BuildingNumber,
+        ApartmentNumber = c.ApartmentNumber,
+        ZipCode = c.ZipCode,
+        CreatedAt = c.CreatedAt
+    }).ToList();
+
+    return Results.Ok(result);
+}).RequireAuthorization();
+
+// Get single client by ID
+app.MapGet("/api/clients/{id}", async (AppDbContext db, HttpContext context, string id) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var client = await db.Clients.FindAsync(id);
+    if (client == null)
+    {
+        return Results.NotFound();
+    }
+
+    var detail = new ClientDetailDto
+    {
+        Id = client.Id,
+        ClientType = client.ClientType,
+        FirstName = client.FirstName,
+        LastName = client.LastName,
+        Pesel = client.Pesel,
+        CompanyName = client.CompanyName,
+        Nip = client.Nip,
+        Regon = client.Regon,
+        Voivodeship = client.Voivodeship,
+        City = client.City,
+        Street = client.Street,
+        BuildingNumber = client.BuildingNumber,
+        ApartmentNumber = client.ApartmentNumber,
+        ZipCode = client.ZipCode,
+        CreatedAt = client.CreatedAt,
+        UpdatedAt = client.UpdatedAt
+    };
+
+    return Results.Ok(detail);
+}).RequireAuthorization();
+
+// Create new client
+app.MapPost("/api/clients", async (AppDbContext db, HttpContext context, [FromBody] ClientCreateUpdateDto dto) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    // Compute display name
+    var displayName = dto.ClientType == "company"
+        ? dto.CompanyName ?? string.Empty
+        : $"{dto.FirstName} {dto.LastName}".Trim();
+
+    var client = new Client
+    {
+        Id = Guid.NewGuid().ToString(),
+        ClientType = dto.ClientType,
+        DisplayName = displayName,
+        FirstName = dto.FirstName,
+        LastName = dto.LastName,
+        Pesel = dto.Pesel,
+        CompanyName = dto.CompanyName,
+        Nip = dto.Nip,
+        Regon = dto.Regon,
+        Voivodeship = dto.Voivodeship,
+        City = dto.City,
+        Street = dto.Street,
+        BuildingNumber = dto.BuildingNumber,
+        ApartmentNumber = dto.ApartmentNumber,
+        ZipCode = dto.ZipCode,
+        CreatedAt = DateTime.UtcNow
+    };
+
+    db.Clients.Add(client);
+    await db.SaveChangesAsync();
+
+    var detail = new ClientDetailDto
+    {
+        Id = client.Id,
+        ClientType = client.ClientType,
+        FirstName = client.FirstName,
+        LastName = client.LastName,
+        Pesel = client.Pesel,
+        CompanyName = client.CompanyName,
+        Nip = client.Nip,
+        Regon = client.Regon,
+        Voivodeship = client.Voivodeship,
+        City = client.City,
+        Street = client.Street,
+        BuildingNumber = client.BuildingNumber,
+        ApartmentNumber = client.ApartmentNumber,
+        ZipCode = client.ZipCode,
+        CreatedAt = client.CreatedAt,
+        UpdatedAt = client.UpdatedAt
+    };
+
+    return Results.Created($"/api/clients/{client.Id}", detail);
+}).RequireAuthorization();
+
+// Update existing client
+app.MapPut("/api/clients/{id}", async (AppDbContext db, HttpContext context, string id, [FromBody] ClientCreateUpdateDto dto) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var client = await db.Clients.FindAsync(id);
+    if (client == null)
+    {
+        return Results.NotFound();
+    }
+
+    // Compute display name
+    var displayName = dto.ClientType == "company"
+        ? dto.CompanyName ?? string.Empty
+        : $"{dto.FirstName} {dto.LastName}".Trim();
+
+    client.ClientType = dto.ClientType;
+    client.DisplayName = displayName;
+    client.FirstName = dto.FirstName;
+    client.LastName = dto.LastName;
+    client.Pesel = dto.Pesel;
+    client.CompanyName = dto.CompanyName;
+    client.Nip = dto.Nip;
+    client.Regon = dto.Regon;
+    client.Voivodeship = dto.Voivodeship;
+    client.City = dto.City;
+    client.Street = dto.Street;
+    client.BuildingNumber = dto.BuildingNumber;
+    client.ApartmentNumber = dto.ApartmentNumber;
+    client.ZipCode = dto.ZipCode;
+    client.UpdatedAt = DateTime.UtcNow;
+
+    await db.SaveChangesAsync();
+
+    var detail = new ClientDetailDto
+    {
+        Id = client.Id,
+        ClientType = client.ClientType,
+        FirstName = client.FirstName,
+        LastName = client.LastName,
+        Pesel = client.Pesel,
+        CompanyName = client.CompanyName,
+        Nip = client.Nip,
+        Regon = client.Regon,
+        Voivodeship = client.Voivodeship,
+        City = client.City,
+        Street = client.Street,
+        BuildingNumber = client.BuildingNumber,
+        ApartmentNumber = client.ApartmentNumber,
+        ZipCode = client.ZipCode,
+        CreatedAt = client.CreatedAt,
+        UpdatedAt = client.UpdatedAt
+    };
+
+    return Results.Ok(detail);
+}).RequireAuthorization();
+
+// Delete client
+app.MapDelete("/api/clients/{id}", async (AppDbContext db, HttpContext context, string id) =>
+{
+    if (!await IsSessionActiveAsync(db, context))
+    {
+        return Results.Unauthorized();
+    }
+
+    var client = await db.Clients.FindAsync(id);
+    if (client == null)
+    {
+        return Results.NotFound();
+    }
+
+    // Optionally: Check if client has associated machines and handle accordingly
+    // For now, just delete the client
+
+    db.Clients.Remove(client);
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+}).RequireAuthorization();
+
 // ==================== ORIGINAL ENDPOINTS ====================
 
 // Inspections API - wymaga autoryzacji i aktywnej sesji
