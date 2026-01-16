@@ -11,21 +11,21 @@
     <ng-container left>
       <button class="btn btn-success" (click)="onAddNew()" [disabled]="deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
-        <span class="btn-label">{{ 'types.machines.addButton' | text }}</span>
+        <span class="btn-label">{{ 'types.cropSprayers.addButton' | text }}</span>
       </button>
       <button
         class="btn btn-primary"
         (click)="onEdit()"
         [disabled]="!currentSprayer || isEditMode || deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
-        <span class="btn-label">{{ 'types.machines.actions.edit' | text }}</span>
+        <span class="btn-label">{{ 'types.cropSprayers.actions.edit' | text }}</span>
       </button>
       <button
         class="btn btn-danger"
         (click)="onDelete()"
         [disabled]="!currentSprayer || isNew || deleting || saving">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
-        <span class="btn-label">{{ 'types.machines.actions.delete' | text }}</span>
+        <span class="btn-label">{{ 'types.cropSprayers.actions.delete' | text }}</span>
       </button>
     </ng-container>
 
@@ -36,11 +36,11 @@
             <path d="M243.498667,0 L341.333333,97.8346667 L341.333333,341.333333 L0,341.333333 L0,0 L243.498667,0 Z M213.333333,234.666667 L128,234.666667 L128,298.688 L213.333333,298.688 L213.333333,234.666667 Z M85.3333333,42.6666667 L42.6666667,42.6666667 L42.6666667,298.666667 L85.3333333,298.666667 L85.3333333,192 L256,192 L256,298.666667 L298.666667,298.666667 L298.666667,115.498667 L256,72.8533333 L256,149.333333 L85.3333333,149.333333 L85.3333333,42.6666667 Z M213.333333,42.6666667 L128,42.6666667 L128,106.688 L213.333333,106.688 L213.333333,42.6666667 Z"/>
           </svg>
         </span>
-        <span class="btn-label">{{ 'types.machines.actions.save' | text }}</span>
+        <span class="btn-label">{{ 'types.cropSprayers.actions.save' | text }}</span>
       </button>
       <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="deleting">
         <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.cancel" style="color: inherit;"></span>
-        <span class="btn-label">{{ 'types.machines.actions.cancel' | text }}</span>
+        <span class="btn-label">{{ 'types.cropSprayers.actions.cancel' | text }}</span>
       </button>
     </ng-container>
   </app-entity-toolbar>
@@ -54,15 +54,15 @@
         <input
           type="text"
           class="search-input"
-          [placeholder]="'types.machines.searchPlaceholder' | text"
+          [placeholder]="'types.cropSprayers.searchPlaceholder' | text"
           [ngModel]="searchTerm"
           (ngModelChange)="onSearchChange($event)" />
 
         <app-filter-panel
           [fields]="filterFields"
           [values]="filterValues"
-          [clearButtonLabel]="'types.machines.filters.clear' | text"
-          [applyButtonLabel]="'types.machines.filters.apply' | text"
+          [clearButtonLabel]="'types.cropSprayers.filters.clear' | text"
+          [applyButtonLabel]="'types.cropSprayers.filters.apply' | text"
           (valuesChange)="onFilterChange($event)"
           (filterClear)="onFilterClear()"
           (openChange)="onFilterPanelOpenChange($event)">
@@ -78,22 +78,22 @@
           <div class="card-main">
             <div class="card-badges-row">
               <span class="badge badge-type" *ngIf="s.type === '00'">
-                {{ 'types.machines.filters.typeField' | text }}
+                {{ 'types.cropSprayers.filters.typeField' | text }}
               </span>
               <span class="badge badge-type" *ngIf="s.type === '01'">
-                {{ 'types.machines.filters.typeGarden' | text }}
+                {{ 'types.cropSprayers.filters.typeGarden' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="s.kind === '00'">
-                {{ 'types.machines.filters.kindMounted' | text }}
+                {{ 'types.cropSprayers.filters.kindMounted' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="s.kind === '01'">
-                {{ 'types.machines.filters.kindTrailed' | text }}
+                {{ 'types.cropSprayers.filters.kindTrailed' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="s.kind === '02'">
-                {{ 'types.machines.filters.kindSelfPropelled' | text }}
+                {{ 'types.cropSprayers.filters.kindSelfPropelled' | text }}
               </span>
               <span class="badge badge-kind" *ngIf="s.kind === '03'">
-                {{ 'types.machines.filters.kindOther' | text }}
+                {{ 'types.cropSprayers.filters.kindOther' | text }}
               </span>
             </div>
             <div class="card-title">{{ s.serialNumber }}</div>
@@ -116,7 +116,7 @@
     <div class="sprayers-detail-panel" *ngIf="formModel as form">
       <div class="detail-header">
         <div>
-          <div class="detail-title">{{ form.serialNumber || ('types.machines.fields.serialNumber' | text) }}</div>
+          <div class="detail-title">{{ form.serialNumber || ('types.cropSprayers.fields.serialNumber' | text) }}</div>
           <div class="detail-sub" *ngIf="!isNew">
              {{ form.manufacturer }}<span *ngIf="form.manufacturer && form.sprayerName" class="vertical-separator"></span>{{ form.sprayerName }}<span *ngIf="(form.manufacturer || form.sprayerName) && form.productionYear" class="vertical-separator"></span>{{ form.productionYear }}
           </div>
@@ -143,7 +143,7 @@
           <!-- Row 1: Nr seryjny / Nazwa opryskiwacza -->
           <div class="form-row form-row-2">
             <div class="form-group required">
-              <label>{{ 'types.machines.fields.serialNumber' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.serialNumber' | text }}</label>
               <input
                 type="text"
                 [ngModel]="form.serialNumber"
@@ -152,7 +152,7 @@
             </div>
 
             <div class="form-group required">
-              <label>{{ 'types.machines.fields.sprayerName' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.sprayerName' | text }}</label>
               <input
                 type="text"
                 [ngModel]="form.sprayerName"
@@ -164,7 +164,7 @@
           <!-- Row 2: Typ / Rodzaj -->
           <div class="form-row form-row-2">
             <div class="form-group required">
-              <label>{{ 'types.machines.fields.type' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.type' | text }}</label>
               <app-custom-select
                 [options]="typeOptions"
                 [ngModel]="form.type"
@@ -174,7 +174,7 @@
             </div>
 
             <div class="form-group required">
-              <label>{{ 'types.machines.fields.kind' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.kind' | text }}</label>
               <app-custom-select
                 [options]="kindOptions"
                 [ngModel]="form.kind"
@@ -187,7 +187,7 @@
           <!-- Row 3: Producent / Rok produkcji / Data zakupu -->
           <div class="form-row form-row-3">
             <div class="form-group required">
-              <label>{{ 'types.machines.fields.manufacturer' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.manufacturer' | text }}</label>
               <input
                 type="text"
                 [ngModel]="form.manufacturer"
@@ -196,7 +196,7 @@
             </div>
 
             <div class="form-group required">
-              <label>{{ 'types.machines.fields.productionYear' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.productionYear' | text }}</label>
               <app-numeric-input
                 [min]="1900"
                 [max]="2100"
@@ -208,7 +208,7 @@
             </div>
 
             <div class="form-group">
-              <label>{{ 'types.machines.fields.purchaseDate' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.purchaseDate' | text }}</label>
               <app-date-picker
                 [ngModel]="form.purchaseDate"
                 (ngModelChange)="form.purchaseDate = $event; onFormChange()"
@@ -220,7 +220,7 @@
           <!-- Row 4: Owner -->
           <div class="form-row form-row-1">
             <div class="form-group">
-              <label>{{ 'types.machines.fields.owner' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
               <app-custom-select
                 [options]="ownerOptions"
                 [ngModel]="form.ownerId || ''"
@@ -235,7 +235,7 @@
         <div *ngIf="currentStep === 1" class="basics-grid">
           <div class="form-row form-row-2">
             <div class="form-group">
-              <label>{{ 'types.machines.fields.pumpType' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.pumpType' | text }}</label>
               <app-custom-select
                 [options]="pumpTypeOptions"
                 [ngModel]="selectedPumpType"
@@ -245,7 +245,7 @@
             </div>
 
             <div class="form-group" *ngIf="formModel?.pumpOther">
-              <label>{{ 'types.machines.fields.pumpOtherType' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.pumpOtherType' | text }}</label>
               <input
                 type="text"
                 [ngModel]="form.pumpOtherType"
@@ -256,7 +256,7 @@
 
           <div class="form-row form-row-2">
             <div class="form-group">
-              <label>{{ 'types.machines.fields.pumpFlowRate' | text }}</label>
+              <label>{{ 'types.cropSprayers.fields.pumpFlowRate' | text }}</label>
               <input
                 type="number"
                 step="0.1"
@@ -270,7 +270,7 @@
         <!-- Step 2: Tank -->
         <div *ngIf="currentStep === 2" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.tankCapacity' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.tankCapacity' | text }}</label>
             <input
               type="number"
               step="1"
@@ -280,17 +280,17 @@
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasFlushing' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.hasFlushing' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasFlushing" (ngModelChange)="form.hasFlushing = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasDiluter' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.hasDiluter' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasDiluter" (ngModelChange)="form.hasDiluter = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasWashingDevice' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.hasWashingDevice' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasWashingDevice" (ngModelChange)="form.hasWashingDevice = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
         </div>
@@ -298,12 +298,12 @@
         <!-- Step 3: Control devices -->
         <div *ngIf="currentStep === 3" class="form-grid">
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasManometer' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.hasManometer' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasManometer" (ngModelChange)="form.hasManometer = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.hasComputer' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.hasComputer' | text }}</label>
             <input type="checkbox" [ngModel]="form.hasComputer" (ngModelChange)="form.hasComputer = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
         </div>
@@ -311,7 +311,7 @@
         <!-- Step 4: Boom -->
         <div *ngIf="currentStep === 4" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.boomWidth' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.boomWidth' | text }}</label>
             <input
               type="number"
               step="0.1"
@@ -321,17 +321,17 @@
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.boomWet' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.boomWet' | text }}</label>
             <input type="checkbox" [ngModel]="form.boomWet" (ngModelChange)="form.boomWet = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.boomDry' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.boomDry' | text }}</label>
             <input type="checkbox" [ngModel]="form.boomDry" (ngModelChange)="form.boomDry = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
 
           <div class="form-group full-width inline-options">
-            <label>{{ 'types.machines.fields.boomDampeningMechanism' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.boomDampeningMechanism' | text }}</label>
             <input type="checkbox" [ngModel]="form.boomDampeningMechanism" (ngModelChange)="form.boomDampeningMechanism = $event; onFormChange()" [disabled]="!isEditMode" />
           </div>
         </div>
@@ -339,7 +339,7 @@
         <!-- Step 5: Sections -->
         <div *ngIf="currentStep === 5" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.sectionCount' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.sectionCount' | text }}</label>
             <input
               type="number"
               step="1"
@@ -352,7 +352,7 @@
         <!-- Step 6: Field nozzles -->
         <div *ngIf="currentStep === 6" class="form-grid">
           <div class="form-group full-width">
-            <label>{{ 'types.machines.fields.nozzlesFieldFeatures' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.nozzlesFieldFeatures' | text }}</label>
             <textarea
               rows="4"
               [ngModel]="form.nozzlesFieldFeatures"
@@ -364,7 +364,7 @@
         <!-- Step 7: Garden nozzles -->
         <div *ngIf="currentStep === 7" class="form-grid">
           <div class="form-group full-width">
-            <label>{{ 'types.machines.fields.nozzlesGardenFeatures' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.nozzlesGardenFeatures' | text }}</label>
             <textarea
               rows="4"
               [ngModel]="form.nozzlesGardenFeatures"
@@ -376,7 +376,7 @@
         <!-- Step 8: Fan -->
         <div *ngIf="currentStep === 8" class="form-grid">
           <div class="form-group">
-            <label>{{ 'types.machines.fields.fanType' | text }}</label>
+            <label>{{ 'types.cropSprayers.fields.fanType' | text }}</label>
             <input
               type="text"
               [ngModel]="form.fanType"
@@ -392,19 +392,19 @@
   <!-- Unsaved changes dialog -->
   <div class="dialog-backdrop" *ngIf="unsavedDialogVisible">
     <div class="dialog">
-      <h4 class="dialog__title">{{ 'types.machines.messages.unsavedTitle' | text }}</h4>
+      <h4 class="dialog__title">{{ 'types.cropSprayers.messages.unsavedTitle' | text }}</h4>
       <div class="dialog__body">
-        <p>{{ 'types.machines.messages.unsavedText' | text }}</p>
+        <p>{{ 'types.cropSprayers.messages.unsavedText' | text }}</p>
       </div>
       <div class="dialog__actions">
         <button class="btn btn-success" (click)="onUnsavedConfirmSave()">
-          {{ 'types.machines.actions.yes' | text }}
+          {{ 'types.cropSprayers.actions.yes' | text }}
         </button>
         <button class="btn btn-secondary" (click)="onUnsavedConfirmDiscard()">
-          {{ 'types.machines.actions.no' | text }}
+          {{ 'types.cropSprayers.actions.no' | text }}
         </button>
         <button class="btn btn-ghost" (click)="onUnsavedConfirmCancel()">
-          {{ 'types.machines.actions.cancel' | text }}
+          {{ 'types.cropSprayers.actions.cancel' | text }}
         </button>
       </div>
     </div>
@@ -413,16 +413,16 @@
   <!-- Delete confirmation dialog -->
   <div class="dialog-backdrop" *ngIf="deleteDialogVisible">
     <div class="dialog">
-      <h4 class="dialog__title">{{ 'types.machines.messages.deleteTitle' | text }}</h4>
+      <h4 class="dialog__title">{{ 'types.cropSprayers.messages.deleteTitle' | text }}</h4>
       <div class="dialog__body">
-        <p>{{ 'types.machines.actions.deleteConfirm' | text }}</p>
+        <p>{{ 'types.cropSprayers.actions.deleteConfirm' | text }}</p>
       </div>
       <div class="dialog__actions">
         <button class="btn btn-danger" (click)="onDeleteConfirm()">
-          {{ 'types.machines.actions.yes' | text }}
+          {{ 'types.cropSprayers.actions.yes' | text }}
         </button>
         <button class="btn btn-secondary" (click)="onDeleteCancel()">
-          {{ 'types.machines.actions.cancel' | text }}
+          {{ 'types.cropSprayers.actions.cancel' | text }}
         </button>
       </div>
     </div>

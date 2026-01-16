@@ -8,7 +8,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { ClientDetail, ClientListItem, ClientService, ClientCreateUpdateRequest } from '../client.service';
-import { MachineService, MachineListItem } from '../machine.service';
+import { CropSprayerService, CropSprayerListItem } from '../crop-sprayer.service';
 import { NavigationService } from '../services/navigation.service';
 import { DirtyFormService } from '../shared/services/dirty-form.service';
 import { TextService } from '../services/text.service';
@@ -92,15 +92,15 @@ export class ClientsComponent implements OnInit, OnDestroy {
   voivodeshipOptions: SelectOption[] = [];
 
   // Sprayers owned by current client
-  ownerSprayers: MachineListItem[] = [];
+  ownerSprayers: CropSprayerListItem[] = [];
   loadingSprayers = false;
 
-  // Subscription for machines data refresh
-  private machinesRefreshSub?: Subscription;
+  // Subscription for crop sprayers data refresh
+  private sprayersRefreshSub?: Subscription;
 
   constructor(
     private clientsService: ClientService,
-    private machineService: MachineService,
+    private cropSprayerService: CropSprayerService,
     private navigationService: NavigationService,
     private dirtyFormService: DirtyFormService,
     private textService: TextService,
@@ -134,8 +134,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
     this.initFilterFields();
     this.loadClients();
     
-    // Subscribe to machines data changes to refresh owner sprayers list
-    this.machinesRefreshSub = this.dataRefreshService.onDataChanged('machines').subscribe(() => {
+    // Subscribe to crop sprayers data changes to refresh owner sprayers list
+    this.sprayersRefreshSub = this.dataRefreshService.onDataChanged('machines').subscribe(() => {
       if (this.currentClient && !this.isNew) {
         this.loadClientSprayers(this.currentClient.id);
       }
@@ -192,7 +192,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.dirtyFormService.unregisterForm(this.formId);
-    this.machinesRefreshSub?.unsubscribe();
+    this.sprayersRefreshSub?.unsubscribe();
   }
 
   // List handling
@@ -357,7 +357,7 @@ export class ClientsComponent implements OnInit, OnDestroy {
   /** Load sprayers owned by the current client */
   private loadClientSprayers(clientId: string): void {
     this.loadingSprayers = true;
-    this.machineService.getMachinesByOwner(clientId).subscribe({
+    this.cropSprayerService.getByOwner(clientId).subscribe({
       next: sprayers => {
         this.ownerSprayers = sprayers;
         this.loadingSprayers = false;

@@ -7,7 +7,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { MachineDetail, MachineListItem, MachineService, MachineCreateUpdateRequest } from '../machine.service';
+import { CropSprayerDetail, CropSprayerListItem, CropSprayerService, CropSprayerCreateUpdateRequest } from '../crop-sprayer.service';
 import { ClientService, ClientListItem } from '../client.service';
 import { NavigationService } from '../services/navigation.service';
 import { DirtyFormService } from '../shared/services/dirty-form.service';
@@ -32,7 +32,7 @@ interface SprayerStep {
 })
 export class CropSprayersComponent implements OnInit, OnDestroy {
   // List
-  sprayers: MachineListItem[] = [];
+  sprayers: CropSprayerListItem[] = [];
   selectedSerialNumber: string | null = null;
   searchTerm = '';
 
@@ -42,23 +42,23 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   filterPanelOpen = false;
 
   // Detail / form
-  currentSprayer: MachineDetail | null = null;
-  formModel: MachineCreateUpdateRequest | null = null;
+  currentSprayer: CropSprayerDetail | null = null;
+  formModel: CropSprayerCreateUpdateRequest | null = null;
   isNew = false;
   isEditMode = false;
   private originalSerialNumber: string | null = null;
 
   // Steps
   steps: SprayerStep[] = [
-    { id: 0, key: 'basics', titleKey: 'types.machines.steps.basics' },
-    { id: 1, key: 'pump', titleKey: 'types.machines.steps.pump' },
-    { id: 2, key: 'tank', titleKey: 'types.machines.steps.tank' },
-    { id: 3, key: 'control', titleKey: 'types.machines.steps.control' },
-    { id: 4, key: 'boom', titleKey: 'types.machines.steps.boom' },
-    { id: 5, key: 'sections', titleKey: 'types.machines.steps.sections' },
-    { id: 6, key: 'fieldNozzles', titleKey: 'types.machines.steps.fieldNozzles' },
-    { id: 7, key: 'gardenNozzles', titleKey: 'types.machines.steps.gardenNozzles' },
-    { id: 8, key: 'fan', titleKey: 'types.machines.steps.fan' }
+    { id: 0, key: 'basics', titleKey: 'types.cropSprayers.steps.basics' },
+    { id: 1, key: 'pump', titleKey: 'types.cropSprayers.steps.pump' },
+    { id: 2, key: 'tank', titleKey: 'types.cropSprayers.steps.tank' },
+    { id: 3, key: 'control', titleKey: 'types.cropSprayers.steps.control' },
+    { id: 4, key: 'boom', titleKey: 'types.cropSprayers.steps.boom' },
+    { id: 5, key: 'sections', titleKey: 'types.cropSprayers.steps.sections' },
+    { id: 6, key: 'fieldNozzles', titleKey: 'types.cropSprayers.steps.fieldNozzles' },
+    { id: 7, key: 'gardenNozzles', titleKey: 'types.cropSprayers.steps.gardenNozzles' },
+    { id: 8, key: 'fan', titleKey: 'types.cropSprayers.steps.fan' }
   ];
   currentStep = 0;
 
@@ -97,7 +97,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   private clientsRefreshSub?: Subscription;
 
   constructor(
-    private sprayersService: MachineService,
+    private sprayersService: CropSprayerService,
     private clientService: ClientService,
     private navigationService: NavigationService,
     private dirtyFormService: DirtyFormService,
@@ -143,7 +143,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   getStepTitleKey(step: SprayerStep): string {
     if (step.key === 'fieldNozzles' || step.key === 'gardenNozzles') {
-      return 'types.machines.steps.nozzles';
+      return 'types.cropSprayers.steps.nozzles';
     }
     return step.titleKey;
   }
@@ -171,40 +171,40 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.filterFields = [
       {
         key: 'type',
-        label: this.textService.get('types.machines.fields.type'),
+        label: this.textService.get('types.cropSprayers.fields.type'),
         type: 'select',
-        placeholder: this.textService.get('types.machines.filters.allTypes'),
+        placeholder: this.textService.get('types.cropSprayers.filters.allTypes'),
         options: [
-          { value: '00', label: this.textService.get('types.machines.filters.typeField') },
-          { value: '01', label: this.textService.get('types.machines.filters.typeGarden') }
+          { value: '00', label: this.textService.get('types.cropSprayers.filters.typeField') },
+          { value: '01', label: this.textService.get('types.cropSprayers.filters.typeGarden') }
         ]
       },
       {
         key: 'kind',
-        label: this.textService.get('types.machines.fields.kind'),
+        label: this.textService.get('types.cropSprayers.fields.kind'),
         type: 'select',
-        placeholder: this.textService.get('types.machines.filters.allKinds'),
+        placeholder: this.textService.get('types.cropSprayers.filters.allKinds'),
         options: [
-          { value: '00', label: this.textService.get('types.machines.filters.kindMounted') },
-          { value: '01', label: this.textService.get('types.machines.filters.kindTrailed') },
-          { value: '02', label: this.textService.get('types.machines.filters.kindSelfPropelled') },
-          { value: '03', label: this.textService.get('types.machines.filters.kindOther') }
+          { value: '00', label: this.textService.get('types.cropSprayers.filters.kindMounted') },
+          { value: '01', label: this.textService.get('types.cropSprayers.filters.kindTrailed') },
+          { value: '02', label: this.textService.get('types.cropSprayers.filters.kindSelfPropelled') },
+          { value: '03', label: this.textService.get('types.cropSprayers.filters.kindOther') }
         ]
       },
       {
         key: 'manufacturer',
-        label: this.textService.get('types.machines.fields.manufacturer'),
+        label: this.textService.get('types.cropSprayers.fields.manufacturer'),
         type: 'text',
-        placeholder: this.textService.get('types.machines.filters.manufacturer')
+        placeholder: this.textService.get('types.cropSprayers.filters.manufacturer')
       },
       {
         key: 'productionYear',
-        label: this.textService.get('types.machines.fields.productionYear'),
+        label: this.textService.get('types.cropSprayers.fields.productionYear'),
         type: 'range',
         rangeFromKey: 'yearFrom',
         rangeToKey: 'yearTo',
-        rangeFromPlaceholder: this.textService.get('types.machines.filters.yearFrom'),
-        rangeToPlaceholder: this.textService.get('types.machines.filters.yearTo'),
+        rangeFromPlaceholder: this.textService.get('types.cropSprayers.filters.yearFrom'),
+        rangeToPlaceholder: this.textService.get('types.cropSprayers.filters.yearTo'),
         min: 1900,
         max: 2100
       }
@@ -213,19 +213,19 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   private initSelectOptions(): void {
     this.typeOptions = [
-      { value: '00', label: this.textService.get('types.machines.filters.typeField') },
-      { value: '01', label: this.textService.get('types.machines.filters.typeGarden') }
+      { value: '00', label: this.textService.get('types.cropSprayers.filters.typeField') },
+      { value: '01', label: this.textService.get('types.cropSprayers.filters.typeGarden') }
     ];
     this.kindOptions = [
-      { value: '00', label: this.textService.get('types.machines.filters.kindMounted') },
-      { value: '01', label: this.textService.get('types.machines.filters.kindTrailed') },
-      { value: '02', label: this.textService.get('types.machines.filters.kindSelfPropelled') },
-      { value: '03', label: this.textService.get('types.machines.filters.kindOther') }
+      { value: '00', label: this.textService.get('types.cropSprayers.filters.kindMounted') },
+      { value: '01', label: this.textService.get('types.cropSprayers.filters.kindTrailed') },
+      { value: '02', label: this.textService.get('types.cropSprayers.filters.kindSelfPropelled') },
+      { value: '03', label: this.textService.get('types.cropSprayers.filters.kindOther') }
     ];
     this.pumpTypeOptions = [
-      { value: 'piston', label: this.textService.get('types.machines.fields.pumpPiston') },
-      { value: 'diaphragm', label: this.textService.get('types.machines.fields.pumpDiaphragm') },
-      { value: 'other', label: this.textService.get('types.machines.fields.pumpOther') }
+      { value: 'piston', label: this.textService.get('types.cropSprayers.fields.pumpPiston') },
+      { value: 'diaphragm', label: this.textService.get('types.cropSprayers.fields.pumpDiaphragm') },
+      { value: 'other', label: this.textService.get('types.cropSprayers.fields.pumpOther') }
     ];
   }
 
@@ -234,7 +234,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.clientService.getClientsList().subscribe({
       next: (clients: ClientListItem[]) => {
         this.ownerOptions = [
-          { value: '', label: this.textService.get('types.machines.fields.noOwner') },
+          { value: '', label: this.textService.get('types.cropSprayers.fields.noOwner') },
           ...clients.map(c => ({
             value: c.id,
             label: c.displayName
@@ -253,7 +253,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   loadSprayers(): void {
     this.loadingList = true;
-    this.sprayersService.getMachinesList({
+    this.sprayersService.getList({
       q: this.searchTerm || undefined,
       type: this.filterValues['type'] || undefined,
       kind: this.filterValues['kind'] || undefined,
@@ -390,7 +390,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.currentStep = 0;
     this.messageKey = '';
     this.messageError = false;
-    this.sprayersService.getMachine(serialNumber).subscribe({
+    this.sprayersService.get(serialNumber).subscribe({
       next: detail => {
         this.currentSprayer = detail;
         this.originalSerialNumber = detail.serialNumber;
@@ -427,13 +427,13 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         this.setDirty(false);
       },
       error: () => {
-        this.messageKey = 'types.machines.messages.error';
+        this.messageKey = 'types.cropSprayers.messages.error';
         this.messageError = true;
       }
     });
   }
 
-  private reconcileSelection(list: MachineListItem[]): void {
+  private reconcileSelection(list: CropSprayerListItem[]): void {
     if (list.length === 0) {
       if (!this.isNew) {
         this.selectedSerialNumber = null;
@@ -553,11 +553,11 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.messageKey = '';
     this.messageError = false;
 
-    const req: MachineCreateUpdateRequest = { ...this.formModel };
+    const req: CropSprayerCreateUpdateRequest = { ...this.formModel };
     
     const obs = this.isNew
-      ? this.sprayersService.createMachine(req)
-      : this.sprayersService.updateMachine(this.originalSerialNumber ?? this.formModel.serialNumber, req);
+      ? this.sprayersService.createSprayer(req)
+      : this.sprayersService.updateSprayer(this.originalSerialNumber ?? this.formModel.serialNumber, req);
 
     obs.subscribe({
       next: detail => {
@@ -571,7 +571,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         this.saving = false;
         this.setDirty(false);
         this.loadSprayers();
-        this.notificationService.success(this.textService.get('types.machines.messages.saved'));
+        this.notificationService.success(this.textService.get('types.cropSprayers.messages.saved'));
         // Notify other components that machines data has changed
         this.dataRefreshService.notifyMachinesChanged(this.isNew ? 'create' : 'update', detail.serialNumber);
         if (onSuccess) {
@@ -583,7 +583,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         this.messageError = false;
         this.saving = false;
         const backendMessage = err?.error?.message as string | undefined;
-        const message = backendMessage || this.textService.get('types.machines.messages.error');
+        const message = backendMessage || this.textService.get('types.cropSprayers.messages.error');
         this.notificationService.error(message);
       }
     });
@@ -621,9 +621,9 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.deleting = true;
     const serialToDelete = this.currentSprayer.serialNumber;
 
-    this.sprayersService.deleteMachine(serialToDelete).subscribe({
+    this.sprayersService.deleteSprayer(serialToDelete).subscribe({
       next: () => {
-        this.notificationService.success(this.textService.get('types.machines.messages.deleted'));
+        this.notificationService.success(this.textService.get('types.cropSprayers.messages.deleted'));
         this.deleting = false;
         this.isEditMode = false;
         this.isNew = false;
@@ -640,7 +640,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       error: err => {
         this.deleting = false;
         const backendMessage = err?.error?.message as string | undefined;
-        const message = backendMessage || this.textService.get('types.machines.messages.error');
+        const message = backendMessage || this.textService.get('types.cropSprayers.messages.error');
         this.notificationService.error(message);
       }
     });

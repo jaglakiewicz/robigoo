@@ -1,5 +1,6 @@
 /*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Crop Sprayer Service
  * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
@@ -8,7 +9,8 @@ import { Injectable } from '@angular/core';
 import { GenericCrudService } from './shared/services/generic-crud.service';
 import { Observable } from 'rxjs';
 
-export interface MachineListItem {
+/** Crop sprayer list item for display in lists */
+export interface CropSprayerListItem {
   serialNumber: string;
   sprayerName: string;
   manufacturer: string;
@@ -20,7 +22,8 @@ export interface MachineListItem {
   createdAt: string;
 }
 
-export interface MachineDetail {
+/** Full crop sprayer details */
+export interface CropSprayerDetail {
   serialNumber: string;
   sprayerName: string;
   type: string;
@@ -53,7 +56,8 @@ export interface MachineDetail {
   updatedAt?: string | null;
 }
 
-export interface MachineCreateUpdateRequest {
+/** Request payload for creating/updating a crop sprayer */
+export interface CropSprayerCreateUpdateRequest {
   serialNumber: string;
   sprayerName: string;
   type: string;
@@ -84,40 +88,48 @@ export interface MachineCreateUpdateRequest {
   fanType?: string | null;
 }
 
+/** Search parameters for crop sprayers list */
+export interface CropSprayerSearchParams {
+  q?: string;
+  type?: string;
+  kind?: string;
+  manufacturer?: string;
+  yearFrom?: string;
+  yearTo?: string;
+  ownerId?: string;
+}
+
 @Injectable({ providedIn: 'root' })
-export class MachineService extends GenericCrudService<any> {
+export class CropSprayerService extends GenericCrudService<any> {
   private readonly endpoint = 'machines';
 
-  getMachinesList(params?: {
-    q?: string;
-    type?: string;
-    kind?: string;
-    manufacturer?: string;
-    yearFrom?: string;
-    yearTo?: string;
-    ownerId?: string;
-  }): Observable<MachineListItem[]> {
-    return this.search(this.endpoint, params || {}) as unknown as Observable<MachineListItem[]>;
+  /** Get list of crop sprayers with optional filters */
+  getList(params?: CropSprayerSearchParams): Observable<CropSprayerListItem[]> {
+    return this.search(this.endpoint, params || {}) as unknown as Observable<CropSprayerListItem[]>;
   }
 
-  /** Get machines owned by a specific client */
-  getMachinesByOwner(ownerId: string): Observable<MachineListItem[]> {
-    return this.getMachinesList({ ownerId });
+  /** Get crop sprayers owned by a specific client */
+  getByOwner(ownerId: string): Observable<CropSprayerListItem[]> {
+    return this.getList({ ownerId });
   }
 
-  getMachine(serialNumber: string): Observable<MachineDetail> {
-    return this.getById(this.endpoint, serialNumber) as unknown as Observable<MachineDetail>;
+  /** Get single crop sprayer by serial number */
+  get(serialNumber: string): Observable<CropSprayerDetail> {
+    return this.getById(this.endpoint, serialNumber) as unknown as Observable<CropSprayerDetail>;
   }
 
-  createMachine(req: MachineCreateUpdateRequest): Observable<MachineDetail> {
-    return this.create(this.endpoint, req) as unknown as Observable<MachineDetail>;
+  /** Create a new crop sprayer */
+  createSprayer(req: CropSprayerCreateUpdateRequest): Observable<CropSprayerDetail> {
+    return this.create(this.endpoint, req) as unknown as Observable<CropSprayerDetail>;
   }
 
-  updateMachine(serialNumber: string, req: MachineCreateUpdateRequest): Observable<MachineDetail> {
-    return this.update(this.endpoint, serialNumber, req) as unknown as Observable<MachineDetail>;
+  /** Update an existing crop sprayer */
+  updateSprayer(serialNumber: string, req: CropSprayerCreateUpdateRequest): Observable<CropSprayerDetail> {
+    return this.update(this.endpoint, serialNumber, req) as unknown as Observable<CropSprayerDetail>;
   }
 
-  deleteMachine(serialNumber: string): Observable<void> {
+  /** Delete a crop sprayer */
+  deleteSprayer(serialNumber: string): Observable<void> {
     return this.delete(this.endpoint, serialNumber);
   }
 }

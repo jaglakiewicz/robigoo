@@ -201,7 +201,7 @@ const TEXTS: TextTree = {
       motorcycle: 'Motocykl',
       trailer: 'Przyczepa'
     },
-    machines: {
+    cropSprayers: {
       addButton: 'Nowy opryskiwacz',
       listTitle: 'Lista opryskiwaczy',
       searchPlaceholder: 'Szukaj po numerze, nazwie, producencie...',
@@ -272,7 +272,7 @@ const TEXTS: TextTree = {
         keepEditing: 'Pozostań w edycji',
         edit: 'Edytuj',
         delete: 'Usuń',
-        deleteConfirm: 'Czy na pewno chcesz usunąć tę maszynę? Tej operacji nie można cofnąć.',
+        deleteConfirm: 'Czy na pewno chcesz usunąć ten opryskiwacz? Tej operacji nie można cofnąć.',
         yes: 'Tak',
         no: 'Nie'
       },
