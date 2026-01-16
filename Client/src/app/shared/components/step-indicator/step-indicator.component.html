@@ -16,7 +16,8 @@
     class="step"
     [class.active]="isActive(step)"
     [class.completed]="isCompleted(step)"
-    [class.clickable]="clickable"
+    [class.clickable]="clickable && !isDisabled(step)"
+    [class.disabled]="isDisabled(step)"
     (click)="onStepClick(step)">
     <span class="step-number">{{ getStepNumber(i) }}</span>
     <span class="step-label">{{ step.label }}</span>

@@ -26,6 +26,7 @@ namespace Server.Controllers
         #region Declarations
 
         private readonly AppDbContext _context;
+        private readonly ILogger<MachinesController> _logger;
 
         private static readonly Regex YearRegex = new("^\\d{4}$", RegexOptions.Compiled);
 
@@ -33,9 +34,10 @@ namespace Server.Controllers
 
         #region Constructor
 
-        public MachinesController(AppDbContext context)
+        public MachinesController(AppDbContext context, ILogger<MachinesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         #endregion
@@ -102,6 +104,8 @@ namespace Server.Controllers
                     ProductionYear = m.ProductionYear,
                     Type = m.Type,
                     Kind = m.Kind,
+                    OwnerId = m.OwnerId,
+                    OwnerName = m.OwnerName,
                     CreatedAt = m.CreatedAt
                 })
                 .ToListAsync();
@@ -164,6 +168,8 @@ namespace Server.Controllers
                 NozzlesFieldFeatures = dto.NozzlesFieldFeatures,
                 NozzlesGardenFeatures = dto.NozzlesGardenFeatures,
                 FanType = dto.FanType,
+                OwnerId = dto.OwnerId,
+                OwnerName = dto.OwnerName,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = null
             };
@@ -181,12 +187,21 @@ namespace Server.Controllers
         [HttpPut("{serialNumber}")]
         public async Task<ActionResult<MachineDetailDto>> UpdateMachine(string serialNumber, [FromBody] MachineCreateUpdateDto dto)
         {
+            _logger.LogInformation("=== UpdateMachine called ===");
+            _logger.LogInformation("Received DTO - OwnerId: {OwnerId}, OwnerName: {OwnerName}", dto.OwnerId, dto.OwnerName);
+            
             if (!string.Equals(serialNumber, dto.SerialNumber, StringComparison.Ordinal))
                 return BadRequest(new { message = "Nie można zmienić numeru seryjnego maszyny" });
 
             var machine = await _context.Machines.FindAsync(serialNumber);
             if (machine == null)
                 return NotFound();
+
+            // Capture old owner values for history tracking
+            var oldOwnerId = machine.OwnerId;
+            var oldOwnerName = machine.OwnerName;
+            
+            _logger.LogInformation("Old values - OwnerId: {OwnerId}, OwnerName: {OwnerName}", oldOwnerId, oldOwnerName);
 
             var validationError = ValidateDto(dto, isCreate: false);
             if (validationError != null)
@@ -217,11 +232,38 @@ namespace Server.Controllers
             machine.NozzlesFieldFeatures = dto.NozzlesFieldFeatures;
             machine.NozzlesGardenFeatures = dto.NozzlesGardenFeatures;
             machine.FanType = dto.FanType;
+
+            // Track owner change in history
+            if (oldOwnerId != dto.OwnerId || oldOwnerName != dto.OwnerName)
+            {
+                var changeDescription = BuildOwnerChangeDescription(oldOwnerId, oldOwnerName, dto.OwnerId, dto.OwnerName);
+                var userName = User.Identity?.Name ?? "System";
+                
+                var changeLog = new ChangeLog
+                {
+                    EntityName = "Machine",
+                    EntityId = serialNumber,
+                    Changes = changeDescription,
+                    Who = userName,
+                    When = DateTime.UtcNow
+                };
+                _context.ChangeLogs.Add(changeLog);
+            }
+
+            machine.OwnerId = dto.OwnerId;
+            machine.OwnerName = dto.OwnerName;
             machine.UpdatedAt = DateTime.UtcNow;
+            
+            _logger.LogInformation("After assignment - Machine.OwnerId: {OwnerId}, Machine.OwnerName: {OwnerName}", machine.OwnerId, machine.OwnerName);
 
             await _context.SaveChangesAsync();
+            
+            _logger.LogInformation("After SaveChangesAsync - Machine.OwnerId: {OwnerId}, Machine.OwnerName: {OwnerName}", machine.OwnerId, machine.OwnerName);
 
-            return Ok(ToDetailDto(machine));
+            var result = ToDetailDto(machine);
+            _logger.LogInformation("ToDetailDto result - OwnerId: {OwnerId}, OwnerName: {OwnerName}", result.OwnerId, result.OwnerName);
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -274,9 +316,27 @@ namespace Server.Controllers
                 NozzlesFieldFeatures = m.NozzlesFieldFeatures,
                 NozzlesGardenFeatures = m.NozzlesGardenFeatures,
                 FanType = m.FanType,
+                OwnerId = m.OwnerId,
+                OwnerName = m.OwnerName,
                 CreatedAt = m.CreatedAt,
                 UpdatedAt = m.UpdatedAt
             };
+        }
+
+        private static string BuildOwnerChangeDescription(string? oldOwnerId, string? oldOwnerName, string? newOwnerId, string? newOwnerName)
+        {
+            if (string.IsNullOrEmpty(oldOwnerId) && !string.IsNullOrEmpty(newOwnerId))
+            {
+                return $"Przypisano właściciela: {newOwnerName ?? newOwnerId}";
+            }
+            else if (!string.IsNullOrEmpty(oldOwnerId) && string.IsNullOrEmpty(newOwnerId))
+            {
+                return $"Usunięto właściciela: {oldOwnerName ?? oldOwnerId}";
+            }
+            else
+            {
+                return $"Zmieniono właściciela z \"{oldOwnerName ?? oldOwnerId}\" na \"{newOwnerName ?? newOwnerId}\"";
+            }
         }
 
         private static string? ValidateDto(MachineCreateUpdateDto dto, bool isCreate)

@@ -9,6 +9,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { AuthService } from './services/auth.service';
+import { NavigationService } from './services/navigation.service';
 import { SVG_ICONS } from './shared/svg-icons';
 
 interface Tab { id: number; type: string; titleKey: string; icon?: string; pinned?: boolean }
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
   userChevronSvg = SVG_ICONS.chevronDown;
   SVG_ICONS = SVG_ICONS; // Make SVG_ICONS available in template
   private currentUserSub: Subscription;
+  private navigationSub: Subscription | null = null;
   private sessionHeartbeatId: number | null = null;
 
   menuItems: MenuItem[] = [
@@ -50,7 +52,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   iconMap: { [key: string]: string } = SVG_ICONS;
 
-  constructor(private sanitizer: DomSanitizer, private authService: AuthService) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private navigationService: NavigationService
+  ) {
     const saved = localStorage.getItem('theme');
     this.darkMode = saved === 'dark';
     this.applyTheme();
@@ -80,10 +86,16 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.isLoggedIn) {
       this.startSessionHeartbeat();
     }
+
+    // Listen for cross-component navigation requests
+    this.navigationSub = this.navigationService.navigation$.subscribe(req => {
+      this.openTab(req.tabType, req.tabTitleKey);
+    });
   }
 
   ngOnDestroy(): void {
     this.currentUserSub?.unsubscribe();
+    this.navigationSub?.unsubscribe();
     this.stopSessionHeartbeat();
   }
 

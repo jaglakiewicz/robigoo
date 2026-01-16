@@ -242,6 +242,8 @@ const TEXTS: TextTree = {
         manufacturer: 'Producent',
         productionYear: 'Rok produkcji',
         purchaseDate: 'Data zakupu',
+        owner: 'Właściciel',
+        noOwner: '— Brak właściciela —',
         pumpType: 'Typ pompy',
         pumpPiston: 'Tłokowa',
         pumpDiaphragm: 'Membranowa',
@@ -295,6 +297,8 @@ const TEXTS: TextTree = {
     loading: 'Ładowanie...',
     addressSection: 'Adres',
     sprayersPlaceholder: 'Lista opryskiwaczy klienta zostanie dodana w przyszłej wersji.',
+    noSprayersAssigned: 'Ten klient nie ma przypisanych opryskiwaczy.',
+    goToSprayer: 'Przejdź do opryskiwacza',
     steps: {
       basics: 'Dane podstawowe',
       address: 'Adres',

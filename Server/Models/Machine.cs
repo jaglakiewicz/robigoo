@@ -85,6 +85,18 @@ namespace Server.Models
         [MaxLength(255)]
         public string? FanType { get; set; }
 
+        /// <summary>
+        /// ID właściciela/klienta (opcjonalne powiązanie z klientem).
+        /// </summary>
+        [MaxLength(100)]
+        public string? OwnerId { get; set; }
+
+        /// <summary>
+        /// Nazwa właściciela (denormalizowana dla wygody).
+        /// </summary>
+        [MaxLength(500)]
+        public string? OwnerName { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 

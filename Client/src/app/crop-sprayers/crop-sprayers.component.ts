@@ -6,10 +6,14 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
 import { MachineDetail, MachineListItem, MachineService, MachineCreateUpdateRequest } from '../machine.service';
+import { ClientService, ClientListItem } from '../client.service';
+import { NavigationService } from '../services/navigation.service';
 import { DirtyFormService } from '../shared/services/dirty-form.service';
 import { TextService } from '../services/text.service';
 import { NotificationService } from '../services/notification.service';
+import { DataRefreshService } from '../services/data-refresh.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { SelectOption } from '../shared/components/custom-select/custom-select.component';
 import { FilterField, FilterValues } from '../shared/components/filter-panel/filter-panel.component';
@@ -78,18 +82,28 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   // Delete confirmation dialog state
   deleteDialogVisible = false;
 
+  // Navigation from clients module
+  private pendingSelectSerial: string | null = null;
+
   private readonly formId = 'sprayers-detail';
 
   // Select options
   typeOptions: SelectOption[] = [];
   kindOptions: SelectOption[] = [];
   pumpTypeOptions: SelectOption[] = [];
+  ownerOptions: SelectOption[] = [];
+
+  // Subscription for clients data refresh
+  private clientsRefreshSub?: Subscription;
 
   constructor(
     private sprayersService: MachineService,
+    private clientService: ClientService,
+    private navigationService: NavigationService,
     private dirtyFormService: DirtyFormService,
     private textService: TextService,
     private notificationService: NotificationService,
+    private dataRefreshService: DataRefreshService,
     private sanitizer: DomSanitizer
   ) {
     this.dirtyFormService.registerForm(this.formId);
@@ -137,7 +151,20 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initSelectOptions();
     this.initFilterFields();
+    this.loadOwnerOptions();
+
+    // Check for pending navigation params from clients module
+    const navParams = this.navigationService.getPendingParams();
+    if (navParams?.['select']) {
+      this.pendingSelectSerial = navParams['select'];
+    }
+
     this.loadSprayers();
+    
+    // Subscribe to clients data changes to refresh owner options
+    this.clientsRefreshSub = this.dataRefreshService.onDataChanged('clients').subscribe(() => {
+      this.loadOwnerOptions();
+    });
   }
 
   private initFilterFields(): void {
@@ -202,8 +229,24 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     ];
   }
 
+  /** Load clients for owner dropdown */
+  private loadOwnerOptions(): void {
+    this.clientService.getClientsList().subscribe({
+      next: (clients: ClientListItem[]) => {
+        this.ownerOptions = [
+          { value: '', label: this.textService.get('types.machines.fields.noOwner') },
+          ...clients.map(c => ({
+            value: c.id,
+            label: c.displayName
+          }))
+        ];
+      }
+    });
+  }
+
   ngOnDestroy(): void {
     this.dirtyFormService.unregisterForm(this.formId);
+    this.clientsRefreshSub?.unsubscribe();
   }
 
   // List handling
@@ -221,12 +264,27 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       next: list => {
         this.sprayers = list;
         this.loadingList = false;
-        this.reconcileSelection(list);
+
+        // Handle pending selection from navigation
+        if (this.pendingSelectSerial) {
+          this.selectSprayerBySerialNumber(this.pendingSelectSerial);
+          this.pendingSelectSerial = null;
+        } else {
+          this.reconcileSelection(list);
+        }
       },
       error: () => {
         this.loadingList = false;
       }
     });
+  }
+
+  /** Select a sprayer by its serial number (used for navigation from clients) */
+  private selectSprayerBySerialNumber(serialNumber: string): void {
+    const sprayer = this.sprayers.find(s => s.serialNumber === serialNumber);
+    if (sprayer) {
+      this.loadSprayerDetail(serialNumber);
+    }
   }
 
   onSearchChange(value: string): void {
@@ -300,6 +358,8 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       manufacturer: '',
       productionYear: '',
       purchaseDate: null,
+      ownerId: null,
+      ownerName: null,
       pumpPiston: true,
       pumpDiaphragm: false,
       pumpOther: false,
@@ -342,6 +402,8 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
           manufacturer: detail.manufacturer,
           productionYear: detail.productionYear,
           purchaseDate: detail.purchaseDate || null,
+          ownerId: detail.ownerId || null,
+          ownerName: detail.ownerName || null,
           pumpPiston: detail.pumpPiston,
           pumpDiaphragm: detail.pumpDiaphragm,
           pumpOther: detail.pumpOther,
@@ -463,6 +525,21 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     }
   }
 
+  onOwnerChange(ownerId: string): void {
+    if (!this.formModel) { return; }
+    this.formModel.ownerId = ownerId || null;
+    
+    // Find the owner name from the options
+    if (ownerId) {
+      const selectedOwner = this.ownerOptions.find(o => o.value === ownerId);
+      this.formModel.ownerName = selectedOwner?.label || null;
+    } else {
+      this.formModel.ownerName = null;
+    }
+    
+    this.onFormChange();
+  }
+
   save(): void {
     this.doSave();
   }
@@ -477,6 +554,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.messageError = false;
 
     const req: MachineCreateUpdateRequest = { ...this.formModel };
+    
     const obs = this.isNew
       ? this.sprayersService.createMachine(req)
       : this.sprayersService.updateMachine(this.originalSerialNumber ?? this.formModel.serialNumber, req);
@@ -494,6 +572,8 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         this.setDirty(false);
         this.loadSprayers();
         this.notificationService.success(this.textService.get('types.machines.messages.saved'));
+        // Notify other components that machines data has changed
+        this.dataRefreshService.notifyMachinesChanged(this.isNew ? 'create' : 'update', detail.serialNumber);
         if (onSuccess) {
           onSuccess();
         }
@@ -554,6 +634,8 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         this.messageError = false;
         this.setDirty(false);
         this.loadSprayers();
+        // Notify other components that machines data has changed
+        this.dataRefreshService.notifyMachinesChanged('delete', serialToDelete);
       },
       error: err => {
         this.deleting = false;

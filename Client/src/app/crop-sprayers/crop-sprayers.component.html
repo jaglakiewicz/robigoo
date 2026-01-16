@@ -216,6 +216,19 @@
               </app-date-picker>
             </div>
           </div>
+
+          <!-- Row 4: Owner -->
+          <div class="form-row form-row-1">
+            <div class="form-group">
+              <label>{{ 'types.machines.fields.owner' | text }}</label>
+              <app-custom-select
+                [options]="ownerOptions"
+                [ngModel]="form.ownerId || ''"
+                (ngModelChange)="onOwnerChange($event)"
+                [disabled]="!isEditMode">
+              </app-custom-select>
+            </div>
+          </div>
         </div>
 
         <!-- Step 1: Pump -->

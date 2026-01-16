@@ -16,6 +16,8 @@ export interface Step {
   key: string;
   /** Display label for the step */
   label: string;
+  /** Whether the step is disabled (optional, defaults to false) */
+  disabled?: boolean;
 }
 
 /**
@@ -62,8 +64,12 @@ export class StepIndicatorComponent {
     return step.id < this.currentStepId;
   }
 
+  isDisabled(step: Step): boolean {
+    return step.disabled === true;
+  }
+
   onStepClick(step: Step): void {
-    if (this.clickable) {
+    if (this.clickable && !step.disabled) {
       this.stepClick.emit(step.id);
     }
   }

@@ -15,6 +15,8 @@ export interface MachineListItem {
   productionYear: string;
   type: string;
   kind: string;
+  ownerId?: string | null;
+  ownerName?: string | null;
   createdAt: string;
 }
 
@@ -26,6 +28,8 @@ export interface MachineDetail {
   manufacturer: string;
   productionYear: string;
   purchaseDate?: string | null;
+  ownerId?: string | null;
+  ownerName?: string | null;
   pumpPiston: boolean;
   pumpDiaphragm: boolean;
   pumpOther: boolean;
@@ -57,6 +61,8 @@ export interface MachineCreateUpdateRequest {
   manufacturer: string;
   productionYear: string;
   purchaseDate?: string | null;
+  ownerId?: string | null;
+  ownerName?: string | null;
   pumpPiston: boolean;
   pumpDiaphragm: boolean;
   pumpOther: boolean;
@@ -89,8 +95,14 @@ export class MachineService extends GenericCrudService<any> {
     manufacturer?: string;
     yearFrom?: string;
     yearTo?: string;
+    ownerId?: string;
   }): Observable<MachineListItem[]> {
     return this.search(this.endpoint, params || {}) as unknown as Observable<MachineListItem[]>;
+  }
+
+  /** Get machines owned by a specific client */
+  getMachinesByOwner(ownerId: string): Observable<MachineListItem[]> {
+    return this.getMachinesList({ ownerId });
   }
 
   getMachine(serialNumber: string): Observable<MachineDetail> {

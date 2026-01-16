@@ -17,6 +17,8 @@ namespace Server.Models
         public string ProductionYear { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string Kind { get; set; } = string.Empty;
+        public string? OwnerId { get; set; }
+        public string? OwnerName { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 
@@ -48,6 +50,8 @@ namespace Server.Models
         public string? NozzlesFieldFeatures { get; set; }
         public string? NozzlesGardenFeatures { get; set; }
         public string? FanType { get; set; }
+        public string? OwnerId { get; set; }
+        public string? OwnerName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
@@ -80,6 +84,8 @@ namespace Server.Models
         public string? NozzlesFieldFeatures { get; set; }
         public string? NozzlesGardenFeatures { get; set; }
         public string? FanType { get; set; }
+        public string? OwnerId { get; set; }
+        public string? OwnerName { get; set; }
     }
 
     #endregion

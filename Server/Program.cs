@@ -296,6 +296,8 @@ static MachineDetailDto ToMachineDetailDto(Machine m)
         NozzlesFieldFeatures = m.NozzlesFieldFeatures,
         NozzlesGardenFeatures = m.NozzlesGardenFeatures,
         FanType = m.FanType,
+        OwnerId = m.OwnerId,
+        OwnerName = m.OwnerName,
         CreatedAt = m.CreatedAt,
         UpdatedAt = m.UpdatedAt
     };
@@ -1047,7 +1049,8 @@ app.MapGet("/api/machines", async (AppDbContext db, HttpContext context,
     [FromQuery] string? kind,
     [FromQuery] string? manufacturer,
     [FromQuery] string? yearFrom,
-    [FromQuery] string? yearTo) =>
+    [FromQuery] string? yearTo,
+    [FromQuery] string? ownerId) =>
 {
     if (!await IsSessionActiveAsync(db, context))
     {
@@ -1076,6 +1079,12 @@ app.MapGet("/api/machines", async (AppDbContext db, HttpContext context,
         queryable = queryable.Where(m => m.Kind == kind);
     }
 
+    // Filter by owner (client) ID
+    if (!string.IsNullOrWhiteSpace(ownerId))
+    {
+        queryable = queryable.Where(m => m.OwnerId == ownerId);
+    }
+
     if (!string.IsNullOrWhiteSpace(manufacturer))
     {
         var man = manufacturer.Trim().ToLowerInvariant();
@@ -1102,6 +1111,8 @@ app.MapGet("/api/machines", async (AppDbContext db, HttpContext context,
             ProductionYear = m.ProductionYear,
             Type = m.Type,
             Kind = m.Kind,
+            OwnerId = m.OwnerId,
+            OwnerName = m.OwnerName,
             CreatedAt = m.CreatedAt
         })
         .ToListAsync();
@@ -1176,6 +1187,8 @@ app.MapPost("/api/machines", async (AppDbContext db, HttpContext context, [FromB
         NozzlesFieldFeatures = dto.NozzlesFieldFeatures,
         NozzlesGardenFeatures = dto.NozzlesGardenFeatures,
         FanType = dto.FanType,
+        OwnerId = dto.OwnerId,
+        OwnerName = dto.OwnerName,
         CreatedAt = DateTime.UtcNow,
         UpdatedAt = null
     };
@@ -1251,6 +1264,8 @@ app.MapPut("/api/machines/{serialNumber}", async (AppDbContext db, HttpContext c
             NozzlesFieldFeatures = dto.NozzlesFieldFeatures,
             NozzlesGardenFeatures = dto.NozzlesGardenFeatures,
             FanType = dto.FanType,
+            OwnerId = dto.OwnerId,
+            OwnerName = dto.OwnerName,
             CreatedAt = machine.CreatedAt,
             UpdatedAt = DateTime.UtcNow
         };
@@ -1290,6 +1305,8 @@ app.MapPut("/api/machines/{serialNumber}", async (AppDbContext db, HttpContext c
         machine.NozzlesFieldFeatures = dto.NozzlesFieldFeatures;
         machine.NozzlesGardenFeatures = dto.NozzlesGardenFeatures;
         machine.FanType = dto.FanType;
+        machine.OwnerId = dto.OwnerId;
+        machine.OwnerName = dto.OwnerName;
         machine.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync();
