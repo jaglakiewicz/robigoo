@@ -4,22 +4,39 @@
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<div 
-  class="step-indicator" 
-  appScrollFade 
-  [horizontal]="true" 
-  appScrollCenter 
-  [horizontal]="true" 
-  [itemSelector]="'.step'">
-  <div
-    *ngFor="let step of steps; let i = index; trackBy: trackByFn"
-    class="step"
-    [class.active]="isActive(step)"
-    [class.completed]="isCompleted(step)"
-    [class.clickable]="clickable && !isDisabled(step)"
-    [class.disabled]="isDisabled(step)"
-    (click)="onStepClick(step)">
-    <span class="step-number">{{ getStepNumber(i) }}</span>
-    <span class="step-label">{{ step.label }}</span>
+<div class="step-indicator-wrapper">
+  <!-- Left arrow indicator -->
+  <div class="scroll-indicator scroll-indicator--left" *ngIf="hasMoreLeft">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </div>
+
+  <div 
+    #scrollContainer
+    class="step-indicator" 
+    appScrollFade 
+    [horizontal]="true" 
+    appScrollCenter 
+    [horizontal]="true" 
+    [itemSelector]="'.step'">
+    <div
+      *ngFor="let step of steps; let i = index; trackBy: trackByFn"
+      class="step"
+      [class.active]="isActive(step)"
+      [class.completed]="isCompleted(step)"
+      [class.clickable]="clickable && !isDisabled(step)"
+      [class.disabled]="isDisabled(step)"
+      (click)="onStepClick(step)">
+      <span class="step-number">{{ getStepNumber(i) }}</span>
+      <span class="step-label">{{ step.label }}</span>
+    </div>
+  </div>
+
+  <!-- Right arrow indicator -->
+  <div class="scroll-indicator scroll-indicator--right" *ngIf="hasMoreRight">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
   </div>
 </div>

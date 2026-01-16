@@ -35,7 +35,6 @@ input:disabled, textarea:disabled, select:disabled {
   opacity: 1;
   -webkit-text-fill-color: var(--disabled-text);
   border-color: var(--disabled-border);
-  border-style: dashed;
 }
 
 /* Read-only style for displaying data (more readable than disabled) */
@@ -121,7 +120,6 @@ input[type="radio"]:checked::after {
 input[type="radio"]:disabled {
   background: var(--disabled-bg) !important;
   border-color: var(--disabled-border) !important;
-  border-style: dashed !important;
   cursor: not-allowed;
 }
 
@@ -185,7 +183,6 @@ input[type="checkbox"]:checked::after {
 input[type="checkbox"]:disabled {
   background: var(--disabled-bg) !important;
   border-color: var(--disabled-border) !important;
-  border-style: dashed !important;
   cursor: not-allowed;
 }
 

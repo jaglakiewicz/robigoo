@@ -80,15 +80,15 @@
 }
 
 .close-btn {
-  background: transparent;
-  border: 1px solid var(--on-dark-border);
-  color: var(--on-dark);
+  background: none;
+  border: none;
+  color: var(--on-dark-muted);
   font-size: var(--font-size-xl);
   cursor: pointer;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-md);
-  transition: all 0.15s ease;
+  transition: color var(--transition-fast), background var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,8 +96,8 @@
 }
 
 .close-btn:hover {
+  color: var(--on-dark);
   background: var(--on-dark-surface-hover);
-  border-color: var(--on-dark-border-strong);
 }
 
 .close-btn:focus-visible {

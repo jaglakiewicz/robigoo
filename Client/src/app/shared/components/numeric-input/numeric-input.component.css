@@ -33,13 +33,11 @@
   background: var(--disabled-bg);
   color: var(--disabled-text);
   border-color: var(--disabled-border);
-  border-style: dashed;
   cursor: not-allowed;
 }
 
 .numeric-input.disabled .spinner-buttons {
   border-left-color: var(--disabled-border);
-  border-left-style: dashed;
 }
 
 .numeric-input.disabled .spinner-btn {

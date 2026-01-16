@@ -38,7 +38,6 @@
   background: var(--disabled-bg);
   color: var(--disabled-text);
   border-color: var(--disabled-border);
-  border-style: dashed;
   cursor: not-allowed;
 }
 
