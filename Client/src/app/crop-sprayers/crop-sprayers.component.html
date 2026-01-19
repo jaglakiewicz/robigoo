@@ -108,7 +108,10 @@
       </div>
 
       <ng-template #loadingTpl>
-        <div class="loading-state">{{ 'inspections.loading' | text }}</div>
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>{{ 'inspections.loading' | text }}</span>
+        </div>
       </ng-template>
     </div>
 
@@ -221,12 +224,12 @@
           <div class="form-row form-row-1">
             <div class="form-group">
               <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
-              <app-custom-select
-                [options]="ownerOptions"
-                [ngModel]="form.ownerId || ''"
+              <app-client-autocomplete
+                [ngModel]="form.ownerId || null"
                 (ngModelChange)="onOwnerChange($event)"
+                [placeholder]="'types.cropSprayers.fields.selectOwner' | text"
                 [disabled]="!isEditMode">
-              </app-custom-select>
+              </app-client-autocomplete>
             </div>
           </div>
         </div>

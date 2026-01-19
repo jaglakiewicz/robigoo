@@ -7,6 +7,9 @@
 <!-- Toast Notifications -->
 <app-toast-notification></app-toast-notification>
 
+<!-- Global Busy Indicator -->
+<app-busy-indicator></app-busy-indicator>
+
 <app-login *ngIf="!isLoggedIn" (loginSuccess)="handleLoginSuccess()"></app-login>
 
 <ng-container *ngIf="isLoggedIn">

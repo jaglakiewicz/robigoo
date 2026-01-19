@@ -525,15 +525,12 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     }
   }
 
-  onOwnerChange(ownerId: string): void {
+  onOwnerChange(ownerId: string | null): void {
     if (!this.formModel) { return; }
     this.formModel.ownerId = ownerId || null;
     
-    // Find the owner name from the options
-    if (ownerId) {
-      const selectedOwner = this.ownerOptions.find(o => o.value === ownerId);
-      this.formModel.ownerName = selectedOwner?.label || null;
-    } else {
+    // Owner name will be looked up by the backend or can be loaded separately
+    if (!ownerId) {
       this.formModel.ownerName = null;
     }
     

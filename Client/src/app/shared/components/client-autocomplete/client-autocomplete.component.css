@@ -1,0 +1,232 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Client Autocomplete Component Styles
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
+@import '../../styles/globals.css';
+
+.autocomplete-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Input wrapper */
+.autocomplete-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.autocomplete-input {
+  width: 100%;
+  height: var(--touch-size);
+  padding: 0 var(--space-xl) 0 var(--space-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.autocomplete-input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--focus-shadow);
+}
+
+.autocomplete-input::placeholder {
+  color: var(--text-muted);
+}
+
+.autocomplete-container.disabled .autocomplete-input {
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Clear button */
+.autocomplete-clear-btn {
+  position: absolute;
+  right: calc(var(--space-xl) + var(--space-xs));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.autocomplete-clear-btn:hover {
+  opacity: 1;
+  color: var(--error);
+}
+
+.autocomplete-clear-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Chevron indicator */
+.autocomplete-chevron {
+  position: absolute;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+}
+
+.autocomplete-chevron.rotated {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.autocomplete-chevron svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Dropdown */
+.autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  left: 0;
+  right: 0;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  max-height: 280px;
+  overflow: hidden;
+}
+
+/* Dropdown opens above when at bottom */
+.autocomplete-dropdown.dropdown-above {
+  top: auto;
+  bottom: calc(100% + var(--space-xs));
+}
+
+.autocomplete-dropdown-content {
+  overflow-y: auto;
+  max-height: 280px;
+}
+
+/* Loading state */
+.autocomplete-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--panel-border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.autocomplete-empty {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+}
+
+/* Result items */
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-bottom: 1px solid var(--bg-alt);
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.highlighted {
+  background: var(--bg-alt);
+}
+
+.autocomplete-item.selected {
+  background: var(--primary-surface);
+}
+
+.autocomplete-item.selected .client-name {
+  color: var(--accent);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Client info */
+.client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.client-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.client-address {
+  font-size: var(--font-size-sm);
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Client type badge */
+.client-type-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-surface);
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.client-type-badge.company {
+  background: var(--success-surface);
+  color: var(--success);
+}

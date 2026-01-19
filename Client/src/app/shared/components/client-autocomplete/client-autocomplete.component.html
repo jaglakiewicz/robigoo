@@ -1,0 +1,65 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="autocomplete-container" [class.disabled]="disabled" [class.open]="isOpen">
+  <div class="autocomplete-input-wrapper">
+    <input
+      type="text"
+      class="autocomplete-input"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [value]="searchText"
+      (input)="onInputChange($event)"
+      (focus)="onInputFocus()"
+      (keydown)="onKeyDown($event)"
+      autocomplete="off"
+    />
+    
+    <button
+      *ngIf="allowClear && selectedClient && !disabled"
+      type="button"
+      class="autocomplete-clear-btn"
+      (click)="clearSelection($event)"
+      tabindex="-1"
+      aria-label="Clear selection">
+      <span [innerHTML]="clearIcon"></span>
+    </button>
+    
+    <span class="autocomplete-chevron" [class.rotated]="isOpen" [innerHTML]="chevronIcon"></span>
+  </div>
+
+  <div class="autocomplete-dropdown" *ngIf="isOpen && !disabled" [class.dropdown-above]="false">
+    <div class="autocomplete-dropdown-content">
+      <!-- Loading state -->
+      <div class="autocomplete-loading" *ngIf="isLoading">
+        <div class="spinner-sm"></div>
+        <span>Ładowanie...</span>
+      </div>
+
+      <!-- No results -->
+      <div class="autocomplete-empty" *ngIf="!isLoading && filteredClients.length === 0">
+        Brak wyników
+      </div>
+
+      <!-- Results list -->
+      <div
+        class="autocomplete-item"
+        *ngFor="let client of filteredClients; let i = index"
+        [class.highlighted]="i === highlightedIndex"
+        [class.selected]="selectedClient?.id === client.id"
+        (click)="selectClient(client)"
+        (mouseenter)="highlightedIndex = i">
+        <div class="client-info">
+          <span class="client-name">{{ client.displayName }}</span>
+          <span class="client-address" *ngIf="client.address">{{ client.address }}</span>
+        </div>
+        <span class="client-type-badge" [class.company]="client.clientType === 'company'">
+          {{ client.clientType === 'person' ? 'Osoba' : 'Firma' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

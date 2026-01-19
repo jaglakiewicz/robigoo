@@ -1,0 +1,15 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<!-- Fullscreen Busy Indicator -->
+<div class="busy-overlay busy-overlay--fullscreen" *ngIf="fullscreenIndicator">
+  <div class="busy-content">
+    <div class="busy-spinner busy-spinner--lg"></div>
+    <span class="busy-message" *ngIf="fullscreenIndicator.message">
+      {{ fullscreenIndicator.message }}
+    </span>
+  </div>
+</div>

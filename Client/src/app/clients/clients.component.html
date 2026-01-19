@@ -98,7 +98,10 @@
       </div>
 
       <ng-template #loadingTpl>
-        <div class="loading-state">{{ 'clients.loading' | text }}</div>
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>{{ 'clients.loading' | text }}</span>
+        </div>
       </ng-template>
     </div>
 

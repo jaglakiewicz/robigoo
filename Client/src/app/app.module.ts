@@ -30,20 +30,25 @@ import { CustomSelectComponent } from './shared/components/custom-select/custom-
 import { NumericInputComponent } from './shared/components/numeric-input/numeric-input.component';
 import { DatePickerComponent } from './shared/components/date-picker/date-picker.component';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { BusyInterceptor } from './services/busy.interceptor';
 import { ScrollFadeDirective } from './shared/directives/scroll-fade.directive';
 import { ScrollCenterDirective } from './shared/directives/scroll-center.directive';
+import { BusyOverlayDirective } from './shared/directives/busy-overlay.directive';
 import { FilterPanelComponent } from './shared/components/filter-panel/filter-panel.component';
 import { EntityListPanelComponent } from './shared/components/entity-list-panel/entity-list-panel.component';
 import { EntityDetailPanelComponent } from './shared/components/entity-detail-panel/entity-detail-panel.component';
 import { StepIndicatorComponent } from './shared/components/step-indicator/step-indicator.component';
 import { MasterDetailLayoutComponent } from './shared/components/master-detail-layout/master-detail-layout.component';
 import { EntityToolbarComponent } from './shared/components/entity-toolbar/entity-toolbar.component';
+import { BusyIndicatorComponent } from './shared/busy-indicator/busy-indicator.component';
+import { ClientAutocompleteComponent } from './shared/components/client-autocomplete/client-autocomplete.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: BusyInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

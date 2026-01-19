@@ -244,6 +244,7 @@ const TEXTS: TextTree = {
         purchaseDate: 'Data zakupu',
         owner: 'Właściciel',
         noOwner: '— Brak właściciela —',
+        selectOwner: 'Wpisz nazwę lub adres właściciela...',
         pumpType: 'Typ pompy',
         pumpPiston: 'Tłokowa',
         pumpDiaphragm: 'Membranowa',
