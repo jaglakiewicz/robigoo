@@ -83,6 +83,14 @@
   <div class="app-shell" [class.shifted]="sidebarOpen">
     <div class="container">
       <div class="top-bar">
+        <!-- Home button - always visible in top bar -->
+        <button class="home-button" 
+                [class.active]="isHomeActive()" 
+                (click)="goHome()" 
+                aria-label="Home" 
+                [innerHTML]="getSafeHtml(SVG_ICONS.home)">
+        </button>
+        
         <div class="tabs" role="tablist" aria-label="Open programs" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="reorderTabs($event)">
           <div *ngFor="let t of tabs; let i = index" 
                class="tab" 
@@ -91,7 +99,7 @@
                [attr.tabindex]="i === activeIndex ? 0 : -1"
                cdkDrag 
                cdkDragLockAxis="x" 
-               [class.active]="i === activeIndex" 
+               [class.active]="i === activeIndex"
                (click)="activateTab(i)"
                (keydown.enter)="activateTab(i)"
                (keydown.space)="activateTab(i); $event.preventDefault()">
@@ -113,8 +121,14 @@
         <div class="app-toolbar"></div>
       </div>
 
-      <div class="main-area" appScrollFade id="main-content" role="main">
-        <ng-container *ngIf="tabs.length; else noTabs">
+      <div class="main-area" [class.home-active]="isHomeActive()" appScrollFade id="main-content" role="main">
+        <!-- Home content when no tab is selected -->
+        <div *ngIf="isHomeActive()" class="home-content">
+          <!-- Home page content - empty for now -->
+        </div>
+        
+        <!-- Tab content when a tab is selected -->
+        <ng-container *ngIf="!isHomeActive() && tabs.length">
           <ng-container [ngSwitch]="tabs[activeIndex]?.type">
             <app-new-inspection *ngSwitchCase="'new'" (close)="closeTab(activeIndex)"></app-new-inspection>
             <app-inspections *ngSwitchCase="'inspections'"></app-inspections>

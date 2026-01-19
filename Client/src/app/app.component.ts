@@ -24,7 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   sidebarOpen = false;
   tabs: Tab[] = [];
-  activeIndex = 0;
+  activeIndex = -1; // -1 means home is active (no tab selected)
   private nextId = 1;
   
   darkMode = false;
@@ -68,6 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.userAvatar = user.avatarBase64 ? `data:image/jpeg;base64,${user.avatarBase64}` : null;
         this.currentUserPermissionNumber = user.permissionNumber ?? '';
         this.isLoggedIn = true;
+        this.initializeHomeTabs();
         this.startSessionHeartbeat();
       } else {
         this.isLoggedIn = false;
@@ -76,6 +77,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.userAvatar = null;
         this.userMenuOpen = false;
         this.currentUserPermissionNumber = '';
+        this.tabs = [];
+        this.activeIndex = 0;
         this.stopSessionHeartbeat();
       }
     });
@@ -139,6 +142,28 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggle() { this.sidebarOpen = !this.sidebarOpen; }
 
+  /**
+   * Initialize - start with home view (no tabs open)
+   */
+  initializeHomeTabs() {
+    this.tabs = [];
+    this.activeIndex = -1; // -1 means home view
+  }
+
+  /**
+   * Navigate to home view
+   */
+  goHome() {
+    this.activeIndex = -1;
+  }
+
+  /**
+   * Check if home view is active
+   */
+  isHomeActive(): boolean {
+    return this.activeIndex === -1;
+  }
+
   openTab(type: string, titleKey: string) {
     // Master admin can only open settings
     if (this.isMasterAdmin() && type !== 'settings') {
@@ -194,7 +219,9 @@ export class AppComponent implements OnInit, OnDestroy {
   closeTab(i: number) {
     if (i < 0 || i >= this.tabs.length) return;
     this.tabs.splice(i,1);
-    if (this.activeIndex >= this.tabs.length) this.activeIndex = this.tabs.length - 1;
+    if (this.activeIndex >= this.tabs.length) {
+      this.activeIndex = this.tabs.length > 0 ? this.tabs.length - 1 : -1;
+    }
   }
 
   toggleUserMenu() {

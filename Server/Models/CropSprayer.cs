@@ -13,9 +13,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Models
 {
-    #region Machine Model
+    #region CropSprayer Model
 
-    public class Machine
+    public class CropSprayer
     {
         #region Properties
 

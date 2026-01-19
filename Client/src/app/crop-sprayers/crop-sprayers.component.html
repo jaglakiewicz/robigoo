@@ -100,6 +100,9 @@
             <div class="card-info-row">
               {{ s.manufacturer }}<span *ngIf="s.manufacturer && s.sprayerName" class="vertical-separator"></span>{{ s.sprayerName }}<span *ngIf="(s.manufacturer || s.sprayerName) && s.productionYear" class="vertical-separator"></span>{{ s.productionYear }}
             </div>
+            <div class="card-info-row card-owner" [class.no-owner]="!s.ownerName">
+              {{ s.ownerName || ('types.cropSprayers.fields.noOwnerShort' | text) }}
+            </div>
           </div>
         </div>
         <div *ngIf="sprayers.length === 0" class="empty-state">
@@ -143,7 +146,20 @@
       <div class="step-content">
         <!-- Step 0: Basic data -->
         <div *ngIf="currentStep === 0" class="basics-grid">
-          <!-- Row 1: Nr seryjny / Nazwa opryskiwacza -->
+          <!-- Row 1: Owner -->
+          <div class="form-row form-row-1">
+            <div class="form-group">
+              <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
+              <app-client-autocomplete
+                [ngModel]="form.ownerId || null"
+                (ngModelChange)="onOwnerChange($event)"
+                [placeholder]="'types.cropSprayers.fields.selectOwner' | text"
+                [disabled]="!isEditMode">
+              </app-client-autocomplete>
+            </div>
+          </div>
+
+          <!-- Row 2: Nr seryjny / Nazwa opryskiwacza -->
           <div class="form-row form-row-2">
             <div class="form-group required">
               <label>{{ 'types.cropSprayers.fields.serialNumber' | text }}</label>
@@ -164,7 +180,7 @@
             </div>
           </div>
 
-          <!-- Row 2: Typ / Rodzaj -->
+          <!-- Row 3: Typ / Rodzaj -->
           <div class="form-row form-row-2">
             <div class="form-group required">
               <label>{{ 'types.cropSprayers.fields.type' | text }}</label>
@@ -187,7 +203,7 @@
             </div>
           </div>
 
-          <!-- Row 3: Producent / Rok produkcji / Data zakupu -->
+          <!-- Row 4: Producent / Rok produkcji / Data zakupu -->
           <div class="form-row form-row-3">
             <div class="form-group required">
               <label>{{ 'types.cropSprayers.fields.manufacturer' | text }}</label>
@@ -217,19 +233,6 @@
                 (ngModelChange)="form.purchaseDate = $event; onFormChange()"
                 [disabled]="!isEditMode">
               </app-date-picker>
-            </div>
-          </div>
-
-          <!-- Row 4: Owner -->
-          <div class="form-row form-row-1">
-            <div class="form-group">
-              <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
-              <app-client-autocomplete
-                [ngModel]="form.ownerId || null"
-                (ngModelChange)="onOwnerChange($event)"
-                [placeholder]="'types.cropSprayers.fields.selectOwner' | text"
-                [disabled]="!isEditMode">
-              </app-client-autocomplete>
             </div>
           </div>
         </div>

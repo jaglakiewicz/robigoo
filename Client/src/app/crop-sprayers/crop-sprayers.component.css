@@ -144,6 +144,16 @@
   line-height: 1.4;
 }
 
+.card-info-row.card-owner {
+  color: var(--accent);
+  font-size: var(--font-size-sm);
+}
+
+.card-info-row.card-owner.no-owner {
+  color: var(--text-muted);
+  font-style: normal;
+}
+
 .sprayer-card .badge {
   padding: 0 var(--space-xs);
   border-radius: var(--radius-sm);

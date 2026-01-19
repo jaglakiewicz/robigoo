@@ -7,9 +7,9 @@
 
 namespace Server.Models
 {
-    #region DTOs - Machines
+    #region DTOs - CropSprayers
 
-    public class MachineListItemDto
+    public class CropSprayerListItemDto
     {
         public string SerialNumber { get; set; } = string.Empty;
         public string SprayerName { get; set; } = string.Empty;
@@ -22,7 +22,7 @@ namespace Server.Models
         public DateTime CreatedAt { get; set; }
     }
 
-    public class MachineDetailDto
+    public class CropSprayerDetailDto
     {
         public string SerialNumber { get; set; } = string.Empty;
         public string SprayerName { get; set; } = string.Empty;
@@ -56,7 +56,7 @@ namespace Server.Models
         public DateTime? UpdatedAt { get; set; }
     }
 
-    public class MachineCreateUpdateDto
+    public class CropSprayerCreateUpdateDto
     {
         public string SerialNumber { get; set; } = string.Empty;
         public string SprayerName { get; set; } = string.Empty;

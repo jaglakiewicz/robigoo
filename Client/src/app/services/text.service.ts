@@ -28,6 +28,7 @@ const TEXTS: TextTree = {
     logout: 'Wyloguj'
   },
   menu: {
+    home: 'Strona główna',
     newInspection: 'Nowe badanie',
     newInspectionHint: 'Utwórz nowy protokół badania',
     inspections: 'Wszystkie badania',
@@ -235,6 +236,7 @@ const TEXTS: TextTree = {
         purchaseDate: 'Data zakupu',
         owner: 'Właściciel',
         noOwner: '— Brak właściciela —',
+        noOwnerShort: 'Brak właściciela',
         selectOwner: 'Wpisz nazwę lub adres właściciela...',
         pumpType: 'Typ pompy',
         pumpPiston: 'Tłokowa',

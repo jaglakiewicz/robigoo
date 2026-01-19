@@ -40,10 +40,22 @@ namespace Server.Data
         public DbSet<InspectionItem> InspectionItems { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserSession> UserSessions { get; set; }
-        public DbSet<Machine> Machines { get; set; }
+        public DbSet<CropSprayer> CropSprayers { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<ChangeLog> ChangeLogs { get; set; }
         public DbSet<LoginAttempt> LoginAttempts { get; set; }
+
+        #endregion
+
+        #region Methods - Protected
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+            // Map CropSprayer entity to existing Machines table
+            modelBuilder.Entity<CropSprayer>().ToTable("Machines");
+        }
 
         #endregion
 
