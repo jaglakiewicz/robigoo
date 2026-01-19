@@ -110,7 +110,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.toolbarIcons = {
       add: this.getSafeHtml(SVG_ICONS.iconAdd),
       edit: this.getSafeHtml(SVG_ICONS.iconEdit),
-      delete: this.getSafeHtml(SVG_ICONS.iconDelete),
+      delete: this.getSafeHtml(SVG_ICONS.deleteIcon),
       save: this.getSafeHtml(SVG_ICONS.iconCheck),
       cancel: this.getSafeHtml(SVG_ICONS.iconCancel)
     };

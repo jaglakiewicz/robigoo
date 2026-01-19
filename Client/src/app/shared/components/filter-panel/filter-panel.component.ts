@@ -5,8 +5,10 @@
  */
 
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, ElementRef, HostListener } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SVG_ICONS } from '../../svg-icons';
 
 export type FilterFieldType = 'text' | 'number' | 'select' | 'date' | 'checkbox' | 'range';
 
@@ -59,9 +61,16 @@ export class FilterPanelComponent implements OnInit, OnDestroy, OnChanges {
   // Track open select dropdowns
   openSelectKey: string | null = null;
 
+  filterIcon!: SafeHtml;
+
   private destroy$ = new Subject<void>();
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(
+    private elementRef: ElementRef,
+    private sanitizer: DomSanitizer
+  ) {
+    this.filterIcon = this.sanitizer.bypassSecurityTrustHtml(SVG_ICONS.filterIcon);
+  }
 
   ngOnInit(): void {
     this.localValues = { ...this.values };

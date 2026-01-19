@@ -16,7 +16,6 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { NewInspectionComponent } from './new-inspection/new-inspection.component';
 import { CropSprayersComponent } from './crop-sprayers/crop-sprayers.component';
-import { StatisticsComponent } from './statistics/statistics.component';
 import { InspectionsComponent } from './inspections/inspections.component';
 import { SettingsComponent } from './settings/settings.component';
 import { TextPipe } from './shared/text.pipe';
@@ -44,7 +43,7 @@ import { BusyIndicatorComponent } from './shared/busy-indicator/busy-indicator.c
 import { ClientAutocompleteComponent } from './shared/components/client-autocomplete/client-autocomplete.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, StatisticsComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

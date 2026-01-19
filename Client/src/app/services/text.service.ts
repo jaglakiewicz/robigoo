@@ -34,8 +34,6 @@ const TEXTS: TextTree = {
     inspectionsHint: 'Przeglądaj i filtruj wyniki badań',
     types: 'Ewidencja opryskiwaczy',
     typesHint: 'Dodawaj i edytuj opryskiwacze',
-    stats: 'Statystyki',
-    statsHint: 'Podgląd wyników i trendów',
     settings: 'Ustawienia',
     settingsHint: 'Konfiguracja aplikacji',
     clients: 'Klienci',
@@ -163,13 +161,6 @@ const TEXTS: TextTree = {
       date: 'Data',
       items: 'Pozycje',
       passRate: 'Zaliczone'
-    }
-  },
-  statistics: {
-    title: 'Statystyki',
-    cards: {
-      last30: 'Badania (30 dni)',
-      passRate: 'Wskaźnik zaliczeń'
     }
   },
   settings: {
