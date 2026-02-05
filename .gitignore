@@ -114,3 +114,6 @@ tmp/
 # Google Drive temporary upload files
 # ====================================================================
 .tmp.driveupload/
+
+app_v2.db-shm
+app_v2.db-wal
