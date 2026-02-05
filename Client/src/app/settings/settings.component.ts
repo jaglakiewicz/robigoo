@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { UserService, CreateUserRequest, UserDTO } from '../services/user.service';
 import { NotificationService } from '../services/notification.service';
 import { SVG_ICONS } from '../shared/svg-icons';
+import { Step } from '../shared/components/step-indicator/step-indicator.component';
 
 @Component({
   selector: 'app-settings',
@@ -11,14 +12,14 @@ import { SVG_ICONS } from '../shared/svg-icons';
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-  activeTab = 0;
+  currentStep = 0;
   private editUserListener: any;
   SVG_ICONS = SVG_ICONS; // Make SVG_ICONS available in template
 
-  tabs = [
-    { label: 'Ustawienia programu' },
-    { label: 'Ustawienia użytkownika' },
-    { label: 'Zarządzanie użytkownikami' }
+  steps: Step[] = [
+    { id: 0, key: 'program', label: 'Ustawienia programu' },
+    { id: 1, key: 'user', label: 'Ustawienia użytkownika' },
+    { id: 2, key: 'admin', label: 'Zarządzanie użytkownikami' }
   ];
 
   // Program Settings (placeholder for future use)
@@ -107,7 +108,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.editUserListener = (event: any) => {
         const user = event.detail;
         console.log('[Settings] Edit user event:', user);
-        this.activeTab = 1;
+        this.currentStep = 1;
       };
       window.addEventListener('editUserEvent', this.editUserListener);
 
@@ -286,27 +287,27 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeTab(tabIndex: number): void {
-    console.log('[Settings] Switching to tab:', tabIndex);
+  goToStep(stepId: number): void {
+    console.log('[Settings] Switching to step:', stepId);
     
-    // Prevent non-admin users from accessing admin tab (tab 2)
+    // Prevent non-admin users from accessing admin tab (step 2)
     const currentUser = this.authService.getCurrentUser();
-    if (tabIndex === 2 && (!currentUser || currentUser.role !== 'admin')) {
+    if (stepId === 2 && (!currentUser || currentUser.role !== 'admin')) {
       console.warn('[Settings] User does not have permission to access admin tab');
       return;
     }
     
-    this.activeTab = tabIndex;
+    this.currentStep = stepId;
   }
 
-  getVisibleTabs(): any[] {
+  get visibleSteps(): Step[] {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser || currentUser.role !== 'admin') {
-      // Non-admin users see only tabs 0 and 1
-      return [this.tabs[0], this.tabs[1]];
+      // Non-admin users see only steps 0 and 1
+      return [this.steps[0], this.steps[1]];
     }
-    // Admin users see all tabs
-    return this.tabs;
+    // Admin users see all steps
+    return this.steps;
   }
 
   isCurrentUserAdmin(): boolean {

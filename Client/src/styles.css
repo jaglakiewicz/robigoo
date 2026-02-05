@@ -441,7 +441,7 @@
 .main-area {
   background: var(--panel);
   border: 1px solid var(--panel-border);
-  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+  border-radius: var(--radius-md);
   padding: 18px;
   flex: 1;
   overflow: hidden;
@@ -470,7 +470,7 @@
    ============================================================ */
 .tabs {
   display: flex;
-  gap: 0;
+  gap: 6px;
   padding: 0;
   background: transparent;
   border: none;
@@ -503,7 +503,7 @@
   background: var(--bg-alt);
   padding: 6px 12px;
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-radius: var(--radius-md);
   cursor: pointer;
   display: flex;
   gap: 6px;
@@ -543,7 +543,6 @@
   color: var(--text);
   font-weight: var(--font-weight-bold);
   border-color: var(--panel-border);
-  border-bottom-color: transparent;
   height: 43px;
   z-index: 2;
 }

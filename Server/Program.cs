@@ -867,11 +867,11 @@ app.MapDelete("/api/users/{userId}", async (AppDbContext db, HttpContext context
     // Get the user to delete
     var userToDelete = await db.Users.FindAsync(userId);
     if (userToDelete == null)
-        return Results.NotFound(new { message = "Uzytkownik nie znaleziony" });
+        return Results.NotFound(new { message = "Użytkownik nie znaleziony" });
 
     // Prevent deleting self
     if (currentUserId == userId)
-        return Results.BadRequest(new { message = "Nie mozesz usunac wlasnego konta" });
+        return Results.BadRequest(new { message = "Nie możesz usunąć własnego konta" });
 
     // Get current user to validate password and permissions
     var currentUser = await db.Users.FindAsync(currentUserId);
@@ -889,20 +889,20 @@ app.MapDelete("/api/users/{userId}", async (AppDbContext db, HttpContext context
     // Master admin (login: admin) can delete anyone except themselves
     // Regular admin can only delete regular users (not admins)
     if (isTargetAdmin && !isMasterAdmin)
-        return Results.BadRequest(new { message = "Tylko master administrator moze usuwac administrator�w" });
+        return Results.BadRequest(new { message = "Tylko master administrator może usuwać administratorów" });
 
     // Verify password
     var passwordService = context.RequestServices.GetRequiredService<Server.Services.IPasswordService>();
     if (!passwordService.VerifyPassword(dto.Password, currentUser.PasswordHash))
     {
-        return Results.BadRequest(new { message = "Bledne haslo" });
+        return Results.BadRequest(new { message = "Błędne hasło" });
     }
 
     // Delete user
     db.Users.Remove(userToDelete);
     await db.SaveChangesAsync();
 
-    return Results.Ok(new { message = $"Uzytkownik '{userToDelete.Login}' zostal usuniety" });
+    return Results.Ok(new { message = $"Użytkownik '{userToDelete.Login}' został usunięty" });
 }).RequireAuthorization().DisableAntiforgery();
 
 // Update user role endpoint - ONLY master admin can change roles
@@ -927,20 +927,20 @@ app.MapPut("/api/users/{userId}/role", async (AppDbContext db, HttpContext conte
 
     // Only master admin (login = admin) can change roles
     if (currentUser.Login != "admin")
-        return Results.BadRequest(new { message = "Tylko master administrator moze zmieniać role użytkowników" });
+        return Results.BadRequest(new { message = "Tylko master administrator może zmieniać role użytkowników" });
 
     // Get the user to update
     var userToUpdate = await db.Users.FindAsync(userId);
     if (userToUpdate == null)
-        return Results.NotFound(new { message = "Uzytkownik nie znaleziony" });
+        return Results.NotFound(new { message = "Użytkownik nie znaleziony" });
 
     // Prevent changing self role
     if (currentUserId == userId)
-        return Results.BadRequest(new { message = "Nie mozesz zmienic swojej roli" });
+        return Results.BadRequest(new { message = "Nie możesz zmienić swojej roli" });
 
     // Validate role value
     if (dto.Role != "admin" && dto.Role != "user")
-        return Results.BadRequest(new { message = "Niepoprawna rola. Dozwolone wartosci: 'admin', 'user'" });
+        return Results.BadRequest(new { message = "Niepoprawna rola. Dozwolone wartości: 'admin', 'user'" });
 
     // Update role
     userToUpdate.Role = dto.Role;
