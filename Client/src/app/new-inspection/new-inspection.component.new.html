@@ -1,0 +1,678 @@
+<!--
+  Robigoo - New Inspection Protocol
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<h3 class="component-title">{{ 'inspectionProtocol.title' | text }}</h3>
+
+<!-- Message display -->
+<div *ngIf="messageKey" class="message" [class.success]="messageType === 'success'" [class.error]="messageType === 'error'">
+  {{ messageKey | text }}
+</div>
+
+<!-- Step indicator -->
+<app-step-indicator
+  [steps]="steps"
+  [currentStepId]="currentStep"
+  [clickable]="true"
+  (stepClick)="goToStep($event)">
+</app-step-indicator>
+
+<!-- STEP 0: Client Selection -->
+<div *ngIf="currentStep === 0" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.client' | text }}</h3>
+  <p class="step-description">{{ 'inspectionProtocol.descriptions.client' | text }}</p>
+
+  <!-- Client search/selection -->
+  <div class="form-group" *ngIf="!isAddingNewClient">
+    <label>{{ 'inspectionProtocol.fields.selectClient' | text }}</label>
+    <app-client-autocomplete
+      [(ngModel)]="selectedClientId"
+      [placeholder]="'inspectionProtocol.placeholders.searchClient' | text"
+      (selectionChange)="selectClient($event)">
+    </app-client-autocomplete>
+  </div>
+
+  <!-- Selected client info -->
+  <div class="selected-entity-card" *ngIf="selectedClient && !isAddingNewClient">
+    <div class="entity-header">
+      <span class="entity-badge" [class.company]="selectedClient.clientType === 'company'">
+        {{ selectedClient.clientType === 'person' ? ('clients.filters.typePerson' | text) : ('clients.filters.typeCompany' | text) }}
+      </span>
+      <button type="button" class="btn-icon-sm" (click)="clearClientSelection()" title="Wyczyść">
+        <span [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></span>
+      </button>
+    </div>
+    <div class="entity-name">{{ selectedClient.displayName }}</div>
+    <div class="entity-details" *ngIf="selectedClient.street || selectedClient.city">
+      {{ selectedClient.street }} {{ selectedClient.buildingNumber }}<span *ngIf="selectedClient.apartmentNumber">/{{ selectedClient.apartmentNumber }}</span>,
+      {{ selectedClient.zipCode }} {{ selectedClient.city }}
+    </div>
+    <div class="entity-details" *ngIf="selectedClient.clientType === 'person' && selectedClient.pesel">
+      PESEL: {{ selectedClient.pesel }}
+    </div>
+    <div class="entity-details" *ngIf="selectedClient.clientType === 'company' && selectedClient.nip">
+      NIP: {{ selectedClient.nip }}
+    </div>
+  </div>
+
+  <!-- Toggle to add new client -->
+  <div class="toggle-add-section">
+    <button type="button" class="btn btn-secondary" (click)="toggleAddNewClient()">
+      <span [innerHTML]="getSafeHtml(isAddingNewClient ? SVG_ICONS.closeIcon : iconAdd)"></span>
+      {{ isAddingNewClient ? ('inspectionProtocol.actions.cancelNewClient' | text) : ('inspectionProtocol.actions.addNewClient' | text) }}
+    </button>
+  </div>
+
+  <!-- New client form -->
+  <div class="new-entity-form" *ngIf="isAddingNewClient">
+    <h4>{{ 'inspectionProtocol.headings.newClient' | text }}</h4>
+
+    <div class="form-group">
+      <label>{{ 'clients.fields.clientType' | text }}</label>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="clientType" value="person" [checked]="newClient.clientType === 'person'" (change)="onNewClientTypeChange('person')" />
+          {{ 'clients.filters.typePerson' | text }}
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="clientType" value="company" [checked]="newClient.clientType === 'company'" (change)="onNewClientTypeChange('company')" />
+          {{ 'clients.filters.typeCompany' | text }}
+        </label>
+      </div>
+    </div>
+
+    <!-- Person fields -->
+    <div *ngIf="newClient.clientType === 'person'" class="form-row">
+      <div class="form-group">
+        <label>{{ 'clients.fields.firstName' | text }} *</label>
+        <input type="text" [(ngModel)]="newClient.firstName" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'clients.fields.lastName' | text }} *</label>
+        <input type="text" [(ngModel)]="newClient.lastName" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'clients.fields.pesel' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.pesel" maxlength="11" />
+      </div>
+    </div>
+
+    <!-- Company fields -->
+    <div *ngIf="newClient.clientType === 'company'" class="form-row">
+      <div class="form-group form-group-wide">
+        <label>{{ 'clients.fields.companyName' | text }} *</label>
+        <input type="text" [(ngModel)]="newClient.companyName" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'clients.fields.nip' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.nip" maxlength="10" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'clients.fields.regon' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.regon" maxlength="14" />
+      </div>
+    </div>
+
+    <!-- Address fields -->
+    <h5>{{ 'clients.addressSection' | text }}</h5>
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'clients.fields.city' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.city" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'clients.fields.street' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.street" />
+      </div>
+      <div class="form-group form-group-sm">
+        <label>{{ 'clients.fields.buildingNumber' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.buildingNumber" />
+      </div>
+      <div class="form-group form-group-sm">
+        <label>{{ 'clients.fields.apartmentNumber' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.apartmentNumber" />
+      </div>
+      <div class="form-group form-group-sm">
+        <label>{{ 'clients.fields.zipCode' | text }}</label>
+        <input type="text" [(ngModel)]="newClient.zipCode" maxlength="6" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 1: Sprayer Selection -->
+<div *ngIf="currentStep === 1" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.sprayer' | text }}</h3>
+  <p class="step-description">{{ 'inspectionProtocol.descriptions.sprayer' | text }}</p>
+
+  <!-- List of client's sprayers -->
+  <div *ngIf="!isAddingNewSprayer && clientSprayers.length > 0" class="sprayer-list">
+    <div *ngFor="let sprayer of clientSprayers"
+         class="sprayer-card"
+         [class.selected]="selectedSprayerSerialNumber === sprayer.serialNumber"
+         (click)="selectSprayer(sprayer)">
+      <div class="sprayer-header">
+        <span class="sprayer-type-badge">{{ getSprayerTypeLabel(sprayer.type) }}</span>
+        <span class="sprayer-serial">{{ sprayer.serialNumber }}</span>
+      </div>
+      <div class="sprayer-name">{{ sprayer.sprayerName }}</div>
+      <div class="sprayer-details">{{ sprayer.manufacturer }}, {{ sprayer.productionYear }}</div>
+    </div>
+  </div>
+
+  <!-- No sprayers message -->
+  <div *ngIf="!isAddingNewSprayer && clientSprayers.length === 0 && selectedClientId && !isLoadingSprayers" class="empty-state">
+    <p>{{ 'inspectionProtocol.messages.noSprayers' | text }}</p>
+  </div>
+
+  <!-- Selected sprayer info -->
+  <div class="selected-entity-card" *ngIf="selectedSprayer && !isAddingNewSprayer">
+    <div class="entity-header">
+      <span class="entity-badge">{{ getSprayerTypeLabel(selectedSprayer.type) }}</span>
+      <span class="entity-badge secondary">{{ getSprayerKindLabel(selectedSprayer.kind) }}</span>
+      <button type="button" class="btn-icon-sm" (click)="clearSprayerSelection()" title="Wyczyść">
+        <span [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></span>
+      </button>
+    </div>
+    <div class="entity-name">{{ selectedSprayer.sprayerName }}</div>
+    <div class="entity-details">Nr seryjny: {{ selectedSprayer.serialNumber }}</div>
+    <div class="entity-details">{{ selectedSprayer.manufacturer }}, rok {{ selectedSprayer.productionYear }}</div>
+    <div class="entity-details" *ngIf="selectedSprayer.tankCapacity">Zbiornik: {{ selectedSprayer.tankCapacity }} l</div>
+    <div class="entity-details" *ngIf="selectedSprayer.boomWidth">Szerokość belki: {{ selectedSprayer.boomWidth }} m</div>
+  </div>
+
+  <!-- Toggle to add new sprayer -->
+  <div class="toggle-add-section">
+    <button type="button" class="btn btn-secondary" (click)="toggleAddNewSprayer()">
+      <span [innerHTML]="getSafeHtml(isAddingNewSprayer ? SVG_ICONS.closeIcon : iconAdd)"></span>
+      {{ isAddingNewSprayer ? ('inspectionProtocol.actions.cancelNewSprayer' | text) : ('inspectionProtocol.actions.addNewSprayer' | text) }}
+    </button>
+  </div>
+
+  <!-- New sprayer form (simplified) -->
+  <div class="new-entity-form" *ngIf="isAddingNewSprayer">
+    <h4>{{ 'inspectionProtocol.headings.newSprayer' | text }}</h4>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'types.cropSprayers.fields.serialNumber' | text }} *</label>
+        <input type="text" [(ngModel)]="newSprayer.serialNumber" />
+      </div>
+      <div class="form-group form-group-wide">
+        <label>{{ 'types.cropSprayers.fields.sprayerName' | text }} *</label>
+        <input type="text" [(ngModel)]="newSprayer.sprayerName" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'types.cropSprayers.fields.type' | text }}</label>
+        <select [(ngModel)]="newSprayer.type">
+          <option value="00">{{ 'types.cropSprayers.filters.typeField' | text }}</option>
+          <option value="01">{{ 'types.cropSprayers.filters.typeGarden' | text }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{ 'types.cropSprayers.fields.kind' | text }}</label>
+        <select [(ngModel)]="newSprayer.kind">
+          <option value="00">{{ 'types.cropSprayers.filters.kindMounted' | text }}</option>
+          <option value="01">{{ 'types.cropSprayers.filters.kindTrailed' | text }}</option>
+          <option value="02">{{ 'types.cropSprayers.filters.kindSelfPropelled' | text }}</option>
+          <option value="03">{{ 'types.cropSprayers.filters.kindOther' | text }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'types.cropSprayers.fields.manufacturer' | text }} *</label>
+        <input type="text" [(ngModel)]="newSprayer.manufacturer" />
+      </div>
+      <div class="form-group form-group-sm">
+        <label>{{ 'types.cropSprayers.fields.productionYear' | text }}</label>
+        <input type="text" [(ngModel)]="newSprayer.productionYear" maxlength="4" />
+      </div>
+      <div class="form-group form-group-sm">
+        <label>{{ 'types.cropSprayers.fields.tankCapacity' | text }}</label>
+        <input type="number" [(ngModel)]="newSprayer.tankCapacity" />
+      </div>
+      <div class="form-group form-group-sm">
+        <label>{{ 'types.cropSprayers.fields.boomWidth' | text }}</label>
+        <input type="number" [(ngModel)]="newSprayer.boomWidth" step="0.1" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: Metadata -->
+<div *ngIf="currentStep === 2" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.metadata' | text }}</h3>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>{{ 'inspectionProtocol.fields.inspectionDate' | text }}</label>
+      <input type="date" [(ngModel)]="inspectionDate" />
+    </div>
+    <div class="form-group form-group-wide">
+      <label>{{ 'inspectionProtocol.fields.inspectionLocation' | text }}</label>
+      <input type="text" [(ngModel)]="inspectionLocation" [placeholder]="'inspectionProtocol.placeholders.inspectionLocation' | text" />
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>{{ 'inspectionProtocol.fields.inspectorName' | text }}</label>
+      <input type="text" [(ngModel)]="inspectorName" />
+    </div>
+    <div class="form-group">
+      <label>{{ 'inspectionProtocol.fields.inspectorLicenseNumber' | text }}</label>
+      <input type="text" [(ngModel)]="inspectorLicenseNumber" />
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: General Condition -->
+<div *ngIf="currentStep === 3" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.general' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.generalCondition' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="generalConditionPassed === true" (click)="generalConditionPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="generalConditionPassed === false" (click)="generalConditionPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.markingsReadable' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="markingsReadablePassed === true" (click)="markingsReadablePassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="markingsReadablePassed === false" (click)="markingsReadablePassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.equipmentComplete' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="equipmentCompletePassed === true" (click)="equipmentCompletePassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="equipmentCompletePassed === false" (click)="equipmentCompletePassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="generalSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 4: Pump -->
+<div *ngIf="currentStep === 4" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.pump' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.pumpOperation' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="pumpOperationPassed === true" (click)="pumpOperationPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="pumpOperationPassed === false" (click)="pumpOperationPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.pumpSealing' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="pumpSealingPassed === true" (click)="pumpSealingPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="pumpSealingPassed === false" (click)="pumpSealingPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.pressurePulsation' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="pressurePulsationPassed === true" (click)="pressurePulsationPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="pressurePulsationPassed === false" (click)="pressurePulsationPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="pumpSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 5: Agitation -->
+<div *ngIf="currentStep === 5" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.agitation' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.agitatorOperation' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="agitatorOperationPassed === true" (click)="agitatorOperationPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="agitatorOperationPassed === false" (click)="agitatorOperationPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="agitatorSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 6: Tank -->
+<div *ngIf="currentStep === 6" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.tank' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.tankCondition' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="tankConditionPassed === true" (click)="tankConditionPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="tankConditionPassed === false" (click)="tankConditionPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.tankSealing' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="tankSealingPassed === true" (click)="tankSealingPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="tankSealingPassed === false" (click)="tankSealingPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.levelIndicator' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="levelIndicatorPassed === true" (click)="levelIndicatorPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="levelIndicatorPassed === false" (click)="levelIndicatorPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.flushingSystem' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="flushingSystemPassed === true" (click)="flushingSystemPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="flushingSystemPassed === false" (click)="flushingSystemPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="tankSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 7: Measuring Instruments -->
+<div *ngIf="currentStep === 7" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.measuring' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.manometer' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="manometerPassed === true" (click)="manometerPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="manometerPassed === false" (click)="manometerPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="measurement-row">
+    <div class="form-group form-group-sm">
+      <label>{{ 'inspectionProtocol.fields.manometerReading2Bar' | text }}</label>
+      <input type="number" [(ngModel)]="manometerReading2Bar" step="0.1" />
+    </div>
+    <div class="form-group form-group-sm">
+      <label>{{ 'inspectionProtocol.fields.manometerReading4Bar' | text }}</label>
+      <input type="number" [(ngModel)]="manometerReading4Bar" step="0.1" />
+    </div>
+    <div class="form-group form-group-sm">
+      <label>{{ 'inspectionProtocol.fields.manometerReading6Bar' | text }}</label>
+      <input type="number" [(ngModel)]="manometerReading6Bar" step="0.1" />
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.manometerDialSize' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="manometerDialSizePassed === true" (click)="manometerDialSizePassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="manometerDialSizePassed === false" (click)="manometerDialSizePassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="measuringSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 8: Piping -->
+<div *ngIf="currentStep === 8" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.piping' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.pipesCondition' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="pipesConditionPassed === true" (click)="pipesConditionPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="pipesConditionPassed === false" (click)="pipesConditionPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.connectionsSealing' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="connectionsSealingPassed === true" (click)="connectionsSealingPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="connectionsSealingPassed === false" (click)="connectionsSealingPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="pipingSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 9: Filtration -->
+<div *ngIf="currentStep === 9" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.filtration' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.suctionFilter' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="suctionFilterPassed === true" (click)="suctionFilterPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="suctionFilterPassed === false" (click)="suctionFilterPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.pressureFilter' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="pressureFilterPassed === true" (click)="pressureFilterPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="pressureFilterPassed === false" (click)="pressureFilterPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.nozzleFilters' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="nozzleFiltersPassed === true" (click)="nozzleFiltersPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="nozzleFiltersPassed === false" (click)="nozzleFiltersPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="filtrationSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 10: Boom -->
+<div *ngIf="currentStep === 10" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.boom' | text }}</h3>
+
+  <!-- Field sprayer checks -->
+  <div *ngIf="isFieldSprayer()">
+    <div class="check-item">
+      <label class="check-label">{{ 'inspectionProtocol.checks.fieldBoomCondition' | text }}</label>
+      <div class="check-buttons">
+        <button type="button" class="check-btn pass" [class.active]="fieldBoomConditionPassed === true" (click)="fieldBoomConditionPassed = true">✓</button>
+        <button type="button" class="check-btn fail" [class.active]="fieldBoomConditionPassed === false" (click)="fieldBoomConditionPassed = false">✗</button>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <label class="check-label">{{ 'inspectionProtocol.checks.boomStability' | text }}</label>
+      <div class="check-buttons">
+        <button type="button" class="check-btn pass" [class.active]="boomStabilityPassed === true" (click)="boomStabilityPassed = true">✓</button>
+        <button type="button" class="check-btn fail" [class.active]="boomStabilityPassed === false" (click)="boomStabilityPassed = false">✗</button>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <label class="check-label">{{ 'inspectionProtocol.checks.boomHeight' | text }}</label>
+      <div class="check-buttons">
+        <button type="button" class="check-btn pass" [class.active]="boomHeightPassed === true" (click)="boomHeightPassed = true">✓</button>
+        <button type="button" class="check-btn fail" [class.active]="boomHeightPassed === false" (click)="boomHeightPassed = false">✗</button>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <label class="check-label">{{ 'inspectionProtocol.checks.boomSymmetry' | text }}</label>
+      <div class="check-buttons">
+        <button type="button" class="check-btn pass" [class.active]="boomSymmetryPassed === true" (click)="boomSymmetryPassed = true">✓</button>
+        <button type="button" class="check-btn fail" [class.active]="boomSymmetryPassed === false" (click)="boomSymmetryPassed = false">✗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orchard sprayer checks -->
+  <div *ngIf="isOrchardSprayer()">
+    <div class="check-item">
+      <label class="check-label">{{ 'inspectionProtocol.checks.orchardSprayerCondition' | text }}</label>
+      <div class="check-buttons">
+        <button type="button" class="check-btn pass" [class.active]="orchardSprayerConditionPassed === true" (click)="orchardSprayerConditionPassed = true">✓</button>
+        <button type="button" class="check-btn fail" [class.active]="orchardSprayerConditionPassed === false" (click)="orchardSprayerConditionPassed = false">✗</button>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <label class="check-label">{{ 'inspectionProtocol.checks.airStreamDirection' | text }}</label>
+      <div class="check-buttons">
+        <button type="button" class="check-btn pass" [class.active]="airStreamDirectionPassed === true" (click)="airStreamDirectionPassed = true">✓</button>
+        <button type="button" class="check-btn fail" [class.active]="airStreamDirectionPassed === false" (click)="airStreamDirectionPassed = false">✗</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="boomSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 11: Nozzles -->
+<div *ngIf="currentStep === 11" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.nozzles' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.nozzleUniformity' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="nozzleUniformityPassed === true" (click)="nozzleUniformityPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="nozzleUniformityPassed === false" (click)="nozzleUniformityPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.nozzleFlowRate' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="nozzleFlowRatePassed === true" (click)="nozzleFlowRatePassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="nozzleFlowRatePassed === false" (click)="nozzleFlowRatePassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.nozzleCondition' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="nozzleConditionPassed === true" (click)="nozzleConditionPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="nozzleConditionPassed === false" (click)="nozzleConditionPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.nozzleMeasurements' | text }}</label>
+    <textarea rows="4" [(ngModel)]="nozzleMeasurements" [placeholder]="'inspectionProtocol.placeholders.nozzleMeasurements' | text"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="nozzlesSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 12: Distribution -->
+<div *ngIf="currentStep === 12" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.distribution' | text }}</h3>
+
+  <div class="check-item">
+    <label class="check-label">{{ 'inspectionProtocol.checks.transverseDistribution' | text }}</label>
+    <div class="check-buttons">
+      <button type="button" class="check-btn pass" [class.active]="transverseDistributionPassed === true" (click)="transverseDistributionPassed = true">✓</button>
+      <button type="button" class="check-btn fail" [class.active]="transverseDistributionPassed === false" (click)="transverseDistributionPassed = false">✗</button>
+    </div>
+  </div>
+
+  <div class="form-group form-group-sm">
+    <label>{{ 'inspectionProtocol.fields.coefficientOfVariation' | text }}</label>
+    <input type="number" [(ngModel)]="coefficientOfVariation" step="0.1" />
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.sectionNotes' | text }}</label>
+    <textarea rows="3" [(ngModel)]="distributionSectionNotes" [placeholder]="'inspectionProtocol.placeholders.notes' | text"></textarea>
+  </div>
+</div>
+
+<!-- STEP 13: Summary -->
+<div *ngIf="currentStep === 13" class="step-content">
+  <h3>{{ 'inspectionProtocol.headings.summary' | text }}</h3>
+
+  <button type="button" class="btn btn-secondary" (click)="calculateFinalResult()">
+    {{ 'inspectionProtocol.actions.calculateResult' | text }}
+  </button>
+
+  <div class="final-result" [class.pass]="finalResult === true" [class.fail]="finalResult === false" *ngIf="finalResult !== null">
+    <div class="result-label">{{ 'inspectionProtocol.fields.finalResult' | text }}</div>
+    <div class="result-value">
+      {{ finalResult ? ('inspectionProtocol.results.positive' | text) : ('inspectionProtocol.results.negative' | text) }}
+    </div>
+  </div>
+
+  <div class="form-row" *ngIf="finalResult === true">
+    <div class="form-group">
+      <label>{{ 'inspectionProtocol.fields.validUntil' | text }}</label>
+      <input type="date" [(ngModel)]="validUntil" />
+    </div>
+    <div class="form-group">
+      <label>{{ 'inspectionProtocol.fields.controlStickerNumber' | text }}</label>
+      <input type="text" [(ngModel)]="controlStickerNumber" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{ 'inspectionProtocol.fields.generalNotes' | text }}</label>
+    <textarea rows="4" [(ngModel)]="generalNotes" [placeholder]="'inspectionProtocol.placeholders.generalNotes' | text"></textarea>
+  </div>
+</div>
+
+<!-- Navigation buttons -->
+<div class="step-navigation">
+  <button class="btn btn-secondary btn-back" (click)="previousStep()" [disabled]="currentStep === 0">
+    <span [innerHTML]="getSafeHtml(iconBack)"></span>{{ 'inspectionProtocol.actions.back' | text }}
+  </button>
+  <div class="spacer"></div>
+  <button class="btn btn-secondary btn-next" (click)="nextStep()" [disabled]="currentStep === steps.length - 1">
+    <span [innerHTML]="getSafeHtml(iconNext)"></span>{{ 'inspectionProtocol.actions.next' | text }}
+  </button>
+  <button class="btn btn-success btn-save" (click)="submit()" [disabled]="saving || currentStep !== steps.length - 1">
+    <span [innerHTML]="getSafeHtml(iconSave)"></span>{{ 'inspectionProtocol.actions.save' | text }}
+  </button>
+  <button class="btn btn-ghost btn-cancel" (click)="close.emit()">
+    <span [innerHTML]="getSafeHtml(iconCancel)"></span>{{ 'inspectionProtocol.actions.cancel' | text }}
+  </button>
+</div>

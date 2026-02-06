@@ -4,12 +4,714 @@
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<app-generic-list
-  [endpoint]="endpoint"
-  [columns]="columns"
-  [filters]="filters"
-  [title]="title"
-  [emptyMessage]="emptyMessage"
-></app-generic-list>
+<h3 class="component-title">{{ 'inspections.title' | text }}</h3>
 
+<div class="inspections-container">
+  <!-- Toolbar -->
+  <app-entity-toolbar>
+    <ng-container left>
+      <button class="btn btn-success" (click)="onAddNew()" [disabled]="deleting">
+        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
+        <span class="btn-label">{{ 'general.add' | text }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="onEdit()"
+        [disabled]="!currentProtocol || deleting">
+        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
+        <span class="btn-label">{{ 'general.edit' | text }}</span>
+      </button>
+      <button
+        class="btn btn-danger"
+        (click)="onDelete()"
+        [disabled]="!currentProtocol || deleting">
+        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
+        <span class="btn-label">{{ 'general.delete' | text }}</span>
+      </button>
+    </ng-container>
+  </app-entity-toolbar>
+
+  <div class="inspections-layout">
+    <!-- LEFT: LIST -->
+    <div class="inspections-list-panel">
+      <h4 class="panel-title">{{ 'inspections.filterTitle' | text }}</h4>
+
+      <div class="filters-row">
+        <input
+          type="text"
+          class="search-input"
+          [placeholder]="'inspections.searchPlaceholder' | text"
+          [ngModel]="searchTerm"
+          (ngModelChange)="onSearchChange($event)" />
+
+        <app-filter-panel
+          [fields]="filterFields"
+          [values]="filterValues"
+          [clearButtonLabel]="'inspections.actions.clear' | text"
+          (valuesChange)="onFilterChange($event)"
+          (filterClear)="onFilterClear()"
+          (openChange)="onFilterPanelOpenChange($event)">
+        </app-filter-panel>
+      </div>
+
+      <div class="protocols-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.protocol-card'">
+        <div
+          class="protocol-card"
+          *ngFor="let protocol of protocols"
+          [class.active]="protocol.id === selectedProtocolId"
+          (click)="onSelectProtocol(protocol.id)">
+          <div class="card-main">
+            <div class="card-badges-row">
+              <span 
+                class="badge"
+                [class.badge-success]="protocol.finalResult === true"
+                [class.badge-danger]="protocol.finalResult === false"
+                [class.badge-secondary]="protocol.finalResult === null || protocol.finalResult === undefined">
+                {{ getResultText(protocol.finalResult) }}
+              </span>
+            </div>
+            <div class="card-title">{{ protocol.protocolNumber }}</div>
+            <div class="card-info-row">
+              {{ formatDate(protocol.inspectionDate) }}
+              <span *ngIf="protocol.inspectorName" class="vertical-separator"></span>
+              {{ protocol.inspectorName }}
+            </div>
+            <div class="card-info-row card-client" [class.no-client]="!protocol.clientName">
+              {{ protocol.clientName || '—' }}
+            </div>
+            <div class="card-info-row card-sprayer" *ngIf="protocol.cropSprayerName">
+              {{ protocol.cropSprayerName }}
+            </div>
+          </div>
+        </div>
+        <div *ngIf="protocols.length === 0" class="empty-state">
+          {{ 'inspections.empty' | text }}
+        </div>
+      </div>
+
+      <ng-template #loadingTpl>
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>{{ 'inspections.loading' | text }}</span>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- RIGHT: DETAIL - Reorganized User-Friendly View -->
+    <div class="inspections-detail-panel" *ngIf="currentProtocol as protocol">
+      <div class="detail-header">
+        <div>
+          <div class="detail-title">{{ protocol.protocolNumber }}</div>
+          <div class="detail-sub">
+            {{ formatDate(protocol.inspectionDate) }}
+            <span *ngIf="protocol.inspectorName" class="vertical-separator"></span>
+            {{ protocol.inspectorName }}
+          </div>
+        </div>
+        <div class="header-actions">
+          <button
+            class="btn btn-secondary btn-icon-only view-toggle"
+            [class.active]="viewMode === 'document'"
+            title="Widok dokumentu"
+            (click)="toggleViewMode()">
+            <span [innerHTML]="getSafeHtml(documentIcon)" style="color: inherit;"></span>
+          </button>
+          <button
+            class="btn btn-secondary btn-icon-only"
+            title="Historia zmian"
+            (click)="openHistory()">
+            <span [innerHTML]="getSafeHtml(historyIcon)" style="color: inherit;"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           DASHBOARD VIEW (Default)
+           ============================================================ -->
+      <div class="dashboard-view" *ngIf="viewMode === 'dashboard'">
+        
+        <!-- Summary Card - Always visible at top -->
+        <div class="summary-card" [class.positive]="protocol.finalResult === true" [class.negative]="protocol.finalResult === false">
+          <div class="summary-result">
+            <div class="result-badge" [class.pass]="protocol.finalResult === true" [class.fail]="protocol.finalResult === false">
+              {{ protocol.finalResult === true ? 'POZYTYWNY' : (protocol.finalResult === false ? 'NEGATYWNY' : 'OCZEKUJE') }}
+            </div>
+            <div class="result-validity" *ngIf="protocol.validUntil && protocol.finalResult === true">
+              Ważne do: <strong>{{ formatDate(protocol.validUntil) }}</strong>
+            </div>
+          </div>
+          <div class="summary-stats">
+            <div class="stat-item passed">
+              <span class="stat-value">{{ getPassedCount(protocol) }}</span>
+              <span class="stat-label">Zaliczone</span>
+            </div>
+            <div class="stat-item failed">
+              <span class="stat-value">{{ getFailedCount(protocol) }}</span>
+              <span class="stat-label">Niezaliczone</span>
+            </div>
+            <div class="stat-item pending">
+              <span class="stat-value">{{ getPendingCount(protocol) }}</span>
+              <span class="stat-label">Niesprawdzone</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Info Cards -->
+        <div class="info-cards">
+          <div class="info-card">
+            <div class="info-card-header">
+              <span class="info-card-icon" [innerHTML]="getSafeHtml(userIcon)"></span>
+              <span class="info-card-title">Właściciel</span>
+            </div>
+            <div class="info-card-content">
+              <div class="info-primary">{{ protocol.clientName || '—' }}</div>
+              <div class="info-secondary">{{ protocol.clientAddress || '' }}</div>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-card-header">
+              <span class="info-card-icon" [innerHTML]="getSafeHtml(sprayerIcon)"></span>
+              <span class="info-card-title">Opryskiwacz</span>
+            </div>
+            <div class="info-card-content">
+              <div class="info-primary">{{ protocol.cropSprayerName || '—' }}</div>
+              <div class="info-secondary">
+                {{ protocol.cropSprayerManufacturer ? protocol.cropSprayerManufacturer + ' • ' : '' }}
+                {{ protocol.cropSprayerType === '00' ? 'Polowy' : (protocol.cropSprayerType === '01' ? 'Sadowniczy' : '') }}
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-card" *ngIf="protocol.controlStickerNumber">
+            <div class="info-card-header">
+              <span class="info-card-icon" [innerHTML]="getSafeHtml(stickerIcon)"></span>
+              <span class="info-card-title">Naklejka kontrolna</span>
+            </div>
+            <div class="info-card-content">
+              <div class="info-primary">{{ protocol.controlStickerNumber }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion Sections for Inspection Results -->
+        <div class="inspection-sections">
+          <h4 class="sections-title">Wyniki badania</h4>
+          
+          <!-- Section 1: General -->
+          <div class="accordion-section" [class.expanded]="expandedSections['general']">
+            <div class="accordion-header" (click)="toggleSection('general')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'general')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'general') }}</span>
+              </div>
+              <span class="section-name">1. Stan ogólny opryskiwacza</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'general') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.generalConditionPassed === true" [class.fail]="protocol.generalConditionPassed === false">
+                <span class="check-name">Stan techniczny ogólny i czystość</span>
+                <span class="check-result">{{ getCheckResult(protocol.generalConditionPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.markingsReadablePassed === true" [class.fail]="protocol.markingsReadablePassed === false">
+                <span class="check-name">Czytelność oznaczeń i tabliczek</span>
+                <span class="check-result">{{ getCheckResult(protocol.markingsReadablePassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.equipmentCompletePassed === true" [class.fail]="protocol.equipmentCompletePassed === false">
+                <span class="check-name">Kompletność wyposażenia</span>
+                <span class="check-result">{{ getCheckResult(protocol.equipmentCompletePassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.generalSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.generalSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Pump -->
+          <div class="accordion-section" [class.expanded]="expandedSections['pump']">
+            <div class="accordion-header" (click)="toggleSection('pump')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'pump')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'pump') }}</span>
+              </div>
+              <span class="section-name">2. Pompa</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'pump') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.pumpOperationPassed === true" [class.fail]="protocol.pumpOperationPassed === false">
+                <span class="check-name">Praca pompy i napędu</span>
+                <span class="check-result">{{ getCheckResult(protocol.pumpOperationPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.pumpSealingPassed === true" [class.fail]="protocol.pumpSealingPassed === false">
+                <span class="check-name">Szczelność pompy</span>
+                <span class="check-result">{{ getCheckResult(protocol.pumpSealingPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.pressurePulsationPassed === true" [class.fail]="protocol.pressurePulsationPassed === false">
+                <span class="check-name">Pulsacje ciśnienia</span>
+                <span class="check-result">{{ getCheckResult(protocol.pressurePulsationPassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.pumpSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.pumpSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Agitation -->
+          <div class="accordion-section" [class.expanded]="expandedSections['agitation']">
+            <div class="accordion-header" (click)="toggleSection('agitation')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'agitation')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'agitation') }}</span>
+              </div>
+              <span class="section-name">3. Mieszalnik</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'agitation') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.agitatorOperationPassed === true" [class.fail]="protocol.agitatorOperationPassed === false">
+                <span class="check-name">Sprawność mieszalnika</span>
+                <span class="check-result">{{ getCheckResult(protocol.agitatorOperationPassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.agitatorSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.agitatorSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Tank -->
+          <div class="accordion-section" [class.expanded]="expandedSections['tank']">
+            <div class="accordion-header" (click)="toggleSection('tank')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'tank')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'tank') }}</span>
+              </div>
+              <span class="section-name">4. Zbiornik</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'tank') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.tankConditionPassed === true" [class.fail]="protocol.tankConditionPassed === false">
+                <span class="check-name">Stan zbiornika</span>
+                <span class="check-result">{{ getCheckResult(protocol.tankConditionPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.tankSealingPassed === true" [class.fail]="protocol.tankSealingPassed === false">
+                <span class="check-name">Szczelność zbiornika</span>
+                <span class="check-result">{{ getCheckResult(protocol.tankSealingPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.levelIndicatorPassed === true" [class.fail]="protocol.levelIndicatorPassed === false">
+                <span class="check-name">Wskaźnik poziomu cieczy</span>
+                <span class="check-result">{{ getCheckResult(protocol.levelIndicatorPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.flushingSystemPassed === true" [class.fail]="protocol.flushingSystemPassed === false">
+                <span class="check-name">Układ płukania</span>
+                <span class="check-result">{{ getCheckResult(protocol.flushingSystemPassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.tankSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.tankSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Measuring -->
+          <div class="accordion-section" [class.expanded]="expandedSections['measuring']">
+            <div class="accordion-header" (click)="toggleSection('measuring')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'measuring')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'measuring') }}</span>
+              </div>
+              <span class="section-name">5. Przyrządy pomiarowe</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'measuring') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.manometerPassed === true" [class.fail]="protocol.manometerPassed === false">
+                <span class="check-name">Stan i sprawność manometru</span>
+                <span class="check-result">{{ getCheckResult(protocol.manometerPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.manometerDialSizePassed === true" [class.fail]="protocol.manometerDialSizePassed === false">
+                <span class="check-name">Średnica tarczy manometru (min. 63 mm)</span>
+                <span class="check-result">{{ getCheckResult(protocol.manometerDialSizePassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.measuringSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.measuringSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 6: Piping -->
+          <div class="accordion-section" [class.expanded]="expandedSections['piping']">
+            <div class="accordion-header" (click)="toggleSection('piping')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'piping')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'piping') }}</span>
+              </div>
+              <span class="section-name">6. Przewody i węże</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'piping') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.pipesConditionPassed === true" [class.fail]="protocol.pipesConditionPassed === false">
+                <span class="check-name">Stan przewodów</span>
+                <span class="check-result">{{ getCheckResult(protocol.pipesConditionPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.connectionsSealingPassed === true" [class.fail]="protocol.connectionsSealingPassed === false">
+                <span class="check-name">Szczelność połączeń</span>
+                <span class="check-result">{{ getCheckResult(protocol.connectionsSealingPassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.pipingSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.pipingSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 7: Filtration -->
+          <div class="accordion-section" [class.expanded]="expandedSections['filtration']">
+            <div class="accordion-header" (click)="toggleSection('filtration')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'filtration')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'filtration') }}</span>
+              </div>
+              <span class="section-name">7. Filtracja</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'filtration') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.suctionFilterPassed === true" [class.fail]="protocol.suctionFilterPassed === false">
+                <span class="check-name">Filtr ssawny</span>
+                <span class="check-result">{{ getCheckResult(protocol.suctionFilterPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.pressureFilterPassed === true" [class.fail]="protocol.pressureFilterPassed === false">
+                <span class="check-name">Filtr tłoczny</span>
+                <span class="check-result">{{ getCheckResult(protocol.pressureFilterPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.nozzleFiltersPassed === true" [class.fail]="protocol.nozzleFiltersPassed === false">
+                <span class="check-name">Filtry rozpylaczy</span>
+                <span class="check-result">{{ getCheckResult(protocol.nozzleFiltersPassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.filtrationSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.filtrationSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 8: Boom -->
+          <div class="accordion-section" [class.expanded]="expandedSections['boom']">
+            <div class="accordion-header" (click)="toggleSection('boom')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'boom')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'boom') }}</span>
+              </div>
+              <span class="section-name">8. {{ protocol.cropSprayerType === '01' ? 'Opryskiwacz sadowniczy' : 'Belka polowa' }}</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'boom') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <ng-container *ngIf="protocol.cropSprayerType === '00'">
+                <div class="check-item" [class.pass]="protocol.fieldBoomConditionPassed === true" [class.fail]="protocol.fieldBoomConditionPassed === false">
+                  <span class="check-name">Stan belki polowej</span>
+                  <span class="check-result">{{ getCheckResult(protocol.fieldBoomConditionPassed) }}</span>
+                </div>
+                <div class="check-item" [class.pass]="protocol.boomStabilityPassed === true" [class.fail]="protocol.boomStabilityPassed === false">
+                  <span class="check-name">Stabilność belki</span>
+                  <span class="check-result">{{ getCheckResult(protocol.boomStabilityPassed) }}</span>
+                </div>
+                <div class="check-item" [class.pass]="protocol.boomHeightPassed === true" [class.fail]="protocol.boomHeightPassed === false">
+                  <span class="check-name">Regulacja wysokości</span>
+                  <span class="check-result">{{ getCheckResult(protocol.boomHeightPassed) }}</span>
+                </div>
+                <div class="check-item" [class.pass]="protocol.boomSymmetryPassed === true" [class.fail]="protocol.boomSymmetryPassed === false">
+                  <span class="check-name">Symetria belki</span>
+                  <span class="check-result">{{ getCheckResult(protocol.boomSymmetryPassed) }}</span>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="protocol.cropSprayerType === '01'">
+                <div class="check-item" [class.pass]="protocol.orchardSprayerConditionPassed === true" [class.fail]="protocol.orchardSprayerConditionPassed === false">
+                  <span class="check-name">Stan opryskiwacza sadowniczego</span>
+                  <span class="check-result">{{ getCheckResult(protocol.orchardSprayerConditionPassed) }}</span>
+                </div>
+                <div class="check-item" [class.pass]="protocol.airStreamDirectionPassed === true" [class.fail]="protocol.airStreamDirectionPassed === false">
+                  <span class="check-name">Kierunek strumienia powietrza</span>
+                  <span class="check-result">{{ getCheckResult(protocol.airStreamDirectionPassed) }}</span>
+                </div>
+              </ng-container>
+              <div class="section-notes" *ngIf="protocol.boomSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.boomSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 9: Nozzles -->
+          <div class="accordion-section" [class.expanded]="expandedSections['nozzles']">
+            <div class="accordion-header" (click)="toggleSection('nozzles')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'nozzles')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'nozzles') }}</span>
+              </div>
+              <span class="section-name">9. Rozpylacze</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'nozzles') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.nozzleUniformityPassed === true" [class.fail]="protocol.nozzleUniformityPassed === false">
+                <span class="check-name">Jednorodność typu rozpylaczy</span>
+                <span class="check-result">{{ getCheckResult(protocol.nozzleUniformityPassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.nozzleFlowRatePassed === true" [class.fail]="protocol.nozzleFlowRatePassed === false">
+                <span class="check-name">Wydajność rozpylaczy</span>
+                <span class="check-result">{{ getCheckResult(protocol.nozzleFlowRatePassed) }}</span>
+              </div>
+              <div class="check-item" [class.pass]="protocol.nozzleConditionPassed === true" [class.fail]="protocol.nozzleConditionPassed === false">
+                <span class="check-name">Stan rozpylaczy</span>
+                <span class="check-result">{{ getCheckResult(protocol.nozzleConditionPassed) }}</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.nozzlesSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.nozzlesSectionNotes }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 10: Distribution -->
+          <div class="accordion-section" [class.expanded]="expandedSections['distribution']">
+            <div class="accordion-header" (click)="toggleSection('distribution')">
+              <div class="section-status" [class]="getSectionStatus(protocol, 'distribution')">
+                <span class="status-icon">{{ getSectionStatusIcon(protocol, 'distribution') }}</span>
+              </div>
+              <span class="section-name">10. Rozkład poprzeczny cieczy</span>
+              <span class="section-summary">{{ getSectionSummary(protocol, 'distribution') }}</span>
+              <span class="accordion-chevron">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="check-item" [class.pass]="protocol.transverseDistributionPassed === true" [class.fail]="protocol.transverseDistributionPassed === false">
+                <span class="check-name">Równomierność rozkładu poprzecznego</span>
+                <span class="check-result">{{ getCheckResult(protocol.transverseDistributionPassed) }}</span>
+              </div>
+              <div class="cv-display" *ngIf="protocol.coefficientOfVariation">
+                <span class="cv-label">Współczynnik zmienności (CV):</span>
+                <span class="cv-value">{{ protocol.coefficientOfVariation }}%</span>
+              </div>
+              <div class="section-notes" *ngIf="protocol.distributionSectionNotes">
+                <span class="notes-label">Uwagi:</span> {{ protocol.distributionSectionNotes }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- General Notes -->
+        <div class="general-notes-card" *ngIf="protocol.generalNotes">
+          <div class="notes-header">Uwagi ogólne</div>
+          <div class="notes-content">{{ protocol.generalNotes }}</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           DOCUMENT VIEW (Toggle)
+           ============================================================ -->
+      <div class="protocol-document-wrapper" *ngIf="viewMode === 'document'">
+        <div class="protocol-document">
+          <!-- Document Title -->
+          <div class="doc-title">
+            <h1>PROTOKÓŁ BADANIA TECHNICZNEGO</h1>
+            <h2>OPRYSKIWACZA {{ protocol.cropSprayerType === '00' ? 'POLOWEGO' : (protocol.cropSprayerType === '01' ? 'SADOWNICZEGO' : 'POLOWEGO/SADOWNICZEGO') }}</h2>
+          </div>
+
+          <!-- Protocol Info Box -->
+          <table class="doc-info-box">
+            <tr>
+              <td><strong>Nr protokołu:</strong> {{ protocol.protocolNumber }}</td>
+              <td><strong>Data badania:</strong> {{ formatDate(protocol.inspectionDate) }}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><strong>Miejsce badania:</strong> {{ protocol.inspectionLocation || '—' }}</td>
+            </tr>
+            <tr>
+              <td><strong>Kontroler:</strong> {{ protocol.inspectorName || '—' }}</td>
+              <td><strong>Nr uprawnień:</strong> {{ protocol.inspectorLicenseNumber || '—' }}</td>
+            </tr>
+          </table>
+
+          <!-- Section A: Client Data -->
+          <div class="doc-section-header">A. DANE WŁAŚCICIELA / POSIADACZA</div>
+          <table class="doc-data-table">
+            <tr>
+              <td class="label-cell">Nazwa / Imię i nazwisko</td>
+              <td class="value-cell">{{ protocol.clientName || '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Adres</td>
+              <td class="value-cell">{{ protocol.clientAddress || '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">NIP / PESEL</td>
+              <td class="value-cell">{{ protocol.clientTaxId || '—' }}</td>
+            </tr>
+          </table>
+
+          <!-- Section B: Sprayer Data -->
+          <div class="doc-section-header">B. DANE OPRYSKIWACZA</div>
+          <table class="doc-data-table">
+            <tr>
+              <td class="label-cell">Typ</td>
+              <td class="value-cell">{{ protocol.cropSprayerType === '00' ? 'Polowy' : (protocol.cropSprayerType === '01' ? 'Sadowniczy' : '—') }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Rodzaj</td>
+              <td class="value-cell">{{ getSprayerKindText(protocol.cropSprayerKind) }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Nazwa / Model</td>
+              <td class="value-cell">{{ protocol.cropSprayerName || '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Producent</td>
+              <td class="value-cell">{{ protocol.cropSprayerManufacturer || '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Numer seryjny</td>
+              <td class="value-cell">{{ protocol.cropSprayerSerialNumber || '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Rok produkcji</td>
+              <td class="value-cell">{{ protocol.cropSprayerProductionYear || '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Pojemność zbiornika</td>
+              <td class="value-cell">{{ protocol.tankCapacity ? protocol.tankCapacity + ' l' : '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Szerokość robocza belki</td>
+              <td class="value-cell">{{ protocol.boomWidth ? protocol.boomWidth + ' m' : '—' }}</td>
+            </tr>
+            <tr>
+              <td class="label-cell">Liczba sekcji</td>
+              <td class="value-cell">{{ protocol.sectionCount || '—' }}</td>
+            </tr>
+          </table>
+
+          <!-- Section C: Inspection Results -->
+          <div class="doc-section-header">C. WYNIKI BADANIA</div>
+          
+          <table class="doc-results-table">
+            <thead>
+              <tr class="results-header">
+                <th class="col-num">Lp.</th>
+                <th class="col-item">Przedmiot badania</th>
+                <th class="col-result">Wynik</th>
+                <th class="col-notes">Uwagi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- All sections condensed for document view -->
+              <tr class="section-title-row"><td class="section-num">1</td><td class="section-title" colspan="3">STAN OGÓLNY OPRYSKIWACZA</td></tr>
+              <tr><td class="item-num">1.1</td><td class="item-name">Stan techniczny ogólny i czystość</td><td class="item-result" [class.pass]="protocol.generalConditionPassed === true" [class.fail]="protocol.generalConditionPassed === false">{{ getCheckResult(protocol.generalConditionPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">1.2</td><td class="item-name">Czytelność oznaczeń i tabliczek</td><td class="item-result" [class.pass]="protocol.markingsReadablePassed === true" [class.fail]="protocol.markingsReadablePassed === false">{{ getCheckResult(protocol.markingsReadablePassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">1.3</td><td class="item-name">Kompletność wyposażenia</td><td class="item-result" [class.pass]="protocol.equipmentCompletePassed === true" [class.fail]="protocol.equipmentCompletePassed === false">{{ getCheckResult(protocol.equipmentCompletePassed) }}</td><td class="item-notes">{{ protocol.generalSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">2</td><td class="section-title" colspan="3">POMPA</td></tr>
+              <tr><td class="item-num">2.1</td><td class="item-name">Praca pompy i napędu</td><td class="item-result" [class.pass]="protocol.pumpOperationPassed === true" [class.fail]="protocol.pumpOperationPassed === false">{{ getCheckResult(protocol.pumpOperationPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">2.2</td><td class="item-name">Szczelność pompy</td><td class="item-result" [class.pass]="protocol.pumpSealingPassed === true" [class.fail]="protocol.pumpSealingPassed === false">{{ getCheckResult(protocol.pumpSealingPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">2.3</td><td class="item-name">Pulsacje ciśnienia</td><td class="item-result" [class.pass]="protocol.pressurePulsationPassed === true" [class.fail]="protocol.pressurePulsationPassed === false">{{ getCheckResult(protocol.pressurePulsationPassed) }}</td><td class="item-notes">{{ protocol.pumpSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">3</td><td class="section-title" colspan="3">MIESZALNIK</td></tr>
+              <tr><td class="item-num">3.1</td><td class="item-name">Sprawność mieszalnika</td><td class="item-result" [class.pass]="protocol.agitatorOperationPassed === true" [class.fail]="protocol.agitatorOperationPassed === false">{{ getCheckResult(protocol.agitatorOperationPassed) }}</td><td class="item-notes">{{ protocol.agitatorSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">4</td><td class="section-title" colspan="3">ZBIORNIK</td></tr>
+              <tr><td class="item-num">4.1</td><td class="item-name">Stan zbiornika</td><td class="item-result" [class.pass]="protocol.tankConditionPassed === true" [class.fail]="protocol.tankConditionPassed === false">{{ getCheckResult(protocol.tankConditionPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">4.2</td><td class="item-name">Szczelność zbiornika</td><td class="item-result" [class.pass]="protocol.tankSealingPassed === true" [class.fail]="protocol.tankSealingPassed === false">{{ getCheckResult(protocol.tankSealingPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">4.3</td><td class="item-name">Wskaźnik poziomu cieczy</td><td class="item-result" [class.pass]="protocol.levelIndicatorPassed === true" [class.fail]="protocol.levelIndicatorPassed === false">{{ getCheckResult(protocol.levelIndicatorPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">4.4</td><td class="item-name">Układ płukania</td><td class="item-result" [class.pass]="protocol.flushingSystemPassed === true" [class.fail]="protocol.flushingSystemPassed === false">{{ getCheckResult(protocol.flushingSystemPassed) }}</td><td class="item-notes">{{ protocol.tankSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">5</td><td class="section-title" colspan="3">PRZYRZĄDY POMIAROWE (MANOMETR)</td></tr>
+              <tr><td class="item-num">5.1</td><td class="item-name">Stan i sprawność manometru</td><td class="item-result" [class.pass]="protocol.manometerPassed === true" [class.fail]="protocol.manometerPassed === false">{{ getCheckResult(protocol.manometerPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">5.2</td><td class="item-name">Średnica tarczy manometru (min. 63 mm)</td><td class="item-result" [class.pass]="protocol.manometerDialSizePassed === true" [class.fail]="protocol.manometerDialSizePassed === false">{{ getCheckResult(protocol.manometerDialSizePassed) }}</td><td class="item-notes">{{ protocol.measuringSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">6</td><td class="section-title" colspan="3">PRZEWODY I WĘŻE</td></tr>
+              <tr><td class="item-num">6.1</td><td class="item-name">Stan przewodów</td><td class="item-result" [class.pass]="protocol.pipesConditionPassed === true" [class.fail]="protocol.pipesConditionPassed === false">{{ getCheckResult(protocol.pipesConditionPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">6.2</td><td class="item-name">Szczelność połączeń</td><td class="item-result" [class.pass]="protocol.connectionsSealingPassed === true" [class.fail]="protocol.connectionsSealingPassed === false">{{ getCheckResult(protocol.connectionsSealingPassed) }}</td><td class="item-notes">{{ protocol.pipingSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">7</td><td class="section-title" colspan="3">FILTRACJA</td></tr>
+              <tr><td class="item-num">7.1</td><td class="item-name">Filtr ssawny</td><td class="item-result" [class.pass]="protocol.suctionFilterPassed === true" [class.fail]="protocol.suctionFilterPassed === false">{{ getCheckResult(protocol.suctionFilterPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">7.2</td><td class="item-name">Filtr tłoczny</td><td class="item-result" [class.pass]="protocol.pressureFilterPassed === true" [class.fail]="protocol.pressureFilterPassed === false">{{ getCheckResult(protocol.pressureFilterPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">7.3</td><td class="item-name">Filtry rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleFiltersPassed === true" [class.fail]="protocol.nozzleFiltersPassed === false">{{ getCheckResult(protocol.nozzleFiltersPassed) }}</td><td class="item-notes">{{ protocol.filtrationSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">8</td><td class="section-title" colspan="3">BELKA POLOWA / OPRYSKIWACZ SADOWNICZY</td></tr>
+              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.1</td><td class="item-name">Stan belki polowej</td><td class="item-result" [class.pass]="protocol.fieldBoomConditionPassed === true" [class.fail]="protocol.fieldBoomConditionPassed === false">{{ getCheckResult(protocol.fieldBoomConditionPassed) }}</td><td class="item-notes"></td></tr>
+              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.2</td><td class="item-name">Stabilność belki</td><td class="item-result" [class.pass]="protocol.boomStabilityPassed === true" [class.fail]="protocol.boomStabilityPassed === false">{{ getCheckResult(protocol.boomStabilityPassed) }}</td><td class="item-notes"></td></tr>
+              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.3</td><td class="item-name">Regulacja wysokości</td><td class="item-result" [class.pass]="protocol.boomHeightPassed === true" [class.fail]="protocol.boomHeightPassed === false">{{ getCheckResult(protocol.boomHeightPassed) }}</td><td class="item-notes"></td></tr>
+              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.4</td><td class="item-name">Symetria belki</td><td class="item-result" [class.pass]="protocol.boomSymmetryPassed === true" [class.fail]="protocol.boomSymmetryPassed === false">{{ getCheckResult(protocol.boomSymmetryPassed) }}</td><td class="item-notes">{{ protocol.boomSectionNotes }}</td></tr>
+              <tr *ngIf="protocol.cropSprayerType === '01'"><td class="item-num">8.1</td><td class="item-name">Stan opryskiwacza sadowniczego</td><td class="item-result" [class.pass]="protocol.orchardSprayerConditionPassed === true" [class.fail]="protocol.orchardSprayerConditionPassed === false">{{ getCheckResult(protocol.orchardSprayerConditionPassed) }}</td><td class="item-notes"></td></tr>
+              <tr *ngIf="protocol.cropSprayerType === '01'"><td class="item-num">8.2</td><td class="item-name">Kierunek strumienia powietrza</td><td class="item-result" [class.pass]="protocol.airStreamDirectionPassed === true" [class.fail]="protocol.airStreamDirectionPassed === false">{{ getCheckResult(protocol.airStreamDirectionPassed) }}</td><td class="item-notes">{{ protocol.boomSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">9</td><td class="section-title" colspan="3">ROZPYLACZE</td></tr>
+              <tr><td class="item-num">9.1</td><td class="item-name">Jednorodność typu rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleUniformityPassed === true" [class.fail]="protocol.nozzleUniformityPassed === false">{{ getCheckResult(protocol.nozzleUniformityPassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">9.2</td><td class="item-name">Wydajność rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleFlowRatePassed === true" [class.fail]="protocol.nozzleFlowRatePassed === false">{{ getCheckResult(protocol.nozzleFlowRatePassed) }}</td><td class="item-notes"></td></tr>
+              <tr><td class="item-num">9.3</td><td class="item-name">Stan rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleConditionPassed === true" [class.fail]="protocol.nozzleConditionPassed === false">{{ getCheckResult(protocol.nozzleConditionPassed) }}</td><td class="item-notes">{{ protocol.nozzlesSectionNotes }}</td></tr>
+
+              <tr class="section-title-row"><td class="section-num">10</td><td class="section-title" colspan="3">ROZKŁAD POPRZECZNY CIECZY</td></tr>
+              <tr><td class="item-num">10.1</td><td class="item-name">Równomierność rozkładu poprzecznego</td><td class="item-result" [class.pass]="protocol.transverseDistributionPassed === true" [class.fail]="protocol.transverseDistributionPassed === false">{{ getCheckResult(protocol.transverseDistributionPassed) }}</td><td class="item-notes"><span *ngIf="protocol.coefficientOfVariation">CV = {{ protocol.coefficientOfVariation }}%</span> {{ protocol.distributionSectionNotes }}</td></tr>
+            </tbody>
+          </table>
+
+          <!-- Section D: Final Result -->
+          <div class="doc-section-header">D. WYNIK KOŃCOWY BADANIA</div>
+          <table class="doc-final-result">
+            <tr>
+              <td class="final-result-cell" [class.positive]="protocol.finalResult === true" [class.negative]="protocol.finalResult === false">
+                {{ protocol.finalResult === true ? 'POZYTYWNY' : (protocol.finalResult === false ? 'NEGATYWNY' : 'BRAK WYNIKU') }}
+              </td>
+            </tr>
+          </table>
+
+          <!-- Additional Info -->
+          <table class="doc-data-table" *ngIf="protocol.validUntil || protocol.controlStickerNumber">
+            <tr *ngIf="protocol.validUntil">
+              <td class="label-cell">Badanie ważne do</td>
+              <td class="value-cell">{{ formatDate(protocol.validUntil) }}</td>
+            </tr>
+            <tr *ngIf="protocol.controlStickerNumber">
+              <td class="label-cell">Numer naklejki kontrolnej</td>
+              <td class="value-cell">{{ protocol.controlStickerNumber }}</td>
+            </tr>
+          </table>
+
+          <!-- General Notes -->
+          <div *ngIf="protocol.generalNotes" class="doc-notes">
+            <div class="doc-notes-label">Uwagi ogólne:</div>
+            <div class="doc-notes-content">{{ protocol.generalNotes }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state when no protocol selected -->
+    <div class="inspections-detail-panel empty-detail" *ngIf="!currentProtocol && !loadingDetail">
+      <div class="empty-state-message">
+        {{ 'inspections.emptyDetailMessage' | text }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- History Dialog -->
+<app-history-dialog
+  *ngIf="showHistoryDialog && currentProtocol"
+  [entityType]="'InspectionProtocol'"
+  [entityId]="currentProtocol.id"
+  (close)="showHistoryDialog = false">
+</app-history-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<div class="dialog-backdrop" *ngIf="deleteDialogVisible" (click)="onDeleteCancel()">
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>{{ 'inspections.deleteDialog.title' | text }}</h3>
+    </div>
+    <div class="dialog-body">
+      <p>{{ 'inspections.deleteDialog.message' | text }}</p>
+      <p class="delete-warning">
+        <strong>{{ currentProtocol?.protocolNumber }}</strong>
+      </p>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-secondary" (click)="onDeleteCancel()">
+        {{ 'general.cancel' | text }}
+      </button>
+      <button class="btn btn-danger" (click)="onDeleteConfirm()" [disabled]="deleting">
+        {{ deleting ? ('general.loading' | text) : ('general.delete' | text) }}
+      </button>
+    </div>
+  </div>
+</div>
 

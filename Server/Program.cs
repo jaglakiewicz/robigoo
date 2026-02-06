@@ -33,6 +33,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISecurityAuditService, SecurityAuditService>();
+builder.Services.AddScoped<IProtocolXmlService, ProtocolXmlService>();
 
 // Get JWT configuration from appsettings
 var jwtKey = builder.Configuration["Jwt:Key"] 
@@ -304,6 +305,81 @@ using (var scope = app.Services.CreateScope())
         ""FanType"" TEXT NULL,
         ""CreatedAt"" TEXT NOT NULL,
         ""UpdatedAt"" TEXT NULL
+    );");
+
+    // Create InspectionProtocols table for protocol data
+    db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""InspectionProtocols"" (
+        ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_InspectionProtocols"" PRIMARY KEY AUTOINCREMENT,
+        ""ProtocolNumber"" TEXT NOT NULL,
+        ""InspectionDate"" TEXT NOT NULL,
+        ""InspectionLocation"" TEXT NULL,
+        ""InspectorName"" TEXT NOT NULL,
+        ""InspectorLicenseNumber"" TEXT NULL,
+        ""ClientId"" TEXT NULL,
+        ""ClientName"" TEXT NULL,
+        ""ClientAddress"" TEXT NULL,
+        ""ClientTaxId"" TEXT NULL,
+        ""CropSprayerSerialNumber"" TEXT NULL,
+        ""CropSprayerName"" TEXT NULL,
+        ""CropSprayerType"" TEXT NULL,
+        ""CropSprayerKind"" TEXT NULL,
+        ""CropSprayerManufacturer"" TEXT NULL,
+        ""CropSprayerProductionYear"" TEXT NULL,
+        ""TankCapacity"" TEXT NULL,
+        ""BoomWidth"" TEXT NULL,
+        ""SectionCount"" INTEGER NULL,
+        ""GeneralConditionPassed"" INTEGER NULL,
+        ""MarkingsReadablePassed"" INTEGER NULL,
+        ""EquipmentCompletePassed"" INTEGER NULL,
+        ""GeneralSectionNotes"" TEXT NULL,
+        ""PumpOperationPassed"" INTEGER NULL,
+        ""PumpSealingPassed"" INTEGER NULL,
+        ""PressurePulsationPassed"" INTEGER NULL,
+        ""PumpSectionNotes"" TEXT NULL,
+        ""AgitatorOperationPassed"" INTEGER NULL,
+        ""AgitatorSectionNotes"" TEXT NULL,
+        ""TankConditionPassed"" INTEGER NULL,
+        ""TankSealingPassed"" INTEGER NULL,
+        ""LevelIndicatorPassed"" INTEGER NULL,
+        ""FlushingSystemPassed"" INTEGER NULL,
+        ""TankSectionNotes"" TEXT NULL,
+        ""ManometerPassed"" INTEGER NULL,
+        ""ManometerReading2Bar"" TEXT NULL,
+        ""ManometerReading4Bar"" TEXT NULL,
+        ""ManometerReading6Bar"" TEXT NULL,
+        ""ManometerDialSizePassed"" INTEGER NULL,
+        ""MeasuringSectionNotes"" TEXT NULL,
+        ""PipesConditionPassed"" INTEGER NULL,
+        ""ConnectionsSealingPassed"" INTEGER NULL,
+        ""PipingSectionNotes"" TEXT NULL,
+        ""SuctionFilterPassed"" INTEGER NULL,
+        ""PressureFilterPassed"" INTEGER NULL,
+        ""NozzleFiltersPassed"" INTEGER NULL,
+        ""FiltrationSectionNotes"" TEXT NULL,
+        ""FieldBoomConditionPassed"" INTEGER NULL,
+        ""BoomStabilityPassed"" INTEGER NULL,
+        ""BoomHeightPassed"" INTEGER NULL,
+        ""BoomSymmetryPassed"" INTEGER NULL,
+        ""OrchardSprayerConditionPassed"" INTEGER NULL,
+        ""AirStreamDirectionPassed"" INTEGER NULL,
+        ""BoomSectionNotes"" TEXT NULL,
+        ""NozzleUniformityPassed"" INTEGER NULL,
+        ""NozzleFlowRatePassed"" INTEGER NULL,
+        ""NozzleConditionPassed"" INTEGER NULL,
+        ""NozzleMeasurements"" TEXT NULL,
+        ""NozzlesSectionNotes"" TEXT NULL,
+        ""TransverseDistributionPassed"" INTEGER NULL,
+        ""CoefficientOfVariation"" TEXT NULL,
+        ""DistributionSectionNotes"" TEXT NULL,
+        ""FinalResult"" INTEGER NULL,
+        ""ValidUntil"" TEXT NULL,
+        ""ControlStickerNumber"" TEXT NULL,
+        ""GeneralNotes"" TEXT NULL,
+        ""CreatedAt"" TEXT NOT NULL,
+        ""UpdatedAt"" TEXT NULL,
+        ""ProtocolXml"" TEXT NULL,
+        ""XslTemplateVersion"" TEXT NULL,
+        ""XmlGeneratedAt"" TEXT NULL
     );");
 
     // Seed master admin if not exists

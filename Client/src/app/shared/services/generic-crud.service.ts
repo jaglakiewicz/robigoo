@@ -19,7 +19,7 @@ export interface PaginatedResult<T> {
   providedIn: 'root'
 })
 export class GenericCrudService<T extends { id?: number | string }> {
-  constructor(private http: HttpClient) { }
+  constructor(protected http: HttpClient) { }
 
   protected baseUrl = '/api';
 

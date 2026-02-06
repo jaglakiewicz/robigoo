@@ -5,132 +5,1131 @@
 -->
 
 <h3 class="component-title">{{ 'newInspection.title' | text }}</h3>
-<div *ngIf="messageKey" class="message">{{ messageKey | text }}</div>
 
-<div class="step-indicator">
-  <div *ngFor="let s of sections; let i = index" class="step" [class.active]="i === currentStep" [class.completed]="i < currentStep" (click)="goToStep(i)" style="cursor: pointer;">
-    <span class="step-number">{{ i + 1 }}</span>
-    <span class="step-label">{{ s.titleKey | text }}</span>
-  </div>
-</div>
-
-<div *ngIf="currentStep === 0" class="step-content">
-  <h3>{{ 'newInspection.headings.vehicle' | text }}</h3>
-  <div class="form-group">
-    <label>{{ 'newInspection.fields.vehiclePlate' | text }}</label>
-    <input [(ngModel)]="vehiclePlate" [placeholder]="'newInspection.placeholders.vehiclePlate' | text" />
-  </div>
-  <div class="form-group">
-    <label>{{ 'newInspection.fields.inspectorName' | text }}</label>
-    <input [(ngModel)]="inspectorName" [placeholder]="'newInspection.placeholders.inspectorName' | text" />
-  </div>
-  <div class="form-group">
-    <label>{{ 'newInspection.fields.inspectionDate' | text }}</label>
-    <input type="date" [(ngModel)]="inspectionDate" />
-  </div>
-  <div class="form-group">
-    <label>{{ 'newInspection.fields.notes' | text }}</label>
-    <textarea rows="3" [(ngModel)]="notes" [placeholder]="'newInspection.placeholders.notes' | text"></textarea>
-  </div>
-</div>
-
-<div *ngIf="currentStep === 1" class="step-content">
-  <h3>{{ 'newInspection.headings.suspension' | text }}</h3>
-  <div *ngFor="let it of suspensionItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="suspensionItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
-    <label>
-      <input type="checkbox" [(ngModel)]="suspensionItems[i].passed" />
-      {{ 'newInspection.labels.pass' | text }}
-    </label>
-    <button
-      class="btn-icon"
-      type="button"
-      (click)="removeItem(suspensionItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | text"
-      [attr.title]="'newInspection.actions.removeItem' | text"
-    >
-      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+<!-- TOOLBAR AT TOP - Always visible -->
+<app-entity-toolbar>
+  <ng-container left>
+    <button class="btn btn-info" (click)="openPdfPreview()" [disabled]="generatingPdf">
+      <span class="btn-icon" [innerHTML]="getSafeHtml(iconEye)"></span>
+      <span class="btn-label">{{ 'inspectionProtocol.pdfPreview.generate' | text }}</span>
     </button>
-  </div>
-  <button class="btn btn-primary" (click)="addItem(suspensionItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
-</div>
+  </ng-container>
 
-<div *ngIf="currentStep === 2" class="step-content">
-  <h3>{{ 'newInspection.headings.alignment' | text }}</h3>
-  <div *ngFor="let it of alignmentItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="alignmentItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
-    <label>
-      <input type="checkbox" [(ngModel)]="alignmentItems[i].passed" />
-      {{ 'newInspection.labels.pass' | text }}
-    </label>
-    <button
-      class="btn-icon"
-      type="button"
-      (click)="removeItem(alignmentItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | text"
-      [attr.title]="'newInspection.actions.removeItem' | text"
-    >
-      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+  <ng-container right>
+    <button class="btn btn-secondary" (click)="cancelInspection()">
+      <span class="btn-icon" [innerHTML]="getSafeHtml(iconCancel)"></span>
+      <span class="btn-label">{{ 'general.cancel' | text }}</span>
     </button>
-  </div>
-  <button class="btn btn-primary" (click)="addItem(alignmentItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
-</div>
-
-<div *ngIf="currentStep === 3" class="step-content">
-  <h3>{{ 'newInspection.headings.lights' | text }}</h3>
-  <div *ngFor="let it of lightsItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="lightsItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
-    <label>
-      <input type="checkbox" [(ngModel)]="lightsItems[i].passed" />
-      {{ 'newInspection.labels.pass' | text }}
-    </label>
-    <button
-      class="btn-icon"
-      type="button"
-      (click)="removeItem(lightsItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | text"
-      [attr.title]="'newInspection.actions.removeItem' | text"
-    >
-      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+    <button class="btn btn-success" (click)="submit()" [disabled]="saving || !canSubmit()">
+      <span class="btn-icon" [innerHTML]="getSafeHtml(iconSave)"></span>
+      <span class="btn-label">{{ saving ? 'Zapisywanie...' : ('general.save' | text) }}</span>
     </button>
+  </ng-container>
+</app-entity-toolbar>
+
+<div *ngIf="messageKey" class="message" [class.success]="messageType === 'success'" [class.error]="messageType === 'error'">{{ messageKey | text }}</div>
+
+<!-- MAIN STEP INDICATOR (2 steps: General Data + Protocol) -->
+<app-step-indicator
+  [steps]="steps"
+  [currentStepId]="currentStep"
+  [clickable]="true"
+  (stepClick)="goToStep($event)">
+</app-step-indicator>
+
+<div class="inspection-content">
+  <!-- ==================== STEP 0: GENERAL DATA ==================== -->
+  <div *ngIf="currentStep === 0" class="step-content" (click)="onStepContentClick($event)">
+    
+    <!-- Section A: Client Selection -->
+    <div class="data-section">
+      <div class="section-header">
+        <h4>A. Dane klienta</h4>
+      </div>
+      <div class="section-body">
+        <div class="form-group">
+          <label>{{ 'clients.title' | text }}</label>
+          <div class="client-search-container" (click)="$event.stopPropagation()">
+            <input 
+              type="text" 
+              [(ngModel)]="clientSearchText" 
+              (input)="onClientSearchChange(clientSearchText)"
+              (focus)="isClientDropdownOpen = true"
+              placeholder="Wpisz imię, nazwisko, nazwę firmy, NIP lub PESEL..."
+              class="search-input"
+              [disabled]="isAddingNewClient"
+            />
+            <button *ngIf="selectedClientId && !isAddingNewClient" class="btn-clear" (click)="clearClientSelection()" title="Wyczyść wybór">
+              <span [innerHTML]="getSafeHtml(iconCancel)"></span>
+            </button>
+            
+            <div *ngIf="isClientDropdownOpen && !isAddingNewClient && filteredClients.length > 0" class="dropdown-list">
+              <div 
+                *ngFor="let client of filteredClients" 
+                class="dropdown-item" 
+                [class.selected]="client.id === selectedClientId"
+                (click)="selectClient(client)"
+              >
+                <div class="dropdown-item-main">
+                  <strong>{{ client.displayName }}</strong>
+                  <span *ngIf="client.clientType === 'person' && client.pesel" class="client-id">PESEL: {{ client.pesel }}</span>
+                  <span *ngIf="client.clientType === 'company' && client.nip" class="client-id">NIP: {{ client.nip }}</span>
+                </div>
+                <span *ngIf="client.city" class="client-city">{{ client.street ? client.street + ', ' : '' }}{{ client.city }}</span>
+              </div>
+            </div>
+            
+            <div *ngIf="isClientDropdownOpen && !isAddingNewClient && filteredClients.length === 0 && clientSearchText.length > 0" class="dropdown-list">
+              <div class="dropdown-item no-results">
+                Nie znaleziono klienta "{{ clientSearchText }}"
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="isLoadingClients" class="loading-indicator">Ładowanie klientów...</div>
+        </div>
+
+        <div class="form-actions-inline">
+          <button class="btn btn-small btn-secondary" (click)="toggleAddNewClient()">
+            <span [innerHTML]="getSafeHtml(iconAdd)"></span>
+            {{ isAddingNewClient ? 'Wybierz istniejącego' : 'Nowy klient' }}
+          </button>
+        </div>
+
+        <!-- Selected client summary -->
+        <div *ngIf="selectedClient && !isAddingNewClient" class="selected-summary compact">
+          <div class="summary-card">
+            <div class="summary-row">
+              <span class="label">Nazwa:</span>
+              <span class="value">{{ selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName }}</span>
+            </div>
+            <div class="summary-row" *ngIf="selectedClient.clientType === 'person' && selectedClient.pesel">
+              <span class="label">PESEL:</span>
+              <span class="value">{{ selectedClient.pesel }}</span>
+            </div>
+            <div class="summary-row" *ngIf="selectedClient.clientType === 'company' && selectedClient.nip">
+              <span class="label">NIP:</span>
+              <span class="value">{{ selectedClient.nip }}</span>
+            </div>
+            <div class="summary-row" *ngIf="selectedClient.city">
+              <span class="label">Adres:</span>
+              <span class="value">{{ selectedClient.street }} {{ selectedClient.buildingNumber }}, {{ selectedClient.zipCode }} {{ selectedClient.city }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- New client form -->
+        <div *ngIf="isAddingNewClient" class="new-client-form compact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'clients.fields.clientType' | text }}</label>
+              <select [(ngModel)]="newClient.clientType" (change)="onNewClientTypeChange(newClient.clientType)">
+                <option value="person">Osoba fizyczna</option>
+                <option value="company">Firma</option>
+              </select>
+            </div>
+          </div>
+          <div *ngIf="newClient.clientType === 'person'" class="form-row">
+            <div class="form-group">
+              <label>{{ 'clients.fields.firstName' | text }}</label>
+              <input [(ngModel)]="newClient.firstName" placeholder="Imię" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'clients.fields.lastName' | text }}</label>
+              <input [(ngModel)]="newClient.lastName" placeholder="Nazwisko" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'clients.fields.pesel' | text }}</label>
+              <input [(ngModel)]="newClient.pesel" placeholder="PESEL" />
+            </div>
+          </div>
+          <div *ngIf="newClient.clientType === 'company'" class="form-row">
+            <div class="form-group">
+              <label>{{ 'clients.fields.companyName' | text }}</label>
+              <input [(ngModel)]="newClient.companyName" placeholder="Nazwa firmy" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'clients.fields.nip' | text }}</label>
+              <input [(ngModel)]="newClient.nip" placeholder="NIP" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'clients.fields.regon' | text }}</label>
+              <input [(ngModel)]="newClient.regon" placeholder="REGON" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'clients.fields.city' | text }}</label>
+              <input [(ngModel)]="newClient.city" placeholder="Miasto" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'clients.fields.street' | text }}</label>
+              <input [(ngModel)]="newClient.street" placeholder="Ulica" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'clients.fields.buildingNumber' | text }}</label>
+              <input [(ngModel)]="newClient.buildingNumber" placeholder="Nr budynku" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'clients.fields.zipCode' | text }}</label>
+              <input [(ngModel)]="newClient.zipCode" placeholder="Kod pocztowy" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section B: Sprayer Selection -->
+    <div class="data-section">
+      <div class="section-header">
+        <h4>B. Opryskiwacz</h4>
+      </div>
+      <div class="section-body">
+        <div *ngIf="!selectedClientId && !isAddingNewClient" class="info-message">
+          <p>Wybierz klienta powyżej, aby zobaczyć przypisane opryskiwacze.</p>
+        </div>
+
+        <div *ngIf="selectedClientId || isAddingNewClient">
+          <div *ngIf="isLoadingSprayers" class="loading-indicator">Ładowanie opryskiwaczy...</div>
+          
+          <div *ngIf="!isLoadingSprayers && clientSprayers.length === 0 && !isAddingNewSprayer" class="info-message">
+            <p>Brak opryskiwaczy dla tego klienta. Dodaj nowy poniżej.</p>
+          </div>
+
+          <div *ngIf="clientSprayers.length > 0 && !isAddingNewSprayer" class="sprayer-list horizontal">
+            <div 
+              *ngFor="let sprayer of clientSprayers" 
+              class="sprayer-card small" 
+              [class.selected]="sprayer.serialNumber === selectedSprayerSerialNumber"
+              (click)="selectSprayer(sprayer)"
+            >
+              <div class="sprayer-header">
+                <strong>{{ sprayer.sprayerName || sprayer.serialNumber }}</strong>
+              </div>
+              <div class="sprayer-details">
+                <span class="sprayer-serial">{{ sprayer.serialNumber }}</span>
+                <span *ngIf="sprayer.manufacturer">{{ sprayer.manufacturer }}</span>
+                <span *ngIf="sprayer.productionYear">{{ sprayer.productionYear }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions-inline">
+            <button class="btn btn-small btn-secondary" (click)="toggleAddNewSprayer()">
+              <span [innerHTML]="getSafeHtml(iconAdd)"></span>
+              {{ isAddingNewSprayer ? 'Wybierz istniejący' : 'Nowy opryskiwacz' }}
+            </button>
+          </div>
+
+          <!-- Selected sprayer summary -->
+          <div *ngIf="selectedSprayer && !isAddingNewSprayer" class="selected-summary compact">
+            <div class="summary-card">
+              <div class="summary-row">
+                <span class="label">Nazwa:</span>
+                <span class="value">{{ selectedSprayer.sprayerName || '—' }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="label">Nr seryjny:</span>
+                <span class="value">{{ selectedSprayer.serialNumber }}</span>
+              </div>
+              <div class="summary-row" *ngIf="selectedSprayer.manufacturer">
+                <span class="label">Producent:</span>
+                <span class="value">{{ selectedSprayer.manufacturer }}</span>
+              </div>
+              <div class="summary-row" *ngIf="selectedSprayer.tankCapacity">
+                <span class="label">Zbiornik:</span>
+                <span class="value">{{ selectedSprayer.tankCapacity }} l</span>
+              </div>
+              <div class="summary-row" *ngIf="selectedSprayer.boomWidth">
+                <span class="label">Belka:</span>
+                <span class="value">{{ selectedSprayer.boomWidth }} m</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- New sprayer form (simplified) -->
+          <div *ngIf="isAddingNewSprayer" class="new-sprayer-form compact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Numer seryjny *</label>
+                <input [(ngModel)]="newSprayer.serialNumber" placeholder="Numer seryjny" />
+              </div>
+              <div class="form-group">
+                <label>Nazwa *</label>
+                <input [(ngModel)]="newSprayer.sprayerName" placeholder="Nazwa opryskiwacza" />
+              </div>
+              <div class="form-group">
+                <label>Producent *</label>
+                <input [(ngModel)]="newSprayer.manufacturer" placeholder="Producent" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Typ</label>
+                <select [(ngModel)]="newSprayer.type">
+                  <option value="00">Polowy</option>
+                  <option value="01">Sadowniczy</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Rodzaj</label>
+                <select [(ngModel)]="newSprayer.kind">
+                  <option value="00">Zawieszany</option>
+                  <option value="01">Przyczepiany</option>
+                  <option value="02">Samobieżny</option>
+                  <option value="03">Inny</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Rok produkcji</label>
+                <input [(ngModel)]="newSprayer.productionYear" placeholder="Rok" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Pojemność zbiornika (l)</label>
+                <input type="number" [(ngModel)]="newSprayer.tankCapacity" placeholder="Pojemność" />
+              </div>
+              <div class="form-group">
+                <label>Szerokość belki (m)</label>
+                <input type="number" [(ngModel)]="newSprayer.boomWidth" placeholder="Szerokość" step="0.1" />
+              </div>
+              <div class="form-group">
+                <label>Liczba sekcji</label>
+                <input type="number" [(ngModel)]="newSprayer.sectionCount" placeholder="Sekcje" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section C: Inspection Metadata -->
+    <div class="data-section">
+      <div class="section-header">
+        <h4>C. Dane badania</h4>
+      </div>
+      <div class="section-body">
+        <div class="form-row metadata-row">
+          <div class="form-group">
+            <label>{{ 'newInspection.fields.inspectionDate' | text }}</label>
+            <input type="date" [(ngModel)]="inspectionDate" />
+          </div>
+          <div class="form-group">
+            <label>Miejsce badania</label>
+            <input [(ngModel)]="inspectionLocation" placeholder="np. Warszawa, ul. Testowa 1" />
+          </div>
+          <div class="form-group">
+            <label>{{ 'newInspection.fields.inspectorName' | text }}</label>
+            <input [(ngModel)]="inspectorName" [placeholder]="'newInspection.placeholders.inspectorName' | text" />
+          </div>
+          <div class="form-group">
+            <label>Nr uprawnień diagnosty</label>
+            <input [(ngModel)]="inspectorLicenseNumber" placeholder="np. DI-12345" />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <button class="btn btn-primary" (click)="addItem(lightsItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
+
+<!-- ==================== STEP 1: PROTOCOL ==================== -->
+  <div *ngIf="currentStep === 1" class="step-content protocol-step">
+    
+    <!-- Protocol Header with client/sprayer info -->
+    <div class="protocol-header">
+      <div class="protocol-info">
+        <span *ngIf="selectedClient" class="badge badge-client">
+          {{ selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName }}
+        </span>
+        <span *ngIf="selectedSprayer" class="badge badge-sprayer">
+          {{ selectedSprayer.sprayerName || selectedSprayer.serialNumber }}
+        </span>
+        <span class="badge badge-date">{{ inspectionDate }}</span>
+      </div>
+    </div>
+
+    <!-- Nested Step Indicator for Protocol Sections -->
+    <app-step-indicator
+      [steps]="protocolSections"
+      [currentStepId]="currentProtocolSection"
+      [clickable]="true"
+      (stepClick)="goToProtocolSection($event)">
+    </app-step-indicator>
+
+    <!-- Protocol Section 0: General Condition -->
+    <div *ngIf="currentProtocolSection === 0" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Stan ogólny i czystość opryskiwacza</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="generalConditionPassed === true" (click)="generalConditionPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="generalConditionPassed === false" (click)="generalConditionPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Czytelność oznaczeń i tabliczek</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="markingsReadablePassed === true" (click)="markingsReadablePassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="markingsReadablePassed === false" (click)="markingsReadablePassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Kompletność wyposażenia</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="equipmentCompletePassed === true" (click)="equipmentCompletePassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="equipmentCompletePassed === false" (click)="equipmentCompletePassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="generalSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 1: Pump -->
+    <div *ngIf="currentProtocolSection === 1" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Praca pompy i napędu</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="pumpOperationPassed === true" (click)="pumpOperationPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="pumpOperationPassed === false" (click)="pumpOperationPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Szczelność pompy</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="pumpSealingPassed === true" (click)="pumpSealingPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="pumpSealingPassed === false" (click)="pumpSealingPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Pulsacje ciśnienia</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="pressurePulsationPassed === true" (click)="pressurePulsationPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="pressurePulsationPassed === false" (click)="pressurePulsationPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="pumpSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 2: Agitation -->
+    <div *ngIf="currentProtocolSection === 2" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Działanie mieszadła</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="agitatorOperationPassed === true" (click)="agitatorOperationPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="agitatorOperationPassed === false" (click)="agitatorOperationPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="agitatorSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 3: Tank -->
+    <div *ngIf="currentProtocolSection === 3" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Stan zbiornika</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="tankConditionPassed === true" (click)="tankConditionPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="tankConditionPassed === false" (click)="tankConditionPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Szczelność zbiornika</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="tankSealingPassed === true" (click)="tankSealingPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="tankSealingPassed === false" (click)="tankSealingPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Wskaźnik poziomu cieczy</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="levelIndicatorPassed === true" (click)="levelIndicatorPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="levelIndicatorPassed === false" (click)="levelIndicatorPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Układ płukania</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="flushingSystemPassed === true" (click)="flushingSystemPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="flushingSystemPassed === false" (click)="flushingSystemPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="tankSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 4: Measuring -->
+    <div *ngIf="currentProtocolSection === 4" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Stan i czytelność manometru</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="manometerPassed === true" (click)="manometerPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="manometerPassed === false" (click)="manometerPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Średnica tarczy (min 63mm)</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="manometerDialSizePassed === true" (click)="manometerDialSizePassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="manometerDialSizePassed === false" (click)="manometerDialSizePassed = false">✗</button>
+        </div>
+      </div>
+      <div class="measurements-row">
+        <label>Odczyty manometru:</label>
+        <div class="measurement-inputs">
+          <div class="measurement-input">
+            <span>2 bar:</span>
+            <input type="number" [(ngModel)]="manometerReading2Bar" placeholder="0.0" step="0.1" />
+          </div>
+          <div class="measurement-input">
+            <span>4 bar:</span>
+            <input type="number" [(ngModel)]="manometerReading4Bar" placeholder="0.0" step="0.1" />
+          </div>
+          <div class="measurement-input">
+            <span>6 bar:</span>
+            <input type="number" [(ngModel)]="manometerReading6Bar" placeholder="0.0" step="0.1" />
+          </div>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="measuringSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 5: Piping -->
+    <div *ngIf="currentProtocolSection === 5" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Stan przewodów i węży</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="pipesConditionPassed === true" (click)="pipesConditionPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="pipesConditionPassed === false" (click)="pipesConditionPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Szczelność połączeń</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="connectionsSealingPassed === true" (click)="connectionsSealingPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="connectionsSealingPassed === false" (click)="connectionsSealingPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="pipingSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 6: Filtration -->
+    <div *ngIf="currentProtocolSection === 6" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Filtr ssawny</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="suctionFilterPassed === true" (click)="suctionFilterPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="suctionFilterPassed === false" (click)="suctionFilterPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Filtr ciśnieniowy</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="pressureFilterPassed === true" (click)="pressureFilterPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="pressureFilterPassed === false" (click)="pressureFilterPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Filtry rozpylaczy</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="nozzleFiltersPassed === true" (click)="nozzleFiltersPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="nozzleFiltersPassed === false" (click)="nozzleFiltersPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="filtrationSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 7: Boom -->
+    <div *ngIf="currentProtocolSection === 7" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Stan belki polowej</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="fieldBoomConditionPassed === true" (click)="fieldBoomConditionPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="fieldBoomConditionPassed === false" (click)="fieldBoomConditionPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Stabilność belki</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="boomStabilityPassed === true" (click)="boomStabilityPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="boomStabilityPassed === false" (click)="boomStabilityPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Wysokość belki</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="boomHeightPassed === true" (click)="boomHeightPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="boomHeightPassed === false" (click)="boomHeightPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Symetria belki</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="boomSymmetryPassed === true" (click)="boomSymmetryPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="boomSymmetryPassed === false" (click)="boomSymmetryPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="boomSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 8: Nozzles -->
+    <div *ngIf="currentProtocolSection === 8" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Jednolitość rozpylaczy</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="nozzleUniformityPassed === true" (click)="nozzleUniformityPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="nozzleUniformityPassed === false" (click)="nozzleUniformityPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Wydatek rozpylaczy</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="nozzleFlowRatePassed === true" (click)="nozzleFlowRatePassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="nozzleFlowRatePassed === false" (click)="nozzleFlowRatePassed = false">✗</button>
+        </div>
+      </div>
+      <div class="check-row">
+        <span class="check-label">Stan rozpylaczy</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="nozzleConditionPassed === true" (click)="nozzleConditionPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="nozzleConditionPassed === false" (click)="nozzleConditionPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Pomiary rozpylaczy:</label>
+        <textarea [(ngModel)]="nozzleMeasurements" rows="3" placeholder="Wprowadź pomiary wydatku rozpylaczy..."></textarea>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="nozzlesSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 9: Distribution -->
+    <div *ngIf="currentProtocolSection === 9" class="protocol-section-content">
+      <div class="check-row">
+        <span class="check-label">Rozkład poprzeczny</span>
+        <div class="check-buttons">
+          <button class="btn-check" [class.active]="transverseDistributionPassed === true" (click)="transverseDistributionPassed = true">✓</button>
+          <button class="btn-check fail" [class.active]="transverseDistributionPassed === false" (click)="transverseDistributionPassed = false">✗</button>
+        </div>
+      </div>
+      <div class="measurements-row">
+        <label>Współczynnik zmienności (CV):</label>
+        <div class="measurement-inputs">
+          <div class="measurement-input">
+            <input type="number" [(ngModel)]="coefficientOfVariation" placeholder="0.0" step="0.1" />
+            <span>%</span>
+          </div>
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi:</label>
+        <textarea [(ngModel)]="distributionSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
+      </div>
+    </div>
+
+    <!-- Protocol Section 10: Final Result -->
+    <div *ngIf="currentProtocolSection === 10" class="protocol-section-content final-section-content">
+      <div class="final-result-row">
+        <label>Wynik badania:</label>
+        <div class="result-buttons">
+          <button class="btn-result positive" [class.active]="finalResult === true" (click)="setFinalResult(true)">
+            POZYTYWNY
+          </button>
+          <button class="btn-result negative" [class.active]="finalResult === false" (click)="setFinalResult(false)">
+            NEGATYWNY
+          </button>
+        </div>
+      </div>
+      <div class="form-row" *ngIf="finalResult === true">
+        <div class="form-group">
+          <label>Data ważności badania:</label>
+          <input type="date" [(ngModel)]="validUntil" />
+        </div>
+        <div class="form-group">
+          <label>Numer naklejki kontrolnej:</label>
+          <input [(ngModel)]="controlStickerNumber" placeholder="np. PL-12345678" />
+        </div>
+      </div>
+      <div class="notes-row">
+        <label>Uwagi ogólne:</label>
+        <textarea [(ngModel)]="generalNotes" rows="3" placeholder="Dodatkowe uwagi do protokołu..."></textarea>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div *ngIf="currentStep === 4" class="step-content">
-  <h3>{{ 'newInspection.headings.brakes' | text }}</h3>
-  <div *ngFor="let it of brakesItems; let i = index" class="item-row">
-    <input type="text" [(ngModel)]="brakesItems[i].description" [placeholder]="'newInspection.placeholders.description' | text" />
-    <label>
-      <input type="checkbox" [(ngModel)]="brakesItems[i].passed" />
-      {{ 'newInspection.labels.pass' | text }}
-    </label>
-    <button
-      class="btn-icon"
-      type="button"
-      (click)="removeItem(brakesItems, i)"
-      [attr.aria-label]="'newInspection.actions.removeItem' | text"
-      [attr.title]="'newInspection.actions.removeItem' | text"
-    >
-      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
-    </button>
-  </div>
-  <button class="btn btn-primary" (click)="addItem(brakesItems)"><span [innerHTML]="getSafeHtml(iconAdd)"></span>{{ 'newInspection.actions.addItem' | text }}</button>
-</div>
+<!-- ==================== PDF PREVIEW MODAL ==================== -->
+<div *ngIf="isPdfPreviewOpen" class="dialog-backdrop dialog-backdrop--dismissible" (click)="onBackdropClick($event)">
+  <div class="dialog dialog--print" (click)="$event.stopPropagation()">
+    <div class="dialog__header">
+      <h2 class="dialog__title">{{ 'inspectionProtocol.pdfPreview.title' | text }}</h2>
+      <button class="dialog__close" (click)="closePdfPreview()" aria-label="Zamknij">&times;</button>
+    </div>
+    <div class="dialog__body dialog__body--scroll print-preview-body">
+      <!-- Protocol Preview Document - Matching XSL-FO Style -->
+      <div class="protocol-document">
+        <!-- Document Title -->
+        <div class="doc-title">
+          <h1>PROTOKÓŁ BADANIA TECHNICZNEGO</h1>
+          <h2>OPRYSKIWACZA {{ selectedSprayer?.type === '00' ? 'POLOWEGO' : (selectedSprayer?.type === '01' ? 'SADOWNICZEGO' : 'POLOWEGO/SADOWNICZEGO') }}</h2>
+        </div>
 
-<div class="step-navigation">
-  <button class="btn btn-secondary btn-back" (click)="previousStep()" [disabled]="currentStep === 0">
-    <span [innerHTML]="getSafeHtml(iconBack)"></span>{{ 'newInspection.actions.back' | text }}
-  </button>
-  <div class="spacer"></div>
-  <button class="btn btn-secondary btn-next" (click)="nextStep()" [disabled]="currentStep === sections.length - 1">
-    <span [innerHTML]="getSafeHtml(iconNext)"></span>{{ 'newInspection.actions.next' | text }}
-  </button>
-  <button class="btn btn-success btn-save" (click)="submit()" [disabled]="saving">
-    <span [innerHTML]="getSafeHtml(iconSave)"></span>{{ 'newInspection.actions.save' | text }}
-  </button>
-  <button class="btn btn-ghost btn-cancel" (click)="close.emit()">
-    <span [innerHTML]="getSafeHtml(iconCancel)"></span>{{ 'newInspection.actions.cancel' | text }}
-  </button>
+        <!-- Protocol Info Box -->
+        <table class="doc-info-box">
+          <tr>
+            <td><strong>Nr protokołu:</strong> {{ protocolNumber || '—' }}</td>
+            <td><strong>Data badania:</strong> {{ inspectionDate || '—' }}</td>
+          </tr>
+          <tr>
+            <td colspan="2"><strong>Miejsce badania:</strong> {{ inspectionLocation || '—' }}</td>
+          </tr>
+        </table>
+
+        <!-- Section A: Client Data -->
+        <div class="doc-section-header">A. DANE WŁAŚCICIELA / POSIADACZA</div>
+        <table class="doc-data-table">
+          <tr>
+            <td class="label-cell">Nazwa / Imię i nazwisko</td>
+            <td class="value-cell">{{ selectedClient ? (selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName) : '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Adres</td>
+            <td class="value-cell">
+              <ng-container *ngIf="selectedClient">{{ selectedClient.street }} {{ selectedClient.buildingNumber }}{{ selectedClient.apartmentNumber ? '/' + selectedClient.apartmentNumber : '' }}, {{ selectedClient.zipCode }} {{ selectedClient.city }}</ng-container>
+              <ng-container *ngIf="!selectedClient">—</ng-container>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-cell">NIP / PESEL</td>
+            <td class="value-cell">{{ selectedClient ? (selectedClient.clientType === 'person' ? selectedClient.pesel : selectedClient.nip) : '—' }}</td>
+          </tr>
+        </table>
+
+        <!-- Section B: Sprayer Data -->
+        <div class="doc-section-header">B. DANE OPRYSKIWACZA</div>
+        <table class="doc-data-table">
+          <tr>
+            <td class="label-cell">Typ</td>
+            <td class="value-cell">{{ selectedSprayer?.type === '00' ? 'Polowy' : (selectedSprayer?.type === '01' ? 'Sadowniczy' : '—') }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Rodzaj</td>
+            <td class="value-cell">{{ selectedSprayer?.kind === '00' ? 'Zawieszany' : (selectedSprayer?.kind === '01' ? 'Przyczepiany' : (selectedSprayer?.kind === '02' ? 'Samobieżny' : (selectedSprayer?.kind === '03' ? 'Inny' : '—'))) }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Nazwa / Model</td>
+            <td class="value-cell">{{ selectedSprayer?.sprayerName || '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Producent</td>
+            <td class="value-cell">{{ selectedSprayer?.manufacturer || '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Numer seryjny</td>
+            <td class="value-cell">{{ selectedSprayer?.serialNumber || selectedSprayerSerialNumber || '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Rok produkcji</td>
+            <td class="value-cell">{{ selectedSprayer?.productionYear || '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Pojemność zbiornika</td>
+            <td class="value-cell">{{ selectedSprayer?.tankCapacity ? selectedSprayer.tankCapacity + ' l' : '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Szerokość robocza belki</td>
+            <td class="value-cell">{{ selectedSprayer?.boomWidth ? selectedSprayer.boomWidth + ' m' : '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Liczba sekcji</td>
+            <td class="value-cell">{{ selectedSprayer?.sectionCount || '—' }}</td>
+          </tr>
+        </table>
+
+        <!-- Section C: Inspection Results -->
+        <div class="doc-section-header">C. WYNIKI BADANIA</div>
+        
+        <table class="doc-results-table">
+          <thead>
+            <tr class="results-header">
+              <th class="col-num">Lp.</th>
+              <th class="col-item">Przedmiot badania</th>
+              <th class="col-result">Wynik</th>
+              <th class="col-notes">Uwagi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Section 1: General Condition -->
+            <tr class="section-title-row">
+              <td class="section-num">1</td>
+              <td class="section-title" colspan="3">STAN OGÓLNY OPRYSKIWACZA</td>
+            </tr>
+            <tr>
+              <td class="item-num">1.1</td>
+              <td class="item-name">Stan techniczny ogólny i czystość</td>
+              <td class="item-result" [class.pass]="generalConditionPassed === true" [class.fail]="generalConditionPassed === false">
+                {{ generalConditionPassed === true ? '✓' : (generalConditionPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">1.2</td>
+              <td class="item-name">Czytelność oznaczeń i tabliczek</td>
+              <td class="item-result" [class.pass]="markingsReadablePassed === true" [class.fail]="markingsReadablePassed === false">
+                {{ markingsReadablePassed === true ? '✓' : (markingsReadablePassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">1.3</td>
+              <td class="item-name">Kompletność wyposażenia</td>
+              <td class="item-result" [class.pass]="equipmentCompletePassed === true" [class.fail]="equipmentCompletePassed === false">
+                {{ equipmentCompletePassed === true ? '✓' : (equipmentCompletePassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ generalSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 2: Pump -->
+            <tr class="section-title-row">
+              <td class="section-num">2</td>
+              <td class="section-title" colspan="3">POMPA</td>
+            </tr>
+            <tr>
+              <td class="item-num">2.1</td>
+              <td class="item-name">Praca pompy i napędu</td>
+              <td class="item-result" [class.pass]="pumpOperationPassed === true" [class.fail]="pumpOperationPassed === false">
+                {{ pumpOperationPassed === true ? '✓' : (pumpOperationPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">2.2</td>
+              <td class="item-name">Szczelność pompy</td>
+              <td class="item-result" [class.pass]="pumpSealingPassed === true" [class.fail]="pumpSealingPassed === false">
+                {{ pumpSealingPassed === true ? '✓' : (pumpSealingPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">2.3</td>
+              <td class="item-name">Pulsacje ciśnienia</td>
+              <td class="item-result" [class.pass]="pressurePulsationPassed === true" [class.fail]="pressurePulsationPassed === false">
+                {{ pressurePulsationPassed === true ? '✓' : (pressurePulsationPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ pumpSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 3: Agitation -->
+            <tr class="section-title-row">
+              <td class="section-num">3</td>
+              <td class="section-title" colspan="3">MIESZALNIK</td>
+            </tr>
+            <tr>
+              <td class="item-num">3.1</td>
+              <td class="item-name">Sprawność mieszalnika</td>
+              <td class="item-result" [class.pass]="agitatorOperationPassed === true" [class.fail]="agitatorOperationPassed === false">
+                {{ agitatorOperationPassed === true ? '✓' : (agitatorOperationPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ agitatorSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 4: Tank -->
+            <tr class="section-title-row">
+              <td class="section-num">4</td>
+              <td class="section-title" colspan="3">ZBIORNIK</td>
+            </tr>
+            <tr>
+              <td class="item-num">4.1</td>
+              <td class="item-name">Stan zbiornika</td>
+              <td class="item-result" [class.pass]="tankConditionPassed === true" [class.fail]="tankConditionPassed === false">
+                {{ tankConditionPassed === true ? '✓' : (tankConditionPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">4.2</td>
+              <td class="item-name">Szczelność zbiornika</td>
+              <td class="item-result" [class.pass]="tankSealingPassed === true" [class.fail]="tankSealingPassed === false">
+                {{ tankSealingPassed === true ? '✓' : (tankSealingPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">4.3</td>
+              <td class="item-name">Wskaźnik poziomu cieczy</td>
+              <td class="item-result" [class.pass]="levelIndicatorPassed === true" [class.fail]="levelIndicatorPassed === false">
+                {{ levelIndicatorPassed === true ? '✓' : (levelIndicatorPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">4.4</td>
+              <td class="item-name">Układ płukania</td>
+              <td class="item-result" [class.pass]="flushingSystemPassed === true" [class.fail]="flushingSystemPassed === false">
+                {{ flushingSystemPassed === true ? '✓' : (flushingSystemPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ tankSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 5: Measuring -->
+            <tr class="section-title-row">
+              <td class="section-num">5</td>
+              <td class="section-title" colspan="3">PRZYRZĄDY POMIAROWE (MANOMETR)</td>
+            </tr>
+            <tr>
+              <td class="item-num">5.1</td>
+              <td class="item-name">Stan i czytelność manometru</td>
+              <td class="item-result" [class.pass]="manometerPassed === true" [class.fail]="manometerPassed === false">
+                {{ manometerPassed === true ? '✓' : (manometerPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">5.2</td>
+              <td class="item-name">Średnica tarczy (min 63mm)</td>
+              <td class="item-result" [class.pass]="manometerDialSizePassed === true" [class.fail]="manometerDialSizePassed === false">
+                {{ manometerDialSizePassed === true ? '✓' : (manometerDialSizePassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">5.3</td>
+              <td class="item-measurements" colspan="3">
+                Odczyty manometru:
+                2 bar → <strong>{{ manometerReading2Bar || '—' }} bar</strong> |
+                4 bar → <strong>{{ manometerReading4Bar || '—' }} bar</strong> |
+                6 bar → <strong>{{ manometerReading6Bar || '—' }} bar</strong>
+              </td>
+            </tr>
+
+            <!-- Section 6: Piping -->
+            <tr class="section-title-row">
+              <td class="section-num">6</td>
+              <td class="section-title" colspan="3">PRZEWODY</td>
+            </tr>
+            <tr>
+              <td class="item-num">6.1</td>
+              <td class="item-name">Stan przewodów i węży</td>
+              <td class="item-result" [class.pass]="pipesConditionPassed === true" [class.fail]="pipesConditionPassed === false">
+                {{ pipesConditionPassed === true ? '✓' : (pipesConditionPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">6.2</td>
+              <td class="item-name">Szczelność połączeń</td>
+              <td class="item-result" [class.pass]="connectionsSealingPassed === true" [class.fail]="connectionsSealingPassed === false">
+                {{ connectionsSealingPassed === true ? '✓' : (connectionsSealingPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ pipingSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 7: Filtration -->
+            <tr class="section-title-row">
+              <td class="section-num">7</td>
+              <td class="section-title" colspan="3">FILTRACJA</td>
+            </tr>
+            <tr>
+              <td class="item-num">7.1</td>
+              <td class="item-name">Filtr ssawny</td>
+              <td class="item-result" [class.pass]="suctionFilterPassed === true" [class.fail]="suctionFilterPassed === false">
+                {{ suctionFilterPassed === true ? '✓' : (suctionFilterPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">7.2</td>
+              <td class="item-name">Filtr ciśnieniowy (tłoczny)</td>
+              <td class="item-result" [class.pass]="pressureFilterPassed === true" [class.fail]="pressureFilterPassed === false">
+                {{ pressureFilterPassed === true ? '✓' : (pressureFilterPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">7.3</td>
+              <td class="item-name">Filtry rozpylaczy</td>
+              <td class="item-result" [class.pass]="nozzleFiltersPassed === true" [class.fail]="nozzleFiltersPassed === false">
+                {{ nozzleFiltersPassed === true ? '✓' : (nozzleFiltersPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ filtrationSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 8: Boom -->
+            <tr class="section-title-row">
+              <td class="section-num">8</td>
+              <td class="section-title" colspan="3">BELKA / URZĄDZENIE ROZPYLAJĄCE</td>
+            </tr>
+            <tr>
+              <td class="item-num">8.1</td>
+              <td class="item-name">Stan belki polowej</td>
+              <td class="item-result" [class.pass]="fieldBoomConditionPassed === true" [class.fail]="fieldBoomConditionPassed === false">
+                {{ fieldBoomConditionPassed === true ? '✓' : (fieldBoomConditionPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">8.2</td>
+              <td class="item-name">Stabilność belki</td>
+              <td class="item-result" [class.pass]="boomStabilityPassed === true" [class.fail]="boomStabilityPassed === false">
+                {{ boomStabilityPassed === true ? '✓' : (boomStabilityPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">8.3</td>
+              <td class="item-name">Wysokość belki</td>
+              <td class="item-result" [class.pass]="boomHeightPassed === true" [class.fail]="boomHeightPassed === false">
+                {{ boomHeightPassed === true ? '✓' : (boomHeightPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">8.4</td>
+              <td class="item-name">Symetria belki</td>
+              <td class="item-result" [class.pass]="boomSymmetryPassed === true" [class.fail]="boomSymmetryPassed === false">
+                {{ boomSymmetryPassed === true ? '✓' : (boomSymmetryPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ boomSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 9: Nozzles -->
+            <tr class="section-title-row">
+              <td class="section-num">9</td>
+              <td class="section-title" colspan="3">ROZPYLACZE</td>
+            </tr>
+            <tr>
+              <td class="item-num">9.1</td>
+              <td class="item-name">Jednorodność rozpylaczy</td>
+              <td class="item-result" [class.pass]="nozzleUniformityPassed === true" [class.fail]="nozzleUniformityPassed === false">
+                {{ nozzleUniformityPassed === true ? '✓' : (nozzleUniformityPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">9.2</td>
+              <td class="item-name">Wydatek rozpylaczy</td>
+              <td class="item-result" [class.pass]="nozzleFlowRatePassed === true" [class.fail]="nozzleFlowRatePassed === false">
+                {{ nozzleFlowRatePassed === true ? '✓' : (nozzleFlowRatePassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">9.3</td>
+              <td class="item-name">Stan rozpylaczy</td>
+              <td class="item-result" [class.pass]="nozzleConditionPassed === true" [class.fail]="nozzleConditionPassed === false">
+                {{ nozzleConditionPassed === true ? '✓' : (nozzleConditionPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes">{{ nozzlesSectionNotes }}</td>
+            </tr>
+
+            <!-- Section 10: Distribution -->
+            <tr class="section-title-row">
+              <td class="section-num">10</td>
+              <td class="section-title" colspan="3">RÓWNOMIERNOŚĆ ROZPROWADZANIA</td>
+            </tr>
+            <tr>
+              <td class="item-num">10.1</td>
+              <td class="item-name">Poprzeczna równomierność rozprowadzania</td>
+              <td class="item-result" [class.pass]="transverseDistributionPassed === true" [class.fail]="transverseDistributionPassed === false">
+                {{ transverseDistributionPassed === true ? '✓' : (transverseDistributionPassed === false ? '✗' : '—') }}
+              </td>
+              <td class="item-notes"></td>
+            </tr>
+            <tr>
+              <td class="item-num">10.2</td>
+              <td class="item-measurements" colspan="3">
+                Współczynnik zmienności CV: <strong>{{ coefficientOfVariation || '—' }} %</strong>
+                <span *ngIf="distributionSectionNotes" class="measurement-note">Uwagi: {{ distributionSectionNotes }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Section D: Final Result -->
+        <div class="doc-section-header">D. WYNIK KOŃCOWY BADANIA</div>
+        
+        <div class="doc-final-result" [class.positive]="finalResult === true" [class.negative]="finalResult === false">
+          <span *ngIf="finalResult === true">WYNIK POZYTYWNY</span>
+          <span *ngIf="finalResult === false">WYNIK NEGATYWNY</span>
+          <span *ngIf="finalResult === null">—</span>
+        </div>
+
+        <table *ngIf="finalResult === true" class="doc-data-table">
+          <tr>
+            <td class="label-cell">Data ważności badania</td>
+            <td class="value-cell">{{ validUntil || '—' }}</td>
+          </tr>
+          <tr>
+            <td class="label-cell">Numer nalepki kontrolnej</td>
+            <td class="value-cell">{{ controlStickerNumber || '—' }}</td>
+          </tr>
+        </table>
+
+        <div *ngIf="generalNotes" class="doc-general-notes">
+          <strong>Uwagi ogólne / Zalecenia:</strong><br/>
+          {{ generalNotes }}
+        </div>
+
+        <!-- Section E: Signatures -->
+        <div class="doc-section-header">E. PODPISY</div>
+        
+        <div class="doc-signatures">
+          <div class="signature-column">
+            <div class="signature-info">
+              <strong>Diagnosta:</strong><br/>
+              {{ inspectorName || '—' }}<br/>
+              <span class="signature-detail">Nr uprawnień: {{ inspectorLicenseNumber || '—' }}</span>
+            </div>
+            <div class="signature-line"></div>
+            <span class="signature-label">(podpis diagnosty)</span>
+          </div>
+          <div class="signature-column">
+            <div class="signature-info">
+              <strong>Właściciel / Posiadacz:</strong><br/>
+              {{ selectedClient ? (selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName) : '—' }}<br/>
+              <span class="signature-detail">&nbsp;</span>
+            </div>
+            <div class="signature-line"></div>
+            <span class="signature-label">(podpis właściciela/posiadacza)</span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="doc-footer">
+          <span>Wygenerowano: {{ today }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="dialog__footer">
+      <button class="btn btn-secondary" (click)="closePdfPreview()">
+        {{ 'inspectionProtocol.pdfPreview.close' | text }}
+      </button>
+      <button class="btn btn-primary" (click)="printPreview()">
+        <span class="btn-icon" [innerHTML]="getSafeHtml(iconPdf)"></span>
+        <span class="btn-label">Drukuj</span>
+      </button>
+    </div>
+  </div>
 </div>
 

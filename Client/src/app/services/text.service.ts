@@ -11,6 +11,20 @@ interface TextTree {
 }
 
 const TEXTS: TextTree = {
+  general: {
+    save: 'Zapisz',
+    cancel: 'Anuluj',
+    close: 'Zamknij',
+    delete: 'Usuń',
+    edit: 'Edytuj',
+    add: 'Dodaj',
+    search: 'Szukaj',
+    loading: 'Ładowanie...',
+    noData: 'Brak danych',
+    yes: 'Tak',
+    no: 'Nie',
+    confirm: 'Potwierdź'
+  },
   theme: {
     toggle: 'Zmień motyw',
     mode: {
@@ -76,8 +90,37 @@ const TEXTS: TextTree = {
     database: 'Baza',
     logout: 'Wyloguj'
   },
+  inspectionProtocol: {
+    steps: {
+      client: 'Klient',
+      sprayer: 'Opryskiwacz',
+      metadata: 'Dane badania',
+      general: 'Ogólne',
+      pump: 'Pompa',
+      agitation: 'Mieszanie',
+      tank: 'Zbiornik',
+      measuring: 'Manometr',
+      piping: 'Przewody',
+      filtration: 'Filtracja',
+      boom: 'Belka',
+      nozzles: 'Rozpylacze',
+      distribution: 'Rozkład',
+      summary: 'Podsumowanie',
+      generalData: 'Dane ogólne',
+      protocol: 'Protokół badania'
+    },
+    pdfPreview: {
+      title: 'Podgląd protokołu PDF',
+      generate: 'Generuj podgląd',
+      generating: 'Generowanie...',
+      close: 'Zamknij',
+      download: 'Pobierz PDF',
+      print: 'Drukuj'
+    }
+  },
   newInspection: {
     title: 'Nowe badanie',
+    confirmCancel: 'Czy na pewno chcesz anulować? Niezapisane zmiany zostaną utracone.',
     sections: {
       vehicle: 'Dane pojazdu',
       suspension: 'Zawieszenie',
@@ -87,6 +130,9 @@ const TEXTS: TextTree = {
     },
     headings: {
       vehicle: 'Informacje o pojeździe',
+      client: 'Wybierz klienta',
+      sprayer: 'Wybierz opryskiwacz',
+      metadata: 'Dane badania',
       suspension: 'Kontrola zawieszenia',
       alignment: 'Kontrola geometrii kół',
       lights: 'Kontrola oświetlenia',
@@ -143,8 +189,11 @@ const TEXTS: TextTree = {
     }
   },
   inspections: {
+    title: 'Protokoły badań',
     loading: 'Ładowanie badań...',
     filterTitle: 'Filtruj badania',
+    searchPlaceholder: 'Szukaj po numerze protokołu, kliencie, opryskiwaczu...',
+    emptyDetailMessage: 'Wybierz protokół z listy, aby zobaczyć szczegóły',
     placeholders: {
       plate: 'Rejestracja pojazdu',
       inspector: 'Imię diagnosty',
@@ -155,13 +204,147 @@ const TEXTS: TextTree = {
       clear: 'Wyczyść filtry'
     },
     results: 'Wyniki',
-    empty: 'Brak wyników.',
+    empty: 'Brak protokołów.',
     columns: {
       plate: 'Tablica',
       inspector: 'Diagnosta',
-      date: 'Data',
+      date: 'Data badania',
       items: 'Pozycje',
-      passRate: 'Zaliczone'
+      passRate: 'Zaliczone',
+      client: 'Klient',
+      sprayer: 'Opryskiwacz',
+      validUntil: 'Ważne do'
+    },
+    filters: {
+      year: 'Rok',
+      allYears: 'Wszystkie lata',
+      result: 'Wynik',
+      allResults: 'Wszystkie wyniki',
+      resultPositive: 'Pozytywny',
+      resultNegative: 'Negatywny',
+      inspector: 'Diagnosta',
+      city: 'Miasto',
+      cityPlaceholder: 'Wpisz nazwę miasta...',
+      voivodeship: 'Województwo',
+      voivodeshipPlaceholder: 'Wpisz województwo...',
+      distance: 'Odległość od klienta',
+      noDistanceLimit: 'Bez ograniczeń',
+      dateRange: 'Zakres dat',
+      sprayerType: 'Typ opryskiwacza',
+      allSprayerTypes: 'Wszystkie typy'
+    },
+    steps: {
+      general: 'Dane ogólne',
+      sprayer: 'Opryskiwacz',
+      results: 'Wyniki badania',
+      final: 'Wynik końcowy'
+    },
+    result: {
+      positive: 'Pozytywny',
+      negative: 'Negatywny',
+      pending: 'W trakcie'
+    },
+    detail: {
+      protocolNumber: 'Numer protokołu',
+      inspectionDate: 'Data badania',
+      inspectorName: 'Imię i nazwisko diagnosty',
+      inspectorNumber: 'Numer uprawnień',
+      inspectionPlace: 'Miejsce badania',
+      clientInfo: 'Dane klienta',
+      clientName: 'Nazwa klienta',
+      clientAddress: 'Adres',
+      clientCity: 'Miasto',
+      clientVoivodeship: 'Województwo',
+      sprayerType: 'Typ opryskiwacza',
+      sprayerManufacturer: 'Producent',
+      sprayerModel: 'Model',
+      sprayerSerial: 'Numer fabryczny',
+      productionYear: 'Rok produkcji',
+      tankCapacity: 'Pojemność zbiornika',
+      boomWidth: 'Szerokość belki',
+      nozzleCount: 'Liczba rozpylaczy',
+      finalResult: 'Wynik końcowy',
+      validUntil: 'Ważne do',
+      remarks: 'Uwagi',
+      inspectorSignature: 'Podpis diagnosty',
+      ownerSignature: 'Podpis właściciela',
+      controlStickerNumber: 'Numer naklejki kontrolnej',
+      clientTaxId: 'NIP',
+      sectionCount: 'Liczba sekcji'
+    },
+    messages: {
+      loadError: 'Nie udało się załadować listy protokołów',
+      loadDetailError: 'Nie udało się załadować szczegółów protokołu',
+      deleted: 'Protokół został usunięty',
+      deleteError: 'Nie udało się usunąć protokołu'
+    },
+    deleteDialog: {
+      title: 'Usuń protokół',
+      message: 'Czy na pewno chcesz usunąć ten protokół? Tej operacji nie można cofnąć.'
+    }
+  },
+  inspection: {
+    notes: 'Uwagi',
+    sections: {
+      general: 'Stan ogólny i wyposażenie',
+      pump: 'Pompa i napęd',
+      agitation: 'Mieszanie',
+      tank: 'Zbiornik',
+      measuring: 'Urządzenia pomiarowe',
+      piping: 'Przewody i węże',
+      filtration: 'Filtracja',
+      boom: 'Belka polowa / Opryskiwacz sadowniczy',
+      nozzles: 'Rozpylacze',
+      distribution: 'Rozkład poprzeczny'
+    },
+    section1: {
+      generalCondition: 'Ogólny stan techniczny',
+      markingsReadable: 'Czytelność oznaczeń',
+      equipmentComplete: 'Kompletność wyposażenia'
+    },
+    section2: {
+      pumpOperation: 'Praca pompy',
+      pumpSealing: 'Szczelność pompy',
+      pressurePulsation: 'Pulsacja ciśnienia'
+    },
+    section3: {
+      agitatorOperation: 'Praca mieszadła'
+    },
+    section4: {
+      tankCondition: 'Stan zbiornika',
+      tankSealing: 'Szczelność zbiornika',
+      levelIndicator: 'Wskaźnik poziomu',
+      flushingSystem: 'System płukania'
+    },
+    section5: {
+      manometer: 'Manometr',
+      manometerDialSize: 'Średnica tarczy manometru'
+    },
+    section6: {
+      pipesCondition: 'Stan przewodów',
+      connectionsSealing: 'Szczelność połączeń'
+    },
+    section7: {
+      suctionFilter: 'Filtr ssawny',
+      pressureFilter: 'Filtr ciśnieniowy',
+      nozzleFilters: 'Filtry rozpylaczy'
+    },
+    section8: {
+      fieldBoomCondition: 'Stan belki polowej',
+      boomStability: 'Stabilność belki',
+      boomHeight: 'Wysokość belki',
+      boomSymmetry: 'Symetria belki',
+      orchardSprayerCondition: 'Stan opryskiwacza sadowniczego',
+      airStreamDirection: 'Kierunek strumienia powietrza'
+    },
+    section9: {
+      nozzleUniformity: 'Jednolitość rozpylaczy',
+      nozzleFlowRate: 'Wydajność rozpylaczy',
+      nozzleCondition: 'Stan rozpylaczy'
+    },
+    section10: {
+      transverseDistribution: 'Rozkład poprzeczny',
+      coefficientOfVariation: 'Współczynnik zmienności'
     }
   },
   settings: {
