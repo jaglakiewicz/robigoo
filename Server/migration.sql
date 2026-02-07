@@ -81,15 +81,24 @@ CREATE TABLE "UserSessions" (
     "Id" INTEGER NOT NULL CONSTRAINT "PK_UserSessions" PRIMARY KEY AUTOINCREMENT,
     "UserId" INTEGER NOT NULL,
     "SessionToken" TEXT NOT NULL,
+    "RefreshToken" TEXT NULL,
+    "RefreshTokenExpiresAt" TEXT NULL,
     "CreatedAt" TEXT NOT NULL,
     "LastActivityAt" TEXT NOT NULL,
     "IsActive" INTEGER NOT NULL,
+    "IpAddress" TEXT NULL,
+    "UserAgent" TEXT NULL,
+    "SessionTimeoutMinutes" INTEGER NULL,
+    "InvalidatedAt" TEXT NULL,
+    "InvalidationReason" TEXT NULL,
     CONSTRAINT "FK_UserSessions_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE
 );
 
 CREATE INDEX "IX_InspectionItems_InspectionId" ON "InspectionItems" ("InspectionId");
 
 CREATE INDEX "IX_UserSessions_UserId" ON "UserSessions" ("UserId");
+
+CREATE INDEX "IX_UserSessions_UserId_IsActive" ON "UserSessions" ("UserId", "IsActive");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20260108133554_InitialCreate', '10.0.1');

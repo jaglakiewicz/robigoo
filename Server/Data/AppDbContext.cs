@@ -10,6 +10,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Server.Exceptions;
 using Server.Models;
 using System.Security.Claims;
 
@@ -45,6 +46,7 @@ namespace Server.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<ChangeLog> ChangeLogs { get; set; }
         public DbSet<LoginAttempt> LoginAttempts { get; set; }
+        public DbSet<SecurityEventLog> SecurityEventLogs { get; set; }
 
         #endregion
 
@@ -56,6 +58,36 @@ namespace Server.Data
             
             // Map CropSprayer entity to existing Machines table
             modelBuilder.Entity<CropSprayer>().ToTable("Machines");
+
+            // Configure optimistic concurrency for CropSprayer
+            // Requirement 4.1: THE Database_Access_Layer SHALL implement optimistic concurrency control using row version tokens
+            modelBuilder.Entity<CropSprayer>()
+                .Property(e => e.RowVersion)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+
+            // Configure optimistic concurrency for InspectionProtocol
+            // Requirement 4.1: THE Database_Access_Layer SHALL implement optimistic concurrency control using row version tokens
+            modelBuilder.Entity<InspectionProtocol>()
+                .Property(e => e.RowVersion)
+                .IsRowVersion()
+                .IsConcurrencyToken();
+
+            // Configure Version as a concurrency token for application-level versioning
+            modelBuilder.Entity<InspectionProtocol>()
+                .Property(e => e.Version)
+                .IsConcurrencyToken();
+
+            // Configure indexes for security event queries
+            // Requirement 7.2: Support efficient querying of security events
+            modelBuilder.Entity<SecurityEventLog>()
+                .HasIndex(e => e.OccurredAt);
+            
+            modelBuilder.Entity<SecurityEventLog>()
+                .HasIndex(e => new { e.EventType, e.OccurredAt });
+            
+            modelBuilder.Entity<SecurityEventLog>()
+                .HasIndex(e => new { e.IpAddress, e.OccurredAt });
         }
 
         #endregion
@@ -65,9 +97,20 @@ namespace Server.Data
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var auditEntries = OnBeforeSaveChanges();
-            var result = await base.SaveChangesAsync(cancellationToken);
-            await OnAfterSaveChanges(auditEntries);
-            return result;
+            
+            try
+            {
+                var result = await base.SaveChangesAsync(cancellationToken);
+                await OnAfterSaveChanges(auditEntries);
+                return result;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                // Handle concurrency conflicts
+                // Requirement 4.2: WHEN two users attempt to modify the same record simultaneously, 
+                // THE Concurrency_Controller SHALL detect the conflict
+                throw new ConcurrencyException("The record was modified by another user. Please refresh and try again.", ex);
+            }
         }
 
         #endregion

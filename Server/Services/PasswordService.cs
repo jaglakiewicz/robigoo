@@ -21,6 +21,8 @@ namespace Server.Services
         bool VerifyPassword(string password, string hash);
         PasswordValidationResult ValidatePasswordStrength(string password);
         bool NeedsRehash(string hash);
+        bool IsValidBCryptHash(string hash);
+        int? GetHashWorkFactor(string hash);
     }
 
     public class PasswordValidationResult
@@ -162,6 +164,72 @@ namespace Server.Services
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Validates that a hash is in valid BCrypt format.
+        /// Valid BCrypt hashes start with $2a$, $2b$, or $2y$ followed by the cost factor.
+        /// </summary>
+        public bool IsValidBCryptHash(string hash)
+        {
+            if (string.IsNullOrEmpty(hash))
+            {
+                return false;
+            }
+
+            // BCrypt hash format: $2a$XX$22-character-salt22-character-hash
+            // Valid prefixes are $2a$, $2b$, $2y$
+            if (!hash.StartsWith("$2a$") && !hash.StartsWith("$2b$") && !hash.StartsWith("$2y$"))
+            {
+                return false;
+            }
+
+            // BCrypt hash should be exactly 60 characters
+            if (hash.Length != 60)
+            {
+                return false;
+            }
+
+            // Validate the cost factor (should be 2 digits between 04 and 31)
+            var parts = hash.Split('$');
+            if (parts.Length < 4)
+            {
+                return false;
+            }
+
+            if (!int.TryParse(parts[2], out int cost) || cost < 4 || cost > 31)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Extracts the work factor (cost) from a BCrypt hash.
+        /// Returns null if the hash is not a valid BCrypt hash.
+        /// </summary>
+        public int? GetHashWorkFactor(string hash)
+        {
+            if (string.IsNullOrEmpty(hash) || !hash.StartsWith("$2"))
+            {
+                return null;
+            }
+
+            try
+            {
+                var parts = hash.Split('$');
+                if (parts.Length >= 3 && int.TryParse(parts[2], out int cost))
+                {
+                    return cost;
+                }
+            }
+            catch
+            {
+                // Ignore parsing errors
+            }
+
+            return null;
         }
 
         #endregion

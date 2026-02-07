@@ -18,6 +18,20 @@ using System.Security.Claims;
 
 namespace Server.Controllers
 {
+    /// <summary>
+    /// Controller for user management operations.
+    /// </summary>
+    /// <remarks>
+    /// Authorization Requirements:
+    /// - Requirement 8.2: Non-admin users get 403 for admin-only operations
+    /// - Requirement 8.4: Users can only modify their own profile data unless admin
+    /// 
+    /// Property 23: Role-Based Access Control
+    /// For any protected API endpoint requiring admin role, requests from non-admin users SHALL receive HTTP 403 Forbidden.
+    /// 
+    /// Property 24: Resource Ownership Authorization
+    /// For any resource with an owner, non-admin users SHALL only be able to access/modify resources they own.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -27,17 +41,41 @@ namespace Server.Controllers
 
         private readonly AppDbContext _context;
         private readonly IPasswordService _passwordService;
+        private readonly Services.IAuthorizationService _authorizationService;
+        private readonly ISecurityAuditService _securityAuditService;
+        private readonly IFileValidationService _fileValidationService;
+        private readonly ILogger<UsersController> _logger;
         private const int MIN_PASSWORD_LENGTH = 6;
         private const long MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB
+        private static readonly string[] ALLOWED_AVATAR_CONTENT_TYPES = new[] { "image/jpeg", "image/png", "image/gif" };
 
         #endregion
 
         #region Constructor
 
-        public UsersController(AppDbContext context, IPasswordService passwordService)
+        /// <summary>
+        /// Initializes a new instance of the UsersController.
+        /// </summary>
+        /// <param name="context">The database context.</param>
+        /// <param name="passwordService">The password service for hashing and verification.</param>
+        /// <param name="authorizationService">The authorization service for access control checks.</param>
+        /// <param name="securityAuditService">The security audit service for logging sensitive data access.</param>
+        /// <param name="fileValidationService">The file validation service for validating file uploads.</param>
+        /// <param name="logger">The logger for this controller.</param>
+        public UsersController(
+            AppDbContext context, 
+            IPasswordService passwordService,
+            Services.IAuthorizationService authorizationService,
+            ISecurityAuditService securityAuditService,
+            IFileValidationService fileValidationService,
+            ILogger<UsersController> logger)
         {
             _context = context;
             _passwordService = passwordService;
+            _authorizationService = authorizationService;
+            _securityAuditService = securityAuditService;
+            _fileValidationService = fileValidationService;
+            _logger = logger;
         }
 
         #endregion
@@ -47,9 +85,27 @@ namespace Server.Controllers
         #endregion
 
         #region Methods - Public
+
+        /// <summary>
+        /// Get all active users (admin only)
+        /// </summary>
+        /// <remarks>
+        /// Requirement 8.2: Non-admin users get 403 for admin-only operations
+        /// Requirement 9.7: Log sensitive data access for compliance purposes
+        /// 
+        /// Property 23: Role-Based Access Control
+        /// For any protected API endpoint requiring admin role, requests from non-admin users SHALL receive HTTP 403 Forbidden.
+        /// </remarks>
+        [HttpGet]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUsers()
         {
+            var currentUserId = GetCurrentUserId();
+            
+            // Log sensitive data access for compliance
+            // Requirement 9.7: IF sensitive data is accessed, THEN THE Backend SHALL log the access for compliance purposes
+            await _securityAuditService.LogDataAccessAsync(currentUserId, "User", "all", "ListAll");
+            
             var users = _context.Users
                 .Where(u => u.IsActive)
                 .Select(u => new
@@ -123,6 +179,9 @@ namespace Server.Controllers
         /// <summary>
         /// Get current user's profile
         /// </summary>
+        /// <remarks>
+        /// Requirement 9.7: Log sensitive data access for compliance purposes
+        /// </remarks>
         [HttpGet("profile")]
         public async Task<IActionResult> GetProfile()
         {
@@ -131,6 +190,10 @@ namespace Server.Controllers
 
             if (user == null || !user.IsActive)
                 return NotFound(new { message = "Użytkownik nie znaleziony" });
+
+            // Log sensitive data access for compliance
+            // Requirement 9.7: IF sensitive data is accessed, THEN THE Backend SHALL log the access for compliance purposes
+            await _securityAuditService.LogDataAccessAsync(userId, "User", userId.ToString(), "ViewProfile");
 
             var avatarBase64 = user.AvatarData != null 
                 ? Convert.ToBase64String(user.AvatarData) 
@@ -154,6 +217,12 @@ namespace Server.Controllers
         /// <summary>
         /// Update current user's profile (first name, last name, email, phone, etc.)
         /// </summary>
+        /// <remarks>
+        /// Requirement 8.4: Users can only modify their own profile data unless admin
+        /// 
+        /// Property 24: Resource Ownership Authorization
+        /// For any resource with an owner, non-admin users SHALL only be able to access/modify resources they own.
+        /// </remarks>
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
         {
@@ -162,6 +231,18 @@ namespace Server.Controllers
                 return BadRequest(new { message = "Imię i nazwisko są wymagane" });
 
             var userId = GetCurrentUserId();
+            
+            // Use authorization service to verify user can modify their own profile
+            // Requirement 8.4: Users can only modify their own profile data unless admin
+            var canModify = await _authorizationService.CanModifyUserAsync(userId, userId);
+            if (!canModify)
+            {
+                _logger.LogWarning(
+                    "User {UserId} denied permission to modify their own profile",
+                    userId);
+                return StatusCode(403, new { message = "Brak uprawnień do modyfikacji profilu" });
+            }
+            
             var user = _context.Users.Find(userId);
 
             if (user == null || !user.IsActive)
@@ -176,6 +257,10 @@ namespace Server.Controllers
             user.Theme = dto.Theme ?? "light";
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "User {UserId} successfully updated their profile",
+                userId);
 
             var avatarBase64 = user.AvatarData != null 
                 ? Convert.ToBase64String(user.AvatarData) 
@@ -193,6 +278,71 @@ namespace Server.Controllers
                 Language = user.Language,
                 Theme = user.Theme,
                 AvatarBase64 = avatarBase64
+            });
+        }
+
+        /// <summary>
+        /// Update another user's profile (admin only)
+        /// </summary>
+        /// <remarks>
+        /// Requirement 8.2: Non-admin users get 403 for admin-only operations
+        /// Requirement 8.4: Users can only modify their own profile data unless admin
+        /// 
+        /// Property 23: Role-Based Access Control
+        /// For any protected API endpoint requiring admin role, requests from non-admin users SHALL receive HTTP 403 Forbidden.
+        /// 
+        /// Property 24: Resource Ownership Authorization
+        /// For any resource with an owner, non-admin users SHALL only be able to access/modify resources they own.
+        /// </remarks>
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateUser(long id, [FromBody] UpdateUserDto dto)
+        {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
+                return BadRequest(new { message = "Imię i nazwisko są wymagane" });
+
+            var currentUserId = GetCurrentUserId();
+            
+            // Use authorization service to verify admin can modify this user
+            // Requirement 8.4: Users can only modify their own profile data unless admin
+            // Property 24: Resource Ownership Authorization
+            var canModify = await _authorizationService.CanModifyUserAsync(currentUserId, id);
+            if (!canModify)
+            {
+                _logger.LogWarning(
+                    "User {CurrentUserId} denied permission to modify user {TargetUserId}",
+                    currentUserId, id);
+                return StatusCode(403, new { message = "Brak uprawnień do modyfikacji tego użytkownika" });
+            }
+            
+            var user = _context.Users.Find(id);
+
+            if (user == null || !user.IsActive)
+                return NotFound(new { message = "Użytkownik nie znaleziony" });
+
+            user.FirstName = dto.FirstName.Trim();
+            user.LastName = dto.LastName.Trim();
+            user.Email = dto.Email?.Trim() ?? string.Empty;
+            user.Phone = dto.Phone?.Trim() ?? string.Empty;
+            user.PermissionNumber = dto.PermissionNumber?.Trim() ?? string.Empty;
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "Admin {CurrentUserId} successfully updated user {TargetUserId}",
+                currentUserId, id);
+
+            return Ok(new
+            {
+                user.Id,
+                user.Login,
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.Phone,
+                user.PermissionNumber,
+                user.Role
             });
         }
 
@@ -229,19 +379,44 @@ namespace Server.Controllers
         /// <summary>
         /// Upload avatar for current user (with password confirmation)
         /// </summary>
+        /// <remarks>
+        /// Requirement 6.6: THE Backend SHALL validate file uploads (type, size, content) server-side before processing
+        /// 
+        /// Property 17: File Upload Validation
+        /// For any file upload, the Backend SHALL validate: file size is within configured limits,
+        /// content type matches allowed types, and file content matches the declared type (magic bytes validation).
+        /// 
+        /// This endpoint validates:
+        /// 1. File presence and non-empty
+        /// 2. File size (max 5MB)
+        /// 3. Content type (JPEG, PNG, GIF)
+        /// 4. Magic bytes to verify actual file type matches declared content type
+        /// </remarks>
         [HttpPost("avatar")]
         public async Task<IActionResult> UploadAvatar(IFormFile file)
         {
+            // Validate file presence
             if (file == null || file.Length == 0)
+            {
                 return BadRequest(new { message = "Plik nie został przesłany" });
+            }
 
-            if (file.Length > MAX_AVATAR_SIZE)
-                return BadRequest(new { message = "Plik jest za duży. Maksymalny rozmiar to 5MB" });
+            // Use FileValidationService for comprehensive validation including magic bytes
+            // Requirement 6.6: Validate file uploads (type, size, content) server-side
+            var validationResult = await _fileValidationService.ValidateFileAsync(
+                file, 
+                ALLOWED_AVATAR_CONTENT_TYPES, 
+                MAX_AVATAR_SIZE);
 
-            // Validate file type
-            var allowedContentTypes = new[] { "image/jpeg", "image/png", "image/gif" };
-            if (!allowedContentTypes.Contains(file.ContentType))
-                return BadRequest(new { message = "Obsługiwane są tylko pliki: JPEG, PNG, GIF" });
+            if (!validationResult.IsValid)
+            {
+                _logger.LogWarning(
+                    "Avatar upload validation failed: {ErrorCode} - {ErrorMessage}",
+                    validationResult.ErrorCode,
+                    validationResult.ErrorMessage);
+                
+                return BadRequest(new { message = validationResult.ErrorMessage });
+            }
 
             try
             {
@@ -254,12 +429,20 @@ namespace Server.Controllers
                     var user = _context.Users.Find(userId);
 
                     if (user == null || !user.IsActive)
+                    {
                         return NotFound(new { message = "Użytkownik nie znaleziony" });
+                    }
 
                     user.AvatarData = fileBytes;
                     await _context.SaveChangesAsync();
 
                     var avatarBase64 = Convert.ToBase64String(fileBytes);
+
+                    _logger.LogInformation(
+                        "User {UserId} successfully uploaded avatar. DetectedType: {DetectedType}, Size: {Size}",
+                        userId,
+                        validationResult.DetectedContentType,
+                        fileBytes.Length);
 
                     return Ok(new
                     {
@@ -270,13 +453,21 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = $"Błąd podczas przesyłania avatara: {ex.Message}" });
+                _logger.LogError(ex, "Error uploading avatar for user");
+                return StatusCode(500, new { message = "Błąd podczas przesyłania avatara" });
             }
         }
 
         /// <summary>
         /// Check if current user can delete another user
         /// </summary>
+        /// <remarks>
+        /// Requirement 8.2: Non-admin users get 403 for admin-only operations
+        /// Requirement 8.5: Only admins can delete users
+        /// 
+        /// Property 23: Role-Based Access Control
+        /// For any protected API endpoint requiring admin role, requests from non-admin users SHALL receive HTTP 403 Forbidden.
+        /// </remarks>
         [HttpGet("{id}/can-delete")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> CanDeleteUser(long id)
@@ -288,37 +479,39 @@ namespace Server.Controllers
             if (userToDelete == null)
                 return NotFound(new { message = "Użytkownik nie znaleziony" });
 
-            // Cannot delete self
-            if (currentUserId == id)
-                return Ok(new CanDeleteUserResponseDto
+            // Use authorization service to check if user can delete
+            // Requirement 8.5: Only admins can delete users
+            var canDelete = await _authorizationService.CanDeleteUserAsync(currentUserId, id);
+            
+            if (!canDelete)
+            {
+                // Determine the specific reason for denial
+                if (currentUserId == id)
                 {
-                    CanDelete = false,
-                    Reason = "Nie możesz usunąć swojego konta"
-                });
-
-            // Check if current user is admin
-            if (currentUser?.Role != "admin")
+                    return Ok(new CanDeleteUserResponseDto
+                    {
+                        CanDelete = false,
+                        Reason = "Nie możesz usunąć swojego konta"
+                    });
+                }
+                
                 return Ok(new CanDeleteUserResponseDto
                 {
                     CanDelete = false,
                     Reason = "Brak uprawnień do usuwania użytkowników"
                 });
+            }
 
-            // Master admin (login: admin) can delete anyone
-            if (currentUser.Login == "admin")
-                return Ok(new CanDeleteUserResponseDto
-                {
-                    CanDelete = true,
-                    Reason = "OK"
-                });
-
-            // Regular admin can only delete regular users (not admins)
-            if (userToDelete.Role == "admin")
+            // Additional check: Regular admin cannot delete another admin (only master admin can)
+            var isMasterAdmin = currentUser?.Login == "admin";
+            if (!isMasterAdmin && userToDelete.Role == "admin")
+            {
                 return Ok(new CanDeleteUserResponseDto
                 {
                     CanDelete = false,
                     Reason = "Zwykły administrator nie może usunąć innego administratora"
                 });
+            }
 
             return Ok(new CanDeleteUserResponseDto
             {
@@ -330,6 +523,13 @@ namespace Server.Controllers
         /// <summary>
         /// Delete user with password confirmation
         /// </summary>
+        /// <remarks>
+        /// Requirement 8.2: Non-admin users get 403 for admin-only operations
+        /// Requirement 8.5: Only admins can delete users
+        /// 
+        /// Property 23: Role-Based Access Control
+        /// For any protected API endpoint requiring admin role, requests from non-admin users SHALL receive HTTP 403 Forbidden.
+        /// </remarks>
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUser(long id, [FromBody] ConfirmPasswordDto dto)
@@ -344,25 +544,39 @@ namespace Server.Controllers
             if (userToDelete == null)
                 return NotFound(new { message = "Użytkownik nie znaleziony" });
 
-            // Cannot delete self
-            if (currentUserId == id)
-                return BadRequest(new { message = "Nie możesz usunąć swojego konta" });
+            // Use authorization service to check if user can delete
+            // Requirement 8.5: Only admins can delete users
+            // Property 23: Role-Based Access Control
+            var canDelete = await _authorizationService.CanDeleteUserAsync(currentUserId, id);
+            if (!canDelete)
+            {
+                _logger.LogWarning(
+                    "User {CurrentUserId} denied permission to delete user {TargetUserId}",
+                    currentUserId, id);
+                return StatusCode(403, new { message = "Brak uprawnień do usunięcia tego użytkownika" });
+            }
 
-            // Check permissions
-            if (currentUser?.Role != "admin")
-                return Forbid();
-
-            var isMasterAdmin = currentUser.Login == "admin";
+            // Additional check: Regular admin cannot delete another admin (only master admin can)
+            var isMasterAdmin = currentUser?.Login == "admin";
             if (!isMasterAdmin && userToDelete.Role == "admin")
+            {
+                _logger.LogWarning(
+                    "Non-master admin {CurrentUserId} attempted to delete admin user {TargetUserId}",
+                    currentUserId, id);
                 return BadRequest(new { message = "Zwykły administrator nie może usunąć innego administratora" });
+            }
 
             // Verify current user's password
-            if (!_passwordService.VerifyPassword(dto.Password, currentUser.PasswordHash))
+            if (currentUser == null || !_passwordService.VerifyPassword(dto.Password, currentUser.PasswordHash))
                 return BadRequest(new { message = "Hasło jest niepoprawne" });
 
             // Soft delete
             userToDelete.IsActive = false;
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "User {CurrentUserId} successfully deleted user {TargetUserId}",
+                currentUserId, id);
 
             return Ok(new { message = "Użytkownik został usunięty" });
         }
@@ -376,9 +590,15 @@ namespace Server.Controllers
         /// </summary>
         private long GetCurrentUserId()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (long.TryParse(userIdClaim?.Value, out var userId))
+            // First try the custom "userId" claim used by TokenService
+            var userIdClaim = User.FindFirst("userId");
+            if (userIdClaim != null && long.TryParse(userIdClaim.Value, out var userId))
                 return userId;
+            
+            // Fallback to standard NameIdentifier claim
+            var nameIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (nameIdClaim != null && long.TryParse(nameIdClaim.Value, out var nameIdUserId))
+                return nameIdUserId;
 
             throw new InvalidOperationException("Nie można pobrać ID użytkownika z tokena");
         }

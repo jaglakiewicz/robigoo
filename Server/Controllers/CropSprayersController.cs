@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
+using Server.Services;
 using System.Text.RegularExpressions;
 
 #endregion
@@ -27,6 +28,7 @@ namespace Server.Controllers
 
         private readonly AppDbContext _context;
         private readonly ILogger<CropSprayersController> _logger;
+        private readonly IConcurrencyController _concurrencyController;
 
         private static readonly Regex YearRegex = new("^\\d{4}$", RegexOptions.Compiled);
 
@@ -34,10 +36,14 @@ namespace Server.Controllers
 
         #region Constructor
 
-        public CropSprayersController(AppDbContext context, ILogger<CropSprayersController> logger)
+        public CropSprayersController(
+            AppDbContext context, 
+            ILogger<CropSprayersController> logger,
+            IConcurrencyController concurrencyController)
         {
             _context = context;
             _logger = logger;
+            _concurrencyController = concurrencyController;
         }
 
         #endregion
@@ -204,6 +210,8 @@ namespace Server.Controllers
 
         /// <summary>
         /// Aktualizacja istniejącego opryskiwacza.
+        /// Implements optimistic concurrency control with 409 Conflict on concurrent modification.
+        /// Requirements: 4.3, 4.6
         /// </summary>
         [HttpPut("{serialNumber}")]
         public async Task<ActionResult<CropSprayerDetailDto>> UpdateCropSprayer(string serialNumber, [FromBody] CropSprayerCreateUpdateDto dto)
@@ -218,81 +226,112 @@ namespace Server.Controllers
             if (cropSprayer == null)
                 return NotFound();
 
-            // Capture old owner values for history tracking
-            var oldOwnerId = cropSprayer.OwnerId;
-            var oldOwnerName = cropSprayer.OwnerName;
-            
-            _logger.LogInformation("Old values - OwnerId: {OwnerId}, OwnerName: {OwnerName}", oldOwnerId, oldOwnerName);
-
             var validationError = ValidateDto(dto, isCreate: false);
             if (validationError != null)
                 return BadRequest(new { message = validationError });
 
-            cropSprayer.SprayerName = dto.SprayerName.Trim();
-            cropSprayer.Type = dto.Type;
-            cropSprayer.Kind = dto.Kind;
-            cropSprayer.Manufacturer = dto.Manufacturer.Trim();
-            cropSprayer.ProductionYear = dto.ProductionYear;
-            cropSprayer.PurchaseDate = dto.PurchaseDate;
-            cropSprayer.PumpPiston = dto.PumpPiston;
-            cropSprayer.PumpDiaphragm = dto.PumpDiaphragm;
-            cropSprayer.PumpOther = dto.PumpOther;
-            cropSprayer.PumpOtherType = string.IsNullOrWhiteSpace(dto.PumpOtherType) ? null : dto.PumpOtherType.Trim();
-            cropSprayer.PumpFlowRate = dto.PumpFlowRate;
-            cropSprayer.TankCapacity = dto.TankCapacity;
-            cropSprayer.HasFlushing = dto.HasFlushing;
-            cropSprayer.HasDiluter = dto.HasDiluter;
-            cropSprayer.HasWashingDevice = dto.HasWashingDevice;
-            cropSprayer.HasManometer = dto.HasManometer;
-            cropSprayer.HasComputer = dto.HasComputer;
-            cropSprayer.BoomWidth = dto.BoomWidth;
-            cropSprayer.BoomWet = dto.BoomWet;
-            cropSprayer.BoomDry = dto.BoomDry;
-            cropSprayer.BoomDampeningMechanism = dto.BoomDampeningMechanism;
-            cropSprayer.SectionCount = dto.SectionCount;
-            cropSprayer.NozzlesFieldFeatures = dto.NozzlesFieldFeatures;
-            cropSprayer.NozzlesGardenFeatures = dto.NozzlesGardenFeatures;
-            cropSprayer.FanType = dto.FanType;
-
-            // Track owner change in history
-            if (oldOwnerId != dto.OwnerId || oldOwnerName != dto.OwnerName)
+            // Execute update with optimistic concurrency control
+            // Requirement 4.3: IF a concurrency conflict is detected, THEN THE Backend SHALL return a 409 Conflict response with details
+            // Requirement 4.6: WHEN saving inspection protocols, THE Database_Access_Layer SHALL acquire appropriate locks to prevent race conditions
+            var result = await _concurrencyController.ExecuteWithOptimisticConcurrencyAsync(async () =>
             {
-                var changeDescription = BuildOwnerChangeDescription(oldOwnerId, oldOwnerName, dto.OwnerId, dto.OwnerName);
-                var userName = User.Identity?.Name ?? "System";
+                // Re-fetch the entity to ensure we have the latest version
+                var entity = await _context.CropSprayers.FindAsync(serialNumber);
+                if (entity == null)
+                    throw new InvalidOperationException("Entity not found during update");
+
+                // Capture old owner values for history tracking
+                var oldOwnerId = entity.OwnerId;
+                var oldOwnerName = entity.OwnerName;
                 
-                var changeLog = new ChangeLog
+                _logger.LogInformation("Old values - OwnerId: {OwnerId}, OwnerName: {OwnerName}", oldOwnerId, oldOwnerName);
+
+                entity.SprayerName = dto.SprayerName.Trim();
+                entity.Type = dto.Type;
+                entity.Kind = dto.Kind;
+                entity.Manufacturer = dto.Manufacturer.Trim();
+                entity.ProductionYear = dto.ProductionYear;
+                entity.PurchaseDate = dto.PurchaseDate;
+                entity.PumpPiston = dto.PumpPiston;
+                entity.PumpDiaphragm = dto.PumpDiaphragm;
+                entity.PumpOther = dto.PumpOther;
+                entity.PumpOtherType = string.IsNullOrWhiteSpace(dto.PumpOtherType) ? null : dto.PumpOtherType.Trim();
+                entity.PumpFlowRate = dto.PumpFlowRate;
+                entity.TankCapacity = dto.TankCapacity;
+                entity.HasFlushing = dto.HasFlushing;
+                entity.HasDiluter = dto.HasDiluter;
+                entity.HasWashingDevice = dto.HasWashingDevice;
+                entity.HasManometer = dto.HasManometer;
+                entity.HasComputer = dto.HasComputer;
+                entity.BoomWidth = dto.BoomWidth;
+                entity.BoomWet = dto.BoomWet;
+                entity.BoomDry = dto.BoomDry;
+                entity.BoomDampeningMechanism = dto.BoomDampeningMechanism;
+                entity.SectionCount = dto.SectionCount;
+                entity.NozzlesFieldFeatures = dto.NozzlesFieldFeatures;
+                entity.NozzlesGardenFeatures = dto.NozzlesGardenFeatures;
+                entity.FanType = dto.FanType;
+
+                // Track owner change in history
+                if (oldOwnerId != dto.OwnerId || oldOwnerName != dto.OwnerName)
                 {
-                    EntityName = "CropSprayer",
-                    EntityId = serialNumber,
-                    Changes = changeDescription,
-                    Who = userName,
-                    When = DateTime.UtcNow
-                };
-                _context.ChangeLogs.Add(changeLog);
+                    var changeDescription = BuildOwnerChangeDescription(oldOwnerId, oldOwnerName, dto.OwnerId, dto.OwnerName);
+                    var userName = User.Identity?.Name ?? "System";
+                    
+                    var changeLog = new ChangeLog
+                    {
+                        EntityName = "CropSprayer",
+                        EntityId = serialNumber,
+                        Changes = changeDescription,
+                        Who = userName,
+                        When = DateTime.UtcNow
+                    };
+                    _context.ChangeLogs.Add(changeLog);
+                }
+
+                entity.OwnerId = dto.OwnerId;
+                entity.OwnerName = dto.OwnerName;
+                entity.UpdatedAt = DateTime.UtcNow;
+                
+                _logger.LogInformation("After assignment - CropSprayer.OwnerId: {OwnerId}, CropSprayer.OwnerName: {OwnerName}", entity.OwnerId, entity.OwnerName);
+
+                await _context.SaveChangesAsync();
+                
+                _logger.LogInformation("After SaveChangesAsync - CropSprayer.OwnerId: {OwnerId}, CropSprayer.OwnerName: {OwnerName}", entity.OwnerId, entity.OwnerName);
+
+                return entity;
+            });
+
+            // Check if concurrency conflict occurred
+            if (!result.Success)
+            {
+                _logger.LogWarning(
+                    "Concurrency conflict detected for CropSprayer {SerialNumber}: {Message}",
+                    serialNumber,
+                    result.Conflict?.Message);
+
+                return Conflict(new
+                {
+                    error = "CONCURRENCY_CONFLICT",
+                    message = result.Conflict?.Message ?? "The record was modified by another user. Please refresh and try again.",
+                    entityType = result.Conflict?.EntityType ?? "CropSprayer",
+                    entityId = result.Conflict?.EntityId ?? serialNumber,
+                    conflictTime = result.Conflict?.ConflictTime ?? DateTime.UtcNow
+                });
             }
-
-            cropSprayer.OwnerId = dto.OwnerId;
-            cropSprayer.OwnerName = dto.OwnerName;
-            cropSprayer.UpdatedAt = DateTime.UtcNow;
-            
-            _logger.LogInformation("After assignment - CropSprayer.OwnerId: {OwnerId}, CropSprayer.OwnerName: {OwnerName}", cropSprayer.OwnerId, cropSprayer.OwnerName);
-
-            await _context.SaveChangesAsync();
-            
-            _logger.LogInformation("After SaveChangesAsync - CropSprayer.OwnerId: {OwnerId}, CropSprayer.OwnerName: {OwnerName}", cropSprayer.OwnerId, cropSprayer.OwnerName);
 
             // Look up real owner name from Clients table
             string? realOwnerName = null;
-            if (!string.IsNullOrEmpty(cropSprayer.OwnerId))
+            if (!string.IsNullOrEmpty(result.Result!.OwnerId))
             {
-                var owner = await _context.Clients.FindAsync(cropSprayer.OwnerId);
+                var owner = await _context.Clients.FindAsync(result.Result.OwnerId);
                 realOwnerName = owner?.DisplayName;
             }
 
-            var result = ToDetailDto(cropSprayer, realOwnerName);
-            _logger.LogInformation("ToDetailDto result - OwnerId: {OwnerId}, OwnerName: {OwnerName}", result.OwnerId, result.OwnerName);
+            var detailDto = ToDetailDto(result.Result, realOwnerName);
+            _logger.LogInformation("ToDetailDto result - OwnerId: {OwnerId}, OwnerName: {OwnerName}", detailDto.OwnerId, detailDto.OwnerName);
 
-            return Ok(result);
+            return Ok(detailDto);
         }
 
         /// <summary>

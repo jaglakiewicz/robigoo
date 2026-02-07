@@ -29,16 +29,32 @@ This document describes the security measures implemented in the Robigoo applica
 
 ## Security Headers
 
-The following security headers are automatically added to all responses:
+The following security headers are automatically added to all responses via the `SecurityHeadersMiddleware`:
 
 | Header | Value | Purpose |
 |--------|-------|---------|
-| Content-Security-Policy | default-src 'self'; ... | Prevents XSS and injection attacks |
+| Content-Security-Policy | default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' | Prevents XSS and injection attacks |
 | X-Content-Type-Options | nosniff | Prevents MIME type sniffing |
 | X-Frame-Options | DENY | Prevents clickjacking |
 | X-XSS-Protection | 1; mode=block | Legacy XSS protection |
 | Referrer-Policy | strict-origin-when-cross-origin | Controls referrer information |
 | Permissions-Policy | geolocation=(), microphone=(), camera=() | Restricts browser features |
+| Cache-Control | no-store, no-cache, must-revalidate, private | Prevents caching of sensitive data (sensitive endpoints only) |
+| Pragma | no-cache | HTTP/1.0 cache prevention (sensitive endpoints only) |
+| Expires | 0 | Additional cache prevention (sensitive endpoints only) |
+| Strict-Transport-Security | max-age=31536000; includeSubDomains | Forces HTTPS connections (production only) |
+
+### Sensitive Endpoints
+
+The following endpoint prefixes are considered sensitive and receive additional Cache-Control headers:
+- `/api/auth` - Authentication endpoints
+- `/api/users` - User management endpoints
+- `/api/protocols` - Protocol data endpoints
+- `/api/inspection` - Inspection data endpoints
+
+### HSTS (HTTP Strict Transport Security)
+
+The `Strict-Transport-Security` header is only added in production environments to avoid issues with local development over HTTP. In production, this header instructs browsers to only connect via HTTPS for one year.
 
 ## Rate Limiting
 

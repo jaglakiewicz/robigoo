@@ -445,6 +445,19 @@ namespace Server.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
+        /// <summary>
+        /// Optimistic concurrency token for detecting concurrent modifications.
+        /// Requirement 4.1: THE Database_Access_Layer SHALL implement optimistic concurrency control using row version tokens
+        /// </summary>
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
+
+        /// <summary>
+        /// Application-level version for conflict detection.
+        /// Incremented on each update to track modification sequence.
+        /// </summary>
+        public int Version { get; set; }
+
         #endregion
 
         #region XML/PDF Storage

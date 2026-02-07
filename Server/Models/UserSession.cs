@@ -31,6 +31,22 @@ namespace Server.Models
         
         [MaxLength(500)]
         public string? UserAgent { get; set; }
+        
+        /// <summary>
+        /// Session timeout configuration in minutes. If null, uses the default system timeout.
+        /// </summary>
+        public int? SessionTimeoutMinutes { get; set; }
+        
+        /// <summary>
+        /// Timestamp when the session was explicitly invalidated.
+        /// </summary>
+        public DateTime? InvalidatedAt { get; set; }
+        
+        /// <summary>
+        /// Reason for session invalidation (e.g., "Logout", "Session timeout", "Force logout by admin").
+        /// </summary>
+        [MaxLength(500)]
+        public string? InvalidationReason { get; set; }
 
         public User User { get; set; } = null!;
     }

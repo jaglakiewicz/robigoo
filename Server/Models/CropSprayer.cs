@@ -8,6 +8,7 @@
 #region Imports
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #endregion
 
@@ -99,6 +100,13 @@ namespace Server.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Optimistic concurrency token for detecting concurrent modifications.
+        /// Requirement 4.1: THE Database_Access_Layer SHALL implement optimistic concurrency control using row version tokens
+        /// </summary>
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
 
         #endregion
     }

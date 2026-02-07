@@ -28,6 +28,8 @@ namespace Server.Controllers
         private readonly AppDbContext _context;
         private readonly ILogger<InspectionProtocolsController> _logger;
         private readonly IProtocolXmlService _xmlService;
+        private readonly IConcurrencyController _concurrencyController;
+        private readonly IDatabaseWriteQueue _writeQueue;
 
         #endregion
 
@@ -36,11 +38,15 @@ namespace Server.Controllers
         public InspectionProtocolsController(
             AppDbContext context, 
             ILogger<InspectionProtocolsController> logger,
-            IProtocolXmlService xmlService)
+            IProtocolXmlService xmlService,
+            IConcurrencyController concurrencyController,
+            IDatabaseWriteQueue writeQueue)
         {
             _context = context;
             _logger = logger;
             _xmlService = xmlService;
+            _concurrencyController = concurrencyController;
+            _writeQueue = writeQueue;
         }
 
         #endregion
@@ -162,123 +168,162 @@ namespace Server.Controllers
 
         /// <summary>
         /// Utworzenie nowego protokołu
+        /// Uses write queue for critical database operations.
+        /// Requirements: 5.3 - Critical write operations (inspection protocol saves) should be queued
         /// </summary>
         [HttpPost]
         public async Task<ActionResult<InspectionProtocolResponseDto>> CreateProtocol([FromBody] InspectionProtocolCreateDto dto)
         {
-            // Generate protocol number
-            var year = dto.InspectionDate.Year;
-            var prefix = $"SKO/{year}/";
+            InspectionProtocol? protocol = null;
+            QueuedOperationResult? queueResult = null;
 
-            var lastProtocol = await _context.Set<InspectionProtocol>()
-                .Where(p => p.ProtocolNumber.StartsWith(prefix))
-                .OrderByDescending(p => p.ProtocolNumber)
-                .FirstOrDefaultAsync();
-
-            int nextNumber = 1;
-            if (lastProtocol != null)
+            // Create the write operation for the queue
+            var writeOperation = new WriteOperation
             {
-                var lastNumberPart = lastProtocol.ProtocolNumber.Replace(prefix, "");
-                if (int.TryParse(lastNumberPart, out int lastNumber))
+                EntityType = "InspectionProtocol",
+                EntityId = "new",
+                Timeout = TimeSpan.FromSeconds(30),
+                Operation = async (cancellationToken) =>
                 {
-                    nextNumber = lastNumber + 1;
+                    // Generate protocol number
+                    var year = dto.InspectionDate.Year;
+                    var prefix = $"SKO/{year}/";
+
+                    var lastProtocol = await _context.Set<InspectionProtocol>()
+                        .Where(p => p.ProtocolNumber.StartsWith(prefix))
+                        .OrderByDescending(p => p.ProtocolNumber)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    int nextNumber = 1;
+                    if (lastProtocol != null)
+                    {
+                        var lastNumberPart = lastProtocol.ProtocolNumber.Replace(prefix, "");
+                        if (int.TryParse(lastNumberPart, out int lastNumber))
+                        {
+                            nextNumber = lastNumber + 1;
+                        }
+                    }
+
+                    var protocolNumber = $"{prefix}{nextNumber:D3}";
+
+                    protocol = new InspectionProtocol
+                    {
+                        ProtocolNumber = protocolNumber,
+                        InspectionDate = dto.InspectionDate,
+                        InspectionLocation = dto.InspectionLocation,
+                        InspectorName = dto.InspectorName,
+                        InspectorLicenseNumber = dto.InspectorLicenseNumber,
+
+                        ClientId = dto.ClientId,
+                        ClientName = dto.ClientName,
+                        ClientAddress = dto.ClientAddress,
+                        ClientTaxId = dto.ClientTaxId,
+
+                        CropSprayerSerialNumber = dto.CropSprayerSerialNumber,
+                        CropSprayerName = dto.CropSprayerName,
+                        CropSprayerType = dto.CropSprayerType,
+                        CropSprayerKind = dto.CropSprayerKind,
+                        CropSprayerManufacturer = dto.CropSprayerManufacturer,
+                        CropSprayerProductionYear = dto.CropSprayerProductionYear,
+                        TankCapacity = dto.TankCapacity,
+                        BoomWidth = dto.BoomWidth,
+                        SectionCount = dto.SectionCount,
+
+                        GeneralConditionPassed = dto.GeneralConditionPassed,
+                        MarkingsReadablePassed = dto.MarkingsReadablePassed,
+                        EquipmentCompletePassed = dto.EquipmentCompletePassed,
+                        GeneralSectionNotes = dto.GeneralSectionNotes,
+
+                        PumpOperationPassed = dto.PumpOperationPassed,
+                        PumpSealingPassed = dto.PumpSealingPassed,
+                        PressurePulsationPassed = dto.PressurePulsationPassed,
+                        PumpSectionNotes = dto.PumpSectionNotes,
+
+                        AgitatorOperationPassed = dto.AgitatorOperationPassed,
+                        AgitatorSectionNotes = dto.AgitatorSectionNotes,
+
+                        TankConditionPassed = dto.TankConditionPassed,
+                        TankSealingPassed = dto.TankSealingPassed,
+                        LevelIndicatorPassed = dto.LevelIndicatorPassed,
+                        FlushingSystemPassed = dto.FlushingSystemPassed,
+                        TankSectionNotes = dto.TankSectionNotes,
+
+                        ManometerPassed = dto.ManometerPassed,
+                        ManometerReading2Bar = dto.ManometerReading2Bar,
+                        ManometerReading4Bar = dto.ManometerReading4Bar,
+                        ManometerReading6Bar = dto.ManometerReading6Bar,
+                        ManometerDialSizePassed = dto.ManometerDialSizePassed,
+                        MeasuringSectionNotes = dto.MeasuringSectionNotes,
+
+                        PipesConditionPassed = dto.PipesConditionPassed,
+                        ConnectionsSealingPassed = dto.ConnectionsSealingPassed,
+                        PipingSectionNotes = dto.PipingSectionNotes,
+
+                        SuctionFilterPassed = dto.SuctionFilterPassed,
+                        PressureFilterPassed = dto.PressureFilterPassed,
+                        NozzleFiltersPassed = dto.NozzleFiltersPassed,
+                        FiltrationSectionNotes = dto.FiltrationSectionNotes,
+
+                        FieldBoomConditionPassed = dto.FieldBoomConditionPassed,
+                        BoomStabilityPassed = dto.BoomStabilityPassed,
+                        BoomHeightPassed = dto.BoomHeightPassed,
+                        BoomSymmetryPassed = dto.BoomSymmetryPassed,
+                        OrchardSprayerConditionPassed = dto.OrchardSprayerConditionPassed,
+                        AirStreamDirectionPassed = dto.AirStreamDirectionPassed,
+                        BoomSectionNotes = dto.BoomSectionNotes,
+
+                        NozzleUniformityPassed = dto.NozzleUniformityPassed,
+                        NozzleFlowRatePassed = dto.NozzleFlowRatePassed,
+                        NozzleConditionPassed = dto.NozzleConditionPassed,
+                        NozzleMeasurements = dto.NozzleMeasurements,
+                        NozzlesSectionNotes = dto.NozzlesSectionNotes,
+
+                        TransverseDistributionPassed = dto.TransverseDistributionPassed,
+                        CoefficientOfVariation = dto.CoefficientOfVariation,
+                        DistributionSectionNotes = dto.DistributionSectionNotes,
+
+                        FinalResult = dto.FinalResult,
+                        ValidUntil = dto.ValidUntil,
+                        ControlStickerNumber = dto.ControlStickerNumber,
+                        GeneralNotes = dto.GeneralNotes,
+
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Set<InspectionProtocol>().Add(protocol);
+                    await _context.SaveChangesAsync(cancellationToken);
                 }
-            }
-
-            var protocolNumber = $"{prefix}{nextNumber:D3}";
-
-            var protocol = new InspectionProtocol
-            {
-                ProtocolNumber = protocolNumber,
-                InspectionDate = dto.InspectionDate,
-                InspectionLocation = dto.InspectionLocation,
-                InspectorName = dto.InspectorName,
-                InspectorLicenseNumber = dto.InspectorLicenseNumber,
-
-                ClientId = dto.ClientId,
-                ClientName = dto.ClientName,
-                ClientAddress = dto.ClientAddress,
-                ClientTaxId = dto.ClientTaxId,
-
-                CropSprayerSerialNumber = dto.CropSprayerSerialNumber,
-                CropSprayerName = dto.CropSprayerName,
-                CropSprayerType = dto.CropSprayerType,
-                CropSprayerKind = dto.CropSprayerKind,
-                CropSprayerManufacturer = dto.CropSprayerManufacturer,
-                CropSprayerProductionYear = dto.CropSprayerProductionYear,
-                TankCapacity = dto.TankCapacity,
-                BoomWidth = dto.BoomWidth,
-                SectionCount = dto.SectionCount,
-
-                GeneralConditionPassed = dto.GeneralConditionPassed,
-                MarkingsReadablePassed = dto.MarkingsReadablePassed,
-                EquipmentCompletePassed = dto.EquipmentCompletePassed,
-                GeneralSectionNotes = dto.GeneralSectionNotes,
-
-                PumpOperationPassed = dto.PumpOperationPassed,
-                PumpSealingPassed = dto.PumpSealingPassed,
-                PressurePulsationPassed = dto.PressurePulsationPassed,
-                PumpSectionNotes = dto.PumpSectionNotes,
-
-                AgitatorOperationPassed = dto.AgitatorOperationPassed,
-                AgitatorSectionNotes = dto.AgitatorSectionNotes,
-
-                TankConditionPassed = dto.TankConditionPassed,
-                TankSealingPassed = dto.TankSealingPassed,
-                LevelIndicatorPassed = dto.LevelIndicatorPassed,
-                FlushingSystemPassed = dto.FlushingSystemPassed,
-                TankSectionNotes = dto.TankSectionNotes,
-
-                ManometerPassed = dto.ManometerPassed,
-                ManometerReading2Bar = dto.ManometerReading2Bar,
-                ManometerReading4Bar = dto.ManometerReading4Bar,
-                ManometerReading6Bar = dto.ManometerReading6Bar,
-                ManometerDialSizePassed = dto.ManometerDialSizePassed,
-                MeasuringSectionNotes = dto.MeasuringSectionNotes,
-
-                PipesConditionPassed = dto.PipesConditionPassed,
-                ConnectionsSealingPassed = dto.ConnectionsSealingPassed,
-                PipingSectionNotes = dto.PipingSectionNotes,
-
-                SuctionFilterPassed = dto.SuctionFilterPassed,
-                PressureFilterPassed = dto.PressureFilterPassed,
-                NozzleFiltersPassed = dto.NozzleFiltersPassed,
-                FiltrationSectionNotes = dto.FiltrationSectionNotes,
-
-                FieldBoomConditionPassed = dto.FieldBoomConditionPassed,
-                BoomStabilityPassed = dto.BoomStabilityPassed,
-                BoomHeightPassed = dto.BoomHeightPassed,
-                BoomSymmetryPassed = dto.BoomSymmetryPassed,
-                OrchardSprayerConditionPassed = dto.OrchardSprayerConditionPassed,
-                AirStreamDirectionPassed = dto.AirStreamDirectionPassed,
-                BoomSectionNotes = dto.BoomSectionNotes,
-
-                NozzleUniformityPassed = dto.NozzleUniformityPassed,
-                NozzleFlowRatePassed = dto.NozzleFlowRatePassed,
-                NozzleConditionPassed = dto.NozzleConditionPassed,
-                NozzleMeasurements = dto.NozzleMeasurements,
-                NozzlesSectionNotes = dto.NozzlesSectionNotes,
-
-                TransverseDistributionPassed = dto.TransverseDistributionPassed,
-                CoefficientOfVariation = dto.CoefficientOfVariation,
-                DistributionSectionNotes = dto.DistributionSectionNotes,
-
-                FinalResult = dto.FinalResult,
-                ValidUntil = dto.ValidUntil,
-                ControlStickerNumber = dto.ControlStickerNumber,
-                GeneralNotes = dto.GeneralNotes,
-
-                CreatedAt = DateTime.UtcNow
             };
 
-            _context.Set<InspectionProtocol>().Add(protocol);
-            await _context.SaveChangesAsync();
+            // Enqueue the operation and get queue position
+            queueResult = await _writeQueue.EnqueueAsync(writeOperation);
+
+            _logger.LogInformation(
+                "Enqueued InspectionProtocol create operation {OperationId}. Queue position: {QueuePosition}",
+                queueResult.OperationId,
+                queueResult.QueuePosition);
+
+            // Wait for the operation to complete
+            await writeOperation.CompletionSource.Task;
+
+            if (protocol == null)
+            {
+                _logger.LogError("Protocol creation failed - protocol is null after queue processing");
+                return StatusCode(500, new { error = "Failed to create protocol" });
+            }
+
+            // Return response with queue information in headers
+            Response.Headers.Append("X-Queue-Operation-Id", queueResult.OperationId);
+            Response.Headers.Append("X-Queue-Position", queueResult.QueuePosition.ToString());
 
             return CreatedAtAction(nameof(GetProtocol), new { id = protocol.Id }, ToResponseDto(protocol));
         }
 
         /// <summary>
         /// Aktualizacja protokołu
+        /// Implements optimistic concurrency control with 409 Conflict on concurrent modification.
+        /// Uses write queue for critical database operations.
+        /// Requirements: 4.3, 4.6, 5.3
         /// </summary>
         [HttpPut("{id:long}")]
         public async Task<ActionResult<InspectionProtocolResponseDto>> UpdateProtocol(long id, [FromBody] InspectionProtocolCreateDto dto)
@@ -287,89 +332,159 @@ namespace Server.Controllers
             if (protocol == null)
                 return NotFound();
 
-            protocol.InspectionDate = dto.InspectionDate;
-            protocol.InspectionLocation = dto.InspectionLocation;
-            protocol.InspectorName = dto.InspectorName;
-            protocol.InspectorLicenseNumber = dto.InspectorLicenseNumber;
+            InspectionProtocol? updatedProtocol = null;
+            ConcurrencyResult<InspectionProtocol>? concurrencyResult = null;
+            QueuedOperationResult? queueResult = null;
 
-            protocol.ClientId = dto.ClientId;
-            protocol.ClientName = dto.ClientName;
-            protocol.ClientAddress = dto.ClientAddress;
-            protocol.ClientTaxId = dto.ClientTaxId;
+            // Create the write operation for the queue
+            var writeOperation = new WriteOperation
+            {
+                EntityType = "InspectionProtocol",
+                EntityId = id.ToString(),
+                Timeout = TimeSpan.FromSeconds(30),
+                Operation = async (cancellationToken) =>
+                {
+                    // Execute update with optimistic concurrency control
+                    // Requirement 4.3: IF a concurrency conflict is detected, THEN THE Backend SHALL return a 409 Conflict response with details
+                    // Requirement 4.6: WHEN saving inspection protocols, THE Database_Access_Layer SHALL acquire appropriate locks to prevent race conditions
+                    concurrencyResult = await _concurrencyController.ExecuteWithOptimisticConcurrencyAsync(async () =>
+                    {
+                        // Re-fetch the entity to ensure we have the latest version
+                        var entity = await _context.Set<InspectionProtocol>().FindAsync(new object[] { id }, cancellationToken);
+                        if (entity == null)
+                            throw new InvalidOperationException("Entity not found during update");
 
-            protocol.CropSprayerSerialNumber = dto.CropSprayerSerialNumber;
-            protocol.CropSprayerName = dto.CropSprayerName;
-            protocol.CropSprayerType = dto.CropSprayerType;
-            protocol.CropSprayerKind = dto.CropSprayerKind;
-            protocol.CropSprayerManufacturer = dto.CropSprayerManufacturer;
-            protocol.CropSprayerProductionYear = dto.CropSprayerProductionYear;
-            protocol.TankCapacity = dto.TankCapacity;
-            protocol.BoomWidth = dto.BoomWidth;
-            protocol.SectionCount = dto.SectionCount;
+                        entity.InspectionDate = dto.InspectionDate;
+                        entity.InspectionLocation = dto.InspectionLocation;
+                        entity.InspectorName = dto.InspectorName;
+                        entity.InspectorLicenseNumber = dto.InspectorLicenseNumber;
 
-            protocol.GeneralConditionPassed = dto.GeneralConditionPassed;
-            protocol.MarkingsReadablePassed = dto.MarkingsReadablePassed;
-            protocol.EquipmentCompletePassed = dto.EquipmentCompletePassed;
-            protocol.GeneralSectionNotes = dto.GeneralSectionNotes;
+                        entity.ClientId = dto.ClientId;
+                        entity.ClientName = dto.ClientName;
+                        entity.ClientAddress = dto.ClientAddress;
+                        entity.ClientTaxId = dto.ClientTaxId;
 
-            protocol.PumpOperationPassed = dto.PumpOperationPassed;
-            protocol.PumpSealingPassed = dto.PumpSealingPassed;
-            protocol.PressurePulsationPassed = dto.PressurePulsationPassed;
-            protocol.PumpSectionNotes = dto.PumpSectionNotes;
+                        entity.CropSprayerSerialNumber = dto.CropSprayerSerialNumber;
+                        entity.CropSprayerName = dto.CropSprayerName;
+                        entity.CropSprayerType = dto.CropSprayerType;
+                        entity.CropSprayerKind = dto.CropSprayerKind;
+                        entity.CropSprayerManufacturer = dto.CropSprayerManufacturer;
+                        entity.CropSprayerProductionYear = dto.CropSprayerProductionYear;
+                        entity.TankCapacity = dto.TankCapacity;
+                        entity.BoomWidth = dto.BoomWidth;
+                        entity.SectionCount = dto.SectionCount;
 
-            protocol.AgitatorOperationPassed = dto.AgitatorOperationPassed;
-            protocol.AgitatorSectionNotes = dto.AgitatorSectionNotes;
+                        entity.GeneralConditionPassed = dto.GeneralConditionPassed;
+                        entity.MarkingsReadablePassed = dto.MarkingsReadablePassed;
+                        entity.EquipmentCompletePassed = dto.EquipmentCompletePassed;
+                        entity.GeneralSectionNotes = dto.GeneralSectionNotes;
 
-            protocol.TankConditionPassed = dto.TankConditionPassed;
-            protocol.TankSealingPassed = dto.TankSealingPassed;
-            protocol.LevelIndicatorPassed = dto.LevelIndicatorPassed;
-            protocol.FlushingSystemPassed = dto.FlushingSystemPassed;
-            protocol.TankSectionNotes = dto.TankSectionNotes;
+                        entity.PumpOperationPassed = dto.PumpOperationPassed;
+                        entity.PumpSealingPassed = dto.PumpSealingPassed;
+                        entity.PressurePulsationPassed = dto.PressurePulsationPassed;
+                        entity.PumpSectionNotes = dto.PumpSectionNotes;
 
-            protocol.ManometerPassed = dto.ManometerPassed;
-            protocol.ManometerReading2Bar = dto.ManometerReading2Bar;
-            protocol.ManometerReading4Bar = dto.ManometerReading4Bar;
-            protocol.ManometerReading6Bar = dto.ManometerReading6Bar;
-            protocol.ManometerDialSizePassed = dto.ManometerDialSizePassed;
-            protocol.MeasuringSectionNotes = dto.MeasuringSectionNotes;
+                        entity.AgitatorOperationPassed = dto.AgitatorOperationPassed;
+                        entity.AgitatorSectionNotes = dto.AgitatorSectionNotes;
 
-            protocol.PipesConditionPassed = dto.PipesConditionPassed;
-            protocol.ConnectionsSealingPassed = dto.ConnectionsSealingPassed;
-            protocol.PipingSectionNotes = dto.PipingSectionNotes;
+                        entity.TankConditionPassed = dto.TankConditionPassed;
+                        entity.TankSealingPassed = dto.TankSealingPassed;
+                        entity.LevelIndicatorPassed = dto.LevelIndicatorPassed;
+                        entity.FlushingSystemPassed = dto.FlushingSystemPassed;
+                        entity.TankSectionNotes = dto.TankSectionNotes;
 
-            protocol.SuctionFilterPassed = dto.SuctionFilterPassed;
-            protocol.PressureFilterPassed = dto.PressureFilterPassed;
-            protocol.NozzleFiltersPassed = dto.NozzleFiltersPassed;
-            protocol.FiltrationSectionNotes = dto.FiltrationSectionNotes;
+                        entity.ManometerPassed = dto.ManometerPassed;
+                        entity.ManometerReading2Bar = dto.ManometerReading2Bar;
+                        entity.ManometerReading4Bar = dto.ManometerReading4Bar;
+                        entity.ManometerReading6Bar = dto.ManometerReading6Bar;
+                        entity.ManometerDialSizePassed = dto.ManometerDialSizePassed;
+                        entity.MeasuringSectionNotes = dto.MeasuringSectionNotes;
 
-            protocol.FieldBoomConditionPassed = dto.FieldBoomConditionPassed;
-            protocol.BoomStabilityPassed = dto.BoomStabilityPassed;
-            protocol.BoomHeightPassed = dto.BoomHeightPassed;
-            protocol.BoomSymmetryPassed = dto.BoomSymmetryPassed;
-            protocol.OrchardSprayerConditionPassed = dto.OrchardSprayerConditionPassed;
-            protocol.AirStreamDirectionPassed = dto.AirStreamDirectionPassed;
-            protocol.BoomSectionNotes = dto.BoomSectionNotes;
+                        entity.PipesConditionPassed = dto.PipesConditionPassed;
+                        entity.ConnectionsSealingPassed = dto.ConnectionsSealingPassed;
+                        entity.PipingSectionNotes = dto.PipingSectionNotes;
 
-            protocol.NozzleUniformityPassed = dto.NozzleUniformityPassed;
-            protocol.NozzleFlowRatePassed = dto.NozzleFlowRatePassed;
-            protocol.NozzleConditionPassed = dto.NozzleConditionPassed;
-            protocol.NozzleMeasurements = dto.NozzleMeasurements;
-            protocol.NozzlesSectionNotes = dto.NozzlesSectionNotes;
+                        entity.SuctionFilterPassed = dto.SuctionFilterPassed;
+                        entity.PressureFilterPassed = dto.PressureFilterPassed;
+                        entity.NozzleFiltersPassed = dto.NozzleFiltersPassed;
+                        entity.FiltrationSectionNotes = dto.FiltrationSectionNotes;
 
-            protocol.TransverseDistributionPassed = dto.TransverseDistributionPassed;
-            protocol.CoefficientOfVariation = dto.CoefficientOfVariation;
-            protocol.DistributionSectionNotes = dto.DistributionSectionNotes;
+                        entity.FieldBoomConditionPassed = dto.FieldBoomConditionPassed;
+                        entity.BoomStabilityPassed = dto.BoomStabilityPassed;
+                        entity.BoomHeightPassed = dto.BoomHeightPassed;
+                        entity.BoomSymmetryPassed = dto.BoomSymmetryPassed;
+                        entity.OrchardSprayerConditionPassed = dto.OrchardSprayerConditionPassed;
+                        entity.AirStreamDirectionPassed = dto.AirStreamDirectionPassed;
+                        entity.BoomSectionNotes = dto.BoomSectionNotes;
 
-            protocol.FinalResult = dto.FinalResult;
-            protocol.ValidUntil = dto.ValidUntil;
-            protocol.ControlStickerNumber = dto.ControlStickerNumber;
-            protocol.GeneralNotes = dto.GeneralNotes;
+                        entity.NozzleUniformityPassed = dto.NozzleUniformityPassed;
+                        entity.NozzleFlowRatePassed = dto.NozzleFlowRatePassed;
+                        entity.NozzleConditionPassed = dto.NozzleConditionPassed;
+                        entity.NozzleMeasurements = dto.NozzleMeasurements;
+                        entity.NozzlesSectionNotes = dto.NozzlesSectionNotes;
 
-            protocol.UpdatedAt = DateTime.UtcNow;
+                        entity.TransverseDistributionPassed = dto.TransverseDistributionPassed;
+                        entity.CoefficientOfVariation = dto.CoefficientOfVariation;
+                        entity.DistributionSectionNotes = dto.DistributionSectionNotes;
 
-            await _context.SaveChangesAsync();
+                        entity.FinalResult = dto.FinalResult;
+                        entity.ValidUntil = dto.ValidUntil;
+                        entity.ControlStickerNumber = dto.ControlStickerNumber;
+                        entity.GeneralNotes = dto.GeneralNotes;
 
-            return Ok(ToResponseDto(protocol));
+                        entity.UpdatedAt = DateTime.UtcNow;
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        return entity;
+                    });
+
+                    updatedProtocol = concurrencyResult?.Result;
+                }
+            };
+
+            // Enqueue the operation and get queue position
+            queueResult = await _writeQueue.EnqueueAsync(writeOperation);
+
+            _logger.LogInformation(
+                "Enqueued InspectionProtocol update operation {OperationId} for protocol {ProtocolId}. Queue position: {QueuePosition}",
+                queueResult.OperationId,
+                id,
+                queueResult.QueuePosition);
+
+            // Wait for the operation to complete
+            await writeOperation.CompletionSource.Task;
+
+            // Add queue information to response headers
+            Response.Headers.Append("X-Queue-Operation-Id", queueResult.OperationId);
+            Response.Headers.Append("X-Queue-Position", queueResult.QueuePosition.ToString());
+
+            // Check if concurrency conflict occurred
+            if (concurrencyResult != null && !concurrencyResult.Success)
+            {
+                _logger.LogWarning(
+                    "Concurrency conflict detected for InspectionProtocol {Id}: {Message}",
+                    id,
+                    concurrencyResult.Conflict?.Message);
+
+                return Conflict(new
+                {
+                    error = "CONCURRENCY_CONFLICT",
+                    message = concurrencyResult.Conflict?.Message ?? "The record was modified by another user. Please refresh and try again.",
+                    entityType = concurrencyResult.Conflict?.EntityType ?? "InspectionProtocol",
+                    entityId = concurrencyResult.Conflict?.EntityId ?? id.ToString(),
+                    conflictTime = concurrencyResult.Conflict?.ConflictTime ?? DateTime.UtcNow,
+                    queueOperationId = queueResult.OperationId
+                });
+            }
+
+            if (updatedProtocol == null)
+            {
+                _logger.LogError("Protocol update failed - protocol is null after queue processing");
+                return StatusCode(500, new { error = "Failed to update protocol" });
+            }
+
+            return Ok(ToResponseDto(updatedProtocol));
         }
 
         /// <summary>
