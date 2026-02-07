@@ -7,7 +7,7 @@
 <h3 class="component-title">{{ 'notifications.title' | text }}</h3>
 
 <ng-container *ngIf="notifications.length; else emptyNotifications">
-  <div class="notification-card" *ngFor="let n of notifications">
+  <div class="card notification-card" *ngFor="let n of notifications">
     <div class="notification-header">
       <strong>{{ n.titleKey | text }}</strong>
       <span class="notification-time">{{ n.timeKey | text }}</span>

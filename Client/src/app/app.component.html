@@ -20,7 +20,7 @@
     &#9776;
   </button>
 
-  <div class="sidebar" [class.open]="sidebarOpen">
+  <div class="sidebar" [class.open]="sidebarOpen" role="navigation" aria-label="Main navigation">
     <div class="sidebar-header" *ngIf="sidebarOpen">
       <div class="sidebar-header-top">
         <button class="close-btn" (click)="toggle()" aria-label="Close menu">&times;</button>
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen" appScrollFade role="navigation" aria-label="Main menu">
+    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen" appScrollFade aria-label="Main menu">
       <li *ngFor="let item of menuItems" 
           role="menuitem"
           tabindex="0"
@@ -69,7 +69,7 @@
         <div class="theme-section">
           <span class="theme-label">{{ 'theme.toggle' | text }}</span>
           <label class="toggle-switch">
-            <input type="checkbox" [checked]="darkMode" (change)="toggleTheme()">
+            <input type="checkbox" [checked]="darkMode" (change)="toggleTheme()" aria-label="Toggle dark mode">
             <span class="toggle-slider">
               <span class="toggle-icon toggle-icon-light">??</span>
               <span class="toggle-icon toggle-icon-dark">??</span>
@@ -82,7 +82,7 @@
 
   <div class="app-shell" [class.shifted]="sidebarOpen">
     <div class="container">
-      <div class="top-bar">
+      <div class="top-bar" role="complementary" aria-label="Status bar">
         <!-- Home button - always visible in top bar -->
         <button class="home-button" 
                 [class.active]="isHomeActive()" 
@@ -121,7 +121,7 @@
         <div class="app-toolbar"></div>
       </div>
 
-      <div class="main-area" [class.home-active]="isHomeActive()" appScrollFade id="main-content" role="main">
+      <div class="main-area" [class.home-active]="isHomeActive()" appScrollFade id="main-content" role="main" aria-label="Main content">
         <!-- Home content when no tab is selected -->
         <div *ngIf="isHomeActive()" class="home-content">
           <!-- Home page content - empty for now -->

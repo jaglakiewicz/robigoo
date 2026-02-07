@@ -2,6 +2,11 @@
  * ROBIGOO FIELD SPRAYER CONTROL STATION
  * Inspections Component - Master Detail View
  * Copyright (c) 2025 Wojciech Salamon
+ *
+ * Shared patterns (cards, badges, dialogs, loading/empty states, spinner)
+ * are provided by globals.css via _layouts.css, _cards.css, _components.css.
+ * This file contains only inspections-specific styles and layout aliases
+ * for component class names used in the HTML template.
  */
 
 @import '../shared/styles/globals.css';
@@ -16,6 +21,7 @@
 
 /* ============================================================
    INSPECTIONS LAYOUT
+   Component-specific class names that alias shared layout patterns.
    ============================================================ */
 .inspections-container {
   display: flex;
@@ -29,9 +35,7 @@
   margin-bottom: 0;
 }
 
-/* ============================================================
-   TWO-COLUMN LAYOUT
-   ============================================================ */
+/* Alias for .md-layout (HTML uses .inspections-layout) */
 .inspections-layout {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) minmax(0, 2.5fr);
@@ -40,6 +44,7 @@
   min-height: 0;
 }
 
+/* Alias for .md-list-panel / .md-detail-panel */
 .inspections-list-panel,
 .inspections-detail-panel {
   background: var(--panel);
@@ -59,7 +64,7 @@
 }
 
 /* ============================================================
-   FILTERS
+   FILTERS — Alias for .md-filters-row
    ============================================================ */
 .filters-row {
   display: flex;
@@ -74,7 +79,7 @@
 }
 
 /* ============================================================
-   PROTOCOLS LIST
+   PROTOCOLS LIST — Alias for .entity-list
    ============================================================ */
 .protocols-list {
   flex: 1;
@@ -92,6 +97,9 @@
   pointer-events: none;
 }
 
+/* ============================================================
+   PROTOCOL CARD — Alias for .entity-card
+   ============================================================ */
 .protocol-card {
   display: flex;
   gap: var(--space-xs);
@@ -112,37 +120,12 @@
   border-color: var(--primary-btn-border);
 }
 
-.card-main {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  position: relative;
-  gap: var(--space-xs);
-}
-
-.card-badges-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  justify-content: flex-start;
-}
-
-.card-title {
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-base);
-  color: var(--text);
-  line-height: 1.2;
-}
-
-.card-info-row {
-  font-size: var(--font-size-sm);
-  color: var(--text-light);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-xs);
-  line-height: 1.4;
-}
+/*
+ * Card inner structure (.card-main, .card-badges-row, .card-title, .card-info-row)
+ * is now provided by _cards.css via globals.css — REMOVED from here.
+ *
+ * Only component-specific card-info-row variants remain below.
+ */
 
 .card-info-row.card-client {
   color: var(--accent);
@@ -168,7 +151,8 @@
 }
 
 /* ============================================================
-   BADGES - Matching crop-sprayers style
+   BADGES — Alias for .entity-card badge variants
+   (HTML uses .protocol-card .badge instead of .entity-card .badge)
    ============================================================ */
 .protocol-card .badge {
   padding: 0 var(--space-xs);
@@ -207,8 +191,9 @@
   margin-bottom: var(--space-md);
 }
 
+/* Standardized to font-size-lg to match reference components (was font-size-xl) */
 .detail-title {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--text);
 }
@@ -420,7 +405,9 @@
   margin: 0 0 var(--space-sm) 0;
 }
 
-/* Accordion Section */
+/* ============================================================
+   ACCORDION SECTION
+   ============================================================ */
 .accordion-section {
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-sm);
@@ -507,7 +494,9 @@
   display: block;
 }
 
-/* Check Items */
+/* ============================================================
+   CHECK ITEMS
+   ============================================================ */
 .check-item {
   display: flex;
   justify-content: space-between;
@@ -745,17 +734,8 @@
 }
 
 /* ============================================================
-   SECTION NOTES
+   SECTION NOTES (detail view variant)
    ============================================================ */
-.section-notes {
-  margin-top: var(--space-sm);
-  padding: var(--space-sm);
-  background: var(--panel);
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--panel-border);
-  font-size: var(--font-size-sm);
-}
-
 .section-notes label {
   font-weight: var(--font-weight-medium);
   color: var(--text-muted);
@@ -852,20 +832,12 @@
   font-weight: var(--font-weight-bold);
 }
 
-/* ============================================================
-   EMPTY STATES
-   ============================================================ */
-.empty-state,
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xl);
-  color: var(--text-muted);
-  text-align: center;
-  gap: var(--space-md);
-}
+/*
+ * EMPTY STATES / LOADING / SPINNER
+ * Base .empty-state and .loading-state are provided by _components.css.
+ * The overrides below ensure the inspections component's HTML structure
+ * (which uses an explicit .spinner div) renders correctly.
+ */
 
 .empty-detail {
   align-items: center;
@@ -877,7 +849,12 @@
   font-size: var(--font-size-base);
 }
 
-.spinner {
+/* Override shared .loading-state ::before spinner since HTML uses explicit .spinner div */
+.loading-state::before {
+  display: none;
+}
+
+.loading-state .spinner {
   width: 32px;
   height: 32px;
   border: 3px solid var(--panel-border);
@@ -886,30 +863,16 @@
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 /* ============================================================
    DIALOG
+   The shared _components.css uses BEM naming (.dialog__header, etc.)
+   but this component's HTML uses dash naming (.dialog-header, etc.),
+   so component-specific dialog styles are retained here.
+   The shared .dialog base is overridden to remove its padding
+   since this component uses section-specific padding.
    ============================================================ */
-.dialog-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
 .dialog {
-  background: var(--panel);
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 0;
   max-width: 400px;
   width: 90%;
 }
@@ -952,6 +915,7 @@
 
 /* ============================================================
    XSL-FO STYLE PROTOCOL DOCUMENT PREVIEW
+   (Kept: these are print/document-specific styles with fixed dimensions)
    ============================================================ */
 .protocol-document-wrapper {
   flex: 1;
@@ -1189,24 +1153,24 @@
   .inspections-layout {
     grid-template-columns: 1fr;
   }
-  
+
   .detail-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .result-checks {
     grid-template-columns: 1fr;
   }
-  
+
   .protocol-document {
     padding: 6mm;
     font-size: 8pt;
   }
-  
+
   .doc-title h1 {
     font-size: 12pt;
   }
-  
+
   .doc-title h2 {
     font-size: 10pt;
   }

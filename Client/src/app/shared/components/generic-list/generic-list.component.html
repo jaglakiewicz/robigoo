@@ -23,6 +23,7 @@
           [(ngModel)]="filterValues[filter.key]"
           (ngModelChange)="onFilterChange()"
           [placeholder]="filter.placeholder || filter.label"
+          [attr.aria-label]="filter.label || filter.placeholder || 'Filter by ' + filter.key"
           class="filter-input"
         />
 
@@ -31,6 +32,7 @@
           type="date"
           [(ngModel)]="filterValues[filter.key]"
           (ngModelChange)="onFilterChange()"
+          [attr.aria-label]="filter.label || 'Filter by ' + filter.key"
           class="filter-input"
         />
 
@@ -40,6 +42,7 @@
           [(ngModel)]="filterValues[filter.key]"
           (ngModelChange)="onFilterChange()"
           [placeholder]="filter.placeholder || filter.label"
+          [attr.aria-label]="filter.label || filter.placeholder || 'Filter by ' + filter.key"
           class="filter-input"
         />
 
@@ -47,6 +50,7 @@
           *ngIf="filter.type === 'select'"
           [(ngModel)]="filterValues[filter.key]"
           (ngModelChange)="onFilterChange()"
+          [attr.aria-label]="filter.label || 'Filter by ' + filter.key"
           class="filter-input"
         >
           <option value="">{{ filter.placeholder || 'Select...' }}</option>

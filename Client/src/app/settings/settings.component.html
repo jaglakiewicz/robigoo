@@ -62,6 +62,7 @@
             (change)="onAvatarSelected($event)" 
             accept="image/*"
             style="display: none"
+            aria-label="Upload avatar"
           />
           <button class="btn btn-secondary" (click)="avatarInput.click()">
             Zmień avatar
@@ -255,6 +256,7 @@
                     (change)="onRoleChanged(user)"
                     [disabled]="!canChangeUserRole(user)"
                     class="role-select"
+                    aria-label="User role"
                   >
                     <option value="user">Użytkownik</option>
                     <option value="admin">Administrator</option>

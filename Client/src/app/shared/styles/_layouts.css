@@ -1,0 +1,152 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * Shared Layouts Module
+ * Copyright (c) 2025 Wojciech Salamon
+ *
+ * Master-detail two-column layout, panel patterns, form grids,
+ * and step navigation extracted from crop-sprayers & clients components.
+ */
+
+/* ============================================================
+   MASTER-DETAIL TWO-COLUMN LAYOUT
+   ============================================================ */
+.md-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 2.5fr);
+  gap: var(--space-lg);
+  flex: 1;
+  min-height: 0;
+}
+
+/* ============================================================
+   LIST PANEL (left side)
+   ============================================================ */
+.md-list-panel {
+  background: var(--panel);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: visible;
+}
+
+/* ============================================================
+   DETAIL PANEL (right side)
+   ============================================================ */
+.md-detail-panel {
+  background: var(--panel);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: visible;
+}
+
+/* ============================================================
+   DETAIL HEADER
+   ============================================================ */
+.md-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.md-detail-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.md-detail-sub {
+  font-size: var(--font-size-sm);
+  color: var(--text-light);
+}
+
+/* ============================================================
+   FILTERS ROW
+   ============================================================ */
+.md-filters-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  align-items: center;
+}
+
+.md-filters-row .search-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================================
+   STEP CONTENT & NAVIGATION
+   ============================================================ */
+.md-step-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.md-step-navigation {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--panel-border);
+}
+
+/* ============================================================
+   FORM GRID PATTERNS
+   ============================================================ */
+.form-row {
+  display: grid;
+  column-gap: var(--space-lg);
+  row-gap: var(--space-sm);
+}
+
+.form-row-1 {
+  grid-template-columns: 1fr;
+  max-width: 300px;
+}
+
+.form-row-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-row-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* ============================================================
+   RESPONSIVE COLLAPSE
+   ============================================================ */
+@media (max-width: 768px) {
+  .md-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row-2,
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .md-layout {
+    gap: var(--space-sm);
+  }
+  
+  .md-list-panel,
+  .md-detail-panel {
+    padding: var(--space-sm);
+  }
+  
+  .md-detail-title {
+    font-size: var(--font-size-base);
+  }
+}

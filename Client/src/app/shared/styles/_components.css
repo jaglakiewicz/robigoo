@@ -31,7 +31,7 @@
   gap: var(--space-md);
 }
 
-.card-title, .panel-title {
+.panel-title {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--text);

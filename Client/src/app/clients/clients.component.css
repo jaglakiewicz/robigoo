@@ -465,3 +465,30 @@
 @media (max-width: 894px) {
   .clients-layout { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 600px) {
+  .clients-list-panel,
+  .clients-detail-panel {
+    padding: var(--space-sm);
+  }
+  
+  .panel-title {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .basics-grid .form-row-2,
+  .basics-grid .form-row-3,
+  .basics-grid .form-row-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-title {
+    font-size: var(--font-size-base);
+  }
+  
+  .step-navigation {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+}

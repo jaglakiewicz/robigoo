@@ -10,10 +10,14 @@ import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { tap, catchError, switchMap } from 'rxjs/operators';
 import { TextService } from './text.service';
 
-export interface LoginResponse {
-  token: string;
+export interface TokenResponse {
+  accessToken: string;
   refreshToken: string;
   expiresIn: number;
+}
+
+export interface LoginResponse {
+  token: TokenResponse;
   user: {
     userId: number;
     login: string;
@@ -28,7 +32,7 @@ export interface LoginResponse {
 }
 
 export interface RefreshResponse {
-  token: string;
+  accessToken: string;
   refreshToken: string;
   expiresIn: number;
 }
@@ -78,18 +82,18 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, body)
       .pipe(
         tap(response => {
-          const expiresAt = Date.now() + (response.expiresIn * 1000);
+          const expiresAt = Date.now() + (response.token.expiresIn * 1000);
           
           const currentUser: CurrentUser = {
             ...response.user,
-            token: response.token,
-            refreshToken: response.refreshToken,
+            token: response.token.accessToken,
+            refreshToken: response.token.refreshToken,
             tokenExpiresAt: expiresAt
           };
           
           sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-          sessionStorage.setItem('token', response.token);
-          sessionStorage.setItem('refreshToken', response.refreshToken);
+          sessionStorage.setItem('token', response.token.accessToken);
+          sessionStorage.setItem('refreshToken', response.token.refreshToken);
           sessionStorage.setItem('tokenExpiresAt', expiresAt.toString());
           
           this.currentUserSubject.next(currentUser);
@@ -112,7 +116,7 @@ export class AuthService {
     }
 
     if (this.isRefreshing) {
-      return of({ token, refreshToken, expiresIn: 0 } as RefreshResponse);
+      return of({ accessToken: token, refreshToken, expiresIn: 0 } as RefreshResponse);
     }
 
     this.isRefreshing = true;
@@ -124,13 +128,13 @@ export class AuthService {
       tap(response => {
         const expiresAt = Date.now() + (response.expiresIn * 1000);
         
-        sessionStorage.setItem('token', response.token);
+        sessionStorage.setItem('token', response.accessToken);
         sessionStorage.setItem('refreshToken', response.refreshToken);
         sessionStorage.setItem('tokenExpiresAt', expiresAt.toString());
         
         const currentUser = this.currentUserSubject.value;
         if (currentUser) {
-          currentUser.token = response.token;
+          currentUser.token = response.accessToken;
           currentUser.refreshToken = response.refreshToken;
           currentUser.tokenExpiresAt = expiresAt;
           sessionStorage.setItem('currentUser', JSON.stringify(currentUser));

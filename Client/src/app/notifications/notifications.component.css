@@ -2,6 +2,9 @@
  * ROBIGOO FIELD SPRAYER CONTROL STATION
  * Notifications Component
  * Copyright (c) 2025 Wojciech Salamon
+ *
+ * Uses shared card patterns from _components.css (via globals.css).
+ * Only notification-specific overrides and styles are defined here.
  */
 
 @import '../shared/styles/globals.css';
@@ -16,22 +19,22 @@
 
 /* ============================================================
    NOTIFICATION CARDS
+   Extends the shared .card pattern from _components.css.
+   The base .card provides: background, border, border-radius,
+   padding, box-shadow, and hover shadow.
+   Only notification-specific overrides are declared here.
    ============================================================ */
 .notification-card {
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
   margin-bottom: var(--space-sm);
-  background: var(--bg-alt);
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-sm);
 }
 
 .notification-card:hover {
-  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
+/* ============================================================
+   NOTIFICATION HEADER
+   ============================================================ */
 .notification-header {
   display: flex;
   justify-content: space-between;
@@ -50,6 +53,9 @@
   white-space: nowrap;
 }
 
+/* ============================================================
+   NOTIFICATION MESSAGE
+   ============================================================ */
 .notification-message {
   font-size: var(--font-size-sm);
   color: var(--text);
@@ -57,6 +63,9 @@
   word-break: break-word;
 }
 
+/* ============================================================
+   NOTIFICATION ACTIONS
+   ============================================================ */
 .notification-actions {
   display: flex;
   gap: var(--space-xs);
@@ -70,8 +79,21 @@
   min-height: 30px;
 }
 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 767px) {
-  .notification-header { flex-direction: column; align-items: flex-start; }
-  .notification-actions { width: 100%; }
-  .notification-actions button { flex: 1; min-width: 80px; }
+  .notification-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notification-actions {
+    width: 100%;
+  }
+
+  .notification-actions button {
+    flex: 1;
+    min-width: 80px;
+  }
 }

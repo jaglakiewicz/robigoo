@@ -141,6 +141,102 @@ a:focus-visible {
 }
 
 /* ============================================================
+   AUTO THEME DETECTION
+   Applies dark theme when system prefers dark and no explicit
+   user preference is stored (no data-theme attribute set)
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    /* Apply dark theme variables when no explicit preference */
+    --primary: hsl(222, 48%, 58%);
+    --primary-hover: hsl(222, 50%, 65%);
+    --primary-surface: hsl(222, 28%, 15%);
+    --primary-border: hsl(222, 18%, 30%);
+    --primary-btn-border: hsl(222, 52%, 48%);
+
+    --success: hsl(165, 42%, 48%);
+    --success-hover: hsl(165, 45%, 55%);
+    --success-surface: hsl(165, 25%, 13%);
+    --success-border: hsl(165, 18%, 26%);
+    --success-btn-border: hsl(165, 48%, 38%);
+    --success-text: hsl(165, 45%, 55%);
+
+    --warning: hsl(38, 65%, 55%);
+    --warning-hover: hsl(38, 68%, 62%);
+    --warning-surface: hsl(38, 35%, 13%);
+    --warning-border: hsl(38, 25%, 26%);
+    --warning-btn-border: hsl(38, 70%, 44%);
+    --warning-text: hsl(40, 60%, 60%);
+
+    --error: hsl(352, 50%, 58%);
+    --error-hover: hsl(352, 52%, 65%);
+    --error-surface: hsl(352, 28%, 14%);
+    --error-border: hsl(352, 20%, 26%);
+    --error-btn-border: hsl(352, 55%, 48%);
+    --error-text: hsl(352, 50%, 65%);
+
+    --bg: hsl(220, 16%, 11%);
+    --bg-alt: hsl(220, 18%, 8%);
+    --surface: hsl(220, 14%, 15%);
+    --surface-alt: hsl(220, 12%, 19%);
+
+    --border: hsl(220, 10%, 26%);
+    --border-light: hsl(220, 8%, 20%);
+    --border-strong: hsl(220, 10%, 36%);
+
+    --text: hsl(220, 12%, 93%);
+    --text-secondary: hsl(220, 8%, 68%);
+    --text-muted: hsl(220, 6%, 54%);
+    --text-disabled: hsl(220, 5%, 44%);
+    --text-inverse: hsl(220, 16%, 11%);
+
+    --disabled-bg: hsl(220, 12%, 12%);
+    --disabled-border: hsl(220, 8%, 22%);
+    --disabled-text: hsl(220, 5%, 46%);
+
+    --focus-ring: hsl(222, 55%, 58%);
+    --focus-ring-offset: hsl(220, 14%, 15%);
+    --overlay: hsla(220, 25%, 5%, 0.8);
+
+    --on-dark: hsla(0, 0%, 100%, 1);
+    --on-dark-muted: hsla(0, 0%, 100%, 0.65);
+    --on-dark-subtle: hsla(0, 0%, 100%, 0.5);
+    --on-dark-border: hsla(0, 0%, 100%, 0.2);
+    --on-dark-border-strong: hsla(0, 0%, 100%, 0.35);
+    --on-dark-surface: hsla(0, 0%, 100%, 0.08);
+    --on-dark-surface-hover: hsla(0, 0%, 100%, 0.15);
+    --on-dark-shadow: hsla(0, 0%, 0%, 0.3);
+
+    --shadow-color: 220, 25%, 5%;
+    --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.18);
+    --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.25);
+    --shadow-md: 0 4px 8px hsla(var(--shadow-color), 0.32);
+    --shadow-lg: 0 8px 16px hsla(var(--shadow-color), 0.40);
+    --shadow-xl: 0 16px 32px hsla(var(--shadow-color), 0.50);
+
+    --panel: var(--surface);
+    --panel-border: var(--border);
+    --bg-elevated: var(--surface);
+    --text-light: var(--text-secondary);
+    --text-lighter: var(--text-muted);
+    --accent: var(--primary);
+    --accent-light: var(--primary-surface);
+    --info: var(--primary);
+    --info-light: var(--primary-surface);
+    --success-dark: var(--success-hover);
+    --success-light: var(--success-surface);
+    --warning-light: var(--warning-surface);
+    --error-light: var(--error-surface);
+    --primary-dark: var(--primary-hover);
+    --primary-light: var(--primary-surface);
+
+    --focus-shadow: inset 0 0 0 1px var(--primary);
+    --link-color: var(--primary);
+    --link-color-hover: var(--primary-hover);
+  }
+}
+
+/* ============================================================
    RESPONSIVE BREAKPOINTS
    ============================================================ */
 @media (max-width: 767px) {
@@ -149,6 +245,18 @@ a:focus-visible {
 
 @media (min-width: 768px) {
   body { font-size: var(--font-size-base); }
+}
+
+/* ============================================================
+   SAFE AREA SUPPORT FOR NOTCHED DEVICES
+   Applied below the sm breakpoint (600px)
+   ============================================================ */
+@media (max-width: 600px) {
+  body {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 /* ============================================================

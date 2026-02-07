@@ -58,6 +58,7 @@
               placeholder="Wpisz imię, nazwisko, nazwę firmy, NIP lub PESEL..."
               class="search-input"
               [disabled]="isAddingNewClient"
+              aria-label="Search client"
             />
             <button *ngIf="selectedClientId && !isAddingNewClient" class="btn-clear" (click)="clearClientSelection()" title="Wyczyść wybór">
               <span [innerHTML]="getSafeHtml(iconCancel)"></span>
@@ -90,9 +91,10 @@
         </div>
 
         <div class="form-actions-inline">
-          <button class="btn btn-small btn-secondary" (click)="toggleAddNewClient()">
-            <span [innerHTML]="getSafeHtml(iconAdd)"></span>
-            {{ isAddingNewClient ? 'Wybierz istniejącego' : 'Nowy klient' }}
+          <button class="btn btn-small btn-secondary toggle-form-btn" [class.expanded]="isAddingNewClient" (click)="toggleAddNewClient()">
+            <span class="btn-icon" [innerHTML]="getSafeHtml(iconAdd)"></span>
+            <span class="btn-label">{{ isAddingNewClient ? 'Wybierz istniejącego' : 'Nowy klient' }}</span>
+            <span class="toggle-chevron" [innerHTML]="getSafeHtml(SVG_ICONS.chevronDown)"></span>
           </button>
         </div>
 
@@ -215,9 +217,10 @@
           </div>
 
           <div class="form-actions-inline">
-            <button class="btn btn-small btn-secondary" (click)="toggleAddNewSprayer()">
-              <span [innerHTML]="getSafeHtml(iconAdd)"></span>
-              {{ isAddingNewSprayer ? 'Wybierz istniejący' : 'Nowy opryskiwacz' }}
+            <button class="btn btn-small btn-secondary toggle-form-btn" [class.expanded]="isAddingNewSprayer" (click)="toggleAddNewSprayer()">
+              <span class="btn-icon" [innerHTML]="getSafeHtml(iconAdd)"></span>
+              <span class="btn-label">{{ isAddingNewSprayer ? 'Wybierz istniejący' : 'Nowy opryskiwacz' }}</span>
+              <span class="toggle-chevron" [innerHTML]="getSafeHtml(SVG_ICONS.chevronDown)"></span>
             </button>
           </div>
 
@@ -486,15 +489,15 @@
         <div class="measurement-inputs">
           <div class="measurement-input">
             <span>2 bar:</span>
-            <input type="number" [(ngModel)]="manometerReading2Bar" placeholder="0.0" step="0.1" />
+            <input type="number" [(ngModel)]="manometerReading2Bar" placeholder="0.0" step="0.1" aria-label="Manometer reading at 2 bar" />
           </div>
           <div class="measurement-input">
             <span>4 bar:</span>
-            <input type="number" [(ngModel)]="manometerReading4Bar" placeholder="0.0" step="0.1" />
+            <input type="number" [(ngModel)]="manometerReading4Bar" placeholder="0.0" step="0.1" aria-label="Manometer reading at 4 bar" />
           </div>
           <div class="measurement-input">
             <span>6 bar:</span>
-            <input type="number" [(ngModel)]="manometerReading6Bar" placeholder="0.0" step="0.1" />
+            <input type="number" [(ngModel)]="manometerReading6Bar" placeholder="0.0" step="0.1" aria-label="Manometer reading at 6 bar" />
           </div>
         </div>
       </div>
@@ -637,7 +640,7 @@
         <label>Współczynnik zmienności (CV):</label>
         <div class="measurement-inputs">
           <div class="measurement-input">
-            <input type="number" [(ngModel)]="coefficientOfVariation" placeholder="0.0" step="0.1" />
+            <input type="number" [(ngModel)]="coefficientOfVariation" placeholder="0.0" step="0.1" aria-label="Coefficient of variation (CV)" />
             <span>%</span>
           </div>
         </div>

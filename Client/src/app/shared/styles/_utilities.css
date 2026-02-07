@@ -167,6 +167,18 @@
   }
 }
 
+/* Touch target minimum size for mobile (Requirement 4.5) */
+@media (max-width: 768px) {
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  .btn,
+  a.btn {
+    min-height: var(--touch-size);
+  }
+}
+
 /* ============================================================
    ANIMATIONS
    ============================================================ */

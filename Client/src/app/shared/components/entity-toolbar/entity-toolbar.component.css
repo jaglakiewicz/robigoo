@@ -20,6 +20,9 @@
   margin-bottom: var(--space-md);
   flex-wrap: wrap;
   border-bottom: 1px solid var(--panel-border);
+  position: relative;
+  z-index: 0;
+  overflow: visible;
 }
 
 .toolbar-group {
@@ -41,9 +44,11 @@
 .entity-toolbar .btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
   min-width: unset;
   padding-inline: var(--space-sm) var(--space-md);
+  position: relative;
+  z-index: 1;
 }
 
 .entity-toolbar .btn-icon {
@@ -61,6 +66,43 @@
 }
 
 .entity-toolbar .btn-label {
-  flex: 0 0 auto;
+  flex: 1;
   text-align: left;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  .entity-toolbar {
+    gap: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .toolbar-group {
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+  
+  .entity-toolbar .btn {
+    font-size: var(--font-size-sm);
+    padding-inline: var(--space-xs) var(--space-sm);
+    height: 36px;
+    min-height: 36px;
+  }
+  
+  .entity-toolbar .btn-label {
+    display: none;
+  }
+  
+  .entity-toolbar .btn-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .entity-toolbar .btn-icon svg {
+    width: 16px;
+    height: 16px;
+  }
 }

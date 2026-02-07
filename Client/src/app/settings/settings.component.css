@@ -44,8 +44,8 @@
 }
 
 .step-number {
-  width: 24px;
-  height: 24px;
+  width: var(--space-xl);
+  height: var(--space-xl);
   border-radius: 50%;
   background: var(--panel-border);
   display: flex;
@@ -103,12 +103,13 @@
   border-top: 1px solid var(--panel-border);
 }
 
-.admin-section .component-title {
+/* Use higher specificity to override shared .component-title without !important */
+:host .admin-section .component-title {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--accent) !important;
-  margin: 0 0 var(--space-lg) 0 !important;
-  padding: 0 !important;
+  color: var(--accent);
+  margin: 0 0 var(--space-lg) 0;
+  padding: 0;
   display: flex;
   align-items: center;
   height: auto;
@@ -118,37 +119,14 @@
 .admin-section h4 {
   margin-bottom: var(--space-lg);
   color: var(--text);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
 }
 
 /* ============================================================
    TOGGLE FORM BUTTON
+   (Shared styles in _buttons.css — component overrides only)
    ============================================================ */
-.toggle-form-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  transition: all var(--transition-base);
-}
-
-.toggle-form-btn .toggle-icon {
-  width: 18px;
-  height: 18px;
-  transition: transform var(--transition-base);
-}
-
-.toggle-form-btn.expanded .toggle-icon { transform: rotate(180deg); }
-
-.toggle-form-btn.expanded {
-  background: var(--accent);
-  color: var(--text-inverse);
-  border: 1px solid var(--primary-btn-border);
-  border-top-left-radius: var(--radius-md);
-  border-top-right-radius: var(--radius-md);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
 
 /* ============================================================
    CREATE USER FORM
@@ -159,7 +137,6 @@
   padding: var(--space-lg);
   border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
   margin: 0;
-  margin-top: -1px;
   border: 1px solid var(--primary-btn-border);
   box-shadow: var(--shadow-sm);
   animation: slideDown var(--transition-base) ease-out;
@@ -175,33 +152,7 @@
   .password-change-form { padding: var(--space-md); }
 }
 
-.create-user-form .form-group,
-.password-change-form .form-group { margin-bottom: var(--space-md); }
-
-.create-user-form input,
-.create-user-form select,
-.password-change-form input {
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  background: var(--bg);
-  color: var(--text);
-  transition: all var(--transition-fast);
-  min-height: var(--touch-size);
-}
-
-.create-user-form input:focus,
-.create-user-form select:focus,
-.password-change-form input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: var(--focus-shadow);
-  background: var(--panel);
-}
-
+/* Password form: unique warning-colored focus (overrides shared _forms.css focus) */
 .password-change-form input:focus {
   border-color: var(--warning);
   box-shadow: 0 0 0 3px var(--warning-surface);
@@ -233,14 +184,19 @@
 /* ============================================================
    DISABLED INPUT & HINTS
    ============================================================ */
-.disabled-input {
-  background: var(--bg-alt) !important;
+/* Override shared form input styles for disabled state without !important */
+input.disabled-input,
+select.disabled-input,
+textarea.disabled-input {
+  background: var(--bg-alt);
   cursor: not-allowed;
 }
 
-.disabled-input:focus {
-  border-color: var(--panel-border) !important;
-  box-shadow: none !important;
+input.disabled-input:focus,
+select.disabled-input:focus,
+textarea.disabled-input:focus {
+  border-color: var(--panel-border);
+  box-shadow: none;
 }
 
 .field-hint,
@@ -433,8 +389,8 @@
 }
 
 .btn-icon {
-  width: 18px;
-  height: 18px;
+  width: var(--space-lg);
+  height: var(--space-lg);
   display: inline-block;
   flex-shrink: 0;
   vertical-align: middle;

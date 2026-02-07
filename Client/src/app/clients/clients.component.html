@@ -56,7 +56,8 @@
           class="search-input"
           [placeholder]="'clients.searchPlaceholder' | text"
           [ngModel]="searchTerm"
-          (ngModelChange)="onSearchChange($event)" />
+          (ngModelChange)="onSearchChange($event)"
+          aria-label="Search clients" />
 
         <app-filter-panel
           [fields]="filterFields"

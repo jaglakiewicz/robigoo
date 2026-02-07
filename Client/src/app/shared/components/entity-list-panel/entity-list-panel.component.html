@@ -13,7 +13,8 @@
       class="search-input"
       [placeholder]="searchPlaceholder"
       [ngModel]="searchTerm"
-      (ngModelChange)="onSearchChange($event)" />
+      (ngModelChange)="onSearchChange($event)"
+      aria-label="Search" />
 
     <app-filter-panel
       *ngIf="filterFields.length > 0"

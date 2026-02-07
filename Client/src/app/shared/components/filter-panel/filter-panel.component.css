@@ -13,8 +13,12 @@
    ============================================================ */
 .filter-toggle-btn {
   position: relative;
-  padding: 0 var(--space-sm) !important;
   min-width: var(--touch-size);
+}
+
+/* Override shared .btn padding with higher specificity instead of !important */
+button.filter-toggle-btn {
+  padding: 0 var(--space-sm);
 }
 
 .filter-toggle-btn.active {

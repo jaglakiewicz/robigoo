@@ -103,3 +103,30 @@
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  .step-indicator {
+    padding: var(--space-xs);
+    gap: 2px;
+  }
+  
+  .step {
+    min-width: 0;
+    flex: 1 1 auto;
+    padding: var(--space-sm) var(--space-xs);
+    font-size: var(--font-size-sm);
+  }
+  
+  .step-label {
+    display: none;
+  }
+  
+  .step-number {
+    width: 22px;
+    height: 22px;
+    font-size: var(--font-size-sm);
+  }
+}

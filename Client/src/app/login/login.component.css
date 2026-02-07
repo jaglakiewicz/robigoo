@@ -567,6 +567,10 @@
   gap: var(--space-lg);
 }
 
+.login-form .form-group label {
+  text-transform: uppercase;
+}
+
 .login-form .form-group input {
   padding: var(--space-md) var(--space-lg);
   border: 1px solid var(--panel-border);
@@ -591,7 +595,9 @@
   align-items: center;
 }
 
-.password-field input { padding-right: 48px !important; }
+/* Override shared form input padding for password toggle space without !important */
+.password-field input[type="password"],
+.password-field input[type="text"] { padding-right: 48px; }
 
 .password-toggle {
   position: absolute;
