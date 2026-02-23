@@ -1,12 +1,3 @@
-﻿/*
- * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Notifications Component
- * Copyright (c) 2025 Wojciech Salamon
- *
- * Uses shared card patterns from _components.css (via globals.css).
- * Only notification-specific overrides and styles are defined here.
- */
-
 @import '../shared/styles/globals.css';
 
 :host {

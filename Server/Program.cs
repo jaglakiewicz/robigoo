@@ -1,11 +1,4 @@
-﻿/*
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
-*/
-
-#region Imports
+﻿#region Imports
 
 using Server.Data;
 using Server.Exceptions;
@@ -79,8 +72,8 @@ builder.Services.AddProblemDetails();
 // Get JWT configuration from appsettings
 var jwtKey = builder.Configuration["Jwt:Key"] 
     ?? throw new InvalidOperationException("JWT Key not configured. Set Jwt:Key in appsettings.json");
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Robigoo";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "RobigooUsers";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "SKO";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "SKOUsers";
 var key = Encoding.UTF8.GetBytes(jwtKey);
 
 // Validate key length
@@ -597,7 +590,7 @@ using (var scope = app.Services.CreateScope())
             PasswordHash = passwordService.HashPassword("admin123"),
             FirstName = "Master",
             LastName = "Administrator",
-            Email = "admin@robigoo.local",
+            Email = "admin@sko.local",
             Phone = "",
             PermissionNumber = "MASTER_ADMIN_001",
             Role = "admin",

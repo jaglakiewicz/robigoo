@@ -1,14 +1,3 @@
-/*
- * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Inspections Component - Master Detail View
- * Copyright (c) 2025 Wojciech Salamon
- *
- * Shared patterns (cards, badges, dialogs, loading/empty states, spinner)
- * are provided by globals.css via _layouts.css, _cards.css, _components.css.
- * This file contains only inspections-specific styles and layout aliases
- * for component class names used in the HTML template.
- */
-
 @import '../shared/styles/globals.css';
 
 :host {

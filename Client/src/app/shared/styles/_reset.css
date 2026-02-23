@@ -1,9 +1,3 @@
-/*
- * ROBIGOO FIELD SPRAYER CONTROL STATION
- * CSS Reset & Base Styles
- * Copyright (c) 2025 Wojciech Salamon
- */
-
 * {
   box-sizing: border-box;
 }
@@ -40,7 +34,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text);
 }
 
-h1 { font-size: var(--font-size-xl); margin-bottom: var(--space-lg); }
+h1 { font-size: var(--font-size-2xl); margin-bottom: var(--space-lg); }
 h2 { font-size: var(--font-size-xl); margin-bottom: var(--space-lg); }
 h3 { font-size: var(--font-size-lg); margin-bottom: var(--space-md); }
 h4 { font-size: var(--font-size-base); margin-bottom: var(--space-sm); }
@@ -147,73 +141,61 @@ a:focus-visible {
    ============================================================ */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    /* Apply dark theme variables when no explicit preference */
-    --primary: hsl(222, 48%, 58%);
-    --primary-hover: hsl(222, 50%, 65%);
-    --primary-surface: hsl(222, 28%, 15%);
-    --primary-border: hsl(222, 18%, 30%);
-    --primary-btn-border: hsl(222, 52%, 48%);
-
-    --success: hsl(165, 42%, 48%);
-    --success-hover: hsl(165, 45%, 55%);
-    --success-surface: hsl(165, 25%, 13%);
-    --success-border: hsl(165, 18%, 26%);
-    --success-btn-border: hsl(165, 48%, 38%);
-    --success-text: hsl(165, 45%, 55%);
-
-    --warning: hsl(38, 65%, 55%);
-    --warning-hover: hsl(38, 68%, 62%);
-    --warning-surface: hsl(38, 35%, 13%);
-    --warning-border: hsl(38, 25%, 26%);
-    --warning-btn-border: hsl(38, 70%, 44%);
-    --warning-text: hsl(40, 60%, 60%);
-
-    --error: hsl(352, 50%, 58%);
-    --error-hover: hsl(352, 52%, 65%);
-    --error-surface: hsl(352, 28%, 14%);
-    --error-border: hsl(352, 20%, 26%);
-    --error-btn-border: hsl(352, 55%, 48%);
-    --error-text: hsl(352, 50%, 65%);
-
-    --bg: hsl(220, 16%, 11%);
-    --bg-alt: hsl(220, 18%, 8%);
-    --surface: hsl(220, 14%, 15%);
-    --surface-alt: hsl(220, 12%, 19%);
-
-    --border: hsl(220, 10%, 26%);
-    --border-light: hsl(220, 8%, 20%);
-    --border-strong: hsl(220, 10%, 36%);
-
-    --text: hsl(220, 12%, 93%);
-    --text-secondary: hsl(220, 8%, 68%);
-    --text-muted: hsl(220, 6%, 54%);
-    --text-disabled: hsl(220, 5%, 44%);
-    --text-inverse: hsl(220, 16%, 11%);
-
-    --disabled-bg: hsl(220, 12%, 12%);
-    --disabled-border: hsl(220, 8%, 22%);
-    --disabled-text: hsl(220, 5%, 46%);
-
-    --focus-ring: hsl(222, 55%, 58%);
-    --focus-ring-offset: hsl(220, 14%, 15%);
-    --overlay: hsla(220, 25%, 5%, 0.8);
-
+    --primary: hsl(214, 76%, 58%);
+    --primary-hover: hsl(214, 80%, 66%);
+    --primary-surface: hsl(214, 40%, 14%);
+    --primary-border: hsl(214, 24%, 28%);
+    --primary-btn-border: hsl(214, 72%, 46%);
+    --success: hsl(158, 48%, 46%);
+    --success-hover: hsl(158, 52%, 54%);
+    --success-surface: hsl(158, 30%, 12%);
+    --success-border: hsl(158, 22%, 24%);
+    --success-btn-border: hsl(158, 52%, 36%);
+    --success-text: hsl(158, 48%, 54%);
+    --warning: hsl(36, 76%, 54%);
+    --warning-hover: hsl(36, 80%, 62%);
+    --warning-surface: hsl(36, 40%, 12%);
+    --warning-border: hsl(36, 28%, 24%);
+    --warning-btn-border: hsl(36, 76%, 42%);
+    --warning-text: hsl(38, 68%, 60%);
+    --error: hsl(4, 64%, 56%);
+    --error-hover: hsl(4, 68%, 64%);
+    --error-surface: hsl(4, 36%, 13%);
+    --error-border: hsl(4, 24%, 24%);
+    --error-btn-border: hsl(4, 66%, 46%);
+    --error-text: hsl(4, 60%, 62%);
+    --bg: hsl(216, 18%, 10%);
+    --bg-alt: hsl(216, 20%, 7%);
+    --surface: hsl(216, 16%, 14%);
+    --surface-alt: hsl(216, 14%, 18%);
+    --border: hsl(216, 12%, 24%);
+    --border-light: hsl(216, 10%, 18%);
+    --border-strong: hsl(216, 12%, 34%);
+    --text: hsl(216, 14%, 92%);
+    --text-secondary: hsl(216, 8%, 66%);
+    --text-muted: hsl(216, 6%, 54%);
+    --text-disabled: hsl(216, 5%, 42%);
+    --text-inverse: hsl(216, 18%, 10%);
+    --disabled-bg: hsl(216, 14%, 11%);
+    --disabled-border: hsl(216, 8%, 20%);
+    --disabled-text: hsl(216, 5%, 44%);
+    --focus-ring: hsl(214, 76%, 58%);
+    --focus-ring-offset: hsl(216, 16%, 14%);
+    --overlay: hsla(216, 28%, 4%, 0.82);
     --on-dark: hsla(0, 0%, 100%, 1);
-    --on-dark-muted: hsla(0, 0%, 100%, 0.65);
-    --on-dark-subtle: hsla(0, 0%, 100%, 0.5);
-    --on-dark-border: hsla(0, 0%, 100%, 0.2);
-    --on-dark-border-strong: hsla(0, 0%, 100%, 0.35);
-    --on-dark-surface: hsla(0, 0%, 100%, 0.08);
-    --on-dark-surface-hover: hsla(0, 0%, 100%, 0.15);
-    --on-dark-shadow: hsla(0, 0%, 0%, 0.3);
-
-    --shadow-color: 220, 25%, 5%;
-    --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.18);
-    --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.25);
-    --shadow-md: 0 4px 8px hsla(var(--shadow-color), 0.32);
-    --shadow-lg: 0 8px 16px hsla(var(--shadow-color), 0.40);
-    --shadow-xl: 0 16px 32px hsla(var(--shadow-color), 0.50);
-
+    --on-dark-muted: hsla(0, 0%, 100%, 0.62);
+    --on-dark-subtle: hsla(0, 0%, 100%, 0.44);
+    --on-dark-border: hsla(0, 0%, 100%, 0.16);
+    --on-dark-border-strong: hsla(0, 0%, 100%, 0.30);
+    --on-dark-surface: hsla(0, 0%, 100%, 0.07);
+    --on-dark-surface-hover: hsla(0, 0%, 100%, 0.13);
+    --on-dark-shadow: hsla(0, 0%, 0%, 0.36);
+    --shadow-color: 216, 28%, 4%;
+    --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.20);
+    --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.28);
+    --shadow-md: 0 4px 10px hsla(var(--shadow-color), 0.36);
+    --shadow-lg: 0 8px 20px hsla(var(--shadow-color), 0.44);
+    --shadow-xl: 0 16px 36px hsla(var(--shadow-color), 0.54);
     --panel: var(--surface);
     --panel-border: var(--border);
     --bg-elevated: var(--surface);
@@ -229,7 +211,6 @@ a:focus-visible {
     --error-light: var(--error-surface);
     --primary-dark: var(--primary-hover);
     --primary-light: var(--primary-surface);
-
     --focus-shadow: inset 0 0 0 1px var(--primary);
     --link-color: var(--primary);
     --link-color-hover: var(--primary-hover);

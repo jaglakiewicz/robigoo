@@ -1,10 +1,3 @@
-/*
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
-*/
-
 #region Imports
 
 using Microsoft.AspNetCore.Diagnostics;
@@ -85,14 +78,14 @@ namespace Server.Services
 
         /// <summary>
         /// Gets the correlation ID from the exception, HttpContext, or generates a new one.
-        /// Priority: RobigooException > HttpContext (from middleware) > Request Header > New GUID
+        /// Priority: SkoException > HttpContext (from middleware) > Request Header > New GUID
         /// </summary>
         private static string GetCorrelationId(HttpContext httpContext, Exception exception)
         {
-            // Try to get from RobigooException
-            if (exception is RobigooException robigooEx)
+            // Try to get from SkoException
+            if (exception is SkoException skoEx)
             {
-                return robigooEx.CorrelationId;
+                return skoEx.CorrelationId;
             }
 
             // Try to get from HttpContext.Items (set by CorrelationIdMiddleware)
@@ -123,14 +116,14 @@ namespace Server.Services
             var method = httpContext.Request.Method;
             var ipAddress = GetClientIpAddress(httpContext);
 
-            if (exception is RobigooException robigooEx)
+            if (exception is SkoException skoEx2)
             {
                 // Log application exceptions at Warning level (expected errors)
                 _logger.LogWarning(
                     exception,
                     "Application exception occurred. CorrelationId: {CorrelationId}, Code: {ErrorCode}, Path: {Path}, Method: {Method}, IP: {IpAddress}",
                     correlationId,
-                    robigooEx.Code,
+                    skoEx2.Code,
                     path,
                     method,
                     ipAddress);

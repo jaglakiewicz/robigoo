@@ -1,10 +1,3 @@
-/*
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
-*/
-
 #region Imports
 
 using System.IdentityModel.Tokens.Jwt;
@@ -53,8 +46,8 @@ namespace Server.Services
             _secretKey = configuration["Jwt:Key"] 
                 ?? throw new InvalidOperationException("JWT Key not configured. Set Jwt:Key in appsettings.json or environment variables.");
             
-            _issuer = configuration["Jwt:Issuer"] ?? "Robigoo";
-            _audience = configuration["Jwt:Audience"] ?? "RobigooUsers";
+            _issuer = configuration["Jwt:Issuer"] ?? "SKO";
+            _audience = configuration["Jwt:Audience"] ?? "SKOUsers";
             _accessTokenExpirationMinutes = configuration.GetValue<int>("Jwt:AccessTokenExpirationMinutes", 30);
             _refreshTokenExpirationDays = configuration.GetValue<int>("Jwt:RefreshTokenExpirationDays", 7);
 

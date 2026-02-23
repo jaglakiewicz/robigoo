@@ -35,8 +35,8 @@
        =============================================== -->
   
   <PropertyGroup>
-    <Company>Robigoo</Company>
-    <Product>Robigoo Inspection Server</Product>
+    <Company>SKO</Company>
+    <Product>SKO Inspection Server</Product>
     <Authors>Development Team</Authors>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>

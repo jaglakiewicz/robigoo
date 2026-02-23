@@ -1,8 +1,8 @@
-# ==================== ROBIGOO PROJECT GITIGNORE ====================
-# Backend (.NET / C#)
-# ====================================================================
+# Build output
 bin/
 obj/
+
+# .NET artifacts
 *.dll
 *.exe
 *.pdb
@@ -10,110 +10,38 @@ obj/
 *.deps.json
 *.staticwebassets.endpoints.json
 
-# Entity Framework
-Migrations/
+# SQLite database files (keep .db for dev seed, ignore WAL/SHM)
+*.db-shm
+*.db-wal
 
-# User-specific files
+# User & IDE specific
 *.user
-*.userprefs
 *.suo
 *.sln.docstates
-
-# Visual Studio
 .vs/
 .vscode/
-*.CodeAnalysisLog.xml
-*.lastcodeanalysisresult.xml
+.idea/
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Configuration
+# Environment / secrets
 appsettings.Development.json
 appsettings.local.json
-app.db-shm
-app.db-wal
-
-# Logs
-*.log
-logs/
-server.log
-bin/Debug/net10.0/
-
-# ====================================================================
-# Frontend (Angular / Node.js)
-# ====================================================================
-Client/node_modules/
-Client/dist/
-Client/.angular/
-Client/npm-debug.log*
-Client/yarn-debug.log*
-Client/yarn-error.log*
-
-# ====================================================================
-# IDE & Editor
-# ====================================================================
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# ====================================================================
-# Environment files
-# ====================================================================
 .env
 .env.local
 .env.*.local
 
-# ====================================================================
-# OS-specific
-# ====================================================================
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
 *.orig
 *.bak
 *.tmp
-
-# ====================================================================
-# Package managers
-# ====================================================================
-node_modules/
-package-lock.json
-yarn.lock
-
-# ====================================================================
-# Build artifacts
-# ====================================================================
-dist/
-build/
-
-# ====================================================================
-# Coverage reports
-# ====================================================================
-coverage/
-*.cover
-
-# ====================================================================
-# IDE cache files
-# ====================================================================
-.cache/
-*.cache
-
-# ====================================================================
-# Temporary files
-# ====================================================================
 *.temp
-*.tmp
-temp/
-tmp/
-
-# ====================================================================
-# Google Drive temporary upload files
-# ====================================================================
 .tmp.driveupload/
 
-app_v2.db-shm
-app_v2.db-wal
+# Coverage
+coverage/
+*.cover

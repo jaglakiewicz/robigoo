@@ -1,13 +1,4 @@
-﻿/*
- * ROBIGOO FIELD SPRAYER CONTROL STATION
- * Global Styles - Main Entry Point
- * Copyright (c) 2025 Wojciech Salamon
- * 
- * This file imports all modular CSS files.
- * Import this file in component CSS files that need shared styles.
- */
-
-@import './_variables.css';
+﻿@import './_variables.css';
 @import './_reset.css';
 @import './_layouts.css';
 @import './_cards.css';

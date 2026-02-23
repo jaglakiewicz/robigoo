@@ -1,17 +1,10 @@
-/*
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
- * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
- * All rights reserved. Unauthorized distribution or disclosure is prohibited.
- * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
-*/
-
 namespace Server.Exceptions
 {
     /// <summary>
-    /// Base exception class for all Robigoo application exceptions.
+    /// Base exception class for all SKO application exceptions.
     /// Provides a consistent error code and correlation ID for tracing.
     /// </summary>
-    public abstract class RobigooException : Exception
+    public abstract class SkoException : Exception
     {
         /// <summary>
         /// A machine-readable error code for categorizing the exception.
@@ -23,14 +16,14 @@ namespace Server.Exceptions
         /// </summary>
         public string CorrelationId { get; }
 
-        protected RobigooException(string message, string code, string? correlationId = null)
+        protected SkoException(string message, string code, string? correlationId = null)
             : base(message)
         {
             Code = code;
             CorrelationId = correlationId ?? Guid.NewGuid().ToString();
         }
 
-        protected RobigooException(string message, string code, Exception innerException, string? correlationId = null)
+        protected SkoException(string message, string code, Exception innerException, string? correlationId = null)
             : base(message, innerException)
         {
             Code = code;
@@ -42,7 +35,7 @@ namespace Server.Exceptions
     /// Exception thrown when input validation fails.
     /// Maps to HTTP 400 Bad Request.
     /// </summary>
-    public class ValidationException : RobigooException
+    public class ValidationException : SkoException
     {
         public IReadOnlyList<ValidationError> Errors { get; }
 
@@ -80,7 +73,7 @@ namespace Server.Exceptions
     /// Exception thrown when authentication fails.
     /// Maps to HTTP 401 Unauthorized.
     /// </summary>
-    public class AuthenticationException : RobigooException
+    public class AuthenticationException : SkoException
     {
         public AuthenticationException(string message = "Authentication required", string? correlationId = null)
             : base(message, "AUTHENTICATION_ERROR", correlationId)
@@ -92,7 +85,7 @@ namespace Server.Exceptions
     /// Exception thrown when authorization fails.
     /// Maps to HTTP 403 Forbidden.
     /// </summary>
-    public class AuthorizationException : RobigooException
+    public class AuthorizationException : SkoException
     {
         public string? Resource { get; }
         public string? Action { get; }
@@ -109,7 +102,7 @@ namespace Server.Exceptions
     /// Exception thrown when a database concurrency conflict occurs.
     /// Maps to HTTP 409 Conflict.
     /// </summary>
-    public class ConcurrencyException : RobigooException
+    public class ConcurrencyException : SkoException
     {
         public string? EntityType { get; }
         public string? EntityId { get; }
@@ -131,7 +124,7 @@ namespace Server.Exceptions
     /// Exception thrown when a requested resource is not found.
     /// Maps to HTTP 404 Not Found.
     /// </summary>
-    public class NotFoundException : RobigooException
+    public class NotFoundException : SkoException
     {
         public string? ResourceType { get; }
         public string? ResourceId { get; }
@@ -148,7 +141,7 @@ namespace Server.Exceptions
     /// Exception thrown when rate limits are exceeded.
     /// Maps to HTTP 429 Too Many Requests.
     /// </summary>
-    public class RateLimitException : RobigooException
+    public class RateLimitException : SkoException
     {
         public TimeSpan? RetryAfter { get; }
 
@@ -163,7 +156,7 @@ namespace Server.Exceptions
     /// Exception thrown when the service is temporarily unavailable.
     /// Maps to HTTP 503 Service Unavailable.
     /// </summary>
-    public class ServiceUnavailableException : RobigooException
+    public class ServiceUnavailableException : SkoException
     {
         public TimeSpan? RetryAfter { get; }
 
@@ -178,7 +171,7 @@ namespace Server.Exceptions
     /// Exception thrown when a security-related issue is detected.
     /// Maps to HTTP 400 Bad Request (to avoid information leakage).
     /// </summary>
-    public class SecurityException : RobigooException
+    public class SecurityException : SkoException
     {
         public string? EventType { get; }
 
