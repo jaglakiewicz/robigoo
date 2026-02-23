@@ -320,5 +320,38 @@ namespace Server.Services
             
             return true;
         }
+
+        /// <inheritdoc />
+        public async Task<bool> ValidateAndRecordActivityAsync(string sessionToken)
+        {
+            if (string.IsNullOrWhiteSpace(sessionToken))
+                return false;
+
+            var now = DateTime.UtcNow;
+            
+            var session = await _context.UserSessions
+                .FirstOrDefaultAsync(s => s.SessionToken == sessionToken);
+            
+            if (session == null)
+                return false;
+            
+            if (!session.IsActive || session.InvalidatedAt != null)
+                return false;
+            
+            if (session.RefreshTokenExpiresAt != null && session.RefreshTokenExpiresAt <= now)
+                return false;
+            
+            var timeoutMinutes = session.SessionTimeoutMinutes 
+                ?? _configuration.GetValue<int>("Session:TimeoutMinutes", DefaultSessionTimeoutMinutes);
+            var sessionTimeout = session.LastActivityAt.AddMinutes(timeoutMinutes);
+            
+            if (now > sessionTimeout)
+                return false;
+
+            session.LastActivityAt = now;
+            await _context.SaveChangesAsync();
+            
+            return true;
+        }
     }
 }

@@ -9,7 +9,7 @@
 
 .master-detail-layout {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(0, 2.5fr);
+  grid-template-columns: minmax(320px, 1.1fr) minmax(0, 2.4fr);
   gap: var(--space-lg);
   flex: 1;
   min-height: 0;
@@ -25,6 +25,13 @@
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+@media (max-width: 1100px) {
+  .master-detail-layout {
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 2.2fr);
+    gap: var(--space-md);
+  }
+}
+
 @media (max-width: 894px) {
   .master-detail-layout {
     grid-template-columns: 1fr;

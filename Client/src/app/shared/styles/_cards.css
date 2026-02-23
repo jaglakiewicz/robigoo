@@ -4,21 +4,28 @@
 .entity-card {
   display: flex;
   gap: var(--space-xs);
-  padding: var(--space-sm);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--panel-border);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  background: var(--panel);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .entity-card:hover {
-  background: var(--bg-alt);
-  border-color: var(--accent-light);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .entity-card.active {
-  background: var(--primary-surface);
-  border-color: var(--primary-btn-border);
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  box-shadow: var(--shadow-md);
+}
+
+.entity-card:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-md), var(--focus-shadow);
 }
 
 /* ============================================================
@@ -29,7 +36,7 @@
   flex-direction: column;
   width: 100%;
   position: relative;
-  gap: var(--space-xs);
+  gap: 6px;
 }
 
 .card-badges-row {
@@ -60,12 +67,12 @@
    ENTITY CARD BADGES
    ============================================================ */
 .entity-card .badge {
-  padding: 0 var(--space-xs);
-  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  border-radius: 999px;
   font-size: var(--font-size-sm);
   line-height: 1.3;
-  border: 1px solid var(--panel-border);
-  background: var(--bg-elevated);
+  border: 1px solid var(--border-light);
+  background: var(--surface-alt);
 }
 
 .entity-card .badge-type {
@@ -91,6 +98,20 @@
   border-color: var(--border-light);
   background: var(--bg-alt);
   color: var(--text-muted);
+}
+
+@media (max-width: 1024px) {
+  .entity-card {
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (max-width: 600px) {
+  .entity-card {
+    padding: 10px;
+    border-radius: var(--radius-md);
+  }
 }
 
 /* ============================================================

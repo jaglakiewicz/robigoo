@@ -9,14 +9,15 @@
 
 .entity-detail-panel {
   background: var(--panel);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--panel-border);
-  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: var(--space-lg);
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: visible;
   flex: 1;
+  box-shadow: var(--shadow-xs);
 }
 
 /* ============================================================
@@ -69,4 +70,27 @@
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .entity-detail-panel {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (max-width: 600px) {
+  .entity-detail-panel {
+    padding: var(--space-sm);
+  }
+
+  .detail-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .detail-title,
+  .detail-sub {
+    white-space: normal;
+  }
 }

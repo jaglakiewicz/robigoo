@@ -1,11 +1,10 @@
+#region Imports
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Server.Data;
-using Server.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Server.Application.History;
+
+#endregion
 
 namespace Server.Controllers
 {
@@ -14,30 +13,36 @@ namespace Server.Controllers
     [Authorize]
     public class HistoryController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        #region Declarations
 
-        public HistoryController(AppDbContext context)
+        private readonly IHistoryService _historyService;
+
+        #endregion
+
+        #region Constructor
+
+        public HistoryController(IHistoryService historyService)
         {
-            _context = context;
+            _historyService = historyService;
         }
+
+        #endregion
+
+        #region Methods - Public
 
         /// <summary>
         /// Get history for a specific entity.
         /// </summary>
-        /// <param name="entityName">The name of the table/entity (e.g. Machine, Client)</param>
+        /// <param name="entityName">The name of the table/entity (e.g. CropSprayer, Client)</param>
         /// <param name="entityId">The ID of the record</param>
-        /// <returns>List of change logs</returns>
+        /// <returns>List of change log entries with user details</returns>
         [HttpGet("{entityName}/{entityId}")]
-        public async Task<ActionResult<IEnumerable<ChangeLog>>> GetHistory(string entityName, string entityId)
+        public async Task<ActionResult<IEnumerable<HistoryEntryDto>>> GetHistory(string entityName, string entityId)
         {
-            // Simple validation or sanitation could be added here
-            
-            var logs = await _context.ChangeLogs
-                .Where(l => l.EntityName == entityName && l.EntityId == entityId)
-                .OrderByDescending(l => l.When)
-                .ToListAsync();
-
+            var logs = await _historyService.GetHistoryAsync(entityName, entityId);
             return Ok(logs);
         }
+
+        #endregion
     }
 }

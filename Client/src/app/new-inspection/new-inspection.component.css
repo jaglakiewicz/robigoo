@@ -1,3 +1,9 @@
+/*
+ * ROBIGOO FIELD SPRAYER CONTROL STATION
+ * New Inspection Component
+ * Copyright (c) 2025 Wojciech Salamon
+ */
+
 @import '../shared/styles/globals.css';
 
 :host {
@@ -36,8 +42,8 @@
 
 .item-row input[type="text"] {
   flex: 1;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md) !important;
+  border-radius: var(--radius-md) !important;
   min-width: 150px;
 }
 
@@ -52,14 +58,14 @@
 }
 
 .item-row button {
-  width: var(--touch-size);
-  height: var(--touch-size);
-  padding: 0;
+  width: 42px;
+  height: 42px;
+  padding: 0 !important;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--panel-border);
+  border: 1px solid var(--panel-border) !important;
   background: var(--bg-alt);
   color: var(--text);
   border-radius: var(--radius-md);
@@ -68,7 +74,7 @@
 
 .item-row button:hover {
   background: var(--panel-border);
-  border-color: var(--text-light);
+  border-color: var(--text-light) !important;
 }
 
 @media (max-width: 767px) {
@@ -114,8 +120,8 @@
 .btn-next svg,
 .btn-save svg,
 .btn-cancel svg {
-  width: var(--font-size-lg);
-  height: var(--font-size-lg);
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
@@ -215,7 +221,7 @@
   font-size: var(--font-size-sm);
   color: var(--text-muted);
   background: var(--bg-alt);
-  padding: 2px var(--space-xs);
+  padding: 2px 6px;
   border-radius: var(--radius-sm);
 }
 
@@ -259,18 +265,11 @@
 
 .new-client-form,
 .new-sprayer-form {
-  margin-top: 0;
+  margin-top: var(--space-lg);
   padding: var(--space-lg);
   background: var(--surface-alt);
-  border: 1px solid var(--primary-btn-border);
-  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  animation: slideDown var(--transition-base) ease-out;
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
 }
 
 .new-client-form h4,
@@ -430,13 +429,16 @@
 }
 
 .form-actions-inline {
-  margin: var(--space-md) 0 0 0;
+  margin: var(--space-md) 0;
 }
 
-/* btn-small: uses shared _buttons.css definition */
+.btn-small {
+  padding: var(--space-xs) var(--space-md) !important;
+  font-size: var(--font-size-sm);
+}
 
 .compact-form {
-  margin-top: 0;
+  margin-top: var(--space-md);
   padding: var(--space-md);
 }
 
@@ -550,8 +552,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-xl);
-  height: var(--space-xl);
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--panel-border);
   font-size: var(--font-size-sm);
@@ -620,7 +622,7 @@
   background: var(--success);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .protocol-layout {
     flex-direction: column;
   }

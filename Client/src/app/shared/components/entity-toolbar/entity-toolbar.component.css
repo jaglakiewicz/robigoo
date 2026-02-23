@@ -13,7 +13,7 @@
   padding-bottom: var(--space-md);
   margin-bottom: var(--space-md);
   flex-wrap: wrap;
-  border-bottom: 1px solid var(--panel-border);
+  border-bottom: 1px solid var(--border-light);
   position: relative;
   z-index: 0;
   overflow: visible;

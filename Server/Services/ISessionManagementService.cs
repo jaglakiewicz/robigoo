@@ -93,5 +93,13 @@ namespace Server.Services
         /// <param name="sessionToken">The session token to validate.</param>
         /// <returns>True if the session is valid, false otherwise.</returns>
         Task<bool> IsSessionValidAsync(string sessionToken);
+
+        /// <summary>
+        /// Validates the session and records activity (updates LastActivityAt).
+        /// Used by JWT Bearer OnTokenValidated to centralize session checks.
+        /// </summary>
+        /// <param name="sessionToken">The access token (session token) to validate.</param>
+        /// <returns>True if the session is valid and activity was recorded, false otherwise.</returns>
+        Task<bool> ValidateAndRecordActivityAsync(string sessionToken);
     }
 }

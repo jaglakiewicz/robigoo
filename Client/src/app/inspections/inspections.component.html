@@ -688,7 +688,7 @@
 <!-- History Dialog -->
 <app-history-dialog
   *ngIf="showHistoryDialog && currentProtocol"
-  [entityType]="'InspectionProtocol'"
+  entityName="InspectionProtocol"
   [entityId]="currentProtocol.id"
   (close)="showHistoryDialog = false">
 </app-history-dialog>

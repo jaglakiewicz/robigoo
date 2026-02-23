@@ -1,4 +1,11 @@
-﻿#region Imports
+/*
+ * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
+ * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+ * All rights reserved. Unauthorized distribution or disclosure is prohibited.
+ * ==================== ROBIGOO FIELD SPRAYER CONTROL STATION ====================
+*/
+
+#region Imports
 
 using Server.Data;
 using Server.Exceptions;
@@ -72,8 +79,8 @@ builder.Services.AddProblemDetails();
 // Get JWT configuration from appsettings
 var jwtKey = builder.Configuration["Jwt:Key"] 
     ?? throw new InvalidOperationException("JWT Key not configured. Set Jwt:Key in appsettings.json");
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "SKO";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "SKOUsers";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Robigoo";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "RobigooUsers";
 var key = Encoding.UTF8.GetBytes(jwtKey);
 
 // Validate key length
@@ -465,17 +472,9 @@ using (var scope = app.Services.CreateScope())
         ""NozzlesFieldFeatures"" TEXT NULL,
         ""NozzlesGardenFeatures"" TEXT NULL,
         ""FanType"" TEXT NULL,
-        ""OwnerId"" TEXT NULL,
-        ""OwnerName"" TEXT NULL,
-        ""RowVersion"" BLOB NULL,
         ""CreatedAt"" TEXT NOT NULL,
         ""UpdatedAt"" TEXT NULL
     );");
-
-    // Add missing columns to Machines if they don't exist (migration for existing databases)
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""Machines"" ADD COLUMN ""OwnerId"" TEXT NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""Machines"" ADD COLUMN ""OwnerName"" TEXT NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""Machines"" ADD COLUMN ""RowVersion"" BLOB NULL;"); } catch { }
 
     // Create InspectionProtocols table for protocol data
     db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""InspectionProtocols"" (
@@ -549,14 +548,8 @@ using (var scope = app.Services.CreateScope())
         ""UpdatedAt"" TEXT NULL,
         ""ProtocolXml"" TEXT NULL,
         ""XslTemplateVersion"" TEXT NULL,
-        ""XmlGeneratedAt"" TEXT NULL,
-        ""RowVersion"" BLOB NULL,
-        ""Version"" INTEGER NOT NULL DEFAULT 0
+        ""XmlGeneratedAt"" TEXT NULL
     );");
-
-    // Add missing columns to InspectionProtocols if they don't exist (migration for existing databases)
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""InspectionProtocols"" ADD COLUMN ""RowVersion"" BLOB NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""InspectionProtocols"" ADD COLUMN ""Version"" INTEGER NOT NULL DEFAULT 0;"); } catch { }
 
     // Create SecurityEventLogs table for security auditing
     // Requirement 9.7: Log sensitive data access for compliance purposes
@@ -590,7 +583,7 @@ using (var scope = app.Services.CreateScope())
             PasswordHash = passwordService.HashPassword("admin123"),
             FirstName = "Master",
             LastName = "Administrator",
-            Email = "admin@sko.local",
+            Email = "admin@robigoo.local",
             Phone = "",
             PermissionNumber = "MASTER_ADMIN_001",
             Role = "admin",

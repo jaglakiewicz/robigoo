@@ -45,37 +45,27 @@
     </ng-container>
   </app-entity-toolbar>
 
-  <div class="clients-layout">
-    <!-- LEFT: LIST -->
-    <div class="clients-list-panel">
-      <h4 class="panel-title">{{ 'clients.listTitle' | text }}</h4>
-
-      <div class="filters-row">
-        <input
-          type="text"
-          class="search-input"
-          [placeholder]="'clients.searchPlaceholder' | text"
-          [ngModel]="searchTerm"
-          (ngModelChange)="onSearchChange($event)"
-          aria-label="Search clients" />
-
-        <app-filter-panel
-          [fields]="filterFields"
-          [values]="filterValues"
-          [clearButtonLabel]="'clients.filters.clear' | text"
-          [applyButtonLabel]="'clients.filters.apply' | text"
-          (valuesChange)="onFilterChange($event)"
-          (filterClear)="onFilterClear()"
-          (openChange)="onFilterPanelOpenChange($event)">
-        </app-filter-panel>
-      </div>
-
-      <div class="clients-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.client-card'">
-        <div
-          class="client-card"
-          *ngFor="let c of clients"
-          [class.active]="c.id === selectedClientId && !isNew"
-          (click)="onSelectClient(c.id)">
+  <app-master-detail-layout>
+    <ng-container master>
+      <app-entity-list-panel
+        [title]="'clients.listTitle' | text"
+        [items]="clients"
+        [loading]="loadingList"
+        [selectedId]="isNew ? null : selectedClientId"
+        idKey="id"
+        [searchTerm]="searchTerm"
+        [searchPlaceholder]="'clients.searchPlaceholder' | text"
+        [filterFields]="filterFields"
+        [filterValues]="filterValues"
+        [clearButtonLabel]="'clients.filters.clear' | text"
+        [applyButtonLabel]="'clients.filters.apply' | text"
+        [emptyMessage]="'clients.empty' | text"
+        [loadingMessage]="'clients.loading' | text"
+        (searchChange)="onSearchChange($event)"
+        (filterChange)="onFilterChange($event)"
+        (filterClear)="onFilterClear()"
+        (itemSelect)="onSelectClient($event.id)">
+        <ng-template #itemTemplate let-c>
           <div class="card-main">
             <div class="card-badges-row">
               <span class="badge badge-type" *ngIf="c.clientType === 'person'">
@@ -92,53 +82,39 @@
               <span *ngIf="c.nip">NIP: {{ c.nip }}</span>
             </div>
           </div>
-        </div>
-        <div *ngIf="clients.length === 0" class="empty-state">
-          {{ 'clients.empty' | text }}
-        </div>
-      </div>
+        </ng-template>
+      </app-entity-list-panel>
+    </ng-container>
 
-      <ng-template #loadingTpl>
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <span>{{ 'clients.loading' | text }}</span>
-        </div>
-      </ng-template>
-    </div>
+    <ng-container detail>
+      <ng-container *ngIf="formModel as form; else emptyDetail">
+        <app-entity-detail-panel
+          [title]="displayName"
+          [subtitle]="!isNew ? displayAddress : ''"
+          [titlePlaceholder]="'clients.selectOrAdd' | text"
+          [showHistoryButton]="true"
+          [historyButtonTitle]="'Historia zmian'"
+          [isNew]="isNew"
+          [isEditMode]="isEditMode"
+          (historyClick)="openHistory()">
+          <ng-template #headerActions>
+            <button
+              *ngIf="!isNew && !isEditMode"
+              class="btn btn-secondary btn-icon-only"
+              [title]="'clients.fields.mapPreview' | text"
+              (click)="openMapDialog()">
+              <span [innerHTML]="getSafeHtml(mapIcon)" style="color: inherit;"></span>
+            </button>
+          </ng-template>
 
-    <!-- RIGHT: DETAIL / EDITOR -->
-    <div class="clients-detail-panel" *ngIf="formModel as form">
-      <div class="detail-header">
-        <div>
-          <div class="detail-title">{{ displayName }}</div>
-          <div class="detail-sub" *ngIf="!isNew && displayAddress">
-            {{ displayAddress }}
-          </div>
-        </div>
-        <div class="header-actions" *ngIf="!isNew && !isEditMode">
-          <button
-            class="btn btn-secondary btn-icon-only"
-            [title]="'clients.fields.mapPreview' | text"
-            (click)="openMapDialog()">
-            <span [innerHTML]="getSafeHtml(mapIcon)" style="color: inherit;"></span>
-          </button>
-          <button
-            class="btn btn-secondary btn-icon-only"
-            title="Historia zmian"
-            (click)="openHistory()">
-            <span [innerHTML]="getSafeHtml(historyIcon)" style="color: inherit;"></span>
-          </button>
-        </div>
-      </div>
+          <!-- Step indicator -->
+          <app-step-indicator
+            [steps]="stepsForIndicator"
+            [currentStepId]="currentStep"
+            (stepClick)="goToStep($event)">
+          </app-step-indicator>
 
-      <!-- Step indicator -->
-      <app-step-indicator
-        [steps]="stepsForIndicator"
-        [currentStepId]="currentStep"
-        (stepClick)="goToStep($event)">
-      </app-step-indicator>
-
-      <div class="step-content">
+          <div class="step-content">
         <!-- Step 0: Basic data -->
         <div *ngIf="currentStep === 0" class="basics-grid">
           <!-- Row 1: Client type -->
@@ -322,7 +298,7 @@
 
           <div *ngIf="!loadingSprayers && ownerSprayers.length > 0" class="sprayers-cards-list">
             <div
-              class="sprayer-card"
+              class="entity-card"
               *ngFor="let s of ownerSprayers"
               (click)="navigateToSprayer(s.serialNumber)"
               tabindex="0"
@@ -357,15 +333,24 @@
           </div>
         </div>
       </div>
-    </div>
+        </app-entity-detail-panel>
+      </ng-container>
 
-    <!-- Empty state when no client selected -->
-    <div class="clients-detail-panel clients-empty-panel" *ngIf="!formModel">
-      <div class="empty-state-center">
-        <p>{{ 'clients.selectOrAdd' | text }}</p>
-      </div>
-    </div>
-  </div>
+      <ng-template #emptyDetail>
+        <app-entity-detail-panel
+          [title]="''"
+          [titlePlaceholder]="'clients.selectOrAdd' | text"
+          [subtitle]="''"
+          [showHistoryButton]="false"
+          [isNew]="false"
+          [isEditMode]="false">
+          <div class="empty-state-center">
+            <p>{{ 'clients.selectOrAdd' | text }}</p>
+          </div>
+        </app-entity-detail-panel>
+      </ng-template>
+    </ng-container>
+  </app-master-detail-layout>
 </div>
 
 <!-- History Dialog -->
