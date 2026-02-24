@@ -919,7 +919,7 @@
   padding: 12mm;
   max-width: 210mm;
   margin: 0 auto;
-  font-family: "DejaVu Sans", Arial, sans-serif;
+  font-family: var(--font-family);
   font-size: 9pt;
   color: #333;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);

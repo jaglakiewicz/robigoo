@@ -1,127 +1,161 @@
 /*
- * SKO - CSS Variables & Design Tokens
+ * SKO - Minimal GitHub-Inspired Design Tokens
+ * Clean, professional, modern aesthetic
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Typography - WCAG recommends minimum 16px for body, 12px absolute minimum */
+  /* Typography - modern, minimal system font */
   --font-size-xs: 11px;
-  --font-size-sm: 13px;
-  --font-size-base: 16px;
-  --font-size-lg: 18px;
-  --font-size-xl: 22px;
-  --font-size-2xl: 26px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
   --font-size-4xl: 48px;
 
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
 
-  --line-height-tight: 1.2;
-  --line-height-normal: 1.5;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.6;
   --line-height-relaxed: 1.75;
 
-  /* Spacing - differentiated scale */
+  /* Spacing - generous for social & breathing room */
   --space-xs: 4px;
   --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 18px;
-  --space-xl: 24px;
-  --space-2xl: 36px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
   --space-3xl: 48px;
 
-  /* Border Radius — differentiated */
+  /* Border Radius — friendlier, more rounded like Facebook */
   --radius: 8px;
-  --radius-sm: 4px;
+  --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
+  --radius-pill: 999px;
 
-  /* Breakpoints (as reference values, used in media queries) */
+  /* Breakpoints */
   --breakpoint-sm: 600px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
 
   /* Touch Target - WCAG 2.5.5 requires 44x44px minimum */
   --touch-size: 44px;
+  --touch-size-lg: 48px;
 
-  /* Transitions */
+  /* Sidebar styling - improved visibility */
+  --sidebar-bg: #0d1117;
+  --sidebar-bg-hover: #30363d;
+  --sidebar-text: #f0f6fc;
+
+  /* Transitions - smooth and performant */
   --transition-fast: 0.15s ease;
   --transition-base: 0.25s ease;
   --transition-slow: 0.35s ease;
 }
 
 :root[data-theme="light"] {
-  --primary: hsl(214, 72%, 42%);
-  --primary-hover: hsl(214, 76%, 34%);
-  --primary-surface: hsl(214, 60%, 95%);
-  --primary-border: hsl(214, 40%, 78%);
-  --primary-btn-border: hsl(214, 78%, 30%);
+  /* MINIMALIST LIGHT THEME — GitHub/Stripe Inspired, Calm & Professional */
 
-  --success: hsl(158, 52%, 36%);
-  --success-hover: hsl(158, 56%, 28%);
-  --success-surface: hsl(158, 40%, 95%);
-  --success-border: hsl(158, 28%, 74%);
-  --success-btn-border: hsl(158, 58%, 26%);
-  --success-text: hsl(158, 55%, 28%);
+  /* Primary - Professional, calm blue (like GitHub) */
+  --primary: #0969da;
+  --primary-hover: #0860ca;
+  --primary-surface: #f6f8fa;
+  --primary-border: #d0d7de;
+  --primary-btn-border: #0969da;
+  --primary-dark: #033d8b;
 
-  --warning: hsl(36, 80%, 44%);
-  --warning-hover: hsl(36, 84%, 36%);
-  --warning-surface: hsl(40, 60%, 95%);
-  --warning-border: hsl(36, 44%, 76%);
-  --warning-btn-border: hsl(36, 84%, 32%);
-  --warning-text: hsl(30, 70%, 28%);
+  /* Secondary - Subtle teal accent */
+  --secondary: #1f6feb;
+  --secondary-hover: #1f6fab;
+  --secondary-surface: #f6f8fa;
+  --secondary-border: #d0d7de;
+  --secondary-btn-border: #1f6feb;
+  --secondary-dark: #0d3a66;
 
-  --error: hsl(4, 68%, 48%);
-  --error-hover: hsl(4, 72%, 40%);
-  --error-surface: hsl(4, 50%, 96%);
-  --error-border: hsl(4, 36%, 80%);
-  --error-btn-border: hsl(4, 74%, 36%);
-  --error-text: hsl(4, 64%, 40%);
+  /* Tertiary - Subtle purple accent */
+  --tertiary: #6e40aa;
+  --tertiary-hover: #5c359a;
+  --tertiary-surface: #f6f8fa;
+  --tertiary-border: #d0d7de;
+  --tertiary-btn-border: #6e40aa;
+  --tertiary-dark: #3d1e6d;
 
-  /* App background & surfaces */
-  --bg: hsl(220, 24%, 97%);
-  --bg-alt: hsl(220, 18%, 95%);
-  --surface: hsl(0, 0%, 100%);
-  --surface-alt: hsl(220, 18%, 99%);
+  /* Success - Calm, professional green that harmonizes with blue */
+  --success: #238636;
+  --success-hover: #1b6e2f;
+  --success-surface: #f6f8fa;
+  --success-border: #d0d7de;
+  --success-btn-border: #238636;
+  --success-text: #1b6e2f;
 
-  /* Borders: default is intentionally subtle */
-  --border: hsl(220, 16%, 86%);
-  --border-light: hsl(220, 18%, 92%);
-  --border-strong: hsl(220, 18%, 72%);
+  /* Warning - Warm, professional amber that matches the palette */
+  --warning: #9d6300;
+  --warning-hover: #7d4e00;
+  --warning-surface: #f6f8fa;
+  --warning-border: #d0d7de;
+  --warning-btn-border: #9d6300;
+  --warning-text: #6b4400;
 
-  --text: hsl(216, 22%, 16%);
-  --text-secondary: hsl(216, 12%, 40%);
-  --text-muted: hsl(216, 8%, 52%);
-  --text-disabled: hsl(216, 6%, 64%);
-  --text-inverse: hsl(0, 0%, 100%);
+  /* Error - Calm, professional red that belongs to this design family */
+  --error: #b1222b;
+  --error-hover: #8b0000;
+  --error-surface: #f6f8fa;
+  --error-border: #d0d7de;
+  --error-btn-border: #b1222b;
+  --error-text: #8b1a1e;
 
-  --disabled-bg: hsl(216, 8%, 93%);
-  --disabled-border: hsl(216, 6%, 80%);
-  --disabled-text: hsl(216, 5%, 56%);
+  /* Backgrounds - Clean, minimal */
+  --bg: #ffffff;
+  --bg-alt: #f6f8fa;
+  --surface: #ffffff;
+  --surface-alt: #f6f8fa;
 
-  --focus-ring: hsl(214, 72%, 48%);
-  --focus-ring-offset: hsl(0, 0%, 100%);
-  --overlay: hsla(216, 24%, 12%, 0.52);
+  /* Borders - Professional grays */
+  --border: #d0d7de;
+  --border-light: #eaeef2;
+  --border-strong: #8c959f;
 
-  --on-dark: hsla(0, 0%, 100%, 1);
-  --on-dark-muted: hsla(0, 0%, 100%, 0.65);
-  --on-dark-subtle: hsla(0, 0%, 100%, 0.45);
-  --on-dark-border: hsla(0, 0%, 100%, 0.18);
-  --on-dark-border-strong: hsla(0, 0%, 100%, 0.32);
-  --on-dark-surface: hsla(0, 0%, 100%, 0.08);
-  --on-dark-surface-hover: hsla(0, 0%, 100%, 0.16);
-  --on-dark-shadow: hsla(0, 0%, 0%, 0.22);
+  /* Text - Professional blacks and grays */
+  --text: #0d1117;
+  --text-secondary: #424a50;
+  --text-muted: #57606a;
+  --text-disabled: #8c959f;
+  --text-inverse: #ffffff;
 
-  --shadow-color: 216, 18%, 8%;
-  --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.05);
-  --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.07);
-  --shadow-md: 0 4px 10px hsla(var(--shadow-color), 0.10);
-  --shadow-lg: 0 8px 20px hsla(var(--shadow-color), 0.12);
-  --shadow-xl: 0 16px 36px hsla(var(--shadow-color), 0.16);
+  --disabled-bg: #f6f8fa;
+  --disabled-border: #d0d7de;
+  --disabled-text: #8c959f;
 
+  --focus-ring: var(--primary);
+  --focus-ring-offset: #ffffff;
+  --overlay: rgba(0, 0, 0, 0.4);
+
+  --on-dark: rgba(255, 255, 255, 1);
+  --on-dark-muted: rgba(255, 255, 255, 0.7);
+  --on-dark-subtle: rgba(255, 255, 255, 0.5);
+  --on-dark-border: rgba(255, 255, 255, 0.2);
+  --on-dark-border-strong: rgba(255, 255, 255, 0.3);
+  --on-dark-surface: rgba(255, 255, 255, 0.1);
+  --on-dark-surface-hover: rgba(255, 255, 255, 0.15);
+  --on-dark-shadow: rgba(0, 0, 0, 0.3);
+
+  /* Shadows - Subtle, minimal */
+  --shadow-color: 0, 0%, 0%;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+  /* Component-level defaults */
   --panel: var(--surface);
   --panel-border: var(--border);
   --bg-elevated: var(--surface);
@@ -131,86 +165,111 @@
   --accent-light: var(--primary-surface);
   --info: var(--primary);
   --info-light: var(--primary-surface);
+  --info-border: var(--primary-border);
   --success-dark: var(--success-hover);
   --success-light: var(--success-surface);
   --warning-light: var(--warning-surface);
   --error-light: var(--error-surface);
-  --primary-dark: var(--primary-hover);
   --primary-light: var(--primary-surface);
 
-  --focus-shadow: 0 0 0 3px color-mix(in oklab, var(--focus-ring) 25%, transparent);
+  --focus-shadow: 0 0 0 3px rgba(9, 105, 218, 0.2);
   --link-color: var(--primary);
   --link-color-hover: var(--primary-hover);
 }
 
 :root[data-theme="dark"] {
-  --primary: hsl(214, 76%, 58%);
-  --primary-hover: hsl(214, 80%, 66%);
-  --primary-surface: hsl(214, 40%, 14%);
-  --primary-border: hsl(214, 24%, 28%);
-  --primary-btn-border: hsl(214, 72%, 46%);
+  /* MINIMALIST DARK THEME — GitHub-Inspired Dark, Calm & Professional */
 
-  --success: hsl(158, 48%, 46%);
-  --success-hover: hsl(158, 52%, 54%);
-  --success-surface: hsl(158, 30%, 12%);
-  --success-border: hsl(158, 22%, 24%);
-  --success-btn-border: hsl(158, 52%, 36%);
-  --success-text: hsl(158, 48%, 54%);
+  /* Primary - Bright but calm blue on dark background */
+  --primary: #58a6ff;
+  --primary-hover: #79c0ff;
+  --primary-surface: #0d2d5b;
+  --primary-border: #3d444d;
+  --primary-btn-border: #58a6ff;
+  --primary-dark: #1f6feb;
 
-  --warning: hsl(36, 76%, 54%);
-  --warning-hover: hsl(36, 80%, 62%);
-  --warning-surface: hsl(36, 40%, 12%);
-  --warning-border: hsl(36, 28%, 24%);
-  --warning-btn-border: hsl(36, 76%, 42%);
-  --warning-text: hsl(38, 68%, 60%);
+  /* Secondary - Subtle cyan accent */
+  --secondary: #79c0ff;
+  --secondary-hover: #a5d6ff;
+  --secondary-surface: #0d3a66;
+  --secondary-border: #30363d;
+  --secondary-btn-border: #79c0ff;
+  --secondary-dark: #1f6feb;
 
-  --error: hsl(4, 64%, 56%);
-  --error-hover: hsl(4, 68%, 64%);
-  --error-surface: hsl(4, 36%, 13%);
-  --error-border: hsl(4, 24%, 24%);
-  --error-btn-border: hsl(4, 66%, 46%);
-  --error-text: hsl(4, 60%, 62%);
+  /* Tertiary - Subtle purple accent */
+  --tertiary: #d2a8ff;
+  --tertiary-hover: #e2b8ff;
+  --tertiary-surface: #2d1b4e;
+  --tertiary-border: #30363d;
+  --tertiary-btn-border: #d2a8ff;
+  --tertiary-dark: #8957e5;
 
-  /* App background & surfaces */
-  --bg: hsl(220, 20%, 8%);
-  --bg-alt: hsl(220, 22%, 6%);
-  --surface: hsl(220, 18%, 12%);
-  --surface-alt: hsl(220, 16%, 15%);
+  /* Success - Bright green for dark mode, harmonizes with blue */
+  --success: #3fb950;
+  --success-hover: #2ea043;
+  --success-surface: #164b35;
+  --success-border: #238636;
+  --success-btn-border: #3fb950;
+  --success-text: #56d364;
 
-  /* Borders: default is intentionally subtle */
-  --border: hsl(220, 12%, 22%);
-  --border-light: hsl(220, 12%, 18%);
-  --border-strong: hsl(220, 12%, 34%);
+  /* Warning - Warm amber for dark mode, matches the palette */
+  --warning: #d29922;
+  --warning-hover: #c29a1a;
+  --warning-surface: #3d2817;
+  --warning-border: #9d6300;
+  --warning-btn-border: #d29922;
+  --warning-text: #e3b341;
 
-  --text: hsl(216, 14%, 92%);
-  --text-secondary: hsl(216, 8%, 66%);
-  --text-muted: hsl(216, 6%, 54%);
-  --text-disabled: hsl(216, 5%, 42%);
-  --text-inverse: hsl(216, 18%, 10%);
+  /* Error - Bright red for dark mode, belongs to this family */
+  --error: #ff7b72;
+  --error-hover: #ff6e63;
+  --error-surface: #3d1f1a;
+  --error-border: #b1222b;
+  --error-btn-border: #ff7b72;
+  --error-text: #ff7b72;
 
-  --disabled-bg: hsl(216, 14%, 11%);
-  --disabled-border: hsl(216, 8%, 20%);
-  --disabled-text: hsl(216, 5%, 44%);
+  /* Backgrounds - Dark grays, GitHub style */
+  --bg: #0d1117;
+  --bg-alt: #161b22;
+  --surface: #161b22;
+  --surface-alt: #1c2128;
 
-  --focus-ring: hsl(214, 76%, 58%);
-  --focus-ring-offset: hsl(216, 16%, 14%);
-  --overlay: hsla(216, 28%, 4%, 0.82);
+  /* Borders - Subtle on dark */
+  --border: #3d444d;
+  --border-light: #21262d;
+  --border-strong: #545d68;
 
-  --on-dark: hsla(0, 0%, 100%, 1);
-  --on-dark-muted: hsla(0, 0%, 100%, 0.62);
-  --on-dark-subtle: hsla(0, 0%, 100%, 0.44);
-  --on-dark-border: hsla(0, 0%, 100%, 0.16);
-  --on-dark-border-strong: hsla(0, 0%, 100%, 0.30);
-  --on-dark-surface: hsla(0, 0%, 100%, 0.07);
-  --on-dark-surface-hover: hsla(0, 0%, 100%, 0.13);
-  --on-dark-shadow: hsla(0, 0%, 0%, 0.36);
+  /* Text - Light on dark */
+  --text: #f0f6fc;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --text-disabled: #3e4451;
+  --text-inverse: #0d1117;
 
-  --shadow-color: 216, 28%, 4%;
-  --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.20);
-  --shadow-sm: 0 2px 4px hsla(var(--shadow-color), 0.28);
-  --shadow-md: 0 4px 10px hsla(var(--shadow-color), 0.36);
-  --shadow-lg: 0 8px 20px hsla(var(--shadow-color), 0.44);
-  --shadow-xl: 0 16px 36px hsla(var(--shadow-color), 0.54);
+  --disabled-bg: #161b22;
+  --disabled-border: #21262d;
+  --disabled-text: #3e4451;
+
+  --focus-ring: var(--primary);
+  --focus-ring-offset: #0d1117;
+  --overlay: rgba(0, 0, 0, 0.5);
+
+  --on-dark: rgba(255, 255, 255, 1);
+  --on-dark-muted: rgba(255, 255, 255, 0.7);
+  --on-dark-subtle: rgba(255, 255, 255, 0.5);
+  --on-dark-border: rgba(255, 255, 255, 0.2);
+  --on-dark-border-strong: rgba(255, 255, 255, 0.3);
+  --on-dark-surface: rgba(255, 255, 255, 0.1);
+  --on-dark-surface-hover: rgba(255, 255, 255, 0.15);
+  --on-dark-shadow: rgba(0, 0, 0, 0.5);
+
+  /* Shadows - More visible on dark */
+  --shadow-color: 0, 0%, 0%;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
 
   --panel: var(--surface);
   --panel-border: var(--border);
@@ -221,14 +280,14 @@
   --accent-light: var(--primary-surface);
   --info: var(--primary);
   --info-light: var(--primary-surface);
+  --info-border: var(--primary-border);
   --success-dark: var(--success-hover);
   --success-light: var(--success-surface);
   --warning-light: var(--warning-surface);
   --error-light: var(--error-surface);
-  --primary-dark: var(--primary-hover);
   --primary-light: var(--primary-surface);
 
-  --focus-shadow: 0 0 0 3px color-mix(in oklab, var(--focus-ring) 35%, transparent);
+  --focus-shadow: 0 0 0 3px rgba(88, 166, 255, 0.25);
   --link-color: var(--primary);
   --link-color-hover: var(--primary-hover);
 }

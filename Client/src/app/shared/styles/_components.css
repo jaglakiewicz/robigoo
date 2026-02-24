@@ -324,7 +324,7 @@
 .step,
 .tab-btn {
   flex: 1;
-  padding: var(--space-lg) var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   text-align: center;
   cursor: pointer;
   position: relative;
@@ -332,14 +332,15 @@
   border: none;
   background: var(--panel);
   transition: all var(--transition-fast);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   color: var(--text);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
+  white-space: nowrap;
 }
 
 .step:last-child,
@@ -377,17 +378,7 @@
 }
 
 .step-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--panel-border);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
-  transition: all var(--transition-fast);
+  display: none;
 }
 
 .step.active .step-number,
@@ -397,9 +388,9 @@
 }
 
 .step-label {
-  font-size: var(--font-size-sm);
+  font-size: inherit;
   display: block;
-  margin-top: var(--space-xs);
+  margin-top: 0;
 }
 
 /* ============================================================

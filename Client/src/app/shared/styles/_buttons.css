@@ -1,17 +1,17 @@
 /* ============================================================
-   BASE BUTTON STYLES
+   BASE BUTTON STYLES - MINIMAL CLEAN DESIGN
    ============================================================ */
 .btn,
 button[class*="btn-"] {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-medium);
   height: var(--touch-size);
   min-height: var(--touch-size);
   padding: 0 24px;
   border-width: 1px;
   border-style: solid;
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -21,18 +21,26 @@ button[class*="btn-"] {
   transition: all var(--transition-fast);
   user-select: none;
   -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Default button (no variant) */
+/* Default button (neutral) */
 .btn {
   background: var(--bg-alt);
   color: var(--text);
-  border-color: var(--border-strong);
+  border-color: var(--border);
+  box-shadow: none;
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--bg);
-  border-color: var(--text-muted);
+  background: var(--surface);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn:active:not(:disabled) {
+  box-shadow: var(--shadow-xs);
 }
 
 .btn svg,
@@ -45,8 +53,6 @@ button[class*="btn-"] svg {
 
 /* ============================================================
    ICON + LABEL LAYOUT
-   Buttons with .btn-icon: icon left, label right
-   Text-only buttons: center text (default justify-content)
    ============================================================ */
 .btn .btn-icon,
 button[class*="btn-"] .btn-icon {
@@ -64,153 +70,193 @@ button[class*="btn-"] .btn-label {
   text-align: left;
 }
 
-/* Buttons containing a .btn-icon child: left-align content */
 .btn:has(.btn-icon),
 button[class*="btn-"]:has(.btn-icon) {
   justify-content: flex-start;
 }
 
 /* ============================================================
-   HOVER / ACTIVE EFFECTS
-   Subtle lift on hover, press-down on active
+   HOVER / ACTIVE EFFECTS - CLEAN & MINIMAL
    ============================================================ */
 .btn:hover:not(:disabled),
 button[class*="btn-"]:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn:active:not(:disabled),
 button[class*="btn-"]:active:not(:disabled) {
-  transform: translateY(0);
   box-shadow: none;
 }
 
-/* Icon-only and link buttons: no lift, just subtle scale */
+/* Icon-only buttons: scale effect */
 .btn-icon-only:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow: none;
+  box-shadow: var(--shadow-xs);
 }
 
 .btn-icon-only:active:not(:disabled) {
-  transform: scale(0.97);
+  box-shadow: none;
 }
 
+/* Link buttons: underline effect */
 .btn-link:hover:not(:disabled) {
-  transform: none;
+  text-decoration: underline;
   box-shadow: none;
 }
 
 .btn-link:active:not(:disabled) {
-  transform: none;
+  opacity: 0.8;
 }
 
-/* Toolbar buttons: no lift/shadow — border-bottom clips it */
+/* Toolbar buttons: subtle effects */
 .entity-toolbar .btn:hover:not(:disabled),
 .entity-toolbar button[class*="btn-"]:hover:not(:disabled) {
-  transform: none;
-  box-shadow: none;
+  box-shadow: var(--shadow-xs);
 }
 
 .entity-toolbar .btn:active:not(:disabled),
 .entity-toolbar button[class*="btn-"]:active:not(:disabled) {
-  transform: none;
   box-shadow: none;
 }
 
 /* ============================================================
-   PRIMARY BUTTON
+   PRIMARY BUTTON - CLEAN SOLID COLOR
    ============================================================ */
 .btn-primary,
 .btn-login {
-  background: var(--accent);
-  color: var(--text-inverse);
-  border-color: var(--primary-btn-border);
+  background: var(--primary);
+  color: white;
+  border-color: color-mix(in oklab, var(--primary) 70%, black);
 }
 
 .btn-primary:hover:not(:disabled),
 .btn-login:hover:not(:disabled) {
-  background: var(--primary-hover);
-  border-color: var(--primary-btn-border);
-  box-shadow: var(--shadow-md);
-}
-
-/* ============================================================
-   SECONDARY BUTTON
-   ============================================================ */
-.btn-secondary {
-  background: var(--bg-alt);
-  color: var(--text);
-  border-color: var(--border-strong);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--bg);
-  border-color: var(--text-muted);
-  color: var(--primary);
-}
-
-/* ============================================================
-   SUCCESS BUTTON
-   ============================================================ */
-.btn-success {
-  background: var(--success);
-  color: var(--text-inverse);
-  border-color: var(--success-btn-border);
-}
-
-.btn-success:hover:not(:disabled) {
-  background: var(--success-dark);
-  border-color: var(--success-btn-border);
-  box-shadow: var(--shadow-md);
-}
-
-/* ============================================================
-   DANGER BUTTON
-   ============================================================ */
-.btn-danger {
-  background: var(--error);
-  color: var(--text-inverse);
-  border-color: var(--error-btn-border);
-}
-
-.btn-danger:hover:not(:disabled) {
-  background: var(--error-hover);
-  border-color: var(--error-btn-border);
-  box-shadow: var(--shadow-md);
-}
-
-/* ============================================================
-   GHOST BUTTON
-   ============================================================ */
-.btn-ghost {
-  background: transparent;
-  color: var(--accent);
-  border-color: var(--primary-border);
-}
-
-.btn-ghost:hover:not(:disabled) {
-  background: var(--primary-surface);
-  color: var(--primary-hover);
-  border-color: var(--primary);
+  background: color-mix(in oklab, var(--primary) 90%, white);
+  border-color: color-mix(in oklab, var(--primary) 60%, black);
   box-shadow: var(--shadow-sm);
 }
 
+.btn-primary:active:not(:disabled),
+.btn-login:active:not(:disabled) {
+  box-shadow: none;
+}
+
 /* ============================================================
-   LINK BUTTON
+   SECONDARY BUTTON - OUTLINED STYLE
+   ============================================================ */
+.btn-secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--primary) 10%, var(--bg));
+  border-color: color-mix(in oklab, var(--primary) 80%, var(--text));
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: color-mix(in oklab, var(--primary) 15%, var(--bg));
+  box-shadow: none;
+}
+
+/* ============================================================
+   TERTIARY BUTTON - MINIMAL BACKGROUND
+   ============================================================ */
+.btn-tertiary {
+  background: var(--bg-alt);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.btn-tertiary:hover:not(:disabled) {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-tertiary:active:not(:disabled) {
+  background: var(--bg-alt);
+  box-shadow: none;
+}
+
+/* ============================================================
+   SUCCESS BUTTON - CLEAN SOLID COLOR
+   ============================================================ */
+.btn-success {
+  background: var(--success);
+  color: white;
+  border-color: color-mix(in oklab, var(--success) 70%, black);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--success) 90%, white);
+  border-color: color-mix(in oklab, var(--success) 60%, black);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-success:active:not(:disabled) {
+  box-shadow: none;
+}
+
+/* ============================================================
+   DANGER BUTTON - CLEAN SOLID COLOR
+   ============================================================ */
+.btn-danger {
+  background: var(--error);
+  color: white;
+  border-color: color-mix(in oklab, var(--error) 70%, black);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--error) 90%, white);
+  border-color: color-mix(in oklab, var(--error) 60%, black);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:active:not(:disabled) {
+  box-shadow: none;
+}
+
+/* ============================================================
+   GHOST BUTTON - OUTLINED STYLE
+   ============================================================ */
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--primary) 10%, var(--bg));
+  border-color: color-mix(in oklab, var(--primary) 80%, var(--text));
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-ghost:active:not(:disabled) {
+  background: color-mix(in oklab, var(--primary) 15%, var(--bg));
+  box-shadow: none;
+}
+
+/* ============================================================
+   LINK BUTTON - CLEAN TEXT WITH UNDERLINE
    ============================================================ */
 .btn-link {
   background: transparent;
   border-color: transparent;
-  color: var(--accent);
-  text-decoration: underline;
+  color: var(--primary);
+  text-decoration: none;
   padding: 0 6px;
   height: auto;
   min-height: auto;
+  font-weight: var(--font-weight-medium);
+  border: none;
 }
 
 .btn-link:hover:not(:disabled) {
-  color: var(--accent-light);
+  color: color-mix(in oklab, var(--primary) 80%, black);
+  text-decoration: underline;
+  box-shadow: none;
 }
 
 /* ============================================================
@@ -245,7 +291,6 @@ button:disabled,
 [class*="btn-"]:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none !important;
   pointer-events: none;
 }
 
@@ -310,18 +355,16 @@ button:focus-visible,
 .toggle-form-btn.expanded {
   background: var(--accent);
   color: var(--text-inverse);
-  border: 1px solid var(--primary-btn-border);
+  border: 1px solid color-mix(in oklab, var(--primary) 70%, black);
   border-bottom: none;
-  border-top-left-radius: var(--radius-md);
-  border-top-right-radius: var(--radius-md);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  transform: none;
   box-shadow: none;
 }
 
 .toggle-form-btn.expanded:hover:not(:disabled) {
-  transform: none;
   box-shadow: none;
 }
 

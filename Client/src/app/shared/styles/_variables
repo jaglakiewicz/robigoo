@@ -1,0 +1,239 @@
+/*
+ * SKO - CSS Variables & Design Tokens
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+  /* Typography - WCAG recommends minimum 16px for body, 12px absolute minimum */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 26px;
+  --font-size-4xl: 48px;
+
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Spacing - differentiated scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 18px;
+  --space-xl: 24px;
+  --space-2xl: 36px;
+  --space-3xl: 48px;
+
+  /* Border Radius — differentiated */
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Breakpoints (as reference values, used in media queries) */
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+
+  /* Touch Target - WCAG 2.5.5 requires 44x44px minimum */
+  --touch-size: 44px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.35s ease;
+}
+
+:root[data-theme="light"] {
+  /* Fresh, vibrant ocean blue - modern 2026 look */
+  --primary: hsl(210, 85%, 38%);
+  --primary-hover: hsl(210, 90%, 32%);
+  --primary-surface: hsl(210, 70%, 96%);
+  --primary-border: hsl(210, 60%, 82%);
+  --primary-btn-border: hsl(210, 85%, 30%);
+
+  /* Fresh green - agricultural/nature feel */
+  --success: hsl(150, 60%, 35%);
+  --success-hover: hsl(150, 65%, 28%);
+  --success-surface: hsl(150, 50%, 96%);
+  --success-border: hsl(150, 45%, 82%);
+  --success-btn-border: hsl(150, 60%, 25%);
+  --success-text: hsl(150, 60%, 28%);
+
+  /* Warm amber - attention without alarm */
+  --warning: hsl(38, 85%, 50%);
+  --warning-hover: hsl(38, 90%, 42%);
+  --warning-surface: hsl(45, 80%, 96%);
+  --warning-border: hsl(38, 60%, 85%);
+  --warning-btn-border: hsl(38, 85%, 40%);
+  --warning-text: hsl(38, 85%, 35%);
+
+  /* Soft coral - clear but not aggressive */
+  --error: hsl(8, 75%, 55%);
+  --error-hover: hsl(8, 80%, 48%);
+  --error-surface: hsl(8, 70%, 97%);
+  --error-border: hsl(8, 50%, 85%);
+  --error-btn-border: hsl(8, 75%, 45%);
+  --error-text: hsl(8, 75%, 42%);
+
+  /* Clean backgrounds - fresh and airy */
+  --bg: hsl(210, 30%, 98%);
+  --bg-alt: hsl(210, 20%, 96%);
+  --surface: hsl(0, 0%, 100%);
+  --surface-alt: hsl(210, 15%, 99%);
+
+  /* Subtle borders */
+  --border: hsl(210, 15%, 90%);
+  --border-light: hsl(210, 15%, 95%);
+  --border-strong: hsl(210, 15%, 75%);
+
+  --text: hsl(210, 20%, 15%);
+  --text-secondary: hsl(210, 10%, 45%);
+  --text-muted: hsl(210, 8%, 55%);
+  --text-disabled: hsl(210, 5%, 65%);
+  --text-inverse: hsl(0, 0%, 100%);
+
+  --disabled-bg: hsl(210, 10%, 94%);
+  --disabled-border: hsl(210, 8%, 85%);
+  --disabled-text: hsl(210, 5%, 60%);
+
+  --focus-ring: var(--primary);
+  --focus-ring-offset: hsl(0, 0%, 100%);
+  --overlay: hsla(210, 20%, 10%, 0.5);
+
+  --on-dark: hsla(0, 0%, 100%, 1);
+  --on-dark-muted: hsla(0, 0%, 100%, 0.75);
+  --on-dark-subtle: hsla(0, 0%, 100%, 0.55);
+  --on-dark-border: hsla(0, 0%, 100%, 0.25);
+  --on-dark-border-strong: hsla(0, 0%, 100%, 0.4);
+  --on-dark-surface: hsla(0, 0%, 100%, 0.12);
+  --on-dark-surface-hover: hsla(0, 0%, 100%, 0.2);
+  --on-dark-shadow: hsla(210, 30%, 10%, 0.4);
+
+  --shadow-color: 210, 20%, 8%;
+  --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.06);
+  --shadow-sm: 0 2px 6px hsla(var(--shadow-color), 0.08);
+  --shadow-md: 0 4px 12px hsla(var(--shadow-color), 0.12);
+  --shadow-lg: 0 8px 24px hsla(var(--shadow-color), 0.16);
+  --shadow-xl: 0 16px 48px hsla(var(--shadow-color), 0.2);
+
+  --panel: var(--surface);
+  --panel-border: var(--border);
+  --bg-elevated: var(--surface);
+  --text-light: var(--text-secondary);
+  --text-lighter: var(--text-muted);
+  --accent: var(--primary);
+  --accent-light: var(--primary-surface);
+  --info: var(--primary);
+  --info-light: var(--primary-surface);
+  --info-border: var(--primary-border);
+  --success-dark: var(--success-hover);
+  --success-light: var(--success-surface);
+  --warning-light: var(--warning-surface);
+  --error-light: var(--error-surface);
+  --primary-dark: var(--primary-hover);
+  --primary-light: var(--primary-surface);
+
+  --focus-shadow: 0 0 0 3px color-mix(in oklab, var(--focus-ring) 25%, transparent);
+  --link-color: var(--primary);
+  --link-color-hover: var(--primary-hover);
+}
+
+:root[data-theme="dark"] {
+  /* Deep ocean - rich and sophisticated */
+  --primary: hsl(210, 75%, 55%);
+  --primary-hover: hsl(210, 80%, 65%);
+  --primary-surface: hsl(210, 50%, 15%);
+  --primary-border: hsl(210, 40%, 30%);
+  --primary-btn-border: hsl(210, 75%, 45%);
+
+  --success: hsl(150, 55%, 50%);
+  --success-hover: hsl(150, 60%, 60%);
+  --success-surface: hsl(150, 40%, 12%);
+  --success-border: hsl(150, 35%, 25%);
+  --success-btn-border: hsl(150, 55%, 40%);
+  --success-text: hsl(150, 60%, 60%);
+
+  --warning: hsl(38, 75%, 55%);
+  --warning-hover: hsl(38, 80%, 65%);
+  --warning-surface: hsl(38, 50%, 15%);
+  --warning-border: hsl(38, 40%, 28%);
+  --warning-btn-border: hsl(38, 75%, 45%);
+  --warning-text: hsl(38, 80%, 65%);
+
+  --error: hsl(8, 70%, 60%);
+  --error-hover: hsl(8, 75%, 70%);
+  --error-surface: hsl(8, 50%, 15%);
+  --error-border: hsl(8, 40%, 28%);
+  --error-btn-border: hsl(8, 70%, 50%);
+  --error-text: hsl(8, 75%, 70%);
+
+  --bg: hsl(210, 15%, 8%);
+  --bg-alt: hsl(210, 15%, 6%);
+  --surface: hsl(210, 12%, 12%);
+  --surface-alt: hsl(210, 10%, 16%);
+
+  --border: hsl(210, 12%, 22%);
+  --border-light: hsl(210, 10%, 18%);
+  --border-strong: hsl(210, 12%, 35%);
+
+  --text: hsl(210, 10%, 95%);
+  --text-secondary: hsl(210, 8%, 70%);
+  --text-muted: hsl(210, 6%, 55%);
+  --text-disabled: hsl(210, 5%, 42%);
+  --text-inverse: hsl(210, 15%, 10%);
+
+  --disabled-bg: hsl(210, 12%, 10%);
+  --disabled-border: hsl(210, 8%, 20%);
+  --disabled-text: hsl(210, 5%, 45%);
+
+  --focus-ring: var(--primary);
+  --focus-ring-offset: hsl(210, 15%, 14%);
+  --overlay: hsla(210, 15%, 4%, 0.8);
+
+  --on-dark: hsla(0, 0%, 100%, 1);
+  --on-dark-muted: hsla(0, 0%, 100%, 0.7);
+  --on-dark-subtle: hsla(0, 0%, 100%, 0.5);
+  --on-dark-border: hsla(0, 0%, 100%, 0.2);
+  --on-dark-border-strong: hsla(0, 0%, 100%, 0.35);
+  --on-dark-surface: hsla(0, 0%, 100%, 0.1);
+  --on-dark-surface-hover: hsla(0, 0%, 100%, 0.16);
+  --on-dark-shadow: hsla(210, 20%, 8%, 0.5);
+
+  --shadow-color: 210, 15%, 5%;
+  --shadow-xs: 0 1px 2px hsla(var(--shadow-color), 0.3);
+  --shadow-sm: 0 2px 6px hsla(var(--shadow-color), 0.35);
+  --shadow-md: 0 4px 12px hsla(var(--shadow-color), 0.4);
+  --shadow-lg: 0 8px 24px hsla(var(--shadow-color), 0.5);
+  --shadow-xl: 0 16px 48px hsla(var(--shadow-color), 0.6);
+
+  --panel: var(--surface);
+  --panel-border: var(--border);
+  --bg-elevated: var(--surface);
+  --text-light: var(--text-secondary);
+  --text-lighter: var(--text-muted);
+  --accent: var(--primary);
+  --accent-light: var(--primary-surface);
+  --info: var(--primary);
+  --info-light: var(--primary-surface);
+  --info-border: var(--primary-border);
+  --success-dark: var(--success-hover);
+  --success-light: var(--success-surface);
+  --warning-light: var(--warning-surface);
+  --error-light: var(--error-surface);
+  --primary-dark: var(--primary-hover);
+  --primary-light: var(--primary-surface);
+
+  --focus-shadow: 0 0 0 3px color-mix(in oklab, var(--focus-ring) 35%, transparent);
+  --link-color: var(--primary);
+  --link-color-hover: var(--primary-hover);
+}

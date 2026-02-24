@@ -5,11 +5,8 @@
    ============================================================ */
 .login-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  inset: 0;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,17 +18,16 @@
 }
 
 .login-box {
-  background: var(--panel);
-  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border-radius: 4px;
   padding: var(--space-xl);
   width: 100%;
-  max-width: 360px;
+  max-width: 420px;
   max-height: calc(100vh - var(--space-lg) * 2);
   overflow-y: auto;
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-md);
   border: 1px solid var(--border);
-  backdrop-filter: blur(10px);
-  animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: slideUp 0.42s cubic-bezier(0.24, 1, 0.32, 1);
   position: relative;
   z-index: 2;
 }
@@ -235,13 +231,9 @@
   font-weight: var(--font-weight-bold);
   color: var(--primary);
   letter-spacing: 2px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   display: block;
   animation: slideInWord 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-family: var(--font-family);
   text-transform: uppercase;
 }
 
@@ -268,15 +260,15 @@
 
 .logo-version {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--accent);
+  font-weight: var(--font-weight-medium);
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-top: var(--space-sm);
   padding: var(--space-xs) var(--space-md);
-  background: var(--primary-surface);
-  border: 1px solid var(--primary-border);
-  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--primary) 10%, var(--bg));
+  border: 1px solid color-mix(in oklab, var(--primary) 30%, var(--border));
+  border-radius: 2px;
   animation: fadeInVersion 1s ease-out 0.3s both;
 }
 
@@ -286,17 +278,17 @@
 }
 
 .login-separator {
-  width: 200px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, var(--accent) 25%, var(--accent) 75%, transparent 100%);
+  width: 160px;
+  height: 1px;
+  background: var(--border);
   margin: var(--space-lg) auto;
-  animation: slideInSeparator 0.8s ease-out 0.4s both;
-  box-shadow: 0 0 12px var(--primary-surface);
+  animation: slideInSeparator 0.6s ease-out 0.25s both;
+  box-shadow: none;
 }
 
 @keyframes slideInSeparator {
   from { opacity: 0; width: 0; }
-  to { opacity: 1; width: 200px; }
+  to { opacity: 1; width: 160px; }
 }
 
 .login-header p {
@@ -464,29 +456,29 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-lg);
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   color: var(--text);
   cursor: pointer;
   appearance: none;
   font-family: inherit;
   text-align: left;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
 
 .language-select__trigger:focus-visible {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--primary);
   box-shadow: var(--focus-shadow);
 }
 
 .language-select.open .language-select__trigger {
-  border-color: var(--accent);
+  border-color: var(--primary);
   box-shadow: var(--focus-shadow);
-  background: var(--bg);
+  background: var(--surface);
 }
 
 .language-select__list {
@@ -494,10 +486,10 @@
   top: calc(100% + 4px);
   left: 0;
   width: 100%;
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: var(--shadow-md);
   padding: var(--space-xs);
   list-style: none;
   margin: 0;
@@ -512,17 +504,17 @@
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
+  border-radius: 2px;
   cursor: pointer;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   color: var(--text);
   transition: background var(--transition-fast);
   white-space: nowrap;
 }
 
 .language-select__list li:hover { background: var(--bg-alt); }
-.language-select__list li.active { background: var(--primary-surface); color: var(--accent); }
+.language-select__list li.active { background: color-mix(in oklab, var(--primary) 15%, var(--bg)); color: var(--primary); }
 
 .language-flag {
   width: 24px;
@@ -567,20 +559,22 @@
 
 .login-form .form-group input {
   padding: var(--space-md) var(--space-lg);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-alt);
   color: var(--text);
   font-size: var(--font-size-base);
   height: 42px;
   min-height: 42px;
+  font-family: inherit;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .login-form .form-group input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--primary);
   box-shadow: var(--focus-shadow);
-  background: var(--panel);
+  background: var(--bg-alt);
 }
 
 .password-field {
@@ -616,18 +610,22 @@
    LOGIN BUTTON
    ============================================================ */
 .btn-login {
-  background: var(--accent);
-  color: var(--text-inverse);
-  border-color: var(--primary-btn-border);
+  background: var(--primary);
+  color: white;
+  border-color: color-mix(in oklab, var(--primary) 70%, black);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: var(--space-md);
   height: 42px;
   min-height: 42px;
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
 }
 
 .btn-login:hover:not(:disabled) {
-  background: var(--primary-hover);
+  background: color-mix(in oklab, var(--primary) 90%, white);
+  border-color: color-mix(in oklab, var(--primary) 60%, black);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 767px) {
@@ -638,22 +636,22 @@
    MESSAGES
    ============================================================ */
 .error-message {
-  background: var(--error-surface);
-  color: var(--error-text);
+  background: color-mix(in oklab, var(--error) 10%, var(--bg));
+  color: var(--error);
   padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   font-size: var(--font-size-sm);
-  border: 1px solid var(--error-border);
+  border: 1px solid color-mix(in oklab, var(--error) 30%, var(--border));
   animation: shake 0.4s ease-in-out;
 }
 
 .info-message {
-  background: var(--primary-surface);
+  background: color-mix(in oklab, var(--primary) 10%, var(--bg));
   color: var(--primary);
   padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   font-size: var(--font-size-sm);
-  border: 1px solid var(--primary-border);
+  border: 1px solid color-mix(in oklab, var(--primary) 30%, var(--border));
   animation: slideIn 0.3s ease-in-out;
   margin-bottom: var(--space-md);
 }
@@ -671,11 +669,11 @@
 
 .demo-hint {
   font-size: var(--font-size-sm);
-  color: var(--text-lighter);
+  color: var(--text-secondary);
   text-align: center;
   margin-top: var(--space-lg);
   padding-top: var(--space-lg);
-  border-top: 1px solid var(--panel-border);
+  border-top: 1px solid var(--border);
   line-height: 1.6;
 }
 

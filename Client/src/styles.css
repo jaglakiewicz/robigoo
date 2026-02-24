@@ -24,22 +24,22 @@
 }
 
 /* ============================================================
-   SIDEBAR
+   SIDEBAR - MINIMAL, SQUARED, CLEAN
    ============================================================ */
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
   height: 100%;
-  width: 60px;
-  background: linear-gradient(180deg, hsl(214, 72%, 36%) 0%, hsl(214, 68%, 28%) 100%);
+  width: 70px;
+  background: linear-gradient(180deg, hsl(210, 20%, 14%) 0%, hsl(210, 18%, 18%) 100%);
   color: var(--on-dark);
-  padding: 0;
-  box-shadow: 2px 0 12px var(--on-dark-shadow);
+  padding: 12px 6px;
+  box-shadow: 1px 0 12px hsla(210, 20%, 8%, 0.3);
   transform: translateX(0);
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: visible;
-  border-right: 1px solid var(--on-dark-border);
+  border-right: 1px solid hsl(210, 15%, 28%);
   display: flex;
   flex-direction: column;
   z-index: 1000;
@@ -128,8 +128,11 @@
   white-space: normal;
   overflow: visible;
   border-bottom: 1px solid var(--on-dark-border);
+  border-left: 3px solid transparent;
   padding-bottom: 6px;
   margin-bottom: 6px;
+  color: var(--on-dark);
+  font-weight: var(--font-weight-regular);
 }
 
 .menu li:last-child {
@@ -168,7 +171,11 @@
 .sidebar.open .menu li .hint { display: block; }
 
 .menu li:hover {
-  background: var(--on-dark-border);
+  background: var(--sidebar-bg-hover);
+  color: var(--sidebar-text);
+  font-weight: var(--font-weight-medium);
+  transition: background 0.12s ease, border-left-color 0.12s ease, color 0.12s ease;
+  border-left-color: #58a6ff;
 }
 
 .menu li.disabled {
@@ -205,9 +212,9 @@
   top: 6px;
   width: 42px;
   height: 42px;
-  background: linear-gradient(180deg, hsl(214, 72%, 36%) 0%, hsl(214, 68%, 28%) 100%);
+  background: transparent;
   color: var(--on-dark);
-  border: 1px solid var(--on-dark-shadow);
+  border: 1px solid color-mix(in oklab, var(--on-dark-border) 30%, transparent);
   cursor: pointer;
   font-size: var(--font-size-xl);
   display: flex;
@@ -219,7 +226,7 @@
 }
 
 .hamburger:hover {
-  background: hsl(214, 76%, 34%);
+  background: var(--primary-hover);
 }
 
 .hamburger:focus-visible {
@@ -227,33 +234,39 @@
   outline-offset: 2px;
 }
 
-/* Home button - in top-bar flow, styled like a tab */
+/* Home button - minimal, clean */
 .home-button {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   background: var(--bg-alt);
-  color: var(--text-light);
-  border: 1px solid var(--panel-border);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-md);
-  transition: background 0.15s ease, color 0.15s ease;
+  border-radius: 4px;
+  transition: all 0.15s ease;
   padding: 0;
   flex-shrink: 0;
-  margin-right: var(--space-xs);
+  margin-right: 0;
+  font-weight: var(--font-weight-medium);
+  box-shadow: none;
 }
 
 .home-button:hover:not(.active) {
-  background: var(--surface-alt);
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-xs);
 }
 
 .home-button.active {
-  background: var(--panel);
-  color: var(--text);
-  border-color: var(--panel-border);
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
 }
 
 .home-button:focus-visible {
@@ -390,24 +403,25 @@
 }
 
 /* ============================================================
-   APP SHELL & MAIN CONTENT
+   APP SHELL & MAIN CONTENT - MINIMAL, CLEAN
    ============================================================ */
 .app-shell {
-  margin-left: 60px;
-  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 70px;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
   overflow: hidden;
+  background: var(--bg);
 }
 
 .app-shell.shifted {
-  margin-left: 300px;
+  margin-left: 280px;
 }
 
 .container {
-  padding: 6px 18px 18px 18px;
+  padding: 16px 20px 20px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -420,10 +434,11 @@
 
 .top-bar {
   display: flex;
-  align-items: flex-end;
-  gap: 0;
+  align-items: center;
+  gap: 12px;
   position: relative;
   width: 100%;
+  margin-bottom: 12px;
 }
 
 .app-toolbar {
@@ -433,23 +448,21 @@
   position: relative;
   width: auto;
   flex-shrink: 0;
-}
-
-.app-toolbar:not(:empty) {
-  margin-left: var(--space-md);
+  gap: 12px;
+  margin-left: 12px;
 }
 
 .main-area {
   background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
-  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
   flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  margin-top: 6px;
+  box-shadow: var(--shadow-sm);
 }
 
 .main-area h3:not(.component-title) {
@@ -467,87 +480,67 @@
 }
 
 /* ============================================================
-   TABS
+   TABS - MINIMAL, CLEAN BOXES
    ============================================================ */
 .tabs {
   display: flex;
-  gap: 6px;
-  padding: 0;
+  gap: 8px;
+  padding: 6px;
   background: transparent;
   border: none;
-  border-radius: 0;
-  align-items: flex-end;
-  margin-bottom: -1px;
+  align-items: center;
+  margin-bottom: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   position: relative;
   min-width: 0;
-  min-height: 36px;
-  flex: 1 1 100%;
-  width: 100%;
-  z-index: 1;
+  width: auto;
+  z-index: 10;
+  scrollbar-width: none;
+  min-height: 48px;
+  flex: 1;
+  border-radius: 4px;
 }
-
-.tabs::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 150px;
-  background: linear-gradient(to right, transparent, var(--bg) 100%);
-  pointer-events: none;
-  z-index: 5;
-}
+.tabs::-webkit-scrollbar { display: none; }
 
 .tab {
   background: var(--bg-alt);
-  padding: 6px 12px;
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
   cursor: pointer;
-  display: flex;
-  gap: 6px;
+  display: inline-flex;
+  gap: 8px;
   align-items: center;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  color: var(--text-light);
+  color: var(--text-secondary);
   position: relative;
   font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  min-height: 36px;
   height: 36px;
+  box-shadow: none;
 }
 
-.tab-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  color: inherit;
-}
-
-.tab-icon svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-  color: inherit;
-}
-
-.tab:hover {
-  background: var(--surface-alt);
+.tab:hover:not(.active) {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-xs);
 }
 
 .tab.active {
-  background: var(--panel);
-  color: var(--text);
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary-dark);
   font-weight: var(--font-weight-bold);
-  border-color: var(--panel-border);
-  border-top: 2px solid var(--primary);
-  height: 43px;
-  z-index: 2;
+  box-shadow: var(--shadow-sm);
 }
+
+.tab-icon { width: 18px; height: 18px; display:flex; align-items:center; justify-content:center; }
+.tab-icon svg { width: 18px; height: 18px; }
 
 .tab .tab-action {
   background: transparent;
@@ -556,43 +549,34 @@
   color: inherit;
   padding: 0;
   margin-left: 6px;
-  font-size: var(--font-size-xl);
-  opacity: 0.6;
-  transition: opacity 0.15s, color 0.15s;
-  display: flex;
+  opacity: 0.7;
+  transition: opacity 0.12s, transform 0.12s;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: var(--radius-sm);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
 
-.tab .tab-action svg {
-  width: 12px;
-  height: 12px;
-}
+.tab .tab-action svg { width: 14px; height: 14px; }
 
-.tab .tab-action:hover {
-  opacity: 1;
-  background: var(--surface-alt);
-}
+.tab .tab-action:hover { opacity: 1; transform: translateY(-1px); }
 
 .tab .tab-action.pin.pinned {
   color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, var(--panel));
+  box-shadow: var(--shadow-xs);
   opacity: 1;
 }
 
-/* Tab focus state */
-.tab:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: -2px;
-}
+/* Pin a tab visually (when pinned it sticks visually, the app logic controls ordering) */
+.tab.pinned { border: 1px dashed color-mix(in oklab, var(--accent) 22%, transparent); }
 
-.tab .tab-action:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 1px;
-}
+/* Accessible focus */
+.tab:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.tab .tab-action:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* ============================================================
    USER MENU
@@ -756,7 +740,7 @@
 .user-avatar {
   width: 30px;
   height: 30px;
-  border-radius: var(--radius);
+  border-radius: 50%;
   background: transparent;
   color: var(--on-dark);
   display: inline-flex;
@@ -774,12 +758,12 @@
   background: var(--primary);
   width: 100%;
   height: 100%;
-  border-radius: var(--radius);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-inverse);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   text-transform: uppercase;
 }
 
@@ -905,7 +889,7 @@
 .avatar-preview {
   width: 144px;
   height: 144px;
-  border-radius: var(--radius);
+  border-radius: 50%;
   border: 1px solid var(--panel-border);
   display: flex;
   align-items: center;
@@ -946,7 +930,7 @@
   .sidebar.open { width: 100%; transform: translateX(0); }
   .app-shell { margin-left: 0; }
   .app-shell.shifted { margin-left: 0; }
-  .hamburger { left: 4px; top: 4px; width: 40px; height: 40px; font-size: var(--font-size-lg); }
+  .hamburger { left: 4px; top: 4px; width: 44px; height: 44px; font-size: var(--font-size-lg); }
   .container { padding: 6px 6px 6px 52px; }
   .container h1 { font-size: var(--font-size-lg); }
   
@@ -956,40 +940,40 @@
   }
   
   .home-button {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
   }
   
   .tabs {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    min-height: 32px;
+    min-height: 44px;
   }
   
   .tabs::before { width: 40px; }
   
   .tab {
-    padding: 4px 8px;
-    font-size: var(--font-size-sm);
-    max-width: 120px;
-    height: 32px;
+    padding: 6px 12px;
+    font-size: var(--font-size-base);
+    max-width: 200px;
+    height: 40px;
   }
   
   .tab.active {
-    height: 36px;
+    height: 45px;
   }
   
   .tab span {
-    max-width: 80px;
+    max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   
   .main-area {
-    padding: 8px;
-    border-radius: var(--radius-sm);
+    padding: 12px;
+    border-radius: var(--radius-md);
     margin-top: 4px;
   }
 }

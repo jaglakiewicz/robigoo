@@ -104,23 +104,21 @@
 @media (max-width: 600px) {
   .step-indicator {
     padding: var(--space-xs);
-    gap: 2px;
+    gap: 4px;
   }
   
   .step {
-    min-width: 0;
-    flex: 1 1 auto;
-    padding: var(--space-sm) var(--space-xs);
+    min-width: auto;
+    flex: 0 0 auto;
+    padding: var(--space-sm) var(--space-md);
     font-size: var(--font-size-sm);
   }
   
   .step-label {
-    display: none;
+    display: block;
   }
   
   .step-number {
-    width: 22px;
-    height: 22px;
-    font-size: var(--font-size-sm);
+    display: none;
   }
 }

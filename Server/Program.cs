@@ -7,6 +7,11 @@
 
 #region Imports
 
+using Server.Application.Clients;
+using Server.Application.CropSprayers;
+using Server.Application.Inspections;
+using Server.Application.History;
+using Server.Infrastructure.Persistence.Repositories;
 using Server.Data;
 using Server.Exceptions;
 using Server.Middleware;
@@ -67,6 +72,16 @@ builder.Services.AddHostedService(sp => sp.GetRequiredService<DatabaseWriteQueue
 // Add session cleanup background service
 // Requirement 3.5: Clean up expired sessions based on token expiration times
 builder.Services.AddHostedService<SessionCleanupService>();
+
+// Add application services and repositories
+// These services handle business logic for domain entities
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<ICropSprayerRepository, CropSprayerRepository>();
+builder.Services.AddScoped<ICropSprayerService, CropSprayerService>();
+builder.Services.AddScoped<IInspectionRepository, InspectionRepository>();
+builder.Services.AddScoped<IInspectionService, InspectionService>();
+builder.Services.AddScoped<IHistoryService, HistoryService>();
 
 // Add rate limit blocking service
 // Requirement 12.6: IF sustained rate limit violations occur, THEN THE Backend SHALL temporarily block the source
