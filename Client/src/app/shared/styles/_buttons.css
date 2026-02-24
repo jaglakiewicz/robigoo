@@ -6,12 +6,12 @@ button[class*="btn-"] {
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  height: 34px;
-  min-height: 34px;
+  height: var(--control-height);
+  min-height: var(--control-height);
   padding: 0 14px;
   border-width: 1px;
   border-style: solid;
-  border-radius: 4px;
+  border-radius: var(--radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -282,10 +282,13 @@ button[class*="btn-"]:active:not(:disabled) {
    ICON-ONLY BUTTON
    ============================================================ */
 .btn-icon-only {
-  width: 34px;
-  height: 34px;
+  width: var(--control-height);
+  height: var(--control-height);
   padding: 0;
-  border-radius: 4px;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-icon-only svg {
@@ -383,13 +386,13 @@ button:focus-visible,
   button[class*="btn-"] {
     padding: 0 var(--space-sm);
     font-size: var(--font-size-sm);
-    height: 36px;
-    min-height: 36px;
+    height: var(--control-height);
+    min-height: var(--control-height);
     gap: 4px;
   }
   
   .btn-icon-only {
-    width: 36px;
-    height: 36px;
+    width: var(--control-height);
+    height: var(--control-height);
   }
 }

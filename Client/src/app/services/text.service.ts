@@ -380,6 +380,9 @@ const TEXTS: TextTree = {
       addButton: 'Nowy opryskiwacz',
       listTitle: 'Lista opryskiwaczy',
       searchPlaceholder: 'Szukaj po numerze, nazwie, producencie...',
+      selectOrAdd: 'Wybierz opryskiwacz z listy lub dodaj nowy',
+      empty: 'Brak opryskiwaczy',
+      loading: 'Ładowanie opryskiwaczy...',
       filters: {
         type: 'Typ',
         kind: 'Rodzaj',

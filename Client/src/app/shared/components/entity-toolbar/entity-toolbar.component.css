@@ -2,17 +2,18 @@
 
 :host {
   display: block;
+  margin-bottom: var(--space-md);
 }
 
 .entity-toolbar {
   display: flex;
   align-items: center;
-  gap: 0;
-  padding: 8px var(--space-lg);
-  background: color-mix(in oklab, var(--bg-alt) 70%, var(--surface));
-  border-top: 1px solid var(--border);
-  border-bottom: 2px solid var(--border);
-  box-shadow: 0 1px 0 var(--border-light), inset 0 1px 0 rgba(255,255,255,0.5);
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  background: color-mix(in oklab, var(--bg-alt) 88%, var(--panel));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   position: relative;
   z-index: 1;
   flex-wrap: wrap;
@@ -20,7 +21,7 @@
 }
 
 :root[data-theme="dark"] .entity-toolbar {
-  box-shadow: 0 1px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .toolbar-group {
@@ -47,14 +48,15 @@
 
 .entity-toolbar .btn {
   padding-inline: 11px;
-  height: 30px;
-  min-height: 30px;
-  font-size: var(--font-size-xs);
+  height: var(--control-height);
+  min-height: var(--control-height);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
 }
 
 .entity-toolbar .btn-icon-only {
-  width: 30px;
-  height: 30px;
+  width: var(--control-height);
+  height: var(--control-height);
 }
 
 .entity-toolbar .btn-icon {

@@ -9,9 +9,8 @@
 
 .entity-detail-panel {
   background: var(--panel);
-  border-radius: 0;
-  border: none;
-  border-left: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--panel-border);
   padding: var(--space-lg);
   display: flex;
   flex-direction: column;

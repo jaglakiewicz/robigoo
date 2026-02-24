@@ -5,23 +5,23 @@
   display: flex;
   gap: var(--space-sm);
   padding: 12px var(--space-lg);
-  padding-left: calc(var(--space-lg) - 3px);
-  border-radius: 0;
-  border: none;
-  border-bottom: 1px solid var(--border-light);
-  border-left: 3px solid transparent;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
   background: var(--panel);
   cursor: pointer;
-  transition: background var(--transition-fast), border-left-color var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .entity-card:hover {
   background: var(--bg-alt);
+  border-color: var(--accent-light);
+  box-shadow: var(--shadow-sm);
 }
 
 .entity-card.active {
   background: var(--primary-surface);
-  border-left-color: var(--primary);
+  border-color: var(--primary-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .entity-card:focus-visible {
@@ -69,7 +69,7 @@
    ============================================================ */
 .entity-card .badge {
   padding: 1px 6px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
   line-height: 1.4;
   border: 1px solid var(--border-light);

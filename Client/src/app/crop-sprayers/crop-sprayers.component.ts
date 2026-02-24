@@ -34,6 +34,8 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   @ViewChild('detailScroll') detailScroll?: ElementRef<HTMLElement>;
   @ViewChild('formSections') formSections?: ElementRef<HTMLElement>;
 
+  readonly currentYear = new Date().getFullYear();
+
   // List
   sprayers: CropSprayerListItem[] = [];
   selectedSerialNumber: string | null = null;
@@ -117,6 +119,28 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       save: this.getSafeHtml(SVG_ICONS.iconCheck),
       cancel: this.getSafeHtml(SVG_ICONS.iconCancel)
     };
+  }
+
+  sanitizeYearInput(value: string | number | null | undefined): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    const raw = String(value);
+    const digits = raw.replace(/\D+/g, '').slice(0, 4);
+
+    // Allow partial typing (e.g. '1', '19', '20')
+    if (digits.length < 4) {
+      return digits;
+    }
+
+    const year = Number(digits);
+    if (!Number.isFinite(year)) {
+      return '';
+    }
+
+    const clamped = Math.min(Math.max(year, 1900), this.currentYear);
+    return String(clamped);
   }
 
   // Visible steps depend on sprayer type (field / garden)
@@ -461,6 +485,18 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
     const firstSerialNumber = list[0].serialNumber;
     this.loadSprayerDetail(firstSerialNumber);
+  }
+
+  onMobileBack(): void {
+    if (this.isEditMode || this.dirtyFormService.isDirty(this.formId)) {
+      return;
+    }
+    this.currentSprayer = null;
+    this.formModel = null;
+    this.isNew = false;
+    this.isEditMode = false;
+    this.selectedSerialNumber = null;
+    this.setDirty(false);
   }
 
   // Step navigation

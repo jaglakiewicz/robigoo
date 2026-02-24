@@ -93,9 +93,9 @@
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   white-space: nowrap;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .step-navigation {

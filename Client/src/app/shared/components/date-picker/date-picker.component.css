@@ -7,11 +7,12 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  height: 36px;
-  padding: var(--space-xs) var(--space-md);
+  height: var(--control-height);
+  min-height: var(--control-height);
+  padding: 0 var(--space-md);
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 2px;
+  border-radius: 0;
   cursor: pointer;
   transition: border-color var(--transition-fast);
   font-size: var(--font-size-base);

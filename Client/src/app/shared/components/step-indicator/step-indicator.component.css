@@ -70,6 +70,14 @@
   overflow: hidden;
 }
 
+.step.active {
+  background: color-mix(in oklab, var(--primary-surface) 70%, var(--panel));
+}
+
+:root[data-theme="dark"] .step.active {
+  background: color-mix(in oklab, var(--primary-surface) 30%, var(--panel));
+}
+
 /* Override the active indicator to follow rounded corners */
 .step.active::after {
   bottom: 0;

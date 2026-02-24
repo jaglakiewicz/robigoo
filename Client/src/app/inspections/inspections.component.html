@@ -55,9 +55,9 @@
         </app-filter-panel>
       </div>
 
-      <div class="protocols-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.protocol-card'">
+      <div class="protocols-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.entity-card'">
         <div
-          class="protocol-card"
+          class="entity-card"
           *ngFor="let protocol of protocols"
           [class.active]="protocol.id === selectedProtocolId"
           (click)="onSelectProtocol(protocol.id)">

@@ -6,12 +6,13 @@
 
 .numeric-input input {
   flex: 1;
-  height: var(--touch-size);
-  padding: var(--space-sm) var(--space-md);
+  height: var(--control-height);
+  min-height: var(--control-height);
+  padding: 0 var(--space-md);
   padding-right: 42px;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 0;
   font-size: var(--font-size-base);
   color: var(--text);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -49,7 +50,7 @@
   flex-direction: column;
   width: 30px;
   border-left: 1px solid var(--border);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: 0;
   overflow: hidden;
 }
 

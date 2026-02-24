@@ -45,37 +45,28 @@
     </ng-container>
   </app-entity-toolbar>
 
-  <div class="sprayers-layout">
-    <!-- LEFT: LIST -->
-    <div class="sprayers-list-panel">
-      <h4 class="panel-title">Lista opryskiwaczy</h4>
-
-      <div class="filters-row">
-        <input
-          type="text"
-          class="search-input"
-          [placeholder]="'types.cropSprayers.searchPlaceholder' | text"
-          [ngModel]="searchTerm"
-          (ngModelChange)="onSearchChange($event)"
-          aria-label="Search crop sprayers" />
-
-        <app-filter-panel
-          [fields]="filterFields"
-          [values]="filterValues"
-          [clearButtonLabel]="'types.cropSprayers.filters.clear' | text"
-          [applyButtonLabel]="'types.cropSprayers.filters.apply' | text"
-          (valuesChange)="onFilterChange($event)"
-          (filterClear)="onFilterClear()"
-          (openChange)="onFilterPanelOpenChange($event)">
-        </app-filter-panel>
-      </div>
-
-      <div class="sprayers-list" [class.blurred]="filterPanelOpen" *ngIf="!loadingList; else loadingTpl" appScrollFade appScrollCenter [itemSelector]="'.sprayer-card'">
-        <div
-          class="sprayer-card"
-          *ngFor="let s of sprayers"
-          [class.active]="s.serialNumber === selectedSerialNumber && !isNew"
-          (click)="onSelectSprayer(s.serialNumber)">
+  <app-master-detail-layout [hasSelection]="!!(currentSprayer || isNew)">
+    <ng-container master>
+      <app-entity-list-panel
+        [title]="'types.cropSprayers.listTitle' | text"
+        [items]="sprayers"
+        [loading]="loadingList"
+        [selectedId]="isNew ? null : selectedSerialNumber"
+        idKey="serialNumber"
+        [searchTerm]="searchTerm"
+        [searchPlaceholder]="'types.cropSprayers.searchPlaceholder' | text"
+        [filterFields]="filterFields"
+        [filterValues]="filterValues"
+        [clearButtonLabel]="'types.cropSprayers.filters.clear' | text"
+        [applyButtonLabel]="'types.cropSprayers.filters.apply' | text"
+        [emptyMessage]="'types.cropSprayers.empty' | text"
+        [loadingMessage]="'types.cropSprayers.loading' | text"
+        itemClass="entity-card"
+        (searchChange)="onSearchChange($event)"
+        (filterChange)="onFilterChange($event)"
+        (filterClear)="onFilterClear()"
+        (itemSelect)="onSelectSprayer($event.serialNumber)">
+        <ng-template #itemTemplate let-s>
           <div class="card-main">
             <div class="card-badges-row">
               <span class="badge badge-type" *ngIf="s.type === '00'">
@@ -105,93 +96,85 @@
               {{ s.ownerName || ('types.cropSprayers.fields.noOwnerShort' | text) }}
             </div>
           </div>
-        </div>
-        <div *ngIf="sprayers.length === 0" class="empty-state">
-          {{ 'inspections.empty' | text }}
-        </div>
-      </div>
-
-      <ng-template #loadingTpl>
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <span>{{ 'inspections.loading' | text }}</span>
-        </div>
-      </ng-template>
-    </div>
-
-    <!-- RIGHT: DETAIL / EDITOR -->
-    <div class="sprayers-detail-panel" #detailScroll *ngIf="formModel as form">
-      <div class="detail-sticky-header">
-        <div class="detail-header">
-          <div>
-            <div class="detail-title">{{ form.serialNumber || ('types.cropSprayers.fields.serialNumber' | text) }}</div>
-            <div class="detail-sub" *ngIf="!isNew">
-               {{ form.manufacturer }}<span *ngIf="form.manufacturer && form.sprayerName" class="vertical-separator"></span>{{ form.sprayerName }}<span *ngIf="(form.manufacturer || form.sprayerName) && form.productionYear" class="vertical-separator"></span>{{ form.productionYear }}
-            </div>
+        </ng-template>
+      </app-entity-list-panel>
+    </ng-container>
+  
+    <ng-container detail>
+      <ng-container *ngIf="formModel as form; else emptyDetail">
+        <app-entity-detail-panel
+          [title]="form.serialNumber"
+          [subtitle]="!isNew ? (form.manufacturer + (form.manufacturer && form.sprayerName ? ' • ' : '') + (form.sprayerName || '') + ((form.manufacturer || form.sprayerName) && form.productionYear ? ' • ' : '') + (form.productionYear || '')) : ''"
+          [titlePlaceholder]="'types.cropSprayers.selectOrAdd' | text"
+          [showHistoryButton]="true"
+          [historyButtonTitle]="'Historia zmian'"
+          [isNew]="isNew"
+          [isEditMode]="isEditMode"
+          (historyClick)="openHistory()"
+          (backClick)="onMobileBack()">
+          <div class="detail-sticky-header">
+            <app-step-indicator
+              [steps]="stepsForIndicator"
+              [currentStepId]="currentStep"
+              (stepClick)="goToStep($event)">
+            </app-step-indicator>
           </div>
-          <button
-            *ngIf="!isNew && !isEditMode"
-            class="btn btn-secondary btn-icon-only"
-            title="Historia zmian"
-            (click)="openHistory()">
-            <span [innerHTML]="getSafeHtml(historyIcon)" style="color: inherit;"></span>
-          </button>
-        </div>
-
-        <app-step-indicator
-          [steps]="stepsForIndicator"
-          [currentStepId]="currentStep"
-          (stepClick)="goToStep($event)">
-        </app-step-indicator>
-      </div>
-
-      <div class="form-sections" #formSections appScrollSpy (activeSection)="onScrollSection($event)">
-
-        <div class="form-section" id="section-0">
-          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.basics' | text }}</span></div>
-          <div class="basics-grid">
-            <div class="form-row form-row-1">
-              <div class="form-group">
-                <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
-                <app-client-autocomplete [ngModel]="form.ownerId || null" (ngModelChange)="onOwnerChange($event)" [placeholder]="'types.cropSprayers.fields.selectOwner' | text" [disabled]="!isEditMode"></app-client-autocomplete>
+  
+          <div class="form-sections" #formSections appScrollSpy (activeSection)="onScrollSection($event)">
+            <div class="form-section" id="section-0">
+              <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.basics' | text }}</span></div>
+              <div class="basics-grid">
+                <div class="form-row form-row-1">
+                  <div class="form-group">
+                    <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
+                    <app-client-autocomplete [ngModel]="form.ownerId || null" (ngModelChange)="onOwnerChange($event)" [placeholder]="'types.cropSprayers.fields.selectOwner' | text" [disabled]="!isEditMode"></app-client-autocomplete>
+                  </div>
+                </div>
+                <div class="form-row form-row-2">
+                  <div class="form-group required">
+                    <label>{{ 'types.cropSprayers.fields.serialNumber' | text }}</label>
+                    <input type="text" [ngModel]="form.serialNumber" (ngModelChange)="form.serialNumber = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
+                  <div class="form-group required">
+                    <label>{{ 'types.cropSprayers.fields.sprayerName' | text }}</label>
+                    <input type="text" [ngModel]="form.sprayerName" (ngModelChange)="form.sprayerName = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
+                </div>
+                <div class="form-row form-row-2">
+                  <div class="form-group required">
+                    <label>{{ 'types.cropSprayers.fields.type' | text }}</label>
+                    <app-custom-select [options]="typeOptions" [ngModel]="form.type" (ngModelChange)="onTypeChange($event)" [disabled]="!isEditMode"></app-custom-select>
+                  </div>
+                  <div class="form-group required">
+                    <label>{{ 'types.cropSprayers.fields.kind' | text }}</label>
+                    <app-custom-select [options]="kindOptions" [ngModel]="form.kind" (ngModelChange)="form.kind = $event; onFormChange()" [disabled]="!isEditMode"></app-custom-select>
+                  </div>
+                </div>
+                <div class="form-row form-row-3">
+                  <div class="form-group required">
+                    <label>{{ 'types.cropSprayers.fields.manufacturer' | text }}</label>
+                    <input type="text" [ngModel]="form.manufacturer" (ngModelChange)="form.manufacturer = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
+                  <div class="form-group required">
+                    <label>{{ 'types.cropSprayers.fields.productionYear' | text }}</label>
+                    <input
+                      type="text"
+                      inputmode="numeric"
+                      autocomplete="off"
+                      placeholder="YYYY"
+                      maxlength="4"
+                      pattern="(19|20)[0-9]{2}"
+                      [ngModel]="form.productionYear"
+                      (ngModelChange)="form.productionYear = sanitizeYearInput($event); onFormChange()"
+                      [disabled]="!isEditMode" />
+                  </div>
+                  <div class="form-group">
+                    <label>{{ 'types.cropSprayers.fields.purchaseDate' | text }}</label>
+                    <app-date-picker [ngModel]="form.purchaseDate" (ngModelChange)="form.purchaseDate = $event; onFormChange()" [disabled]="!isEditMode"></app-date-picker>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="form-row form-row-2">
-              <div class="form-group required">
-                <label>{{ 'types.cropSprayers.fields.serialNumber' | text }}</label>
-                <input type="text" [ngModel]="form.serialNumber" (ngModelChange)="form.serialNumber = $event; onFormChange()" [disabled]="!isEditMode" />
-              </div>
-              <div class="form-group required">
-                <label>{{ 'types.cropSprayers.fields.sprayerName' | text }}</label>
-                <input type="text" [ngModel]="form.sprayerName" (ngModelChange)="form.sprayerName = $event; onFormChange()" [disabled]="!isEditMode" />
-              </div>
-            </div>
-            <div class="form-row form-row-2">
-              <div class="form-group required">
-                <label>{{ 'types.cropSprayers.fields.type' | text }}</label>
-                <app-custom-select [options]="typeOptions" [ngModel]="form.type" (ngModelChange)="onTypeChange($event)" [disabled]="!isEditMode"></app-custom-select>
-              </div>
-              <div class="form-group required">
-                <label>{{ 'types.cropSprayers.fields.kind' | text }}</label>
-                <app-custom-select [options]="kindOptions" [ngModel]="form.kind" (ngModelChange)="form.kind = $event; onFormChange()" [disabled]="!isEditMode"></app-custom-select>
-              </div>
-            </div>
-            <div class="form-row form-row-3">
-              <div class="form-group required">
-                <label>{{ 'types.cropSprayers.fields.manufacturer' | text }}</label>
-                <input type="text" [ngModel]="form.manufacturer" (ngModelChange)="form.manufacturer = $event; onFormChange()" [disabled]="!isEditMode" />
-              </div>
-              <div class="form-group required">
-                <label>{{ 'types.cropSprayers.fields.productionYear' | text }}</label>
-                <app-numeric-input [min]="1900" [max]="2100" [step]="1" [ngModel]="form.productionYear" (ngModelChange)="form.productionYear = $event; onFormChange()" [disabled]="!isEditMode"></app-numeric-input>
-              </div>
-              <div class="form-group">
-                <label>{{ 'types.cropSprayers.fields.purchaseDate' | text }}</label>
-                <app-date-picker [ngModel]="form.purchaseDate" (ngModelChange)="form.purchaseDate = $event; onFormChange()" [disabled]="!isEditMode"></app-date-picker>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div class="form-section" id="section-1">
           <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.pump' | text }}</span></div>
@@ -313,9 +296,17 @@
           </div>
         </div>
 
-      </div>
-    </div>
-  </div>
+          </div>
+        </app-entity-detail-panel>
+      </ng-container>
+
+      <ng-template #emptyDetail>
+        <div class="empty-detail">
+          <div class="empty-state-message">{{ 'types.cropSprayers.selectOrAdd' | text }}</div>
+        </div>
+      </ng-template>
+    </ng-container>
+  </app-master-detail-layout>
 
   <!-- Unsaved changes dialog -->
   <div class="dialog-backdrop" *ngIf="unsavedDialogVisible">
