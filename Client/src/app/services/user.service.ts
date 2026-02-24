@@ -55,6 +55,7 @@ export interface UserProfileResponse {
   permissionNumber: string;
   theme: string;
   avatarBase64?: string;
+  signatureBase64?: string;
 }
 
 export interface CanDeleteUserResponse {
@@ -112,6 +113,12 @@ export class UserService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(`${this.apiUrl}/avatar`, formData);
+  }
+
+  uploadSignature(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}/signature`, formData);
   }
 
   /**

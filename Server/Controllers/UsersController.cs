@@ -188,9 +188,8 @@ namespace Server.Controllers
             // Requirement 9.7: IF sensitive data is accessed, THEN THE Backend SHALL log the access for compliance purposes
             await _securityAuditService.LogDataAccessAsync(userId, "User", userId.ToString(), "ViewProfile");
 
-            var avatarBase64 = user.AvatarData != null 
-                ? Convert.ToBase64String(user.AvatarData) 
-                : null;
+            var avatarBase64 = user.AvatarData != null ? Convert.ToBase64String(user.AvatarData) : null;
+            var signatureBase64 = user.SignatureData != null ? Convert.ToBase64String(user.SignatureData) : null;
 
             return Ok(new UserProfileResponseDto
             {
@@ -203,7 +202,8 @@ namespace Server.Controllers
                 PermissionNumber = user.PermissionNumber,
                 Language = user.Language,
                 Theme = user.Theme,
-                AvatarBase64 = avatarBase64
+                AvatarBase64 = avatarBase64,
+                SignatureBase64 = signatureBase64
             });
         }
 
@@ -255,9 +255,8 @@ namespace Server.Controllers
                 "User {UserId} successfully updated their profile",
                 userId);
 
-            var avatarBase64 = user.AvatarData != null 
-                ? Convert.ToBase64String(user.AvatarData) 
-                : null;
+            var avatarBase64 = user.AvatarData != null ? Convert.ToBase64String(user.AvatarData) : null;
+            var signatureBase64 = user.SignatureData != null ? Convert.ToBase64String(user.SignatureData) : null;
 
             return Ok(new UserProfileResponseDto
             {
@@ -270,7 +269,8 @@ namespace Server.Controllers
                 PermissionNumber = user.PermissionNumber,
                 Language = user.Language,
                 Theme = user.Theme,
-                AvatarBase64 = avatarBase64
+                AvatarBase64 = avatarBase64,
+                SignatureBase64 = signatureBase64
             });
         }
 
@@ -449,6 +449,33 @@ namespace Server.Controllers
                 _logger.LogError(ex, "Error uploading avatar for user");
                 return StatusCode(500, new { message = "Błąd podczas przesyłania avatara" });
             }
+        }
+
+        [HttpPost("signature")]
+        public async Task<IActionResult> UploadSignature(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest(new { message = "Plik nie został przesłany" });
+
+            var validationResult = await _fileValidationService.ValidateFileAsync(
+                file, ALLOWED_AVATAR_CONTENT_TYPES, MAX_AVATAR_SIZE);
+
+            if (!validationResult.IsValid)
+                return BadRequest(new { message = validationResult.ErrorMessage });
+
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+
+            var userId = GetCurrentUserId();
+            var user = _context.Users.Find(userId);
+            if (user == null || !user.IsActive)
+                return NotFound(new { message = "Użytkownik nie znaleziony" });
+
+            user.SignatureData = bytes;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Podpis przesłany pomyślnie", signatureBase64 = Convert.ToBase64String(bytes) });
         }
 
         /// <summary>

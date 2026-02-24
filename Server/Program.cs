@@ -445,6 +445,9 @@ using (var scope = app.Services.CreateScope())
     try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""InvalidatedAt"" TEXT NULL;"); } catch { }
     try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""InvalidationReason"" TEXT NULL;"); } catch { }
 
+    // Add SignatureData column to Users if not exists
+    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""Users"" ADD COLUMN ""SignatureData"" BLOB NULL;"); } catch { }
+
     // Create LoginAttempts table for security auditing
     db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""LoginAttempts"" (
         ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_LoginAttempts"" PRIMARY KEY AUTOINCREMENT,
@@ -588,6 +591,14 @@ using (var scope = app.Services.CreateScope())
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_SecurityEventLogs_OccurredAt"" ON ""SecurityEventLogs"" (""OccurredAt"");");
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_SecurityEventLogs_EventType_OccurredAt"" ON ""SecurityEventLogs"" (""EventType"", ""OccurredAt"");");
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_SecurityEventLogs_IpAddress_OccurredAt"" ON ""SecurityEventLogs"" (""IpAddress"", ""OccurredAt"");");
+
+    // Create AppSettings table (single-row JSON blob, schema-free for future fields)
+    db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""AppSettings"" (
+        ""Id"" INTEGER NOT NULL CONSTRAINT ""PK_AppSettings"" PRIMARY KEY,
+        ""DataJson"" TEXT NOT NULL DEFAULT '{{}}',
+        ""UpdatedAt"" TEXT NOT NULL,
+        ""UpdatedBy"" TEXT NOT NULL
+    );");
 
     // Seed master admin if not exists
     if (!db.Users.Any(u => u.Login == "admin"))

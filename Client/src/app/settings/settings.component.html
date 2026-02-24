@@ -1,323 +1,714 @@
-<h3 class="component-title">{{ 'settings.title' | text }}</h3>
-
-<!-- Step Indicator -->
+<!-- Step Indicator as scroll-nav -->
 <app-step-indicator
   [steps]="visibleSteps"
-  [currentStepId]="currentStep"
-  (stepClick)="goToStep($event)">
+  [currentStepId]="activeSection"
+  (stepClick)="scrollToSection($event)">
 </app-step-indicator>
 
-<!-- Tab Contents -->
-<div class="step-content">
-    <!-- Program Settings Tab -->
-    <div *ngIf="currentStep === 0" class="tab-pane">
-      <h3>Ustawienia programu</h3>
-      
-      <div class="form-group">
-        <label>Domyślna drukarka</label>
-        <select [(ngModel)]="programSettings.defaultPrinter">
-          <option value="pdf">PDF</option>
-          <option value="hp">HP LaserJet</option>
-          <option value="canon">Canon</option>
-        </select>
-      </div>
+<!-- Single scrollable content -->
+<div class="settings-scroll"
+     appScrollSpy
+     sectionSelector=".settings-section"
+     (activeSection)="onActiveSection($event)">
 
-      <div class="form-group">
-        <label>Format daty</label>
-        <select [(ngModel)]="programSettings.dateFormat">
-          <option value="dd.MM.yyyy">dd.MM.yyyy</option>
-          <option value="yyyy-MM-dd">yyyy-MM-dd</option>
-          <option value="MM/dd/yyyy">MM/dd/yyyy</option>
-        </select>
-      </div>
+  <!-- ── PROGRAM SETTINGS ── -->
+  <section id="section-0" class="settings-section">
+    <div class="form-section-divider"><span class="form-section-label">Ustawienia programu</span></div>
 
-      <div class="form-group">
-        <label>Ścieżka backupu</label>
-        <input type="text" [(ngModel)]="programSettings.backupPath" />
+    <!-- Sub-group: Drukowanie -->
+    <div class="settings-group">
+      <div class="settings-group-title">Drukowanie</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Domyślna drukarka</label>
+          <app-custom-select [(ngModel)]="appSettings.printing.defaultPrinter" [options]="printerOptions" placeholder="— wybierz —"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Domyślny szablon XSL</label>
+          <app-custom-select [(ngModel)]="appSettings.printing.defaultXslTemplate" [options]="xslTemplateOptions" placeholder="— wybierz —"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Rozmiar papieru</label>
+          <app-custom-select [(ngModel)]="appSettings.printing.paperSize" [options]="paperSizeOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Orientacja</label>
+          <app-custom-select [(ngModel)]="appSettings.printing.orientation" [options]="orientationOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Liczba kopii</label>
+          <input type="number" [(ngModel)]="appSettings.printing.copies" min="1" max="10" />
+        </div>
+        <div class="form-group">
+          <label>Druk kolorowy</label>
+          <div class="toggle-row">
+            <label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.colorPrint" /><span class="toggle-slider-inline"></span></label>
+          </div>
+        </div>
       </div>
-
-      <button class="btn btn-primary" (click)="saveSettings()">Zapisz</button>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Nagłówek na wydruku</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printHeader" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Stopka na wydruku</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printFooter" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Numery stron</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printPageNumbers" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Znak wodny</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printWatermark" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group" *ngIf="appSettings.printing.printWatermark">
+          <label>Tekst znaku wodnego</label>
+          <input type="text" [(ngModel)]="appSettings.printing.watermarkText" />
+        </div>
+      </div>
+      <div class="settings-group-title" style="font-size:var(--font-size-xs);margin-top:var(--space-xs)">Marginesy (mm)</div>
+      <div class="form-row form-row-4">
+        <div class="form-group"><label>Górny</label><input type="number" [(ngModel)]="appSettings.printing.marginTopMm" min="0" /></div>
+        <div class="form-group"><label>Prawy</label><input type="number" [(ngModel)]="appSettings.printing.marginRightMm" min="0" /></div>
+        <div class="form-group"><label>Dolny</label><input type="number" [(ngModel)]="appSettings.printing.marginBottomMm" min="0" /></div>
+        <div class="form-group"><label>Lewy</label><input type="number" [(ngModel)]="appSettings.printing.marginLeftMm" min="0" /></div>
+      </div>
     </div>
 
-    <!-- User Settings Tab -->
-    <div *ngIf="currentStep === 1" class="tab-pane">
-      <h3>Ustawienia użytkownika</h3>
-      
-      <!-- Avatar Section -->
-      <div class="form-group avatar-section">
-        <label>Avatar</label>
-        <div class="avatar-info">
-          <div>Login: <strong>{{ userSettings.login }}</strong></div>
+    <!-- Sub-group: Protokoły -->
+    <div class="settings-group">
+      <div class="settings-group-title">Protokoły badań</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Prefiks numeru</label>
+          <input type="text" [(ngModel)]="appSettings.protocols.numberPrefix" placeholder="np. SKO" />
         </div>
-        <div class="avatar-container">
-          <div class="avatar-preview" *ngIf="userSettings.avatar">
-            <img [src]="userSettings.avatar" alt="Avatar" />
-          </div>
-          <div class="avatar-preview empty" *ngIf="!userSettings.avatar">
-            <span [innerHTML]="getSafeHtml(SVG_ICONS.userDefaultAvatar)"></span>
-          </div>
-          <input 
-            type="file" 
-            #avatarInput 
-            (change)="onAvatarSelected($event)" 
-            accept="image/*"
-            style="display: none"
-            aria-label="Upload avatar"
-          />
-          <button class="btn btn-secondary" (click)="avatarInput.click()">
-            Zmień avatar
-          </button>
+        <div class="form-group">
+          <label>Ważność badania (lata)</label>
+          <input type="number" [(ngModel)]="appSettings.protocols.inspectionValidityYears" min="1" max="10" />
         </div>
-        <div *ngIf="avatarError" class="error-message">{{ avatarError }}</div>
-        <div *ngIf="avatarSuccess" class="success-message">Avatar został pomyślnie przesłany!</div>
+        <div class="form-group">
+          <label>Reset numeracji</label>
+          <app-custom-select [(ngModel)]="appSettings.protocols.sequenceResetPeriod" [options]="seqResetOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Wartość startowa sekwencji</label>
+          <input type="number" [(ngModel)]="appSettings.protocols.sequenceStartValue" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Szerokość numeru (cyfry)</label>
+          <input type="number" [(ngModel)]="appSettings.protocols.sequencePadding" min="1" max="6" />
+        </div>
+        <div class="form-group">
+          <label>Domyślny typ badania</label>
+          <app-custom-select [(ngModel)]="appSettings.protocols.defaultInspectionType" [options]="inspectionTypeOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Ostrzeżenie przed wygaśnięciem (dni)</label>
+          <input type="number" [(ngModel)]="appSettings.protocols.expiryWarningDays" min="1" />
+        </div>
+      </div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Wymagaj klienta przy tworzeniu</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.requireClientOnCreate" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Wymagaj opryskiwacza przy tworzeniu</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.requireSprayerOnCreate" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Zezwól na edycję po podpisaniu</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.allowEditAfterSign" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Generuj PDF przy tworzeniu</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.generatePdfOnCreate" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Format numeru protokołu</label>
+        <span class="field-hint" style="margin-bottom:var(--space-sm);display:block">Kliknij token aby wstawić go do schematu. Możesz też wpisać dowolny separator (np. <code>/</code>, <code>-</code>).</span>
+        <div class="format-tokens">
+          <button *ngFor="let t of formatTokens" type="button" class="token-chip" (click)="insertToken(t.token)" [title]="t.hint">{{ t.token }}</button>
+        </div>
+        <input type="text" [(ngModel)]="appSettings.protocols.numberFormat" placeholder="np. {PREFIX}/{YEAR}/{SEQ}" class="format-input" />
+      </div>
+      <div class="form-group">
+        <label>Podgląd</label>
+        <div class="protocol-number-preview">{{ protocolNumberPreview }}</div>
+      </div>
+    </div>
+
+    <!-- Sub-group: Organizacja -->
+    <div class="settings-group">
+      <div class="settings-group-title">Organizacja / Stacja kontroli</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Nazwa stacji</label>
+          <input type="text" [(ngModel)]="appSettings.organization.stationName" placeholder="np. SKO Warszawa" />
+        </div>
+        <div class="form-group">
+          <label>Numer akredytacji</label>
+          <input type="text" [(ngModel)]="appSettings.organization.accreditationNumber" />
+        </div>
+        <div class="form-group">
+          <label>Jednostka akredytująca</label>
+          <input type="text" [(ngModel)]="appSettings.organization.accreditationBody" placeholder="np. PCA" />
+        </div>
+        <div class="form-group">
+          <label>Zakres akredytacji</label>
+          <input type="text" [(ngModel)]="appSettings.organization.accreditationScope" />
+        </div>
+        <div class="form-group">
+          <label>Adres (linia 1)</label>
+          <input type="text" [(ngModel)]="appSettings.organization.addressLine1" />
+        </div>
+        <div class="form-group">
+          <label>Adres (linia 2)</label>
+          <input type="text" [(ngModel)]="appSettings.organization.addressLine2" />
+        </div>
+        <div class="form-group">
+          <label>Kod pocztowy</label>
+          <input type="text" [(ngModel)]="appSettings.organization.postalCode" />
+        </div>
+        <div class="form-group">
+          <label>Miejscowość</label>
+          <input type="text" [(ngModel)]="appSettings.organization.city" />
+        </div>
+        <div class="form-group">
+          <label>Telefon</label>
+          <input type="tel" [(ngModel)]="appSettings.organization.phone" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="appSettings.organization.email" />
+        </div>
+        <div class="form-group">
+          <label>Strona WWW</label>
+          <input type="url" [(ngModel)]="appSettings.organization.website" />
+        </div>
+        <div class="form-group">
+          <label>NIP</label>
+          <input type="text" [(ngModel)]="appSettings.organization.taxId" />
+        </div>
+        <div class="form-group">
+          <label>Numer konta bankowego</label>
+          <input type="text" [(ngModel)]="appSettings.organization.bankAccount" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-group: Wyświetlanie -->
+    <div class="settings-group">
+      <div class="settings-group-title">Wyświetlanie</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Język</label>
+          <app-custom-select [(ngModel)]="appSettings.display.language" [options]="languageOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Motyw</label>
+          <app-custom-select [(ngModel)]="appSettings.display.theme" [options]="themeOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Format daty</label>
+          <app-custom-select [(ngModel)]="appSettings.display.dateFormat" [options]="dateFormatOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Format czasu</label>
+          <app-custom-select [(ngModel)]="appSettings.display.timeFormat" [options]="[{value:'HH:mm',label:'HH:mm (24h)'},{value:'hh:mm a',label:'hh:mm AM/PM'}]"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Separator dziesiętny</label>
+          <app-custom-select [(ngModel)]="appSettings.display.decimalSeparator" [options]="[{value:',',label:'Przecinek (,)'},{value:'.',label:'Kropka (.)'  }]"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Separator tysięcy</label>
+          <app-custom-select [(ngModel)]="appSettings.display.thousandsSeparator" [options]="[{value:' ',label:'Spacja'},{value:'.',label:'Kropka (.)'},{value:',',label:'Przecinek (,)'}]"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Strefa czasowa</label>
+          <input type="text" [(ngModel)]="appSettings.display.timezone" placeholder="np. Europe/Warsaw" />
+        </div>
+        <div class="form-group">
+          <label>Waluta</label>
+          <input type="text" [(ngModel)]="appSettings.display.currency" placeholder="PLN" />
+        </div>
+        <div class="form-group">
+          <label>Wierszy na stronę</label>
+          <app-custom-select [(ngModel)]="appSettings.display.itemsPerPage" [options]="itemsPerPageOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Tryb kompaktowy</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.display.compactMode" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Pokazuj podpowiedzi</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.display.showTooltips" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-group: Dane i eksport -->
+    <div class="settings-group">
+      <div class="settings-group-title">Dane i eksport</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Automatyczny zapis</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.autoSave" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group" *ngIf="appSettings.data.autoSave">
+          <label>Interwał autozapisu (s)</label>
+          <input type="number" [(ngModel)]="appSettings.data.autoSaveIntervalSeconds" min="10" max="300" />
+        </div>
+        <div class="form-group">
+          <label>Format eksportu</label>
+          <app-custom-select [(ngModel)]="appSettings.data.exportFormat" [options]="exportFormatOptions"></app-custom-select>
+        </div>
+        <div class="form-group">
+          <label>Załączniki w eksporcie</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.exportIncludeAttachments" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Maks. rozmiar załącznika (MB)</label>
+          <input type="number" [(ngModel)]="appSettings.data.maxAttachmentSizeMb" min="1" max="100" />
+        </div>
+        <div class="form-group">
+          <label>Automatyczny backup</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.autoBackup" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group" *ngIf="appSettings.data.autoBackup">
+          <label>Harmonogram backupu</label>
+          <app-custom-select [(ngModel)]="appSettings.data.backupSchedule" [options]="backupScheduleOptions"></app-custom-select>
+        </div>
+        <div class="form-group" *ngIf="appSettings.data.autoBackup">
+          <label>Retencja backupów (dni)</label>
+          <input type="number" [(ngModel)]="appSettings.data.backupRetentionDays" min="1" />
+        </div>
+        <div class="form-group" *ngIf="appSettings.data.autoBackup">
+          <label>Ścieżka backupów</label>
+          <input type="text" [(ngModel)]="appSettings.data.backupPath" placeholder="np. C:\Backups\SKO" />
+        </div>
+        <div class="form-group">
+          <label>Archiwizuj po latach</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.archiveAfterYears" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group" *ngIf="appSettings.data.archiveAfterYears">
+          <label>Archiwizuj po (lata)</label>
+          <input type="number" [(ngModel)]="appSettings.data.archiveAfterYearsValue" min="1" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-group: Bezpieczeństwo -->
+    <div class="settings-group">
+      <div class="settings-group-title">Bezpieczeństwo</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Timeout sesji (min)</label>
+          <input type="number" [(ngModel)]="appSettings.security.sessionTimeoutMinutes" min="5" />
+        </div>
+        <div class="form-group">
+          <label>Maks. prób logowania</label>
+          <input type="number" [(ngModel)]="appSettings.security.maxLoginAttempts" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Czas blokady (min)</label>
+          <input type="number" [(ngModel)]="appSettings.security.lockoutDurationMinutes" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Min. długość hasła</label>
+          <input type="number" [(ngModel)]="appSettings.security.passwordMinLength" min="4" max="32" />
+        </div>
+        <div class="form-group">
+          <label>Hasło: wielka litera</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.passwordRequireUppercase" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Hasło: cyfra</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.passwordRequireDigit" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Hasło: znak specjalny</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.passwordRequireSpecial" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Wymuś zmianę hasła co (dni, 0=nigdy)</label>
+          <input type="number" [(ngModel)]="appSettings.security.forcePasswordChangeDays" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Loguj zdarzenia bezpieczeństwa</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.logSecurityEvents" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Retencja logów (dni)</label>
+          <input type="number" [(ngModel)]="appSettings.security.securityLogRetentionDays" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Wiele sesji jednocześnie</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.allowMultipleSessions" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Wymagaj 2FA</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.requireTwoFactor" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-group: Powiadomienia -->
+    <div class="settings-group">
+      <div class="settings-group-title">Powiadomienia</div>
+      <div class="form-row form-row-2">
+        <div class="form-group">
+          <label>Powiadomienia w aplikacji</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.inAppNotifications" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+        <div class="form-group">
+          <label>Powiadomienia email</label>
+          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.emailEnabled" /><span class="toggle-slider-inline"></span></label></div>
+        </div>
+      </div>
+      <ng-container *ngIf="appSettings.notifications.emailEnabled">
+        <div class="form-row form-row-2">
+          <div class="form-group">
+            <label>Serwer SMTP</label>
+            <input type="text" [(ngModel)]="appSettings.notifications.smtpHost" placeholder="smtp.example.com" />
+          </div>
+          <div class="form-group">
+            <label>Port SMTP</label>
+            <input type="number" [(ngModel)]="appSettings.notifications.smtpPort" />
+          </div>
+          <div class="form-group">
+            <label>Użytkownik SMTP</label>
+            <input type="text" [(ngModel)]="appSettings.notifications.smtpUser" />
+          </div>
+          <div class="form-group">
+            <label>Hasło SMTP</label>
+            <input type="password" [(ngModel)]="appSettings.notifications.smtpPassword" />
+          </div>
+          <div class="form-group">
+            <label>Nadawca (email)</label>
+            <input type="email" [(ngModel)]="appSettings.notifications.emailFrom" />
+          </div>
+          <div class="form-group">
+            <label>Nadawca (nazwa)</label>
+            <input type="text" [(ngModel)]="appSettings.notifications.emailFromName" />
+          </div>
+          <div class="form-group">
+            <label>SSL/TLS</label>
+            <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.smtpUseSsl" /><span class="toggle-slider-inline"></span></label></div>
+          </div>
+        </div>
+        <div class="form-row form-row-2">
+          <div class="form-group">
+            <label>Powiadom o nowym protokole</label>
+            <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.notifyOnProtocolCreate" /><span class="toggle-slider-inline"></span></label></div>
+          </div>
+          <div class="form-group">
+            <label>Powiadom o wygaśnięciu</label>
+            <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.notifyOnProtocolExpiry" /><span class="toggle-slider-inline"></span></label></div>
+          </div>
+          <div class="form-group" *ngIf="appSettings.notifications.notifyOnProtocolExpiry">
+            <label>Dni przed wygaśnięciem</label>
+            <input type="number" [(ngModel)]="appSettings.notifications.notifyDaysBeforeExpiry" min="1" />
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Sub-group: Szablony XSL -->
+    <div class="settings-group">
+      <div class="settings-group-title">Szablony XSL protokołów</div>
+      <div class="xsl-actions">
+        <input type="file" #xslInput (change)="onXslFileSelected($event)" accept=".xsl" style="display:none" />
+        <button class="btn btn-secondary btn-sm" (click)="xslInput.click()" [disabled]="uploadingXsl">
+          <span [innerHTML]="getSafeHtml(SVG_ICONS.iconAdd)"></span>
+          {{ uploadingXsl ? 'Przesyłanie...' : 'Dodaj szablon .xsl' }}
+        </button>
+        <span *ngIf="xslError" class="field-hint error-text">{{ xslError }}</span>
+        <span *ngIf="xslSuccess" class="field-hint success-text">{{ xslSuccess }}</span>
       </div>
 
-      <!-- Personal Information -->
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Imię *</label>
-          <input 
-            type="text" 
-            [(ngModel)]="userSettings.firstName"
-            [disabled]="!isCurrentUserAdmin()"
-            [class.disabled-input]="!isCurrentUserAdmin()"
-          />
-          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+      <div *ngIf="loadingXsl" class="field-hint">Ładowanie...</div>
+
+      <div *ngIf="!loadingXsl && xslTemplates.length === 0" class="field-hint">
+        Brak szablónów. Dodaj plik .xsl powyżej.
+      </div>
+
+      <table *ngIf="xslTemplates.length > 0" class="xsl-table">
+        <thead>
+          <tr>
+            <th>Nazwa pliku</th>
+            <th>Data dodania</th>
+            <th>Domyślny</th>
+            <th>Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of xslTemplates" [class.xsl-default-row]="t.name === defaultXslTemplate">
+            <td>{{ t.name }}</td>
+            <td>{{ t.uploadedAt | date:'dd.MM.yyyy HH:mm' }}</td>
+            <td>
+              <span *ngIf="t.name === defaultXslTemplate" class="badge-default">✓ Domyślny</span>
+              <button *ngIf="t.name !== defaultXslTemplate" class="btn btn-small btn-secondary" (click)="setDefaultXsl(t.name)">Ustaw domyślny</button>
+            </td>
+            <td>
+              <button class="btn btn-small btn-danger" (click)="deleteXsl(t.name)" [disabled]="t.name === defaultXslTemplate" [title]="t.name === defaultXslTemplate ? 'Nie można usunąć domyślnego szablonu' : ''">
+                <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-actions">
+      <button class="btn btn-primary" (click)="saveAppSettings()" [disabled]="savingAppSettings">
+        {{ savingAppSettings ? 'Zapisywanie...' : 'Zapisz ustawienia programu' }}
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ── USER SETTINGS ── -->
+  <section id="section-1" class="settings-section">
+    <div class="form-section-divider"><span class="form-section-label">Ustawienia użytkownika</span></div>
+
+    <div class="user-profile-row">
+      <!-- Avatar + Signature side by side -->
+      <div class="media-cols">
+        <div class="avatar-col">
+          <div class="media-label">Zdjęcie profilowe</div>
+          <div class="avatar-preview" [class.empty]="!userSettings.avatar">
+            <img *ngIf="userSettings.avatar" [src]="userSettings.avatar" alt="Avatar" />
+            <span *ngIf="!userSettings.avatar" [innerHTML]="getSafeHtml(SVG_ICONS.userDefaultAvatar)"></span>
+          </div>
+          <input type="file" #avatarInput (change)="onAvatarSelected($event)" accept="image/*" style="display:none" aria-label="Upload avatar" />
+          <button class="btn btn-secondary btn-sm" (click)="avatarInput.click()">Zmień zdjęcie</button>
+          <span *ngIf="avatarError" class="field-hint error-text">{{ avatarError }}</span>
+          <span *ngIf="avatarSuccess" class="field-hint success-text">Przesłano!</span>
         </div>
 
-        <div class="form-group">
-          <label>Nazwisko *</label>
-          <input 
-            type="text" 
-            [(ngModel)]="userSettings.lastName"
-            [disabled]="!isCurrentUserAdmin()"
-            [class.disabled-input]="!isCurrentUserAdmin()"
-          />
-          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
+        <div class="avatar-col">
+          <div class="media-label">Podpis (do protokołów)</div>
+          <div class="signature-preview" [class.empty]="!signatureImage">
+            <img *ngIf="signatureImage" [src]="signatureImage" alt="Podpis" />
+            <span *ngIf="!signatureImage" class="signature-placeholder">Brak podpisu</span>
+          </div>
+          <input type="file" #signatureInput (change)="onSignatureSelected($event)" accept="image/*" style="display:none" aria-label="Upload signature" />
+          <button class="btn btn-secondary btn-sm" (click)="signatureInput.click()">Zmień podpis</button>
+          <span *ngIf="signatureError" class="field-hint error-text">{{ signatureError }}</span>
+          <span *ngIf="signatureSuccess" class="field-hint success-text">Przesłano!</span>
         </div>
+      </div>
 
+      <!-- Identity fields — max 2 per row -->
+      <div class="form-row form-row-2 flex-1">
+        <div class="form-group">
+          <label>Login</label>
+          <input type="text" [value]="userSettings.login" disabled class="disabled-input" />
+        </div>
+        <div class="form-group">
+          <label>Numer uprawnień</label>
+          <input type="text" [(ngModel)]="userSettings.permissionNumber"
+                 [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">Tylko administrator</span>
+        </div>
+        <div class="form-group">
+          <label>Imię</label>
+          <input type="text" [(ngModel)]="userSettings.firstName"
+                 [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+        </div>
+        <div class="form-group">
+          <label>Nazwisko</label>
+          <input type="text" [(ngModel)]="userSettings.lastName"
+                 [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+        </div>
         <div class="form-group">
           <label>Email</label>
           <input type="email" [(ngModel)]="userSettings.email" />
         </div>
-
         <div class="form-group">
           <label>Telefon</label>
           <input type="tel" [(ngModel)]="userSettings.phone" />
         </div>
-
-        <div class="form-group">
-          <label>Numer uprawnień</label>
-          <input 
-            type="text" 
-            [(ngModel)]="userSettings.permissionNumber" 
-            placeholder="Wpisz swój numer uprawnień"
-            [disabled]="!isCurrentUserAdmin()"
-            [class.disabled-input]="!isCurrentUserAdmin()"
-          />
-          <span *ngIf="!isCurrentUserAdmin()" class="field-hint">To pole może zmienić tylko administrator</span>
-        </div>
       </div>
+    </div>
 
-      <!-- Password Change Section -->
-      <button class="btn btn-secondary toggle-form-btn" [class.expanded]="showPasswordForm" (click)="togglePasswordForm()">
-        <span [innerHTML]="getSafeHtml(SVG_ICONS.chevronUp)"></span>
-        {{ showPasswordForm ? 'Anuluj zmianę hasła' : 'Zmień hasło' }}
-      </button>
-
-      <div *ngIf="showPasswordForm" class="password-change-form">
-        <div class="form-group">
-          <label>Stare hasło *</label>
-          <input type="password" [(ngModel)]="passwordForm.oldPassword" placeholder="Wpisz stare hasło" />
-        </div>
-
-        <div class="form-group">
-          <label>Nowe hasło *</label>
-          <input type="password" [(ngModel)]="passwordForm.newPassword" placeholder="Wpisz nowe hasło" />
-        </div>
-
-        <div class="form-group">
-          <label>Potwierdź nowe hasło *</label>
-          <input type="password" [(ngModel)]="passwordForm.confirmPassword" placeholder="Powtórz nowe hasło" />
-        </div>
-
-        <div *ngIf="changePasswordError" class="error-message">{{ changePasswordError }}</div>
-        <div *ngIf="changePasswordSuccess" class="success-message">Hasło zostało zmienione pomyślnie!</div>
-
-        <button class="btn btn-primary" (click)="changePassword()" [disabled]="changingPassword">
-          {{ changingPassword ? 'Zmiana...' : 'Zmień hasło' }}
-        </button>
-      </div>
-
-      <!-- Preferences -->
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Motyw</label>
-          <select [(ngModel)]="userSettings.theme">
-            <option value="light">Jasny</option>
-            <option value="dark">Ciemny</option>
-            <option value="auto">Auto</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Save Button -->
-      <div *ngIf="userSettingsError" class="error-message">{{ userSettingsError }}</div>
-      <div *ngIf="userSettingsSuccess" class="success-message">Ustawienia zostały pomyślnie zapisane!</div>
+    <div class="section-actions">
       <button class="btn btn-primary" (click)="saveUserSettings()" [disabled]="savingSettings">
         {{ savingSettings ? 'Zapisywanie...' : 'Zapisz ustawienia' }}
       </button>
+      <button class="btn btn-secondary" (click)="openPasswordDrawer()">Zmień hasło</button>
+    </div>
+  </section>
+
+  <!-- ── ADMIN ── -->
+  <section *ngIf="isCurrentUserAdmin()" id="section-2" class="settings-section">
+    <div class="form-section-divider"><span class="form-section-label">Zarządzanie użytkownikami</span></div>
+
+    <div class="section-actions">
+      <button class="btn btn-primary" (click)="openCreateUserDrawer()">
+        <span [innerHTML]="getSafeHtml(SVG_ICONS.iconAdd)"></span>
+        Nowy użytkownik
+      </button>
     </div>
 
-    <!-- Admin Settings Tab -->
-    <div *ngIf="currentStep === 2 && isCurrentUserAdmin()" class="tab-pane">
-      <h3>Zarządzanie użytkownikami</h3>
-        
-        <button class="btn btn-secondary toggle-form-btn" [class.expanded]="showCreateUserForm" (click)="toggleCreateUserForm()">
-          <span [innerHTML]="getSafeHtml(SVG_ICONS.chevronUp)"></span>
-          {{ showCreateUserForm ? 'Anuluj tworzenie użytkownika' : 'Utwórz nowego użytkownika' }}
-        </button>
-
-        <!-- Create User Form -->
-        <div class="create-user-form" *ngIf="showCreateUserForm">
-          <div class="form-group">
-            <label>Login *</label>
-            <input type="text" [(ngModel)]="newUserForm.login" placeholder="Wpisz login" />
-          </div>
-
-          <div class="form-group">
-            <label>Hasło *</label>
-            <input type="password" [(ngModel)]="newUserForm.password" placeholder="Wpisz hasło" />
-          </div>
-
-          <div class="form-group">
-            <label>Imię</label>
-            <input type="text" [(ngModel)]="newUserForm.firstName" placeholder="Wpisz imię" />
-          </div>
-
-          <div class="form-group">
-            <label>Nazwisko</label>
-            <input type="text" [(ngModel)]="newUserForm.lastName" placeholder="Wpisz nazwisko" />
-          </div>
-
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" [(ngModel)]="newUserForm.email" placeholder="Wpisz email" />
-          </div>
-
-          <div class="form-group">
-            <label>Telefon</label>
-            <input type="tel" [(ngModel)]="newUserForm.phone" placeholder="Wpisz numer telefonu" />
-          </div>
-
-          <div class="form-group">
-            <label>Numer uprawnień</label>
-            <input type="text" [(ngModel)]="newUserForm.permissionNumber" placeholder="Wpisz numer uprawnień" />
-          </div>
-
-          <div class="form-group">
-            <label>Rola *</label>
-            <select 
-              [(ngModel)]="newUserForm.role"
-              [disabled]="!canSelectRoleWhenCreating()"
-            >
-              <option value="user">Użytkownik</option>
-              <option value="admin">Administrator</option>
-            </select>
-            <span *ngIf="!canSelectRoleWhenCreating()" class="role-hint">Zwykły administrator może tworzyć tylko zwykłych użytkowników</span>
-          </div>
-
-          <button class="btn btn-primary" (click)="createUser()" [disabled]="creatingUser">
-            {{ creatingUser ? 'Tworzenie...' : 'Utwórz użytkownika' }}
-          </button>
-        </div>
-
-        <!-- Users List -->
-        <div class="users-list" *ngIf="users.length > 0">
-          <h5>Lista użytkowników ({{ users.length }})</h5>
-          <table class="users-table">
-            <thead>
-              <tr>
-                <th>Login</th>
-                <th>Imię i nazwisko</th>
-                <th>Email</th>
-                <th>Rola</th>
-                <th>Akcje</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let user of users">
-                <td>{{ user.login }}</td>
-                <td>{{ user.firstName }} {{ user.lastName }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                  <select 
-                    [(ngModel)]="user.role" 
-                    (change)="onRoleChanged(user)"
-                    [disabled]="!canChangeUserRole(user)"
-                    class="role-select"
-                    aria-label="User role"
-                  >
-                    <option value="user">Użytkownik</option>
-                    <option value="admin">Administrator</option>
-                  </select>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button 
-                      *ngIf="canDeleteUser(user)"
-                      class="btn btn-small btn-danger" 
-                      (click)="openDeleteConfirmDialog(user)"
-                      [disabled]="deletingUserId === user.userId"
-                      title="Usuń użytkownika"
-                    >
-                      <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
-                      Usuń
-                    </button>
-                    <span *ngIf="!canDeleteUser(user)" class="btn-disabled-text">Brak uprawnień</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- Password Confirmation Dialog -->
-        <div class="password-confirm-dialog" *ngIf="showPasswordConfirmDialog">
-          <div class="dialog-overlay" (click)="cancelPasswordConfirmDialog()"></div>
-          <div class="dialog-content">
-            <h4>{{ confirmDialogAction === 'delete' ? 'Potwierdź usunięcie' : 'Potwierdź działanie' }}</h4>
-            <p *ngIf="confirmDialogAction === 'delete' && userToConfirm">
-              Na pewno chcesz usunąć użytkownika <strong>{{ userToConfirm.login }}</strong>?
-            </p>
-            <p class="dialog-info">Wpisz swoje hasło aby potwierdzić:</p>
-            
-            <div class="form-group">
-              <label>Hasło</label>
-              <input 
-                type="password" 
-                [(ngModel)]="confirmDialogPassword"
-                placeholder="Twoje hasło"
-                (keyup.enter)="confirmPasswordAction()"
-              />
-            </div>
-
-            <div *ngIf="confirmDialogError" class="error-message">{{ confirmDialogError }}</div>
-
-            <div class="dialog-buttons">
-              <button 
-                class="btn btn-primary" 
-                (click)="confirmPasswordAction()"
-                [disabled]="confirmingAction"
-              >
-                <span *ngIf="confirmDialogAction === 'delete'" [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
-                {{ confirmingAction ? 'Przetwarzanie...' : (confirmDialogAction === 'delete' ? 'Usuń' : 'Potwierdź') }}
+    <div class="users-list" *ngIf="users.length > 0">
+      <div class="users-count">Użytkownicy ({{ users.length }})</div>
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Login</th>
+            <th>Imię i nazwisko</th>
+            <th>Email</th>
+            <th>Rola</th>
+            <th>Akcje</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.login }}</td>
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <select [(ngModel)]="user.role" (change)="onRoleChanged(user)"
+                      [disabled]="!canChangeUserRole(user)" class="role-select" aria-label="User role">
+                <option value="user">Użytkownik</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </td>
+            <td>
+              <button *ngIf="canDeleteUser(user)" class="btn btn-small btn-danger"
+                      (click)="openDeleteConfirmDialog(user)" [disabled]="deletingUserId === user.userId">
+                <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span> Usuń
               </button>
-              <button class="btn btn-secondary" (click)="cancelPasswordConfirmDialog()" [disabled]="confirmingAction">
-                <span *ngIf="SVG_ICONS.cancel" [innerHTML]="getSafeHtml(SVG_ICONS.cancel)" style="color: inherit;"></span>
-                Anuluj
-              </button>
-            </div>
-          </div>
-        </div>
+              <span *ngIf="!canDeleteUser(user)" class="btn-disabled-text">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<!-- ── PASSWORD DRAWER ── -->
+<div class="drawer-backdrop" *ngIf="passwordDrawerOpen" (click)="closePasswordDrawer()"></div>
+<div class="drawer" [class.open]="passwordDrawerOpen" role="dialog" aria-label="Zmiana hasła">
+  <div class="drawer-header">
+    <span class="drawer-title">Zmiana hasła</span>
+    <button class="drawer-close" (click)="closePasswordDrawer()">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <div class="form-group">
+      <label>Aktualne hasło</label>
+      <input type="password" [(ngModel)]="passwordForm.oldPassword" placeholder="Wpisz aktualne hasło" />
+    </div>
+    <div class="form-group">
+      <label>Nowe hasło</label>
+      <input type="password" [(ngModel)]="passwordForm.newPassword" placeholder="Min. 6 znaków" />
+      <div class="password-strength" *ngIf="passwordForm.newPassword">
+        <div class="strength-bar" [class]="getPasswordStrengthClass()"></div>
+        <span class="strength-label">{{ getPasswordStrengthLabel() }}</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Powtórz nowe hasło</label>
+      <input type="password" [(ngModel)]="passwordForm.confirmPassword" placeholder="Powtórz hasło"
+             (keyup.enter)="changePassword()" />
+      <span *ngIf="passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword"
+            class="field-hint error-text">Hasła nie są zgodne</span>
     </div>
   </div>
+  <div class="drawer-footer">
+    <button class="btn btn-secondary" (click)="closePasswordDrawer()">Anuluj</button>
+    <button class="btn btn-primary" (click)="changePassword()" [disabled]="changingPassword || !canSubmitPassword()">
+      {{ changingPassword ? 'Zmiana...' : 'Zmień hasło' }}
+    </button>
+  </div>
+</div>
+
+<!-- ── CREATE USER DRAWER ── -->
+<div class="drawer-backdrop" *ngIf="createUserDrawerOpen" (click)="closeCreateUserDrawer()"></div>
+<div class="drawer" [class.open]="createUserDrawerOpen" role="dialog" aria-label="Nowy użytkownik">
+  <div class="drawer-header">
+    <span class="drawer-title">Nowy użytkownik</span>
+    <button class="drawer-close" (click)="closeCreateUserDrawer()">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <div class="form-group">
+      <label>Login *</label>
+      <input type="text" [(ngModel)]="newUserForm.login" placeholder="Login" />
+    </div>
+    <div class="form-group">
+      <label>Hasło *</label>
+      <input type="password" [(ngModel)]="newUserForm.password" placeholder="Min. 6 znaków" />
+    </div>
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Imię *</label>
+        <input type="text" [(ngModel)]="newUserForm.firstName" placeholder="Imię" />
+      </div>
+      <div class="form-group">
+        <label>Nazwisko *</label>
+        <input type="text" [(ngModel)]="newUserForm.lastName" placeholder="Nazwisko" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" [(ngModel)]="newUserForm.email" placeholder="Email" />
+    </div>
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Telefon</label>
+        <input type="tel" [(ngModel)]="newUserForm.phone" placeholder="Telefon" />
+      </div>
+      <div class="form-group">
+        <label>Nr uprawnień</label>
+        <input type="text" [(ngModel)]="newUserForm.permissionNumber" placeholder="Nr uprawnień" />
+      </div>
+    </div>
+    <div class="form-group" *ngIf="canSelectRoleWhenCreating()">
+      <label>Rola</label>
+      <div class="role-toggle">
+        <button class="role-btn" [class.active]="newUserForm.role === 'user'" (click)="newUserForm.role = 'user'">Użytkownik</button>
+        <button class="role-btn" [class.active]="newUserForm.role === 'admin'" (click)="newUserForm.role = 'admin'">Administrator</button>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn btn-secondary" (click)="closeCreateUserDrawer()">Anuluj</button>
+    <button class="btn btn-primary" (click)="createUserFromDrawer()" [disabled]="creatingUser">
+      {{ creatingUser ? 'Tworzenie...' : 'Utwórz' }}
+    </button>
+  </div>
+</div>
+
+<!-- ── DELETE CONFIRM DRAWER ── -->
+<div class="drawer-backdrop" *ngIf="showPasswordConfirmDialog" (click)="cancelPasswordConfirmDialog()"></div>
+<div class="drawer drawer-sm" [class.open]="showPasswordConfirmDialog" role="dialog">
+  <div class="drawer-header">
+    <span class="drawer-title">Potwierdź usunięcie</span>
+    <button class="drawer-close" (click)="cancelPasswordConfirmDialog()">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <p *ngIf="userToConfirm" class="drawer-warning">
+      Usuwasz konto <strong>{{ userToConfirm.login }}</strong>. Tej operacji nie można cofnąć.
+    </p>
+    <div class="form-group">
+      <label>Twoje hasło (potwierdzenie)</label>
+      <input type="password" [(ngModel)]="confirmDialogPassword" placeholder="Hasło"
+             (keyup.enter)="confirmPasswordAction()" />
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn btn-secondary" (click)="cancelPasswordConfirmDialog()" [disabled]="confirmingAction">Anuluj</button>
+    <button class="btn btn-danger" (click)="confirmPasswordAction()" [disabled]="confirmingAction || !confirmDialogPassword">
+      {{ confirmingAction ? 'Usuwanie...' : 'Usuń konto' }}
+    </button>
+  </div>
+</div>

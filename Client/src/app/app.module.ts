@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -45,7 +46,7 @@ import { ClientAutocompleteComponent } from './shared/components/client-autocomp
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent, ScrollSpyDirective],
-  imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
+  imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule, RouterModule.forRoot([], { useHash: false })],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: BusyInterceptor, multi: true }

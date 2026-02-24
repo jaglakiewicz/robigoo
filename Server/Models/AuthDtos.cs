@@ -55,6 +55,7 @@ namespace Server.Models
         public string PermissionNumber { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string? AvatarBase64 { get; set; }
+        public string? SignatureBase64 { get; set; }
 
         #endregion
     }
@@ -302,6 +303,7 @@ namespace Server.Models
         public string Language { get; set; } = "pl";
         public string Theme { get; set; } = "light";
         public string? AvatarBase64 { get; set; }
+        public string? SignatureBase64 { get; set; }
 
         #endregion
     }

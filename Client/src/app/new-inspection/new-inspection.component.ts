@@ -5,14 +5,15 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
-import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { InspectionProtocolService, InspectionProtocolCreateUpdateRequest } from '../inspection-protocol.service';
+import { InspectionProtocolService, InspectionProtocolCreateUpdateRequest, InspectionProtocolDetail } from '../inspection-protocol.service';
 import { ClientService, ClientDetail, ClientListItem, ClientCreateUpdateRequest } from '../client.service';
 import { CropSprayerService, CropSprayerDetail, CropSprayerListItem, CropSprayerCreateUpdateRequest } from '../crop-sprayer.service';
 import { TextService } from '../services/text.service';
 import { AuthService } from '../services/auth.service';
+import { NavigationService } from '../services/navigation.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { Step } from '../shared/components/step-indicator/step-indicator.component';
 
@@ -22,6 +23,7 @@ import { Step } from '../shared/components/step-indicator/step-indicator.compone
   styleUrls: ['./new-inspection.component.css']
 })
 export class NewInspectionComponent implements OnInit, OnDestroy {
+  @Input() instanceId: number = 0;
   @Output() close = new EventEmitter<void>();
 
   // Main step management (2 steps: General Data + Protocol)
@@ -130,6 +132,10 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
   controlStickerNumber = '';
   generalNotes = '';
 
+  // Edit mode
+  editProtocolId: number | null = null;
+  isEditMode = false;
+
   // UI state
   saving = false;
   messageKey = '';
@@ -157,15 +163,30 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
     private cropSprayerService: CropSprayerService,
     private textService: TextService,
     private authService: AuthService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private navigationService: NavigationService
   ) {}
 
-  private readonly STORAGE_KEY = 'robigoo_new_inspection_state';
+  private readonly STORAGE_KEY_BASE = 'robigoo_new_inspection_state';
+  private get STORAGE_KEY(): string { return `${this.STORAGE_KEY_BASE}_${this.instanceId}`; }
 
   ngOnInit(): void {
     this.initSteps();
     this.loadClients();
     this.loadInspectorInfo();
+
+    const navParams = this.navigationService.getPendingParams();
+    const editId = navParams?.['edit'];
+    if (editId) {
+      const id = parseInt(editId, 10);
+      if (!isNaN(id)) {
+        this.editProtocolId = id;
+        this.isEditMode = true;
+        this.loadProtocolForEdit(id);
+        return;
+      }
+    }
+
     this.restoreState();
   }
 
@@ -323,7 +344,7 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
 
       // Restore selected client and sprayer if IDs exist
       if (this.selectedClientId) {
-        this.loadSelectedClient(this.selectedClientId);
+        this.loadSelectedClient(this.selectedClientId, this.selectedSprayerSerialNumber);
       }
     } catch (e) {
       console.error('Error restoring inspection state:', e);
@@ -331,19 +352,97 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Load an existing protocol into the form for editing */
+  private loadProtocolForEdit(id: number): void {
+    const sub = this.protocolService.get(id).subscribe({
+      next: (p: InspectionProtocolDetail) => {
+        this.inspectionDate = p.inspectionDate ? p.inspectionDate.slice(0, 10) : new Date().toISOString().slice(0, 10);
+        this.inspectionLocation = p.inspectionLocation || '';
+        this.inspectorName = p.inspectorName || '';
+        this.inspectorLicenseNumber = p.inspectorLicenseNumber || '';
+        this.protocolNumber = p.protocolNumber || '';
+
+        this.generalConditionPassed = p.generalConditionPassed ?? null;
+        this.markingsReadablePassed = p.markingsReadablePassed ?? null;
+        this.equipmentCompletePassed = p.equipmentCompletePassed ?? null;
+        this.generalSectionNotes = p.generalSectionNotes || '';
+
+        this.pumpOperationPassed = p.pumpOperationPassed ?? null;
+        this.pumpSealingPassed = p.pumpSealingPassed ?? null;
+        this.pressurePulsationPassed = p.pressurePulsationPassed ?? null;
+        this.pumpSectionNotes = p.pumpSectionNotes || '';
+
+        this.agitatorOperationPassed = p.agitatorOperationPassed ?? null;
+        this.agitatorSectionNotes = p.agitatorSectionNotes || '';
+
+        this.tankConditionPassed = p.tankConditionPassed ?? null;
+        this.tankSealingPassed = p.tankSealingPassed ?? null;
+        this.levelIndicatorPassed = p.levelIndicatorPassed ?? null;
+        this.flushingSystemPassed = p.flushingSystemPassed ?? null;
+        this.tankSectionNotes = p.tankSectionNotes || '';
+
+        this.manometerPassed = p.manometerPassed ?? null;
+        this.manometerReading2Bar = p.manometerReading2Bar ?? null;
+        this.manometerReading4Bar = p.manometerReading4Bar ?? null;
+        this.manometerReading6Bar = p.manometerReading6Bar ?? null;
+        this.manometerDialSizePassed = p.manometerDialSizePassed ?? null;
+        this.measuringSectionNotes = p.measuringSectionNotes || '';
+
+        this.pipesConditionPassed = p.pipesConditionPassed ?? null;
+        this.connectionsSealingPassed = p.connectionsSealingPassed ?? null;
+        this.pipingSectionNotes = p.pipingSectionNotes || '';
+
+        this.suctionFilterPassed = p.suctionFilterPassed ?? null;
+        this.pressureFilterPassed = p.pressureFilterPassed ?? null;
+        this.nozzleFiltersPassed = p.nozzleFiltersPassed ?? null;
+        this.filtrationSectionNotes = p.filtrationSectionNotes || '';
+
+        this.fieldBoomConditionPassed = p.fieldBoomConditionPassed ?? null;
+        this.boomStabilityPassed = p.boomStabilityPassed ?? null;
+        this.boomHeightPassed = p.boomHeightPassed ?? null;
+        this.boomSymmetryPassed = p.boomSymmetryPassed ?? null;
+        this.orchardSprayerConditionPassed = p.orchardSprayerConditionPassed ?? null;
+        this.airStreamDirectionPassed = p.airStreamDirectionPassed ?? null;
+        this.boomSectionNotes = p.boomSectionNotes || '';
+
+        this.nozzleUniformityPassed = p.nozzleUniformityPassed ?? null;
+        this.nozzleFlowRatePassed = p.nozzleFlowRatePassed ?? null;
+        this.nozzleConditionPassed = p.nozzleConditionPassed ?? null;
+        this.nozzleMeasurements = p.nozzleMeasurements || '';
+        this.nozzlesSectionNotes = p.nozzlesSectionNotes || '';
+
+        this.transverseDistributionPassed = p.transverseDistributionPassed ?? null;
+        this.coefficientOfVariation = p.coefficientOfVariation ?? null;
+        this.distributionSectionNotes = p.distributionSectionNotes || '';
+
+        this.finalResult = p.finalResult ?? null;
+        this.validUntil = p.validUntil ? p.validUntil.slice(0, 10) : null;
+        this.controlStickerNumber = p.controlStickerNumber || '';
+        this.generalNotes = p.generalNotes || '';
+
+        if (p.clientId) {
+          this.selectedClientId = p.clientId;
+          this.loadSelectedClient(p.clientId, p.cropSprayerSerialNumber);
+        }
+      },
+      error: () => {
+        this.showMessage('inspectionProtocol.messages.loadError', 'error');
+      }
+    });
+    this.subscriptions.push(sub);
+  }
+
   /** Load selected client details after restoring state */
-  private loadSelectedClient(clientId: string): void {
+  private loadSelectedClient(clientId: string, restoreSprayerSerial?: string | null): void {
     const sub = this.clientService.getClient(clientId).subscribe({
       next: (client) => {
         this.selectedClient = client;
         this.clientSearchText = client.clientType === 'person' 
           ? `${client.firstName} ${client.lastName}` 
           : client.companyName || '';
-        // Load sprayers for this client
-        this.loadClientSprayers(clientId);
+        this.loadClientSprayers(clientId, restoreSprayerSerial);
       },
       error: () => {
-        // Client no longer exists, clear selection
         this.selectedClientId = null;
         this.selectedClient = null;
       }
@@ -903,13 +1002,19 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
         generalNotes: this.generalNotes || null
       };
 
-      await this.protocolService.createProtocol(request).toPromise();
+      if (this.isEditMode && this.editProtocolId !== null) {
+        await this.protocolService.updateProtocol(this.editProtocolId, request).toPromise();
+      } else {
+        await this.protocolService.createProtocol(request).toPromise();
+      }
 
       this.showMessage('inspectionProtocol.messages.saved', 'success');
       this.saving = false;
-      this.clearSavedState(); // Clear saved state after successful submission
+      this.clearSavedState();
 
-      setTimeout(() => this.close.emit(), 1500);
+      setTimeout(() => {
+        this.close.emit();
+      }, 1500);
     } catch (error) {
       this.showMessage('inspectionProtocol.messages.error', 'error');
       this.saving = false;

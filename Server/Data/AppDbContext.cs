@@ -40,6 +40,7 @@ namespace Server.Data
         public DbSet<ChangeLog> ChangeLogs { get; set; }
         public DbSet<LoginAttempt> LoginAttempts { get; set; }
         public DbSet<SecurityEventLog> SecurityEventLogs { get; set; }
+        public DbSet<AppSettings> AppSettings { get; set; }
 
         #endregion
 

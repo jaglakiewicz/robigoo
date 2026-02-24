@@ -7,11 +7,11 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { InspectionProtocolService, InspectionProtocolListItem, InspectionProtocolDetail } from '../inspection-protocol.service';
 import { TextService } from '../services/text.service';
 import { NotificationService } from '../services/notification.service';
+import { NavigationService } from '../services/navigation.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { SelectOption } from '../shared/components/custom-select/custom-select.component';
 import { FilterField, FilterValues } from '../shared/components/filter-panel/filter-panel.component';
@@ -88,7 +88,7 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     private textService: TextService,
     private notificationService: NotificationService,
     private sanitizer: DomSanitizer,
-    private router: Router
+    private navigationService: NavigationService
   ) {
     this.toolbarIcons = {
       add: this.getSafeHtml(SVG_ICONS.iconAdd),
@@ -394,16 +394,15 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     this.deleteDialogVisible = false;
   }
 
-  // Navigation to new-inspection
   onAddNew(): void {
-    this.router.navigate(['/new-inspection']);
+    this.navigationService.navigateTo('new', 'menu.newInspection');
   }
 
   onEdit(): void {
     if (!this.currentProtocol) {
       return;
     }
-    this.router.navigate(['/new-inspection'], { queryParams: { edit: this.currentProtocol.id } });
+    this.navigationService.navigateTo('new', 'menu.newInspection', { edit: this.currentProtocol.id.toString() });
   }
 
   // Helpers

@@ -145,6 +145,22 @@
 .badge-error   { background: var(--error-surface);   color: var(--error);   border-color: var(--error-border); }
 .badge-warning { background: var(--warning-surface); color: var(--warning); border-color: var(--warning-border); }
 
+.tab-instance {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  background: var(--border);
+  color: var(--text-secondary);
+  line-height: 1;
+  opacity: 0.75;
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;

@@ -6,13 +6,14 @@
 
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Location } from '@angular/common';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { AuthService } from './services/auth.service';
 import { NavigationService } from './services/navigation.service';
 import { SVG_ICONS } from './shared/svg-icons';
 
-interface Tab { id: number; type: string; titleKey: string; icon?: string; pinned?: boolean }
+interface Tab { id: number; type: string; titleKey: string; icon?: string; pinned?: boolean; instance?: number }
 interface MenuItem { type: string; titleKey: string; hintKey: string }
 
 @Component({
@@ -54,7 +55,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private sanitizer: DomSanitizer,
     private authService: AuthService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private location: Location
   ) {
     const saved = localStorage.getItem('theme');
     this.darkMode = saved === 'dark';
@@ -155,6 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   goHome() {
     this.activeIndex = -1;
+    this.location.replaceState('/');
   }
 
   /**
@@ -165,24 +168,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   openTab(type: string, titleKey: string) {
-    // Master admin can only open settings
-    if (this.isMasterAdmin() && type !== 'settings') {
-      console.log('[AppComponent] Master admin cannot access:', type);
-      return;
+    if (this.isMasterAdmin() && type !== 'settings') return;
+    if (type === 'settings') {
+      const existing = this.tabs.findIndex(t => t.type === 'settings');
+      if (existing >= 0) { this.activeIndex = existing; this.location.replaceState('/settings'); return; }
     }
-    
-    console.log('[AppComponent] openTab called with type:', type, 'titleKey:', titleKey);
-    const existing = this.tabs.findIndex(t => t.type === type);
-    if (existing >= 0) { 
-      console.log('[AppComponent] Tab already exists at index:', existing);
-      this.activeIndex = existing; 
-      return; 
-    }
-    console.log('[AppComponent] Creating new tab with type:', type);
-    this.tabs.push({ id: this.nextId++, type, titleKey, icon: this.iconMap[type] });
+    const sameType = this.tabs.filter(t => t.type === type);
+    const instance = sameType.length + 1;
+    this.tabs.push({ id: this.nextId++, type, titleKey, icon: this.iconMap[type], instance });
     this.activeIndex = this.tabs.length - 1;
-    console.log('[AppComponent] New activeIndex:', this.activeIndex, 'Total tabs:', this.tabs.length);
-    console.log('[AppComponent] Current tabs:', this.tabs);
+    this.location.replaceState('/' + type);
   }
 
   /**
@@ -204,6 +199,10 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  hasDuplicateType(type: string): boolean {
+    return this.tabs.filter(t => t.type === type).length > 1;
+  }
+
   isMasterAdmin(): boolean {
     return this.currentUserLogin === 'admin';
   }
@@ -214,14 +213,21 @@ export class AppComponent implements OnInit, OnDestroy {
       this.tabs[i].pinned = !this.tabs[i].pinned;
     }
   }
-  activateTab(i: number) { this.activeIndex = i; }
+  activateTab(i: number) {
+    this.activeIndex = i;
+    if (i >= 0 && i < this.tabs.length) {
+      this.location.replaceState('/' + this.tabs[i].type);
+    }
+  }
 
   closeTab(i: number) {
     if (i < 0 || i >= this.tabs.length) return;
-    this.tabs.splice(i,1);
+    this.tabs.splice(i, 1);
     if (this.activeIndex >= this.tabs.length) {
       this.activeIndex = this.tabs.length > 0 ? this.tabs.length - 1 : -1;
     }
+    const active = this.tabs[this.activeIndex];
+    this.location.replaceState(active ? '/' + active.type : '/');
   }
 
   toggleUserMenu() {

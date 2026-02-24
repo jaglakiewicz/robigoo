@@ -27,6 +27,7 @@ namespace Server.Models
         public string Phone { get; set; } = string.Empty;
         public string PermissionNumber { get; set; } = string.Empty;
         public byte[]? AvatarData { get; set; }
+        public byte[]? SignatureData { get; set; }
         public string Role { get; set; } = "user"; // "admin" lub "user"
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

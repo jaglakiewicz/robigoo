@@ -104,7 +104,7 @@
                (keydown.enter)="activateTab(i)"
                (keydown.space)="activateTab(i); $event.preventDefault()">
             <span *ngIf="t.icon" class="tab-icon" aria-hidden="true" [innerHTML]="getSafeHtml(t.icon)"></span>
-            <span>{{ t.titleKey | text }}</span>
+            <span>{{ t.titleKey | text }}</span><span *ngIf="hasDuplicateType(t.type)" class="tab-instance">{{ t.instance }}</span>
             <button class="tab-action pin" 
                     [attr.aria-label]="t.pinned ? 'Unpin tab' : 'Pin tab'" 
                     *ngIf="i === activeIndex || t.pinned" 
@@ -130,12 +130,12 @@
         <!-- Tab content when a tab is selected -->
         <ng-container *ngIf="!isHomeActive() && tabs.length">
           <ng-container [ngSwitch]="tabs[activeIndex]?.type">
-            <app-new-inspection *ngSwitchCase="'new'" (close)="closeTab(activeIndex)"></app-new-inspection>
-            <app-inspections *ngSwitchCase="'inspections'"></app-inspections>
-            <app-clients *ngSwitchCase="'clients'"></app-clients>
-            <app-inspection-marks *ngSwitchCase="'marks'"></app-inspection-marks>
-            <app-notifications *ngSwitchCase="'notifications'"></app-notifications>
-            <app-crop-sprayers *ngSwitchCase="'types'"></app-crop-sprayers>
+            <app-new-inspection *ngSwitchCase="'new'" [instanceId]="tabs[activeIndex].id" (close)="closeTab(activeIndex)"></app-new-inspection>
+            <app-inspections *ngSwitchCase="'inspections'" [instanceId]="tabs[activeIndex].id"></app-inspections>
+            <app-clients *ngSwitchCase="'clients'" [instanceId]="tabs[activeIndex].id"></app-clients>
+            <app-inspection-marks *ngSwitchCase="'marks'" [instanceId]="tabs[activeIndex].id"></app-inspection-marks>
+            <app-notifications *ngSwitchCase="'notifications'" [instanceId]="tabs[activeIndex].id"></app-notifications>
+            <app-crop-sprayers *ngSwitchCase="'types'" [instanceId]="tabs[activeIndex].id"></app-crop-sprayers>
             <app-settings *ngSwitchCase="'settings'"></app-settings>
           </ng-container>
         </ng-container>
