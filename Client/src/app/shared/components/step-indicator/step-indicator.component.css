@@ -2,6 +2,10 @@
 
 :host {
   display: block;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--panel);
 }
 
 /* Wrapper to position scroll indicators */
@@ -42,16 +46,15 @@
 .step-indicator {
   flex: 1;
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
+  border-radius: 0;
   background: var(--panel);
-  padding: var(--space-sm);
-  gap: var(--space-xs);
+  padding: 0;
+  gap: 0;
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
-  /* Hide scrollbar but keep scroll functionality */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* Hide scrollbar for Chrome, Safari, Opera */
@@ -60,17 +63,17 @@
 }
 
 .step {
-  min-width: 138px;
+  min-width: 130px;
   flex: 1 0 auto;
   justify-content: flex-start;
-  border-radius: var(--radius-sm);
-  overflow: hidden; /* Clip the active indicator to follow rounded corners */
+  border-radius: 0;
+  overflow: hidden;
 }
 
 /* Override the active indicator to follow rounded corners */
 .step.active::after {
   bottom: 0;
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  border-radius: 0;
 }
 
 /* Subtle separator between steps using ::before to avoid conflict with active indicator */

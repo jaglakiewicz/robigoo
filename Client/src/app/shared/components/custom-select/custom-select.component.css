@@ -8,13 +8,13 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  height: var(--touch-size);
-  padding: var(--space-sm) var(--space-md);
+  height: 36px;
+  padding: var(--space-xs) var(--space-md);
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 2px;
   cursor: pointer;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast);
   font-size: var(--font-size-base);
   color: var(--text);
 }
@@ -31,6 +31,7 @@
   border-color: var(--primary);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  border-radius: 0;
 }
 
 .custom-select.disabled .select-trigger {
@@ -79,10 +80,10 @@
   background: var(--panel);
   border: 1px solid var(--primary);
   border-top: none;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  border-radius: 0;
   box-shadow: var(--shadow-lg);
   z-index: 1000;
-  animation: dropdownSlide 0.15s ease-out;
+  animation: dropdownSlide 0.12s ease-out;
 }
 
 @keyframes dropdownSlide {
@@ -109,7 +110,7 @@
 .select-option.selected {
   background: var(--primary-surface);
   color: var(--primary);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
 }
 
-.select-option:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+.select-option:last-child { border-radius: 0; }

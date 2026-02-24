@@ -46,6 +46,23 @@
   overflow: visible;
 }
 
+.sprayers-detail-panel {
+  overflow: hidden;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-sections {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg) 0 var(--space-xl) 0;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+
 .panel-title {
   margin: 0 0 var(--space-md) 0;
   font-size: var(--font-size-lg);
@@ -172,11 +189,20 @@
 /* ============================================================
    DETAIL PANEL
    ============================================================ */
+.detail-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 11;
+  background: var(--panel);
+  margin-bottom: var(--space-md);
+}
+
 .detail-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .detail-title {
@@ -211,6 +237,38 @@
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+}
+
+.form-section {
+  scroll-margin-top: 120px;
+}
+
+.form-section-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-xl) 0 var(--space-lg) 0;
+  pointer-events: none;
+  border-bottom: 1px solid var(--border);
+  opacity: 0.6;
+  padding-bottom: var(--space-xs);
+}
+
+.form-section:first-child .form-section-divider {
+  margin-top: 0;
+}
+
+.form-section-divider::before,
+.form-section-divider::after { display: none; }
+
+.form-section-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  opacity: 0.7;
 }
 
 .step-navigation {

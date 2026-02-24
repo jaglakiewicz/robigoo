@@ -47,4 +47,7 @@ export class MasterDetailLayoutComponent {
 
   /** Breakpoint for responsive stacking (in px) */
   @Input() stackBreakpoint = 894;
+
+  /** Whether an item is selected — on mobile, hides master and shows detail */
+  @Input() hasSelection = false;
 }

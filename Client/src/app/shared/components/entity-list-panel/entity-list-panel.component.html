@@ -5,7 +5,9 @@
 -->
 
 <div class="entity-list-panel">
-  <h4 class="panel-title" *ngIf="title">{{ title }}</h4>
+  <div class="panel-header-row">
+    <h4 class="panel-title" *ngIf="title">{{ title }}</h4>
+  </div>
 
   <div class="filters-row">
     <input
@@ -40,7 +42,11 @@
       *ngFor="let item of items; trackBy: trackByFn"
       [class]="itemClass"
       [class.active]="isSelected(item)"
-      (click)="onItemClick(item)">
+      role="button"
+      [attr.tabindex]="0"
+      (click)="onItemClick(item)"
+      (keydown.enter)="onItemClick(item)"
+      (keydown.space)="$event.preventDefault(); onItemClick(item)">
       <ng-container 
         *ngTemplateOutlet="itemTemplate; context: { $implicit: item, selected: isSelected(item) }">
       </ng-container>

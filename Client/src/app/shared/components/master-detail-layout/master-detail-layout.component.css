@@ -36,6 +36,14 @@
   .master-detail-layout {
     grid-template-columns: 1fr;
   }
+
+  .master-detail-layout.has-selection .master-panel {
+    display: none;
+  }
+
+  .master-detail-layout:not(.has-selection) .detail-panel {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {

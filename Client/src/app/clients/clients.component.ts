@@ -4,7 +4,7 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { ClientDetail, ClientListItem, ClientService, ClientCreateUpdateRequest } from '../client.service';
@@ -18,6 +18,7 @@ import { SVG_ICONS } from '../shared/svg-icons';
 import { SelectOption } from '../shared/components/custom-select/custom-select.component';
 import { FilterField, FilterValues } from '../shared/components/filter-panel/filter-panel.component';
 import { Step } from '../shared/components/step-indicator/step-indicator.component';
+import { EntityDetailPanelComponent } from '../shared/components/entity-detail-panel/entity-detail-panel.component';
 
 interface ClientStep {
   id: number;
@@ -74,6 +75,8 @@ export class ClientsComponent implements OnInit, OnDestroy {
   // Eye icons for PESEL toggle
   eyeIconOpen = `<svg viewBox="0 0 426.666667 341.333333" focusable="false" aria-hidden="true"><path fill="currentColor" d="M213.333333,1.42108547e-14 C64,1.42108547e-14 7.10542736e-15,170.666667 7.10542736e-15,170.666667 C7.10542736e-15,170.666667 64,341.333333 213.333333,341.333333 C362.666667,341.333333 426.666667,170.666667 426.666667,170.666667 C426.666667,170.666667 362.666667,1.42108547e-14 213.333333,1.42108547e-14 Z M213.333333,298.666667 C119.071573,298.666667 64.7370667,207.3632 46.7136,170.67328 C64.7850667,133.88928 119.114667,42.6666667 213.333333,42.6666667 C307.595093,42.6666667 361.9296,133.970133 379.954347,170.658773 C361.8816,207.444053 307.552,298.666667 213.333333,298.666667 Z M213.333333,96 C172.096427,96 138.666667,129.42976 138.666667,170.666667 C138.666667,211.903573 172.096427,245.333333 213.333333,245.333333 C254.57024,245.333333 288,211.903573 288,170.666667 C288,129.42976 254.57024,96 213.333333,96 Z M213.333333,202.666667 C195.688747,202.666667 181.333333,188.311253 181.333333,170.666667 C181.333333,153.02208 195.688747,138.666667 213.333333,138.666667 C230.97792,138.666667 245.333333,153.02208 245.333333,170.666667 C245.333333,188.311253 230.97792,202.666667 213.333333,202.666667 Z"></path></svg>`;
   eyeIconClosed = `<svg viewBox="0 0 426.666667 392.836561" focusable="false" aria-hidden="true"><path fill="currentColor" d="M47.0849493,2.84217094e-14 L185.740632,138.655563 C194.095501,134.657276 203.45297,132.418278 213.333333,132.418278 C248.679253,132.418278 277.333333,161.072358 277.333333,196.418278 C277.333333,206.299034 275.094157,215.656855 271.095572,224.011976 L409.751616,362.666662 L379.581717,392.836561 L320.374817,333.628896 C291.246618,353.329494 255.728838,367.084945 213.333333,367.084945 C64,367.084945 7.10542736e-15,196.418278 7.10542736e-15,196.418278 C7.10542736e-15,196.418278 22.862032,135.452859 73.1408088,86.3974274 L16.9150553,30.169894 L47.0849493,2.84217094e-14 Z M103.440016,116.694904 C74.7091717,144.512844 55.9626236,177.598744 46.7136,196.424891 C64.7370667,233.114811 119.071573,324.418278 213.333333,324.418278 C242.440012,324.418278 267.739844,315.712374 289.339919,302.595012 L240.926035,254.180993 C232.571166,258.17928 223.213696,260.418278 213.333333,260.418278 C177.987413,260.418278 149.333333,231.764198 149.333333,196.418278 C149.333333,186.537915 151.572331,177.180445 155.570618,168.825577 Z M213.333333,25.7516113 C362.666667,25.7516113 426.666667,196.418278 426.666667,196.418278 C426.666667,196.418278 412.428071,234.387867 381.712212,274.508373 L351.151213,243.941206 C364.581948,225.697449 374.142733,208.239347 379.954347,196.410385 C361.9296,159.721745 307.595093,68.418278 213.333333,68.418278 C201.495833,68.418278 190.287983,69.858232 179.702584,72.449263 L145.662385,38.4000762 C165.913597,30.494948 188.437631,25.7516113 213.333333,25.7516113 Z"></path></svg>`;
+
+  @ViewChild('detailPanel') detailPanel?: EntityDetailPanelComponent;
 
   toolbarIcons!: Record<'add' | 'edit' | 'delete' | 'save' | 'cancel', SafeHtml>;
 
@@ -269,6 +272,15 @@ export class ClientsComponent implements OnInit, OnDestroy {
     }
   }
 
+  onMobileBack(): void {
+    this.currentClient = null;
+    this.formModel = null;
+    this.isNew = false;
+    this.isEditMode = false;
+    this.selectedClientId = null;
+    this.setDirty(false);
+  }
+
   openMapDialog(): void {
     if (this.currentClient && !this.isNew) {
       this.showMapDialog = true;
@@ -404,10 +416,13 @@ export class ClientsComponent implements OnInit, OnDestroy {
   // Step navigation
 
   goToStep(index: number): void {
-    const step = this.steps.find(s => s.id === index);
-    if (step) {
-      this.currentStep = step.id;
-    }
+    this.currentStep = index;
+    this.detailPanel?.scrollToSection(`section-${index}`);
+  }
+
+  onScrollSection(id: string): void {
+    const index = parseInt(id.replace('section-', ''), 10);
+    if (!isNaN(index)) this.currentStep = index;
   }
 
   previousStep(): void {

@@ -45,7 +45,7 @@
     </ng-container>
   </app-entity-toolbar>
 
-  <app-master-detail-layout>
+  <app-master-detail-layout [hasSelection]="!!(currentClient || isNew)">
     <ng-container master>
       <app-entity-list-panel
         [title]="'clients.listTitle' | text"
@@ -89,6 +89,7 @@
     <ng-container detail>
       <ng-container *ngIf="formModel as form; else emptyDetail">
         <app-entity-detail-panel
+          #detailPanel
           [title]="displayName"
           [subtitle]="!isNew ? displayAddress : ''"
           [titlePlaceholder]="'clients.selectOrAdd' | text"
@@ -96,7 +97,8 @@
           [historyButtonTitle]="'Historia zmian'"
           [isNew]="isNew"
           [isEditMode]="isEditMode"
-          (historyClick)="openHistory()">
+          (historyClick)="openHistory()"
+          (backClick)="onMobileBack()">
           <ng-template #headerActions>
             <button
               *ngIf="!isNew && !isEditMode"
@@ -107,232 +109,152 @@
             </button>
           </ng-template>
 
-          <!-- Step indicator -->
           <app-step-indicator
             [steps]="stepsForIndicator"
             [currentStepId]="currentStep"
             (stepClick)="goToStep($event)">
           </app-step-indicator>
 
-          <div class="step-content">
-        <!-- Step 0: Basic data -->
-        <div *ngIf="currentStep === 0" class="basics-grid">
-          <!-- Row 1: Client type -->
-          <div class="form-row form-row-1">
-            <div class="form-group required">
-              <label>{{ 'clients.fields.clientType' | text }}</label>
-              <app-custom-select
-                [options]="clientTypeOptions"
-                [ngModel]="form.clientType"
-                (ngModelChange)="onClientTypeChange($event)"
-                [disabled]="!isEditMode">
-              </app-custom-select>
-            </div>
-          </div>
+          <div class="form-sections" appScrollSpy (activeSection)="onScrollSection($event)">
 
-          <!-- Person fields -->
-          <ng-container *ngIf="form.clientType === 'person'">
-            <div class="form-row form-row-2">
-              <div class="form-group required">
-                <label>{{ 'clients.fields.firstName' | text }}</label>
-                <input
-                  type="text"
-                  [ngModel]="form.firstName"
-                  (ngModelChange)="form.firstName = $event; onFormChange()"
-                  [disabled]="!isEditMode" />
+            <!-- Section 0: Basic data -->
+            <div class="form-section" id="section-0">
+              <div class="form-section-divider">
+                <span class="form-section-label">{{ 'clients.steps.basics' | text }}</span>
               </div>
-
-              <div class="form-group required">
-                <label>{{ 'clients.fields.lastName' | text }}</label>
-                <input
-                  type="text"
-                  [ngModel]="form.lastName"
-                  (ngModelChange)="form.lastName = $event; onFormChange()"
-                  [disabled]="!isEditMode" />
-              </div>
-            </div>
-
-            <div class="form-row form-row-2">
-              <div class="form-group">
-                <label>{{ 'clients.fields.pesel' | text }}</label>
-                <div class="input-with-toggle">
-                  <input
-                    [type]="peselVisible ? 'text' : 'password'"
-                    [ngModel]="form.pesel"
-                    (ngModelChange)="form.pesel = $event; onFormChange()"
-                    [disabled]="!isEditMode"
-                    maxlength="11" />
-                  <button 
-                    type="button" 
-                    class="toggle-visibility-btn"
-                    (click)="togglePeselVisibility()"
-                    [attr.aria-label]="peselVisible ? 'Hide PESEL' : 'Show PESEL'">
-                    <span class="eye-icon" [innerHTML]="peselVisible ? eyeIconClosed : eyeIconOpen"></span>
-                  </button>
+              <div class="basics-grid">
+                <div class="form-row form-row-1">
+                  <div class="form-group required">
+                    <label>{{ 'clients.fields.clientType' | text }}</label>
+                    <app-custom-select
+                      [options]="clientTypeOptions"
+                      [ngModel]="form.clientType"
+                      (ngModelChange)="onClientTypeChange($event)"
+                      [disabled]="!isEditMode">
+                    </app-custom-select>
+                  </div>
                 </div>
+
+                <ng-container *ngIf="form.clientType === 'person'">
+                  <div class="form-row form-row-2">
+                    <div class="form-group required">
+                      <label>{{ 'clients.fields.firstName' | text }}</label>
+                      <input type="text" [ngModel]="form.firstName" (ngModelChange)="form.firstName = $event; onFormChange()" [disabled]="!isEditMode" />
+                    </div>
+                    <div class="form-group required">
+                      <label>{{ 'clients.fields.lastName' | text }}</label>
+                      <input type="text" [ngModel]="form.lastName" (ngModelChange)="form.lastName = $event; onFormChange()" [disabled]="!isEditMode" />
+                    </div>
+                  </div>
+                  <div class="form-row form-row-2">
+                    <div class="form-group">
+                      <label>{{ 'clients.fields.pesel' | text }}</label>
+                      <div class="input-with-toggle">
+                        <input [type]="peselVisible ? 'text' : 'password'" [ngModel]="form.pesel" (ngModelChange)="form.pesel = $event; onFormChange()" [disabled]="!isEditMode" maxlength="11" />
+                        <button type="button" class="toggle-visibility-btn" (click)="togglePeselVisibility()" [attr.aria-label]="peselVisible ? 'Hide PESEL' : 'Show PESEL'">
+                          <span class="eye-icon" [innerHTML]="peselVisible ? eyeIconClosed : eyeIconOpen"></span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>{{ 'clients.fields.nip' | text }}</label>
+                      <input type="text" [ngModel]="form.nip" (ngModelChange)="form.nip = $event; onFormChange()" [disabled]="!isEditMode" maxlength="10" />
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="form.clientType === 'company'">
+                  <div class="form-row form-row-1">
+                    <div class="form-group required">
+                      <label>{{ 'clients.fields.companyName' | text }}</label>
+                      <input type="text" [ngModel]="form.companyName" (ngModelChange)="form.companyName = $event; onFormChange()" [disabled]="!isEditMode" />
+                    </div>
+                  </div>
+                  <div class="form-row form-row-2">
+                    <div class="form-group required">
+                      <label>{{ 'clients.fields.nip' | text }}</label>
+                      <input type="text" [ngModel]="form.nip" (ngModelChange)="form.nip = $event; onFormChange()" [disabled]="!isEditMode" maxlength="10" />
+                    </div>
+                    <div class="form-group">
+                      <label>{{ 'clients.fields.regon' | text }}</label>
+                      <input type="text" [ngModel]="form.regon" (ngModelChange)="form.regon = $event; onFormChange()" [disabled]="!isEditMode" maxlength="14" />
+                    </div>
+                  </div>
+                </ng-container>
               </div>
+            </div>
 
-              <div class="form-group">
-                <label>{{ 'clients.fields.nip' | text }}</label>
-                <input
-                  type="text"
-                  [ngModel]="form.nip"
-                  (ngModelChange)="form.nip = $event; onFormChange()"
-                  [disabled]="!isEditMode"
-                  maxlength="10" />
+            <!-- Section 1: Address -->
+            <div class="form-section" id="section-1">
+              <div class="form-section-divider">
+                <span class="form-section-label">{{ 'clients.steps.address' | text }}</span>
               </div>
-            </div>
-          </ng-container>
-
-          <!-- Company fields -->
-          <ng-container *ngIf="form.clientType === 'company'">
-            <div class="form-row form-row-1">
-              <div class="form-group required">
-                <label>{{ 'clients.fields.companyName' | text }}</label>
-                <input
-                  type="text"
-                  [ngModel]="form.companyName"
-                  (ngModelChange)="form.companyName = $event; onFormChange()"
-                  [disabled]="!isEditMode" />
-              </div>
-            </div>
-
-            <div class="form-row form-row-2">
-              <div class="form-group required">
-                <label>{{ 'clients.fields.nip' | text }}</label>
-                <input
-                  type="text"
-                  [ngModel]="form.nip"
-                  (ngModelChange)="form.nip = $event; onFormChange()"
-                  [disabled]="!isEditMode"
-                  maxlength="10" />
-              </div>
-
-              <div class="form-group">
-                <label>{{ 'clients.fields.regon' | text }}</label>
-                <input
-                  type="text"
-                  [ngModel]="form.regon"
-                  (ngModelChange)="form.regon = $event; onFormChange()"
-                  [disabled]="!isEditMode"
-                  maxlength="14" />
-              </div>
-            </div>
-          </ng-container>
-        </div>
-
-        <!-- Step 1: Address -->
-        <div *ngIf="currentStep === 1" class="basics-grid">
-          <div class="form-row form-row-2">
-            <div class="form-group required">
-              <label>{{ 'clients.fields.voivodeship' | text }}</label>
-              <app-custom-select
-                [options]="voivodeshipOptions"
-                [ngModel]="form.voivodeship"
-                (ngModelChange)="form.voivodeship = $event; onFormChange()"
-                [disabled]="!isEditMode">
-              </app-custom-select>
-            </div>
-
-            <div class="form-group required">
-              <label>{{ 'clients.fields.city' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.city"
-                (ngModelChange)="form.city = $event; onFormChange()"
-                [disabled]="!isEditMode" />
-            </div>
-          </div>
-
-          <div class="form-row form-row-2">
-            <div class="form-group required">
-              <label>{{ 'clients.fields.zipCode' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.zipCode"
-                (ngModelChange)="form.zipCode = $event; onFormChange()"
-                [disabled]="!isEditMode"
-                placeholder="00-000" />
-            </div>
-
-            <div class="form-group">
-              <label>{{ 'clients.fields.street' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.street"
-                (ngModelChange)="form.street = $event; onFormChange()"
-                [disabled]="!isEditMode" />
-            </div>
-          </div>
-
-          <div class="form-row form-row-3">
-            <div class="form-group required">
-              <label>{{ 'clients.fields.buildingNumber' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.buildingNumber"
-                (ngModelChange)="form.buildingNumber = $event; onFormChange()"
-                [disabled]="!isEditMode" />
-            </div>
-
-            <div class="form-group">
-              <label>{{ 'clients.fields.apartmentNumber' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.apartmentNumber"
-                (ngModelChange)="form.apartmentNumber = $event; onFormChange()"
-                [disabled]="!isEditMode" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 2: Crop Sprayers -->
-        <div *ngIf="currentStep === 2" class="sprayers-tab">
-          <div *ngIf="loadingSprayers" class="loading-state">
-            {{ 'clients.loading' | text }}
-          </div>
-
-          <div *ngIf="!loadingSprayers && ownerSprayers.length === 0" class="empty-tab-placeholder">
-            <p>{{ 'clients.noSprayersAssigned' | text }}</p>
-          </div>
-
-          <div *ngIf="!loadingSprayers && ownerSprayers.length > 0" class="sprayers-cards-list">
-            <div
-              class="entity-card"
-              *ngFor="let s of ownerSprayers"
-              (click)="navigateToSprayer(s.serialNumber)"
-              tabindex="0"
-              (keydown.enter)="navigateToSprayer(s.serialNumber)">
-              <div class="card-main">
-                <div class="card-badges-row">
-                  <span class="badge badge-type" *ngIf="s.type === '00'">
-                    {{ 'types.machines.filters.typeField' | text }}
-                  </span>
-                  <span class="badge badge-type" *ngIf="s.type === '01'">
-                    {{ 'types.machines.filters.typeGarden' | text }}
-                  </span>
-                  <span class="badge badge-kind" *ngIf="s.kind === '00'">
-                    {{ 'types.machines.filters.kindMounted' | text }}
-                  </span>
-                  <span class="badge badge-kind" *ngIf="s.kind === '01'">
-                    {{ 'types.machines.filters.kindTrailed' | text }}
-                  </span>
-                  <span class="badge badge-kind" *ngIf="s.kind === '02'">
-                    {{ 'types.machines.filters.kindSelfPropelled' | text }}
-                  </span>
-                  <span class="badge badge-kind" *ngIf="s.kind === '03'">
-                    {{ 'types.machines.filters.kindOther' | text }}
-                  </span>
+              <div class="basics-grid">
+                <div class="form-row form-row-2">
+                  <div class="form-group required">
+                    <label>{{ 'clients.fields.voivodeship' | text }}</label>
+                    <app-custom-select [options]="voivodeshipOptions" [ngModel]="form.voivodeship" (ngModelChange)="form.voivodeship = $event; onFormChange()" [disabled]="!isEditMode"></app-custom-select>
+                  </div>
+                  <div class="form-group required">
+                    <label>{{ 'clients.fields.city' | text }}</label>
+                    <input type="text" [ngModel]="form.city" (ngModelChange)="form.city = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
                 </div>
-                <div class="card-title">{{ s.serialNumber }}</div>
-                <div class="card-info-row">
-                  {{ s.manufacturer }}<span *ngIf="s.manufacturer && s.sprayerName" class="vertical-separator"></span>{{ s.sprayerName }}<span *ngIf="(s.manufacturer || s.sprayerName) && s.productionYear" class="vertical-separator"></span>{{ s.productionYear }}
+                <div class="form-row form-row-2">
+                  <div class="form-group required">
+                    <label>{{ 'clients.fields.zipCode' | text }}</label>
+                    <input type="text" [ngModel]="form.zipCode" (ngModelChange)="form.zipCode = $event; onFormChange()" [disabled]="!isEditMode" placeholder="00-000" />
+                  </div>
+                  <div class="form-group">
+                    <label>{{ 'clients.fields.street' | text }}</label>
+                    <input type="text" [ngModel]="form.street" (ngModelChange)="form.street = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
+                </div>
+                <div class="form-row form-row-3">
+                  <div class="form-group required">
+                    <label>{{ 'clients.fields.buildingNumber' | text }}</label>
+                    <input type="text" [ngModel]="form.buildingNumber" (ngModelChange)="form.buildingNumber = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
+                  <div class="form-group">
+                    <label>{{ 'clients.fields.apartmentNumber' | text }}</label>
+                    <input type="text" [ngModel]="form.apartmentNumber" (ngModelChange)="form.apartmentNumber = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
                 </div>
               </div>
             </div>
+
+            <!-- Section 2: Crop Sprayers -->
+            <div class="form-section" id="section-2">
+              <div class="form-section-divider">
+                <span class="form-section-label">{{ 'clients.steps.sprayers' | text }}</span>
+              </div>
+              <div *ngIf="loadingSprayers" class="loading-state">{{ 'clients.loading' | text }}</div>
+              <div *ngIf="!loadingSprayers && ownerSprayers.length === 0" class="empty-tab-placeholder">
+                <p>{{ 'clients.noSprayersAssigned' | text }}</p>
+              </div>
+              <div *ngIf="!loadingSprayers && ownerSprayers.length > 0" class="sprayers-cards-list">
+                <div class="entity-card" *ngFor="let s of ownerSprayers"
+                  (click)="navigateToSprayer(s.serialNumber)" tabindex="0" role="button"
+                  (keydown.enter)="navigateToSprayer(s.serialNumber)">
+                  <div class="card-main">
+                    <div class="card-badges-row">
+                      <span class="badge badge-type" *ngIf="s.type === '00'">{{ 'types.machines.filters.typeField' | text }}</span>
+                      <span class="badge badge-type" *ngIf="s.type === '01'">{{ 'types.machines.filters.typeGarden' | text }}</span>
+                      <span class="badge badge-kind" *ngIf="s.kind === '00'">{{ 'types.machines.filters.kindMounted' | text }}</span>
+                      <span class="badge badge-kind" *ngIf="s.kind === '01'">{{ 'types.machines.filters.kindTrailed' | text }}</span>
+                      <span class="badge badge-kind" *ngIf="s.kind === '02'">{{ 'types.machines.filters.kindSelfPropelled' | text }}</span>
+                      <span class="badge badge-kind" *ngIf="s.kind === '03'">{{ 'types.machines.filters.kindOther' | text }}</span>
+                    </div>
+                    <div class="card-title">{{ s.serialNumber }}</div>
+                    <div class="card-info-row">
+                      {{ s.manufacturer }}<span *ngIf="s.manufacturer && s.sprayerName" class="vertical-separator"></span>{{ s.sprayerName }}<span *ngIf="(s.manufacturer || s.sprayerName) && s.productionYear" class="vertical-separator"></span>{{ s.productionYear }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </div>
-      </div>
         </app-entity-detail-panel>
       </ng-container>
 

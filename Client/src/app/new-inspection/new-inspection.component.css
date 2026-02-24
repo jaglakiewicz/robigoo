@@ -11,6 +11,7 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  height: 0;
   overflow: hidden;
 }
 
@@ -422,6 +423,7 @@
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   color: var(--primary);
+  text-align: left;
 }
 
 .section-body {
@@ -490,11 +492,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-md);
   padding: var(--space-md) var(--space-lg);
   background: var(--surface);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
   flex-wrap: wrap;
   gap: var(--space-md);
 }
@@ -1350,7 +1350,6 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  
   .check-row {
     flex-direction: column;
     align-items: flex-start;

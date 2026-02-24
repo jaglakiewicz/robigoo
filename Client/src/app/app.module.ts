@@ -40,10 +40,11 @@ import { StepIndicatorComponent } from './shared/components/step-indicator/step-
 import { MasterDetailLayoutComponent } from './shared/components/master-detail-layout/master-detail-layout.component';
 import { EntityToolbarComponent } from './shared/components/entity-toolbar/entity-toolbar.component';
 import { BusyIndicatorComponent } from './shared/busy-indicator/busy-indicator.component';
+import { ScrollSpyDirective } from './shared/directives/scroll-spy.directive';
 import { ClientAutocompleteComponent } from './shared/components/client-autocomplete/client-autocomplete.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent, ScrollSpyDirective],
   imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

@@ -4,7 +4,7 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
  */
 
-import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
+import { Component, ContentChild, ElementRef, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SVG_ICONS } from '../../svg-icons';
 
@@ -62,8 +62,13 @@ export class EntityDetailPanelComponent {
   /** Emitted when history button is clicked */
   @Output() historyClick = new EventEmitter<void>();
 
+  /** Emitted when the mobile back button is clicked */
+  @Output() backClick = new EventEmitter<void>();
+
   /** Template for custom header actions */
   @ContentChild('headerActions') headerActionsTemplate!: TemplateRef<any>;
+
+  @ViewChild('detailContent') detailContent!: ElementRef<HTMLElement>;
 
   historyIcon: SafeHtml;
 
@@ -77,6 +82,11 @@ export class EntityDetailPanelComponent {
 
   get showHistory(): boolean {
     return this.showHistoryButton && !this.isNew && !this.isEditMode;
+  }
+
+  scrollToSection(sectionId: string): void {
+    const el = this.detailContent?.nativeElement?.querySelector(`#${sectionId}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   onHistoryClick(): void {

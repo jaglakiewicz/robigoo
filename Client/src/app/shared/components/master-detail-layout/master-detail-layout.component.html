@@ -4,7 +4,7 @@
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<div class="master-detail-layout" [class]="containerClass">
+<div class="master-detail-layout" [class]="containerClass" [class.has-selection]="hasSelection">
   <div class="master-panel">
     <ng-content select="[master]"></ng-content>
   </div>

@@ -4,7 +4,7 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
 */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { CropSprayerDetail, CropSprayerListItem, CropSprayerService, CropSprayerCreateUpdateRequest } from '../crop-sprayer.service';
@@ -31,6 +31,9 @@ interface SprayerStep {
   styleUrls: ['./crop-sprayers.component.css']
 })
 export class CropSprayersComponent implements OnInit, OnDestroy {
+  @ViewChild('detailScroll') detailScroll?: ElementRef<HTMLElement>;
+  @ViewChild('formSections') formSections?: ElementRef<HTMLElement>;
+
   // List
   sprayers: CropSprayerListItem[] = [];
   selectedSerialNumber: string | null = null;
@@ -463,10 +466,14 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   // Step navigation
 
   goToStep(index: number): void {
-    const step = this.steps.find(s => s.id === index);
-    if (step) {
-      this.currentStep = step.id;
-    }
+    this.currentStep = index;
+    const el = this.formSections?.nativeElement?.querySelector(`#section-${index}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  onScrollSection(id: string): void {
+    const index = parseInt(id.replace('section-', ''), 10);
+    if (!isNaN(index)) this.currentStep = index;
   }
 
   previousStep(): void {

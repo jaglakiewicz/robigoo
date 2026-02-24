@@ -7,13 +7,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  height: var(--touch-size);
-  padding: var(--space-sm) var(--space-md);
+  height: 36px;
+  padding: var(--space-xs) var(--space-md);
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 2px;
   cursor: pointer;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast);
   font-size: var(--font-size-base);
   color: var(--text);
 }
@@ -53,15 +53,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   padding: 0;
   background: var(--bg-alt);
   border: none;
-  border-radius: 50%;
+  border-radius: 2px;
   cursor: pointer;
   color: var(--text-muted);
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1;
   transition: background var(--transition-fast), color var(--transition-fast);
   position: relative;
@@ -91,15 +91,15 @@
    ============================================================ */
 .picker-dropdown {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 2px);
   left: 0;
   width: 280px;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 0;
   box-shadow: var(--shadow-lg);
   z-index: 1000;
-  animation: dropdownSlide 0.15s ease-out;
+  animation: dropdownSlide 0.12s ease-out;
   padding: var(--space-md);
   user-select: none;
   -webkit-user-select: none;
@@ -121,12 +121,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: 2px;
   cursor: pointer;
   color: var(--text);
   transition: background var(--transition-fast), border-color var(--transition-fast);
@@ -182,11 +182,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 32px;
+  height: 30px;
   padding: 0;
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 2px;
   cursor: pointer;
   font-size: var(--font-size-sm);
   color: var(--text);

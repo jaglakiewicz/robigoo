@@ -3,29 +3,30 @@
    ============================================================ */
 .entity-card {
   display: flex;
-  gap: var(--space-xs);
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
+  gap: var(--space-sm);
+  padding: 12px var(--space-lg);
+  padding-left: calc(var(--space-lg) - 3px);
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--border-light);
+  border-left: 3px solid transparent;
   background: var(--panel);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast), border-left-color var(--transition-fast);
 }
 
 .entity-card:hover {
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  background: var(--bg-alt);
 }
 
 .entity-card.active {
-  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
-  box-shadow: var(--shadow-md);
+  background: var(--primary-surface);
+  border-left-color: var(--primary);
 }
 
 .entity-card:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-md), var(--focus-shadow);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
 }
 
 /* ============================================================
@@ -67,51 +68,46 @@
    ENTITY CARD BADGES
    ============================================================ */
 .entity-card .badge {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: var(--font-size-sm);
-  line-height: 1.3;
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
   border: 1px solid var(--border-light);
   background: var(--surface-alt);
+  font-weight: var(--font-weight-medium);
 }
 
 .entity-card .badge-type {
   border-color: var(--primary-border);
   background: var(--primary-surface);
-  color: var(--accent);
+  color: var(--primary);
 }
 
 .entity-card .badge-kind,
 .entity-card .badge-success {
   border-color: var(--success-border);
   background: var(--success-surface);
-  color: var(--success-dark);
+  color: var(--success);
 }
 
 .entity-card .badge-danger {
   border-color: var(--error-border);
   background: var(--error-surface);
-  color: var(--error-text);
+  color: var(--error);
 }
 
 .entity-card .badge-secondary {
-  border-color: var(--border-light);
+  border-color: var(--border);
   background: var(--bg-alt);
   color: var(--text-muted);
 }
 
 @media (max-width: 1024px) {
-  .entity-card {
-    padding: var(--space-sm);
-    border-radius: var(--radius-md);
-  }
+  .entity-card { padding: 10px var(--space-md); }
 }
 
 @media (max-width: 600px) {
-  .entity-card {
-    padding: 10px;
-    border-radius: var(--radius-md);
-  }
+  .entity-card { padding: 10px var(--space-sm); }
 }
 
 /* ============================================================

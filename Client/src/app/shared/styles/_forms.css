@@ -4,30 +4,30 @@
 input, textarea, select {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
-  padding: var(--space-sm) var(--space-md);
+  padding: 0 var(--space-md);
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
+  border-radius: 2px;
   background: var(--panel);
   color: var(--text);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   width: 100%;
-  height: var(--touch-size);
-  min-height: var(--touch-size);
+  height: 38px;
+  min-height: 38px;
 }
 
 input:focus, textarea:focus, select:focus,
 input:focus-visible, textarea:focus-visible, select:focus-visible {
   border-color: var(--primary);
-  box-shadow: inset 0 0 0 1px var(--primary);
+  box-shadow: 0 0 0 2px var(--focus-ring-offset), 0 0 0 4px var(--focus-ring);
   outline: none;
 }
 
 input:disabled, textarea:disabled, select:disabled {
   background: var(--disabled-bg);
-  color: var(--disabled-text);
+  color: var(--text-muted);
   cursor: not-allowed;
   opacity: 1;
-  -webkit-text-fill-color: var(--disabled-text);
+  -webkit-text-fill-color: var(--text-muted);
   border-color: var(--disabled-border);
 }
 
@@ -46,16 +46,18 @@ input[readonly]:focus, textarea[readonly]:focus {
 
 textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 100px;
   height: auto;
+  padding: var(--space-sm) var(--space-md);
 }
 
 label {
   display: block;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-xs);
-  color: var(--text);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+  letter-spacing: 0.1px;
 }
 
 /* ============================================================
@@ -86,8 +88,9 @@ input[type="radio"] {
 }
 
 input[type="radio"]:focus-visible {
-  outline: 2px solid var(--focus-ring);
+  outline: 2px solid var(--focus-ring-offset);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 input[type="radio"]:hover:not(:disabled) {
@@ -128,14 +131,14 @@ input[type="checkbox"] {
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
-  width: 18px !important;
-  height: 18px !important;
-  min-width: 18px !important;
-  min-height: 18px !important;
-  max-width: 18px !important;
-  max-height: 18px !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
   border: 1px solid var(--border) !important;
-  border-radius: var(--radius-sm) !important;
+  border-radius: 2px !important;
   background: var(--panel) !important;
   cursor: pointer;
   transition: border-color var(--transition-fast), background var(--transition-fast);
@@ -149,8 +152,9 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:focus-visible {
-  outline: 2px solid var(--focus-ring);
+  outline: 2px solid var(--focus-ring-offset);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 input[type="checkbox"]:hover:not(:disabled) {
@@ -194,11 +198,10 @@ input[type="checkbox"]:disabled:checked {
 }
 
 .form-group label {
-  display: block;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-xs);
-  color: var(--text);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 5px;
+  color: var(--text-secondary);
 }
 
 .form-group input,
@@ -291,7 +294,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @media (max-width: 600px) {
   input, textarea, select {
     font-size: var(--font-size-sm);
-    padding: var(--space-xs) var(--space-sm);
+    padding: 0 var(--space-sm);
     height: 36px;
     min-height: 36px;
   }

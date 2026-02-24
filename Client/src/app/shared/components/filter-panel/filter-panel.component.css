@@ -33,16 +33,16 @@ button.filter-toggle-btn {
 
 .filter-badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 var(--space-xs);
-  border-radius: 9px;
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 2px;
   background: var(--error);
   color: var(--text-inverse);
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,16 +54,16 @@ button.filter-toggle-btn {
    ============================================================ */
 .filter-dropdown {
   position: absolute;
-  top: calc(100% + var(--space-xs));
+  top: calc(100% + 2px);
   right: 0;
   z-index: 1000;
   min-width: 280px;
   max-width: 320px;
   background: var(--panel);
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-md);
+  border-radius: 0;
   box-shadow: var(--shadow-lg);
-  animation: filterDropdownIn 0.15s ease-out;
+  animation: filterDropdownIn 0.12s ease-out;
 }
 
 @keyframes filterDropdownIn {
@@ -193,9 +193,9 @@ button.filter-toggle-btn {
     right: 0;
     max-width: none;
     min-width: auto;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-radius: 0;
     z-index: 1000;
-    animation: slideUp 0.25s ease-out;
+    animation: slideUp 0.2s ease-out;
   }
 
   @keyframes slideUp {

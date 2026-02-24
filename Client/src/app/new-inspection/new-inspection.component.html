@@ -37,6 +37,27 @@
   (stepClick)="goToStep($event)">
 </app-step-indicator>
 
+<!-- Protocol header + section indicator: always visible when on protocol step -->
+<ng-container *ngIf="currentStep === 1">
+  <div class="protocol-header">
+    <div class="protocol-info">
+      <span *ngIf="selectedClient" class="badge badge-client">
+        {{ selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName }}
+      </span>
+      <span *ngIf="selectedSprayer" class="badge badge-sprayer">
+        {{ selectedSprayer.sprayerName || selectedSprayer.serialNumber }}
+      </span>
+      <span class="badge badge-date">{{ inspectionDate }}</span>
+    </div>
+  </div>
+  <app-step-indicator
+    [steps]="protocolSections"
+    [currentStepId]="currentProtocolSection"
+    [clickable]="true"
+    (stepClick)="goToProtocolSection($event)">
+  </app-step-indicator>
+</ng-container>
+
 <div class="inspection-content">
   <!-- ==================== STEP 0: GENERAL DATA ==================== -->
   <div *ngIf="currentStep === 0" class="step-content" (click)="onStepContentClick($event)">
@@ -334,27 +355,6 @@
 
 <!-- ==================== STEP 1: PROTOCOL ==================== -->
   <div *ngIf="currentStep === 1" class="step-content protocol-step">
-    
-    <!-- Protocol Header with client/sprayer info -->
-    <div class="protocol-header">
-      <div class="protocol-info">
-        <span *ngIf="selectedClient" class="badge badge-client">
-          {{ selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName }}
-        </span>
-        <span *ngIf="selectedSprayer" class="badge badge-sprayer">
-          {{ selectedSprayer.sprayerName || selectedSprayer.serialNumber }}
-        </span>
-        <span class="badge badge-date">{{ inspectionDate }}</span>
-      </div>
-    </div>
-
-    <!-- Nested Step Indicator for Protocol Sections -->
-    <app-step-indicator
-      [steps]="protocolSections"
-      [currentStepId]="currentProtocolSection"
-      [clickable]="true"
-      (stepClick)="goToProtocolSection($event)">
-    </app-step-indicator>
 
     <!-- Protocol Section 0: General Condition -->
     <div *ngIf="currentProtocolSection === 0" class="protocol-section-content">

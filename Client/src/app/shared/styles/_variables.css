@@ -3,43 +3,42 @@
  * Clean, professional, modern aesthetic
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
 :root {
-  /* Typography - modern, minimal system font */
   --font-size-xs: 11px;
-  --font-size-sm: 12px;
-  --font-size-base: 14px;
-  --font-size-lg: 16px;
-  --font-size-xl: 20px;
-  --font-size-2xl: 24px;
-  --font-size-4xl: 48px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-lg: 17px;
+  --font-size-xl: 21px;
+  --font-size-2xl: 26px;
+  --font-size-4xl: 44px;
 
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
-  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 600;
 
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.6;
-  --line-height-relaxed: 1.75;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.65;
 
-  /* Spacing - generous for social & breathing room */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 40px;
-  --space-3xl: 48px;
+  --space-xl: 36px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
 
-  /* Border Radius — friendlier, more rounded like Facebook */
-  --radius: 8px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-pill: 999px;
+  /* Border Radius — sharp, minimal, modern */
+  --radius: 3px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-pill: 3px;
 
   /* Breakpoints */
   --breakpoint-sm: 600px;
@@ -62,100 +61,90 @@
 }
 
 :root[data-theme="light"] {
-  /* MINIMALIST LIGHT THEME — GitHub/Stripe Inspired, Calm & Professional */
+  /* Primary — steel blue */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-surface: #eff6ff;
+  --primary-border: #bfdbfe;
+  --primary-btn-border: #1d4ed8;
+  --primary-dark: #1e3a8a;
 
-  /* Primary - Professional, calm blue (like GitHub) */
-  --primary: #0969da;
-  --primary-hover: #0860ca;
-  --primary-surface: #f6f8fa;
-  --primary-border: #d0d7de;
-  --primary-btn-border: #0969da;
-  --primary-dark: #033d8b;
+  --secondary: #0ea5e9;
+  --secondary-hover: #0284c7;
+  --secondary-surface: #f0f9ff;
+  --secondary-border: #bae6fd;
+  --secondary-btn-border: #0284c7;
+  --secondary-dark: #075985;
 
-  /* Secondary - Subtle teal accent */
-  --secondary: #1f6feb;
-  --secondary-hover: #1f6fab;
-  --secondary-surface: #f6f8fa;
-  --secondary-border: #d0d7de;
-  --secondary-btn-border: #1f6feb;
-  --secondary-dark: #0d3a66;
+  --tertiary: #7c3aed;
+  --tertiary-hover: #6d28d9;
+  --tertiary-surface: #f5f3ff;
+  --tertiary-border: #ddd6fe;
+  --tertiary-btn-border: #6d28d9;
+  --tertiary-dark: #4c1d95;
 
-  /* Tertiary - Subtle purple accent */
-  --tertiary: #6e40aa;
-  --tertiary-hover: #5c359a;
-  --tertiary-surface: #f6f8fa;
-  --tertiary-border: #d0d7de;
-  --tertiary-btn-border: #6e40aa;
-  --tertiary-dark: #3d1e6d;
+  /* Success — teal-green, same saturation family as primary */
+  --success: #0d9488;
+  --success-hover: #0f766e;
+  --success-surface: #f0fdfa;
+  --success-border: #99f6e4;
+  --success-btn-border: #0f766e;
+  --success-text: #0f766e;
 
-  /* Success - Calm, professional green that harmonizes with blue */
-  --success: #238636;
-  --success-hover: #1b6e2f;
-  --success-surface: #f6f8fa;
-  --success-border: #d0d7de;
-  --success-btn-border: #238636;
-  --success-text: #1b6e2f;
+  /* Warning — amber, warm but not garish */
+  --warning: #d97706;
+  --warning-hover: #b45309;
+  --warning-surface: #fffbeb;
+  --warning-border: #fde68a;
+  --warning-btn-border: #b45309;
+  --warning-text: #92400e;
 
-  /* Warning - Warm, professional amber that matches the palette */
-  --warning: #9d6300;
-  --warning-hover: #7d4e00;
-  --warning-surface: #f6f8fa;
-  --warning-border: #d0d7de;
-  --warning-btn-border: #9d6300;
-  --warning-text: #6b4400;
+  /* Error — rose, not pure red */
+  --error: #e11d48;
+  --error-hover: #be123c;
+  --error-surface: #fff1f2;
+  --error-border: #fecdd3;
+  --error-btn-border: #be123c;
+  --error-text: #9f1239;
 
-  /* Error - Calm, professional red that belongs to this design family */
-  --error: #b1222b;
-  --error-hover: #8b0000;
-  --error-surface: #f6f8fa;
-  --error-border: #d0d7de;
-  --error-btn-border: #b1222b;
-  --error-text: #8b1a1e;
-
-  /* Backgrounds - Clean, minimal */
-  --bg: #ffffff;
-  --bg-alt: #f6f8fa;
+  --bg: #f8fafc;
+  --bg-alt: #f1f5f9;
   --surface: #ffffff;
-  --surface-alt: #f6f8fa;
+  --surface-alt: #f8fafc;
 
-  /* Borders - Professional grays */
-  --border: #d0d7de;
-  --border-light: #eaeef2;
-  --border-strong: #8c959f;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --border-strong: #94a3b8;
 
-  /* Text - Professional blacks and grays */
-  --text: #0d1117;
-  --text-secondary: #424a50;
-  --text-muted: #57606a;
-  --text-disabled: #8c959f;
+  --text: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-disabled: #94a3b8;
   --text-inverse: #ffffff;
 
-  --disabled-bg: #f6f8fa;
-  --disabled-border: #d0d7de;
-  --disabled-text: #8c959f;
+  --disabled-bg: #f1f5f9;
+  --disabled-border: #e2e8f0;
+  --disabled-text: #94a3b8;
 
   --focus-ring: var(--primary);
   --focus-ring-offset: #ffffff;
-  --overlay: rgba(0, 0, 0, 0.4);
+  --overlay: rgba(15, 23, 42, 0.45);
 
   --on-dark: rgba(255, 255, 255, 1);
   --on-dark-muted: rgba(255, 255, 255, 0.7);
   --on-dark-subtle: rgba(255, 255, 255, 0.5);
-  --on-dark-border: rgba(255, 255, 255, 0.2);
-  --on-dark-border-strong: rgba(255, 255, 255, 0.3);
-  --on-dark-surface: rgba(255, 255, 255, 0.1);
-  --on-dark-surface-hover: rgba(255, 255, 255, 0.15);
+  --on-dark-border: rgba(255, 255, 255, 0.15);
+  --on-dark-border-strong: rgba(255, 255, 255, 0.25);
+  --on-dark-surface: rgba(255, 255, 255, 0.08);
+  --on-dark-surface-hover: rgba(255, 255, 255, 0.13);
   --on-dark-shadow: rgba(0, 0, 0, 0.3);
 
-  /* Shadows - Subtle, minimal */
-  --shadow-color: 0, 0%, 0%;
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
-  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 4px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 8px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 8px 20px rgba(15, 23, 42, 0.1), 0 4px 8px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.14), 0 8px 16px rgba(15, 23, 42, 0.08);
 
-  /* Component-level defaults */
   --panel: var(--surface);
   --panel-border: var(--border);
   --bg-elevated: var(--surface);
@@ -172,99 +161,90 @@
   --error-light: var(--error-surface);
   --primary-light: var(--primary-surface);
 
-  --focus-shadow: 0 0 0 3px rgba(9, 105, 218, 0.2);
+  --focus-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
   --link-color: var(--primary);
   --link-color-hover: var(--primary-hover);
 }
 
 :root[data-theme="dark"] {
-  /* MINIMALIST DARK THEME — GitHub-Inspired Dark, Calm & Professional */
+  /* Primary — lighter blue for dark bg */
+  --primary: #60a5fa;
+  --primary-hover: #93c5fd;
+  --primary-surface: #1e3a5f;
+  --primary-border: #2d4a7a;
+  --primary-btn-border: #3b82f6;
+  --primary-dark: #93c5fd;
 
-  /* Primary - Bright but calm blue on dark background */
-  --primary: #58a6ff;
-  --primary-hover: #79c0ff;
-  --primary-surface: #0d2d5b;
-  --primary-border: #3d444d;
-  --primary-btn-border: #58a6ff;
-  --primary-dark: #1f6feb;
+  --secondary: #38bdf8;
+  --secondary-hover: #7dd3fc;
+  --secondary-surface: #0c2d3f;
+  --secondary-border: #164e63;
+  --secondary-btn-border: #0ea5e9;
+  --secondary-dark: #7dd3fc;
 
-  /* Secondary - Subtle cyan accent */
-  --secondary: #79c0ff;
-  --secondary-hover: #a5d6ff;
-  --secondary-surface: #0d3a66;
-  --secondary-border: #30363d;
-  --secondary-btn-border: #79c0ff;
-  --secondary-dark: #1f6feb;
+  --tertiary: #a78bfa;
+  --tertiary-hover: #c4b5fd;
+  --tertiary-surface: #2e1065;
+  --tertiary-border: #4c1d95;
+  --tertiary-btn-border: #7c3aed;
+  --tertiary-dark: #c4b5fd;
 
-  /* Tertiary - Subtle purple accent */
-  --tertiary: #d2a8ff;
-  --tertiary-hover: #e2b8ff;
-  --tertiary-surface: #2d1b4e;
-  --tertiary-border: #30363d;
-  --tertiary-btn-border: #d2a8ff;
-  --tertiary-dark: #8957e5;
+  /* Success — teal on dark */
+  --success: #2dd4bf;
+  --success-hover: #5eead4;
+  --success-surface: #042f2e;
+  --success-border: #134e4a;
+  --success-btn-border: #0d9488;
+  --success-text: #5eead4;
 
-  /* Success - Bright green for dark mode, harmonizes with blue */
-  --success: #3fb950;
-  --success-hover: #2ea043;
-  --success-surface: #164b35;
-  --success-border: #238636;
-  --success-btn-border: #3fb950;
-  --success-text: #56d364;
+  /* Warning — amber on dark */
+  --warning: #fbbf24;
+  --warning-hover: #fcd34d;
+  --warning-surface: #2d1a00;
+  --warning-border: #78350f;
+  --warning-btn-border: #d97706;
+  --warning-text: #fcd34d;
 
-  /* Warning - Warm amber for dark mode, matches the palette */
-  --warning: #d29922;
-  --warning-hover: #c29a1a;
-  --warning-surface: #3d2817;
-  --warning-border: #9d6300;
-  --warning-btn-border: #d29922;
-  --warning-text: #e3b341;
+  /* Error — rose on dark */
+  --error: #fb7185;
+  --error-hover: #fda4af;
+  --error-surface: #2d0a14;
+  --error-border: #881337;
+  --error-btn-border: #e11d48;
+  --error-text: #fda4af;
 
-  /* Error - Bright red for dark mode, belongs to this family */
-  --error: #ff7b72;
-  --error-hover: #ff6e63;
-  --error-surface: #3d1f1a;
-  --error-border: #b1222b;
-  --error-btn-border: #ff7b72;
-  --error-text: #ff7b72;
+  --bg: #0f172a;
+  --bg-alt: #1e293b;
+  --surface: #1e293b;
+  --surface-alt: #273549;
 
-  /* Backgrounds - Dark grays, GitHub style */
-  --bg: #0d1117;
-  --bg-alt: #161b22;
-  --surface: #161b22;
-  --surface-alt: #1c2128;
+  --border: #334155;
+  --border-light: #1e293b;
+  --border-strong: #475569;
 
-  /* Borders - Subtle on dark */
-  --border: #3d444d;
-  --border-light: #21262d;
-  --border-strong: #545d68;
+  --text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-disabled: #334155;
+  --text-inverse: #0f172a;
 
-  /* Text - Light on dark */
-  --text: #f0f6fc;
-  --text-secondary: #8b949e;
-  --text-muted: #6e7681;
-  --text-disabled: #3e4451;
-  --text-inverse: #0d1117;
-
-  --disabled-bg: #161b22;
-  --disabled-border: #21262d;
-  --disabled-text: #3e4451;
+  --disabled-bg: #1e293b;
+  --disabled-border: #334155;
+  --disabled-text: #475569;
 
   --focus-ring: var(--primary);
-  --focus-ring-offset: #0d1117;
-  --overlay: rgba(0, 0, 0, 0.5);
+  --focus-ring-offset: #0f172a;
+  --overlay: rgba(0, 0, 0, 0.6);
 
   --on-dark: rgba(255, 255, 255, 1);
-  --on-dark-muted: rgba(255, 255, 255, 0.7);
-  --on-dark-subtle: rgba(255, 255, 255, 0.5);
-  --on-dark-border: rgba(255, 255, 255, 0.2);
-  --on-dark-border-strong: rgba(255, 255, 255, 0.3);
-  --on-dark-surface: rgba(255, 255, 255, 0.1);
-  --on-dark-surface-hover: rgba(255, 255, 255, 0.15);
+  --on-dark-muted: rgba(255, 255, 255, 0.65);
+  --on-dark-subtle: rgba(255, 255, 255, 0.4);
+  --on-dark-border: rgba(255, 255, 255, 0.12);
+  --on-dark-border-strong: rgba(255, 255, 255, 0.22);
+  --on-dark-surface: rgba(255, 255, 255, 0.06);
+  --on-dark-surface-hover: rgba(255, 255, 255, 0.1);
   --on-dark-shadow: rgba(0, 0, 0, 0.5);
 
-  /* Shadows - More visible on dark */
-  --shadow-color: 0, 0%, 0%;
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -287,7 +267,7 @@
   --error-light: var(--error-surface);
   --primary-light: var(--primary-surface);
 
-  --focus-shadow: 0 0 0 3px rgba(88, 166, 255, 0.25);
+  --focus-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
   --link-color: var(--primary);
   --link-color-hover: var(--primary-hover);
 }

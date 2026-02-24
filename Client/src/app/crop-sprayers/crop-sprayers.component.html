@@ -120,279 +120,200 @@
     </div>
 
     <!-- RIGHT: DETAIL / EDITOR -->
-    <div class="sprayers-detail-panel" *ngIf="formModel as form">
-      <div class="detail-header">
-        <div>
-          <div class="detail-title">{{ form.serialNumber || ('types.cropSprayers.fields.serialNumber' | text) }}</div>
-          <div class="detail-sub" *ngIf="!isNew">
-             {{ form.manufacturer }}<span *ngIf="form.manufacturer && form.sprayerName" class="vertical-separator"></span>{{ form.sprayerName }}<span *ngIf="(form.manufacturer || form.sprayerName) && form.productionYear" class="vertical-separator"></span>{{ form.productionYear }}
+    <div class="sprayers-detail-panel" #detailScroll *ngIf="formModel as form">
+      <div class="detail-sticky-header">
+        <div class="detail-header">
+          <div>
+            <div class="detail-title">{{ form.serialNumber || ('types.cropSprayers.fields.serialNumber' | text) }}</div>
+            <div class="detail-sub" *ngIf="!isNew">
+               {{ form.manufacturer }}<span *ngIf="form.manufacturer && form.sprayerName" class="vertical-separator"></span>{{ form.sprayerName }}<span *ngIf="(form.manufacturer || form.sprayerName) && form.productionYear" class="vertical-separator"></span>{{ form.productionYear }}
+            </div>
           </div>
+          <button
+            *ngIf="!isNew && !isEditMode"
+            class="btn btn-secondary btn-icon-only"
+            title="Historia zmian"
+            (click)="openHistory()">
+            <span [innerHTML]="getSafeHtml(historyIcon)" style="color: inherit;"></span>
+          </button>
         </div>
-        <button
-          *ngIf="!isNew && !isEditMode"
-          class="btn btn-secondary btn-icon-only"
-          title="Historia zmian"
-          (click)="openHistory()">
-          <span [innerHTML]="getSafeHtml(historyIcon)" style="color: inherit;"></span>
-        </button>
+
+        <app-step-indicator
+          [steps]="stepsForIndicator"
+          [currentStepId]="currentStep"
+          (stepClick)="goToStep($event)">
+        </app-step-indicator>
       </div>
 
-      <!-- Step indicator -->
-      <app-step-indicator
-        [steps]="stepsForIndicator"
-        [currentStepId]="currentStep"
-        (stepClick)="goToStep($event)">
-      </app-step-indicator>
+      <div class="form-sections" #formSections appScrollSpy (activeSection)="onScrollSection($event)">
 
-      <div class="step-content">
-        <!-- Step 0: Basic data -->
-        <div *ngIf="currentStep === 0" class="basics-grid">
-          <!-- Row 1: Owner -->
-          <div class="form-row form-row-1">
+        <div class="form-section" id="section-0">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.basics' | text }}</span></div>
+          <div class="basics-grid">
+            <div class="form-row form-row-1">
+              <div class="form-group">
+                <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
+                <app-client-autocomplete [ngModel]="form.ownerId || null" (ngModelChange)="onOwnerChange($event)" [placeholder]="'types.cropSprayers.fields.selectOwner' | text" [disabled]="!isEditMode"></app-client-autocomplete>
+              </div>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group required">
+                <label>{{ 'types.cropSprayers.fields.serialNumber' | text }}</label>
+                <input type="text" [ngModel]="form.serialNumber" (ngModelChange)="form.serialNumber = $event; onFormChange()" [disabled]="!isEditMode" />
+              </div>
+              <div class="form-group required">
+                <label>{{ 'types.cropSprayers.fields.sprayerName' | text }}</label>
+                <input type="text" [ngModel]="form.sprayerName" (ngModelChange)="form.sprayerName = $event; onFormChange()" [disabled]="!isEditMode" />
+              </div>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group required">
+                <label>{{ 'types.cropSprayers.fields.type' | text }}</label>
+                <app-custom-select [options]="typeOptions" [ngModel]="form.type" (ngModelChange)="onTypeChange($event)" [disabled]="!isEditMode"></app-custom-select>
+              </div>
+              <div class="form-group required">
+                <label>{{ 'types.cropSprayers.fields.kind' | text }}</label>
+                <app-custom-select [options]="kindOptions" [ngModel]="form.kind" (ngModelChange)="form.kind = $event; onFormChange()" [disabled]="!isEditMode"></app-custom-select>
+              </div>
+            </div>
+            <div class="form-row form-row-3">
+              <div class="form-group required">
+                <label>{{ 'types.cropSprayers.fields.manufacturer' | text }}</label>
+                <input type="text" [ngModel]="form.manufacturer" (ngModelChange)="form.manufacturer = $event; onFormChange()" [disabled]="!isEditMode" />
+              </div>
+              <div class="form-group required">
+                <label>{{ 'types.cropSprayers.fields.productionYear' | text }}</label>
+                <app-numeric-input [min]="1900" [max]="2100" [step]="1" [ngModel]="form.productionYear" (ngModelChange)="form.productionYear = $event; onFormChange()" [disabled]="!isEditMode"></app-numeric-input>
+              </div>
+              <div class="form-group">
+                <label>{{ 'types.cropSprayers.fields.purchaseDate' | text }}</label>
+                <app-date-picker [ngModel]="form.purchaseDate" (ngModelChange)="form.purchaseDate = $event; onFormChange()" [disabled]="!isEditMode"></app-date-picker>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section" id="section-1">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.pump' | text }}</span></div>
+          <div class="basics-grid">
+            <div class="form-row form-row-2">
+              <div class="form-group">
+                <label>{{ 'types.cropSprayers.fields.pumpType' | text }}</label>
+                <app-custom-select [options]="pumpTypeOptions" [ngModel]="selectedPumpType" (ngModelChange)="onPumpTypeChange($event)" [disabled]="!isEditMode"></app-custom-select>
+              </div>
+              <div class="form-group" *ngIf="formModel?.pumpOther">
+                <label>{{ 'types.cropSprayers.fields.pumpOtherType' | text }}</label>
+                <input type="text" [ngModel]="form.pumpOtherType" (ngModelChange)="form.pumpOtherType = $event; onFormChange()" [disabled]="!isEditMode" />
+              </div>
+            </div>
+            <div class="form-row form-row-2">
+              <div class="form-group">
+                <label>{{ 'types.cropSprayers.fields.pumpFlowRate' | text }}</label>
+                <input type="number" step="0.1" [ngModel]="form.pumpFlowRate" (ngModelChange)="form.pumpFlowRate = $event; onFormChange()" [disabled]="!isEditMode" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section" id="section-2">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.tank' | text }}</span></div>
+          <div class="form-grid">
             <div class="form-group">
-              <label>{{ 'types.cropSprayers.fields.owner' | text }}</label>
-              <app-client-autocomplete
-                [ngModel]="form.ownerId || null"
-                (ngModelChange)="onOwnerChange($event)"
-                [placeholder]="'types.cropSprayers.fields.selectOwner' | text"
-                [disabled]="!isEditMode">
-              </app-client-autocomplete>
+              <label>{{ 'types.cropSprayers.fields.tankCapacity' | text }}</label>
+              <input type="number" step="1" [ngModel]="form.tankCapacity" (ngModelChange)="form.tankCapacity = $event; onFormChange()" [disabled]="!isEditMode" />
+            </div>
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.hasFlushing' | text }}</label>
+              <input type="checkbox" [ngModel]="form.hasFlushing" (ngModelChange)="form.hasFlushing = $event; onFormChange()" [disabled]="!isEditMode" />
+            </div>
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.hasDiluter' | text }}</label>
+              <input type="checkbox" [ngModel]="form.hasDiluter" (ngModelChange)="form.hasDiluter = $event; onFormChange()" [disabled]="!isEditMode" />
+            </div>
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.hasWashingDevice' | text }}</label>
+              <input type="checkbox" [ngModel]="form.hasWashingDevice" (ngModelChange)="form.hasWashingDevice = $event; onFormChange()" [disabled]="!isEditMode" />
             </div>
           </div>
+        </div>
 
-          <!-- Row 2: Nr seryjny / Nazwa opryskiwacza -->
-          <div class="form-row form-row-2">
-            <div class="form-group required">
-              <label>{{ 'types.cropSprayers.fields.serialNumber' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.serialNumber"
-                (ngModelChange)="form.serialNumber = $event; onFormChange()"
-                [disabled]="!isEditMode" />
+        <div class="form-section" id="section-3">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.control' | text }}</span></div>
+          <div class="form-grid">
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.hasManometer' | text }}</label>
+              <input type="checkbox" [ngModel]="form.hasManometer" (ngModelChange)="form.hasManometer = $event; onFormChange()" [disabled]="!isEditMode" />
             </div>
-
-            <div class="form-group required">
-              <label>{{ 'types.cropSprayers.fields.sprayerName' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.sprayerName"
-                (ngModelChange)="form.sprayerName = $event; onFormChange()"
-                [disabled]="!isEditMode" />
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.hasComputer' | text }}</label>
+              <input type="checkbox" [ngModel]="form.hasComputer" (ngModelChange)="form.hasComputer = $event; onFormChange()" [disabled]="!isEditMode" />
             </div>
           </div>
+        </div>
 
-          <!-- Row 3: Typ / Rodzaj -->
-          <div class="form-row form-row-2">
-            <div class="form-group required">
-              <label>{{ 'types.cropSprayers.fields.type' | text }}</label>
-              <app-custom-select
-                [options]="typeOptions"
-                [ngModel]="form.type"
-                (ngModelChange)="onTypeChange($event)"
-                [disabled]="!isEditMode">
-              </app-custom-select>
-            </div>
-
-            <div class="form-group required">
-              <label>{{ 'types.cropSprayers.fields.kind' | text }}</label>
-              <app-custom-select
-                [options]="kindOptions"
-                [ngModel]="form.kind"
-                (ngModelChange)="form.kind = $event; onFormChange()"
-                [disabled]="!isEditMode">
-              </app-custom-select>
-            </div>
-          </div>
-
-          <!-- Row 4: Producent / Rok produkcji / Data zakupu -->
-          <div class="form-row form-row-3">
-            <div class="form-group required">
-              <label>{{ 'types.cropSprayers.fields.manufacturer' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.manufacturer"
-                (ngModelChange)="form.manufacturer = $event; onFormChange()"
-                [disabled]="!isEditMode" />
-            </div>
-
-            <div class="form-group required">
-              <label>{{ 'types.cropSprayers.fields.productionYear' | text }}</label>
-              <app-numeric-input
-                [min]="1900"
-                [max]="2100"
-                [step]="1"
-                [ngModel]="form.productionYear"
-                (ngModelChange)="form.productionYear = $event; onFormChange()"
-                [disabled]="!isEditMode">
-              </app-numeric-input>
-            </div>
-
+        <div class="form-section" id="section-4">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.boom' | text }}</span></div>
+          <div class="form-grid">
             <div class="form-group">
-              <label>{{ 'types.cropSprayers.fields.purchaseDate' | text }}</label>
-              <app-date-picker
-                [ngModel]="form.purchaseDate"
-                (ngModelChange)="form.purchaseDate = $event; onFormChange()"
-                [disabled]="!isEditMode">
-              </app-date-picker>
+              <label>{{ 'types.cropSprayers.fields.boomWidth' | text }}</label>
+              <input type="number" step="0.1" [ngModel]="form.boomWidth" (ngModelChange)="form.boomWidth = $event; onFormChange()" [disabled]="!isEditMode" />
+            </div>
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.boomWet' | text }}</label>
+              <input type="checkbox" [ngModel]="form.boomWet" (ngModelChange)="form.boomWet = $event; onFormChange()" [disabled]="!isEditMode" />
+            </div>
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.boomDry' | text }}</label>
+              <input type="checkbox" [ngModel]="form.boomDry" (ngModelChange)="form.boomDry = $event; onFormChange()" [disabled]="!isEditMode" />
+            </div>
+            <div class="form-group full-width inline-options">
+              <label>{{ 'types.cropSprayers.fields.boomDampeningMechanism' | text }}</label>
+              <input type="checkbox" [ngModel]="form.boomDampeningMechanism" (ngModelChange)="form.boomDampeningMechanism = $event; onFormChange()" [disabled]="!isEditMode" />
             </div>
           </div>
         </div>
 
-        <!-- Step 1: Pump -->
-        <div *ngIf="currentStep === 1" class="basics-grid">
-          <div class="form-row form-row-2">
+        <div class="form-section" id="section-5">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.sections' | text }}</span></div>
+          <div class="form-grid">
             <div class="form-group">
-              <label>{{ 'types.cropSprayers.fields.pumpType' | text }}</label>
-              <app-custom-select
-                [options]="pumpTypeOptions"
-                [ngModel]="selectedPumpType"
-                (ngModelChange)="onPumpTypeChange($event)"
-                [disabled]="!isEditMode">
-              </app-custom-select>
-            </div>
-
-            <div class="form-group" *ngIf="formModel?.pumpOther">
-              <label>{{ 'types.cropSprayers.fields.pumpOtherType' | text }}</label>
-              <input
-                type="text"
-                [ngModel]="form.pumpOtherType"
-                (ngModelChange)="form.pumpOtherType = $event; onFormChange()"
-                [disabled]="!isEditMode" />
+              <label>{{ 'types.cropSprayers.fields.sectionCount' | text }}</label>
+              <input type="number" step="1" [ngModel]="form.sectionCount" (ngModelChange)="form.sectionCount = $event; onFormChange()" [disabled]="!isEditMode" />
             </div>
           </div>
+        </div>
 
-          <div class="form-row form-row-2">
+        <div class="form-section" id="section-6" *ngIf="form.type !== '01'">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.fieldNozzles' | text }}</span></div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>{{ 'types.cropSprayers.fields.nozzlesFieldFeatures' | text }}</label>
+              <textarea rows="4" [ngModel]="form.nozzlesFieldFeatures" (ngModelChange)="form.nozzlesFieldFeatures = $event; onFormChange()" [disabled]="!isEditMode"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section" id="section-7" *ngIf="form.type !== '00'">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.gardenNozzles' | text }}</span></div>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>{{ 'types.cropSprayers.fields.nozzlesGardenFeatures' | text }}</label>
+              <textarea rows="4" [ngModel]="form.nozzlesGardenFeatures" (ngModelChange)="form.nozzlesGardenFeatures = $event; onFormChange()" [disabled]="!isEditMode"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section" id="section-8">
+          <div class="form-section-divider"><span class="form-section-label">{{ 'types.cropSprayers.steps.fan' | text }}</span></div>
+          <div class="form-grid">
             <div class="form-group">
-              <label>{{ 'types.cropSprayers.fields.pumpFlowRate' | text }}</label>
-              <input
-                type="number"
-                step="0.1"
-                [ngModel]="form.pumpFlowRate"
-                (ngModelChange)="form.pumpFlowRate = $event; onFormChange()"
-                [disabled]="!isEditMode" />
+              <label>{{ 'types.cropSprayers.fields.fanType' | text }}</label>
+              <input type="text" [ngModel]="form.fanType" (ngModelChange)="form.fanType = $event; onFormChange()" [disabled]="!isEditMode" />
             </div>
           </div>
         </div>
 
-        <!-- Step 2: Tank -->
-        <div *ngIf="currentStep === 2" class="form-grid">
-          <div class="form-group">
-            <label>{{ 'types.cropSprayers.fields.tankCapacity' | text }}</label>
-            <input
-              type="number"
-              step="1"
-              [ngModel]="form.tankCapacity"
-              (ngModelChange)="form.tankCapacity = $event; onFormChange()"
-              [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.hasFlushing' | text }}</label>
-            <input type="checkbox" [ngModel]="form.hasFlushing" (ngModelChange)="form.hasFlushing = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.hasDiluter' | text }}</label>
-            <input type="checkbox" [ngModel]="form.hasDiluter" (ngModelChange)="form.hasDiluter = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.hasWashingDevice' | text }}</label>
-            <input type="checkbox" [ngModel]="form.hasWashingDevice" (ngModelChange)="form.hasWashingDevice = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-        </div>
-
-        <!-- Step 3: Control devices -->
-        <div *ngIf="currentStep === 3" class="form-grid">
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.hasManometer' | text }}</label>
-            <input type="checkbox" [ngModel]="form.hasManometer" (ngModelChange)="form.hasManometer = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.hasComputer' | text }}</label>
-            <input type="checkbox" [ngModel]="form.hasComputer" (ngModelChange)="form.hasComputer = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-        </div>
-
-        <!-- Step 4: Boom -->
-        <div *ngIf="currentStep === 4" class="form-grid">
-          <div class="form-group">
-            <label>{{ 'types.cropSprayers.fields.boomWidth' | text }}</label>
-            <input
-              type="number"
-              step="0.1"
-              [ngModel]="form.boomWidth"
-              (ngModelChange)="form.boomWidth = $event; onFormChange()"
-              [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.boomWet' | text }}</label>
-            <input type="checkbox" [ngModel]="form.boomWet" (ngModelChange)="form.boomWet = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.boomDry' | text }}</label>
-            <input type="checkbox" [ngModel]="form.boomDry" (ngModelChange)="form.boomDry = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-
-          <div class="form-group full-width inline-options">
-            <label>{{ 'types.cropSprayers.fields.boomDampeningMechanism' | text }}</label>
-            <input type="checkbox" [ngModel]="form.boomDampeningMechanism" (ngModelChange)="form.boomDampeningMechanism = $event; onFormChange()" [disabled]="!isEditMode" />
-          </div>
-        </div>
-
-        <!-- Step 5: Sections -->
-        <div *ngIf="currentStep === 5" class="form-grid">
-          <div class="form-group">
-            <label>{{ 'types.cropSprayers.fields.sectionCount' | text }}</label>
-            <input
-              type="number"
-              step="1"
-              [ngModel]="form.sectionCount"
-              (ngModelChange)="form.sectionCount = $event; onFormChange()"
-              [disabled]="!isEditMode" />
-          </div>
-        </div>
-
-        <!-- Step 6: Field nozzles -->
-        <div *ngIf="currentStep === 6" class="form-grid">
-          <div class="form-group full-width">
-            <label>{{ 'types.cropSprayers.fields.nozzlesFieldFeatures' | text }}</label>
-            <textarea
-              rows="4"
-              [ngModel]="form.nozzlesFieldFeatures"
-              (ngModelChange)="form.nozzlesFieldFeatures = $event; onFormChange()"
-              [disabled]="!isEditMode"></textarea>
-          </div>
-        </div>
-
-        <!-- Step 7: Garden nozzles -->
-        <div *ngIf="currentStep === 7" class="form-grid">
-          <div class="form-group full-width">
-            <label>{{ 'types.cropSprayers.fields.nozzlesGardenFeatures' | text }}</label>
-            <textarea
-              rows="4"
-              [ngModel]="form.nozzlesGardenFeatures"
-              (ngModelChange)="form.nozzlesGardenFeatures = $event; onFormChange()"
-              [disabled]="!isEditMode"></textarea>
-          </div>
-        </div>
-
-        <!-- Step 8: Fan -->
-        <div *ngIf="currentStep === 8" class="form-grid">
-          <div class="form-group">
-            <label>{{ 'types.cropSprayers.fields.fanType' | text }}</label>
-            <input
-              type="text"
-              [ngModel]="form.fanType"
-              (ngModelChange)="form.fanType = $event; onFormChange()"
-              [disabled]="!isEditMode" />
-          </div>
-        </div>
       </div>
-
     </div>
   </div>
 
