@@ -21,7 +21,7 @@
     [horizontal]="true" 
     [itemSelector]="'.step'">
     <div
-      *ngFor="let step of steps; let i = index; trackBy: trackByFn"
+      *ngFor="let step of steps; let i = index; trackBy: trackByStep"
       class="step"
       [class.active]="isActive(step)"
       [class.completed]="isCompleted(step)"
@@ -38,5 +38,16 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
+  </div>
+</div>
+
+<!-- Sub-nav: shown when active step has children -->
+<div class="sub-nav" *ngIf="activeChildren.length > 0">
+  <div
+    *ngFor="let child of activeChildren"
+    class="sub-nav-item"
+    [class.active]="child.key === activeSubKey"
+    (click)="onSubStepClick(child)">
+    {{ child.label }}
   </div>
 </div>

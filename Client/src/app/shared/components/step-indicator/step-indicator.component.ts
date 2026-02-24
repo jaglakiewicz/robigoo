@@ -18,6 +18,8 @@ export interface Step {
   label: string;
   /** Whether the step is disabled (optional, defaults to false) */
   disabled?: boolean;
+  /** Optional child steps rendered as sub-nav when parent is active */
+  children?: Step[];
 }
 
 /**
@@ -51,11 +53,17 @@ export class StepIndicatorComponent implements AfterViewInit, OnDestroy {
   /** ID of the currently active step */
   @Input() currentStepId = 0;
 
+  /** Key of the currently active sub-section */
+  @Input() activeSubKey = '';
+
   /** Whether steps can be clicked to navigate */
   @Input() clickable = true;
 
   /** Emitted when a step is clicked */
   @Output() stepClick = new EventEmitter<number>();
+
+  /** Emitted when a sub-step is clicked */
+  @Output() subStepClick = new EventEmitter<string>();
 
   /** Reference to the scrollable container */
   @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLElement>;
@@ -133,11 +141,23 @@ export class StepIndicatorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  onSubStepClick(child: Step): void {
+    if (this.clickable && !child.disabled) {
+      this.subStepClick.emit(child.key);
+    }
+  }
+
+  get activeChildren(): Step[] {
+    // find by top-level id only (children are not in this search)
+    const parent = this.steps.find(s => s.id === this.currentStepId);
+    return parent?.children ?? [];
+  }
+
   getStepNumber(index: number): number {
     return index + 1;
   }
 
-  trackByFn(index: number, step: Step): number {
-    return step.id;
+  trackByStep(index: number, step: Step): string {
+    return step.key; // key is unique; id is NOT (children share id 0)
   }
 }

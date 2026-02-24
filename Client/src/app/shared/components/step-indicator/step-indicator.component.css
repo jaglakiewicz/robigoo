@@ -110,6 +110,42 @@
 }
 
 /* ============================================================
+   SUB-NAV (level 2 children)
+   ============================================================ */
+.sub-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--panel-border);
+  padding: 0 var(--space-md);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sub-nav::-webkit-scrollbar { display: none; }
+
+.sub-nav-item {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.sub-nav-item:hover {
+  color: var(--text);
+}
+
+.sub-nav-item.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ============================================================
    MOBILE RESPONSIVE
    ============================================================ */
 @media (max-width: 600px) {

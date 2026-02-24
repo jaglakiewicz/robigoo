@@ -1,477 +1,177 @@
+<!-- Toolbar -->
+<app-entity-toolbar>
+  <ng-container right>
+    <button class="btn btn-primary" (click)="saveAll()" [disabled]="saving">
+      {{ saving ? 'Zapisywanie...' : 'Zapisz zmiany' }}
+    </button>
+  </ng-container>
+</app-entity-toolbar>
+
 <!-- Step Indicator as scroll-nav -->
 <app-step-indicator
   [steps]="visibleSteps"
   [currentStepId]="activeSection"
-  (stepClick)="scrollToSection($event)">
+  [activeSubKey]="activeSubKey"
+  (stepClick)="scrollToSection($event)"
+  (subStepClick)="scrollToSubSection($event)">
 </app-step-indicator>
 
 <!-- Single scrollable content -->
 <div class="settings-scroll"
      appScrollSpy
-     sectionSelector=".settings-section"
      (activeSection)="onActiveSection($event)">
 
   <!-- ── PROGRAM SETTINGS ── -->
   <section id="section-0" class="settings-section">
     <div class="form-section-divider"><span class="form-section-label">Ustawienia programu</span></div>
 
-    <!-- Sub-group: Drukowanie -->
-    <div class="settings-group">
-      <div class="settings-group-title">Drukowanie</div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Domyślna drukarka</label>
-          <app-custom-select [(ngModel)]="appSettings.printing.defaultPrinter" [options]="printerOptions" placeholder="— wybierz —"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Domyślny szablon XSL</label>
-          <app-custom-select [(ngModel)]="appSettings.printing.defaultXslTemplate" [options]="xslTemplateOptions" placeholder="— wybierz —"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Rozmiar papieru</label>
-          <app-custom-select [(ngModel)]="appSettings.printing.paperSize" [options]="paperSizeOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Orientacja</label>
-          <app-custom-select [(ngModel)]="appSettings.printing.orientation" [options]="orientationOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Liczba kopii</label>
-          <input type="number" [(ngModel)]="appSettings.printing.copies" min="1" max="10" />
-        </div>
-        <div class="form-group">
-          <label>Druk kolorowy</label>
-          <div class="toggle-row">
-            <label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.colorPrint" /><span class="toggle-slider-inline"></span></label>
-          </div>
-        </div>
-      </div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Nagłówek na wydruku</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printHeader" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Stopka na wydruku</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printFooter" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Numery stron</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printPageNumbers" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Znak wodny</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.printing.printWatermark" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group" *ngIf="appSettings.printing.printWatermark">
-          <label>Tekst znaku wodnego</label>
-          <input type="text" [(ngModel)]="appSettings.printing.watermarkText" />
-        </div>
-      </div>
-      <div class="settings-group-title" style="font-size:var(--font-size-xs);margin-top:var(--space-xs)">Marginesy (mm)</div>
-      <div class="form-row form-row-4">
-        <div class="form-group"><label>Górny</label><input type="number" [(ngModel)]="appSettings.printing.marginTopMm" min="0" /></div>
-        <div class="form-group"><label>Prawy</label><input type="number" [(ngModel)]="appSettings.printing.marginRightMm" min="0" /></div>
-        <div class="form-group"><label>Dolny</label><input type="number" [(ngModel)]="appSettings.printing.marginBottomMm" min="0" /></div>
-        <div class="form-group"><label>Lewy</label><input type="number" [(ngModel)]="appSettings.printing.marginLeftMm" min="0" /></div>
-      </div>
-    </div>
-
-    <!-- Sub-group: Protokoły -->
-    <div class="settings-group">
-      <div class="settings-group-title">Protokoły badań</div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Prefiks numeru</label>
-          <input type="text" [(ngModel)]="appSettings.protocols.numberPrefix" placeholder="np. SKO" />
-        </div>
-        <div class="form-group">
-          <label>Ważność badania (lata)</label>
-          <input type="number" [(ngModel)]="appSettings.protocols.inspectionValidityYears" min="1" max="10" />
-        </div>
-        <div class="form-group">
-          <label>Reset numeracji</label>
-          <app-custom-select [(ngModel)]="appSettings.protocols.sequenceResetPeriod" [options]="seqResetOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Wartość startowa sekwencji</label>
-          <input type="number" [(ngModel)]="appSettings.protocols.sequenceStartValue" min="1" />
-        </div>
-        <div class="form-group">
-          <label>Szerokość numeru (cyfry)</label>
-          <input type="number" [(ngModel)]="appSettings.protocols.sequencePadding" min="1" max="6" />
-        </div>
-        <div class="form-group">
-          <label>Domyślny typ badania</label>
-          <app-custom-select [(ngModel)]="appSettings.protocols.defaultInspectionType" [options]="inspectionTypeOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Ostrzeżenie przed wygaśnięciem (dni)</label>
-          <input type="number" [(ngModel)]="appSettings.protocols.expiryWarningDays" min="1" />
-        </div>
-      </div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Wymagaj klienta przy tworzeniu</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.requireClientOnCreate" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Wymagaj opryskiwacza przy tworzeniu</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.requireSprayerOnCreate" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Zezwól na edycję po podpisaniu</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.allowEditAfterSign" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Generuj PDF przy tworzeniu</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.protocols.generatePdfOnCreate" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
+    <!-- USTAWIENIA JEDNOSTKI -->
+    <div id="sub-org" class="settings-subsection-title">Ustawienia jednostki</div>
+    <div *ngIf="!isCurrentUserAdmin()" class="field-hint" style="font-style:normal;color:var(--warning)">Tylko administrator może edytować ustawienia programu.</div>
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Nazwa stacji</label>
+        <input type="text" [(ngModel)]="appSettings.organization.stationName" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
       </div>
       <div class="form-group">
-        <label>Format numeru protokołu</label>
-        <span class="field-hint" style="margin-bottom:var(--space-sm);display:block">Kliknij token aby wstawić go do schematu. Możesz też wpisać dowolny separator (np. <code>/</code>, <code>-</code>).</span>
-        <div class="format-tokens">
-          <button *ngFor="let t of formatTokens" type="button" class="token-chip" (click)="insertToken(t.token)" [title]="t.hint">{{ t.token }}</button>
-        </div>
-        <input type="text" [(ngModel)]="appSettings.protocols.numberFormat" placeholder="np. {PREFIX}/{YEAR}/{SEQ}" class="format-input" />
+        <label>Numer jednostki upoważnionej do badań</label>
+        <input type="text" [(ngModel)]="appSettings.organization.unitAuthorizationNumber" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
       </div>
       <div class="form-group">
-        <label>Podgląd</label>
-        <div class="protocol-number-preview">{{ protocolNumberPreview }}</div>
+        <label>Adres 1</label>
+        <input type="text" [(ngModel)]="appSettings.organization.addressLine1" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Adres 2</label>
+        <input type="text" [(ngModel)]="appSettings.organization.addressLine2" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Miejscowość</label>
+        <input type="text" [(ngModel)]="appSettings.organization.city" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Kod pocztowy</label>
+        <input type="text" [(ngModel)]="appSettings.organization.postalCode" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Poczta</label>
+        <input type="text" [(ngModel)]="appSettings.organization.postOffice" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Telefon</label>
+        <input type="tel" [(ngModel)]="appSettings.organization.phone" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="appSettings.organization.email" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>NIP</label>
+        <input type="text" [(ngModel)]="appSettings.organization.taxId" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>REGON</label>
+        <input type="text" [(ngModel)]="appSettings.organization.regon" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
       </div>
     </div>
 
-    <!-- Sub-group: Organizacja -->
-    <div class="settings-group">
-      <div class="settings-group-title">Organizacja / Stacja kontroli</div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Nazwa stacji</label>
-          <input type="text" [(ngModel)]="appSettings.organization.stationName" placeholder="np. SKO Warszawa" />
-        </div>
-        <div class="form-group">
-          <label>Numer akredytacji</label>
-          <input type="text" [(ngModel)]="appSettings.organization.accreditationNumber" />
-        </div>
-        <div class="form-group">
-          <label>Jednostka akredytująca</label>
-          <input type="text" [(ngModel)]="appSettings.organization.accreditationBody" placeholder="np. PCA" />
-        </div>
-        <div class="form-group">
-          <label>Zakres akredytacji</label>
-          <input type="text" [(ngModel)]="appSettings.organization.accreditationScope" />
-        </div>
-        <div class="form-group">
-          <label>Adres (linia 1)</label>
-          <input type="text" [(ngModel)]="appSettings.organization.addressLine1" />
-        </div>
-        <div class="form-group">
-          <label>Adres (linia 2)</label>
-          <input type="text" [(ngModel)]="appSettings.organization.addressLine2" />
-        </div>
-        <div class="form-group">
-          <label>Kod pocztowy</label>
-          <input type="text" [(ngModel)]="appSettings.organization.postalCode" />
-        </div>
-        <div class="form-group">
-          <label>Miejscowość</label>
-          <input type="text" [(ngModel)]="appSettings.organization.city" />
-        </div>
-        <div class="form-group">
-          <label>Telefon</label>
-          <input type="tel" [(ngModel)]="appSettings.organization.phone" />
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" [(ngModel)]="appSettings.organization.email" />
-        </div>
-        <div class="form-group">
-          <label>Strona WWW</label>
-          <input type="url" [(ngModel)]="appSettings.organization.website" />
-        </div>
-        <div class="form-group">
-          <label>NIP</label>
-          <input type="text" [(ngModel)]="appSettings.organization.taxId" />
-        </div>
-        <div class="form-group">
-          <label>Numer konta bankowego</label>
-          <input type="text" [(ngModel)]="appSettings.organization.bankAccount" />
-        </div>
+    <!-- USTAWIENIA DOKUMENTÓW -->
+    <div id="sub-docs" class="settings-subsection-title">Ustawienia dokumentów</div>
+
+    <!-- USTAWIENIA PROTOKOŁU BADANIA -->
+    <div id="sub-protocol" class="settings-nested-title">Ustawienia protokołu badania</div>
+    <div class="form-row form-row-2">
+      <div class="form-group">
+        <label>Ważność badania (lata)</label>
+        <input type="number" [(ngModel)]="appSettings.documents.protocol.inspectionValidityYears" min="1" max="10" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Prefiks numeru</label>
+        <input type="text" [(ngModel)]="appSettings.documents.protocol.numberPrefix" placeholder="np. SKO (zostaw puste jeśli brak)" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      </div>
+      <div class="form-group">
+        <label>Szerokość numeru (cyfry)</label>
+        <input type="number" [(ngModel)]="appSettings.documents.protocol.sequencePadding" min="1" max="6" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
       </div>
     </div>
-
-    <!-- Sub-group: Wyświetlanie -->
-    <div class="settings-group">
-      <div class="settings-group-title">Wyświetlanie</div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Język</label>
-          <app-custom-select [(ngModel)]="appSettings.display.language" [options]="languageOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Motyw</label>
-          <app-custom-select [(ngModel)]="appSettings.display.theme" [options]="themeOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Format daty</label>
-          <app-custom-select [(ngModel)]="appSettings.display.dateFormat" [options]="dateFormatOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Format czasu</label>
-          <app-custom-select [(ngModel)]="appSettings.display.timeFormat" [options]="[{value:'HH:mm',label:'HH:mm (24h)'},{value:'hh:mm a',label:'hh:mm AM/PM'}]"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Separator dziesiętny</label>
-          <app-custom-select [(ngModel)]="appSettings.display.decimalSeparator" [options]="[{value:',',label:'Przecinek (,)'},{value:'.',label:'Kropka (.)'  }]"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Separator tysięcy</label>
-          <app-custom-select [(ngModel)]="appSettings.display.thousandsSeparator" [options]="[{value:' ',label:'Spacja'},{value:'.',label:'Kropka (.)'},{value:',',label:'Przecinek (,)'}]"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Strefa czasowa</label>
-          <input type="text" [(ngModel)]="appSettings.display.timezone" placeholder="np. Europe/Warsaw" />
-        </div>
-        <div class="form-group">
-          <label>Waluta</label>
-          <input type="text" [(ngModel)]="appSettings.display.currency" placeholder="PLN" />
-        </div>
-        <div class="form-group">
-          <label>Wierszy na stronę</label>
-          <app-custom-select [(ngModel)]="appSettings.display.itemsPerPage" [options]="itemsPerPageOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Tryb kompaktowy</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.display.compactMode" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Pokazuj podpowiedzi</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.display.showTooltips" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
+    <div class="form-group">
+      <label>Format numeru protokołu</label>
+      <span class="field-hint" style="margin-bottom:var(--space-sm);display:block">Kliknij token aby wstawić go do schematu. Możesz też wpisać dowolny separator (np. <code>/</code>, <code>-</code>).</span>
+      <div class="format-tokens">
+        <button *ngFor="let t of formatTokens" type="button" class="token-chip" (click)="insertToken(t.token)" [title]="t.hint" [disabled]="!isCurrentUserAdmin()">{{ t.token }}</button>
       </div>
+      <input type="text" [(ngModel)]="appSettings.documents.protocol.numberFormat" placeholder="np. {PREFIX}/{YEAR}/{SEQ}" class="format-input" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()" />
+      <div class="protocol-number-preview" style="margin-top:var(--space-sm)">{{ protocolNumberPreview }}</div>
     </div>
-
-    <!-- Sub-group: Dane i eksport -->
-    <div class="settings-group">
-      <div class="settings-group-title">Dane i eksport</div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Automatyczny zapis</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.autoSave" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group" *ngIf="appSettings.data.autoSave">
-          <label>Interwał autozapisu (s)</label>
-          <input type="number" [(ngModel)]="appSettings.data.autoSaveIntervalSeconds" min="10" max="300" />
-        </div>
-        <div class="form-group">
-          <label>Format eksportu</label>
-          <app-custom-select [(ngModel)]="appSettings.data.exportFormat" [options]="exportFormatOptions"></app-custom-select>
-        </div>
-        <div class="form-group">
-          <label>Załączniki w eksporcie</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.exportIncludeAttachments" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Maks. rozmiar załącznika (MB)</label>
-          <input type="number" [(ngModel)]="appSettings.data.maxAttachmentSizeMb" min="1" max="100" />
-        </div>
-        <div class="form-group">
-          <label>Automatyczny backup</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.autoBackup" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group" *ngIf="appSettings.data.autoBackup">
-          <label>Harmonogram backupu</label>
-          <app-custom-select [(ngModel)]="appSettings.data.backupSchedule" [options]="backupScheduleOptions"></app-custom-select>
-        </div>
-        <div class="form-group" *ngIf="appSettings.data.autoBackup">
-          <label>Retencja backupów (dni)</label>
-          <input type="number" [(ngModel)]="appSettings.data.backupRetentionDays" min="1" />
-        </div>
-        <div class="form-group" *ngIf="appSettings.data.autoBackup">
-          <label>Ścieżka backupów</label>
-          <input type="text" [(ngModel)]="appSettings.data.backupPath" placeholder="np. C:\Backups\SKO" />
-        </div>
-        <div class="form-group">
-          <label>Archiwizuj po latach</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.data.archiveAfterYears" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group" *ngIf="appSettings.data.archiveAfterYears">
-          <label>Archiwizuj po (lata)</label>
-          <input type="number" [(ngModel)]="appSettings.data.archiveAfterYearsValue" min="1" />
-        </div>
-      </div>
+    <div class="form-group">
+      <label>Nagłówek</label>
+      <textarea [(ngModel)]="appSettings.documents.protocol.header" rows="3" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()"></textarea>
     </div>
-
-    <!-- Sub-group: Bezpieczeństwo -->
-    <div class="settings-group">
-      <div class="settings-group-title">Bezpieczeństwo</div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Timeout sesji (min)</label>
-          <input type="number" [(ngModel)]="appSettings.security.sessionTimeoutMinutes" min="5" />
-        </div>
-        <div class="form-group">
-          <label>Maks. prób logowania</label>
-          <input type="number" [(ngModel)]="appSettings.security.maxLoginAttempts" min="1" />
-        </div>
-        <div class="form-group">
-          <label>Czas blokady (min)</label>
-          <input type="number" [(ngModel)]="appSettings.security.lockoutDurationMinutes" min="1" />
-        </div>
-        <div class="form-group">
-          <label>Min. długość hasła</label>
-          <input type="number" [(ngModel)]="appSettings.security.passwordMinLength" min="4" max="32" />
-        </div>
-        <div class="form-group">
-          <label>Hasło: wielka litera</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.passwordRequireUppercase" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Hasło: cyfra</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.passwordRequireDigit" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Hasło: znak specjalny</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.passwordRequireSpecial" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Wymuś zmianę hasła co (dni, 0=nigdy)</label>
-          <input type="number" [(ngModel)]="appSettings.security.forcePasswordChangeDays" min="0" />
-        </div>
-        <div class="form-group">
-          <label>Loguj zdarzenia bezpieczeństwa</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.logSecurityEvents" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Retencja logów (dni)</label>
-          <input type="number" [(ngModel)]="appSettings.security.securityLogRetentionDays" min="1" />
-        </div>
-        <div class="form-group">
-          <label>Wiele sesji jednocześnie</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.allowMultipleSessions" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Wymagaj 2FA</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.security.requireTwoFactor" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-      </div>
+    <div class="form-group">
+      <label>Stopka</label>
+      <textarea [(ngModel)]="appSettings.documents.protocol.footer" rows="3" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()"></textarea>
     </div>
+    <ng-container *ngTemplateOutlet="xslBlock; context: { $implicit: appSettings.documents.protocol, key: 'protocol' }"></ng-container>
 
-    <!-- Sub-group: Powiadomienia -->
-    <div class="settings-group">
-      <div class="settings-group-title">Powiadomienia</div>
-      <div class="form-row form-row-2">
-        <div class="form-group">
-          <label>Powiadomienia w aplikacji</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.inAppNotifications" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-        <div class="form-group">
-          <label>Powiadomienia email</label>
-          <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.emailEnabled" /><span class="toggle-slider-inline"></span></label></div>
-        </div>
-      </div>
-      <ng-container *ngIf="appSettings.notifications.emailEnabled">
-        <div class="form-row form-row-2">
-          <div class="form-group">
-            <label>Serwer SMTP</label>
-            <input type="text" [(ngModel)]="appSettings.notifications.smtpHost" placeholder="smtp.example.com" />
-          </div>
-          <div class="form-group">
-            <label>Port SMTP</label>
-            <input type="number" [(ngModel)]="appSettings.notifications.smtpPort" />
-          </div>
-          <div class="form-group">
-            <label>Użytkownik SMTP</label>
-            <input type="text" [(ngModel)]="appSettings.notifications.smtpUser" />
-          </div>
-          <div class="form-group">
-            <label>Hasło SMTP</label>
-            <input type="password" [(ngModel)]="appSettings.notifications.smtpPassword" />
-          </div>
-          <div class="form-group">
-            <label>Nadawca (email)</label>
-            <input type="email" [(ngModel)]="appSettings.notifications.emailFrom" />
-          </div>
-          <div class="form-group">
-            <label>Nadawca (nazwa)</label>
-            <input type="text" [(ngModel)]="appSettings.notifications.emailFromName" />
-          </div>
-          <div class="form-group">
-            <label>SSL/TLS</label>
-            <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.smtpUseSsl" /><span class="toggle-slider-inline"></span></label></div>
-          </div>
-        </div>
-        <div class="form-row form-row-2">
-          <div class="form-group">
-            <label>Powiadom o nowym protokole</label>
-            <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.notifyOnProtocolCreate" /><span class="toggle-slider-inline"></span></label></div>
-          </div>
-          <div class="form-group">
-            <label>Powiadom o wygaśnięciu</label>
-            <div class="toggle-row"><label class="toggle-switch-inline"><input type="checkbox" [(ngModel)]="appSettings.notifications.notifyOnProtocolExpiry" /><span class="toggle-slider-inline"></span></label></div>
-          </div>
-          <div class="form-group" *ngIf="appSettings.notifications.notifyOnProtocolExpiry">
-            <label>Dni przed wygaśnięciem</label>
-            <input type="number" [(ngModel)]="appSettings.notifications.notifyDaysBeforeExpiry" min="1" />
-          </div>
-        </div>
-      </ng-container>
+    <!-- USTAWIENIA REJESTRU PRZEBADANEGO SPRZĘTU -->
+    <div id="sub-register" class="settings-nested-title">Ustawienia rejestru przebadanego sprzętu</div>
+    <div class="form-group">
+      <label>Nagłówek</label>
+      <textarea [(ngModel)]="appSettings.documents.register.header" rows="3" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()"></textarea>
     </div>
-
-    <!-- Sub-group: Szablony XSL -->
-    <div class="settings-group">
-      <div class="settings-group-title">Szablony XSL protokołów</div>
-      <div class="xsl-actions">
-        <input type="file" #xslInput (change)="onXslFileSelected($event)" accept=".xsl" style="display:none" />
-        <button class="btn btn-secondary btn-sm" (click)="xslInput.click()" [disabled]="uploadingXsl">
-          <span [innerHTML]="getSafeHtml(SVG_ICONS.iconAdd)"></span>
-          {{ uploadingXsl ? 'Przesyłanie...' : 'Dodaj szablon .xsl' }}
-        </button>
-        <span *ngIf="xslError" class="field-hint error-text">{{ xslError }}</span>
-        <span *ngIf="xslSuccess" class="field-hint success-text">{{ xslSuccess }}</span>
-      </div>
-
-      <div *ngIf="loadingXsl" class="field-hint">Ładowanie...</div>
-
-      <div *ngIf="!loadingXsl && xslTemplates.length === 0" class="field-hint">
-        Brak szablónów. Dodaj plik .xsl powyżej.
-      </div>
-
-      <table *ngIf="xslTemplates.length > 0" class="xsl-table">
-        <thead>
-          <tr>
-            <th>Nazwa pliku</th>
-            <th>Data dodania</th>
-            <th>Domyślny</th>
-            <th>Akcje</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let t of xslTemplates" [class.xsl-default-row]="t.name === defaultXslTemplate">
-            <td>{{ t.name }}</td>
-            <td>{{ t.uploadedAt | date:'dd.MM.yyyy HH:mm' }}</td>
-            <td>
-              <span *ngIf="t.name === defaultXslTemplate" class="badge-default">✓ Domyślny</span>
-              <button *ngIf="t.name !== defaultXslTemplate" class="btn btn-small btn-secondary" (click)="setDefaultXsl(t.name)">Ustaw domyślny</button>
-            </td>
-            <td>
-              <button class="btn btn-small btn-danger" (click)="deleteXsl(t.name)" [disabled]="t.name === defaultXslTemplate" [title]="t.name === defaultXslTemplate ? 'Nie można usunąć domyślnego szablonu' : ''">
-                <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="form-group">
+      <label>Stopka</label>
+      <textarea [(ngModel)]="appSettings.documents.register.footer" rows="3" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()"></textarea>
     </div>
+    <ng-container *ngTemplateOutlet="xslBlock; context: { $implicit: appSettings.documents.register, key: 'register' }"></ng-container>
 
-    <div class="section-actions">
-      <button class="btn btn-primary" (click)="saveAppSettings()" [disabled]="savingAppSettings">
-        {{ savingAppSettings ? 'Zapisywanie...' : 'Zapisz ustawienia programu' }}
+    <!-- USTAWIENIA EWIDENCJI ZNAKÓW KONTROLNYCH -->
+    <div id="sub-controlmarks" class="settings-nested-title">Ustawienia ewidencji znaków kontrolnych</div>
+    <div class="form-group">
+      <label>Nagłówek</label>
+      <textarea [(ngModel)]="appSettings.documents.controlMarks.header" rows="3" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Stopka</label>
+      <textarea [(ngModel)]="appSettings.documents.controlMarks.footer" rows="3" [disabled]="!isCurrentUserAdmin()" [class.disabled-input]="!isCurrentUserAdmin()"></textarea>
+    </div>
+    <ng-container *ngTemplateOutlet="xslBlock; context: { $implicit: appSettings.documents.controlMarks, key: 'controlMarks' }"></ng-container>
+
+
+
+  <!-- XSL shared template -->
+  <ng-template #xslBlock let-doc let-key="key">
+    <div class="settings-nested-subtitle">Szablony XSL</div>
+    <div class="xsl-actions">
+      <input type="file" [id]="'xslInput-'+key" (change)="onXslFileSelected($event, key)" accept=".xsl" style="display:none" />
+      <button class="btn btn-secondary btn-sm" (click)="triggerXslUpload(key)" [disabled]="uploadingXsl || !isCurrentUserAdmin()">
+        <span [innerHTML]="getSafeHtml(SVG_ICONS.iconAdd)"></span>
+        {{ uploadingXsl ? 'Przesyłanie...' : 'Dodaj szablon .xsl' }}
       </button>
+      <span *ngIf="xslError" class="field-hint error-text">{{ xslError }}</span>
+      <span *ngIf="xslSuccess" class="field-hint success-text">{{ xslSuccess }}</span>
     </div>
-
-  </section>
+    <div *ngIf="loadingXsl" class="field-hint">Ładowanie...</div>
+    <div *ngIf="!loadingXsl && getXslTemplates(key).length === 0" class="field-hint">Brak szablonów. Dodaj plik .xsl powyżej.</div>
+    <table *ngIf="getXslTemplates(key).length > 0" class="xsl-table">
+      <thead><tr><th>Nazwa pliku</th><th>Data dodania</th><th>Domyślny</th><th>Akcje</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let t of getXslTemplates(key)" [class.xsl-default-row]="t.name === doc.defaultXslTemplate">
+          <td>{{ t.name }}</td>
+          <td>{{ t.uploadedAt | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td>
+            <span *ngIf="t.name === doc.defaultXslTemplate" class="badge-default">✓ Domyślny</span>
+            <button *ngIf="t.name !== doc.defaultXslTemplate" class="btn btn-small btn-secondary" (click)="doc.defaultXslTemplate = t.name">Ustaw domyślny</button>
+          </td>
+          <td>
+            <button class="btn btn-small btn-danger" (click)="deleteXsl(t.name, key)" [disabled]="t.name === doc.defaultXslTemplate">
+              <span [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>
 
   <!-- ── USER SETTINGS ── -->
   <section id="section-1" class="settings-section">
@@ -538,12 +238,6 @@
       </div>
     </div>
 
-    <div class="section-actions">
-      <button class="btn btn-primary" (click)="saveUserSettings()" [disabled]="savingSettings">
-        {{ savingSettings ? 'Zapisywanie...' : 'Zapisz ustawienia' }}
-      </button>
-      <button class="btn btn-secondary" (click)="openPasswordDrawer()">Zmień hasło</button>
-    </div>
   </section>
 
   <!-- ── ADMIN ── -->

@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
@@ -6,6 +6,7 @@ import { UserService, CreateUserRequest, UserDTO } from '../services/user.servic
 import { NotificationService } from '../services/notification.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { Step } from '../shared/components/step-indicator/step-indicator.component';
+import { ScrollSpyDirective } from '../shared/directives/scroll-spy.directive';
 
 @Component({
   selector: 'app-settings',
@@ -13,78 +14,56 @@ import { Step } from '../shared/components/step-indicator/step-indicator.compone
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
+  @ViewChild(ScrollSpyDirective) private scrollSpy!: ScrollSpyDirective;
   activeSection = 0;
+  activeSubKey = '';
   currentStep = 0; // kept for compatibility
   private editUserListener: any;
   SVG_ICONS = SVG_ICONS; // Make SVG_ICONS available in template
 
   steps: Step[] = [
-    { id: 0, key: 'program', label: 'Ustawienia programu' },
-    { id: 1, key: 'user', label: 'Ustawienia użytkownika' },
+    {
+      id: 0, key: 'program', label: 'Ustawienia programu',
+      children: [
+        { id: 0, key: 'sub-org',          label: 'Jednostka' },
+        { id: 0, key: 'sub-docs',         label: 'Dokumenty' },
+        { id: 0, key: 'sub-protocol',     label: 'Protokół' },
+        { id: 0, key: 'sub-register',     label: 'Rejestr' },
+        { id: 0, key: 'sub-controlmarks', label: 'Znaki kontrolne' },
+      ]
+    },
+    { id: 1, key: 'user',  label: 'Ustawienia użytkownika' },
     { id: 2, key: 'admin', label: 'Zarządzanie użytkownikami' }
   ];
 
-  // ── App Settings (full DTO mirroring backend AppSettingsData) ──────────
+  // ── App Settings ──────────────────────────────────────────────────────
   appSettings = {
-    printing: {
-      defaultPrinter: '', paperSize: 'A4', orientation: 'Portrait',
-      copies: 1, colorPrint: false, printHeader: true, printFooter: true,
-      printPageNumbers: true, printWatermark: false, watermarkText: 'KOPIA',
-      marginTopMm: 20, marginRightMm: 15, marginBottomMm: 20, marginLeftMm: 25,
-      defaultXslTemplate: ''
-    },
-    protocols: {
-      numberFormat: '{PREFIX}/{YEAR}/{SEQ}', numberPrefix: 'SKO',
-      inspectionValidityYears: 3, sequenceResetPeriod: 'yearly',
-      sequenceStartValue: 1, sequencePadding: 3,
-      autoSaveOnCreate: true, requireClientOnCreate: false, requireSprayerOnCreate: true,
-      expiryWarningDays: 30, defaultInspectionType: 'field',
-      allowEditAfterSign: false, generatePdfOnCreate: false
-    },
     organization: {
-      stationName: '', accreditationNumber: '', addressLine1: '', addressLine2: '',
-      postalCode: '', city: '', phone: '', email: '', website: '',
-      taxId: '', bankAccount: '', logoBase64: '', logoMimeType: '',
-      accreditationBody: '', accreditationScope: ''
+      stationName: '', unitAuthorizationNumber: '',
+      addressLine1: '', addressLine2: '', city: '', postalCode: '', postOffice: '',
+      phone: '', email: '', taxId: '', regon: ''
     },
-    display: {
-      language: 'pl', theme: 'light', dateFormat: 'dd.MM.yyyy', timeFormat: 'HH:mm',
-      decimalSeparator: ',', thousandsSeparator: ' ', timezone: 'Europe/Warsaw',
-      currency: 'PLN', itemsPerPage: 25, showTooltips: true, compactMode: false
-    },
-    data: {
-      autoSave: true, autoSaveIntervalSeconds: 30, backupPath: '',
-      autoBackup: false, backupSchedule: 'daily', backupRetentionDays: 30,
-      exportFormat: 'pdf', exportIncludeAttachments: true,
-      maxAttachmentSizeMb: 10, archiveAfterYears: false, archiveAfterYearsValue: 5
-    },
-    security: {
-      sessionTimeoutMinutes: 60, maxLoginAttempts: 5, lockoutDurationMinutes: 15,
-      passwordMinLength: 6, passwordRequireUppercase: false,
-      passwordRequireDigit: false, passwordRequireSpecial: false,
-      forcePasswordChangeDays: 0, logSecurityEvents: true,
-      securityLogRetentionDays: 90, allowMultipleSessions: true, requireTwoFactor: false
-    },
-    notifications: {
-      emailEnabled: false, smtpHost: '', smtpPort: 587, smtpUseSsl: true,
-      smtpUser: '', smtpPassword: '', emailFrom: '', emailFromName: '',
-      notifyOnProtocolCreate: false, notifyOnProtocolExpiry: true,
-      notifyDaysBeforeExpiry: 30, notifyRecipientsJson: '[]', inAppNotifications: true
+    documents: {
+      protocol: {
+        inspectionValidityYears: 3, numberPrefix: '', sequencePadding: 3,
+        numberFormat: '{PREFIX}/{YEAR}/{SEQ}', header: '', footer: '', defaultXslTemplate: ''
+      },
+      register: { header: '', footer: '', defaultXslTemplate: '' },
+      controlMarks: { header: '', footer: '', defaultXslTemplate: '' }
     }
   };
 
-  availablePrinters: string[] = [];
   savingAppSettings = false;
 
   readonly formatTokens = [
-    { token: '{PREFIX}',  hint: 'Prefiks (np. SKO)' },
-    { token: '{YEAR}',    hint: 'Rok (np. 2025)' },
-    { token: '{MONTH}',   hint: 'Miesiąc (np. 06)' },
-    { token: '{SEQ}',     hint: 'Numer sekwencyjny (np. 001)' },
-    { token: '{SEQ4}',    hint: 'Numer 4-cyfrowy (np. 0001)' },
+    { token: '{PREFIX}', hint: 'Prefiks (np. SKO)' },
+    { token: '{YEAR}',   hint: 'Rok (np. 2025)' },
+    { token: '{MONTH}',  hint: 'Miesiąc (np. 06)' },
+    { token: '{SEQ}',    hint: 'Numer sekwencyjny (np. 001)' },
+    { token: '{SEQ4}',   hint: 'Numer 4-cyfrowy (np. 0001)' },
   ];
 
-  // XSL Templates
+  // XSL Templates (per-document-type, loaded once)
   xslTemplates: { name: string; uploadedAt: string; size: number }[] = [];
   defaultXslTemplate = '';
   loadingXsl = false;
@@ -94,9 +73,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   get protocolNumberPreview(): string {
     const now = new Date();
-    const p = this.appSettings.protocols;
-    return (p.numberFormat || '{PREFIX}/{YEAR}/{SEQ}')
-      .replace('{PREFIX}', p.numberPrefix || 'SKO')
+    const p = this.appSettings.documents.protocol;
+    return (p.numberFormat || '{YEAR}/{SEQ}')
+      .replace('{PREFIX}', p.numberPrefix || '')
       .replace('{YEAR}',   String(now.getFullYear()))
       .replace('{MONTH}',  String(now.getMonth() + 1).padStart(2, '0'))
       .replace('{SEQ}',    '1'.padStart(p.sequencePadding || 3, '0'))
@@ -104,8 +83,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   insertToken(token: string): void {
-    this.appSettings.protocols.numberFormat =
-      (this.appSettings.protocols.numberFormat || '') + token;
+    this.appSettings.documents.protocol.numberFormat =
+      (this.appSettings.documents.protocol.numberFormat || '') + token;
   }
 
   // User Settings
@@ -196,7 +175,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
       this.loadUserSettings();
       this.loadUsers();
-      this.loadPrinters();
       this.loadXslTemplates();
       this.loadAppSettings();
     } catch (error) {
@@ -224,18 +202,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.signatureImage = 'data:image/png;base64,' + (currentUser as any).signatureBase64;
       }
     }
-  }
-
-  loadPrinters(): void {
-    this.http.get<{ printers: string[], defaultPrinter: string }>('/api/settings/printers').subscribe({
-      next: (res) => {
-        this.availablePrinters = res.printers;
-        if (!this.appSettings.printing.defaultPrinter && res.defaultPrinter) {
-          this.appSettings.printing.defaultPrinter = res.defaultPrinter;
-        }
-      },
-      error: () => {}
-    });
   }
 
   loadUsers(): void {
@@ -453,13 +419,35 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   scrollToSection(sectionId: number): void {
-    const el = this.el.nativeElement.querySelector(`#section-${sectionId}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const container = this.el.nativeElement.querySelector('.settings-scroll') as HTMLElement;
+    const el = this.el.nativeElement.querySelector(`#section-${sectionId}`) as HTMLElement;
+    if (container && el) {
+      this.scrollSpy?.lock();
+      this.activeSection = sectionId;
+      const step = this.steps.find(s => s.id === sectionId);
+      this.activeSubKey = step?.children?.[0]?.key ?? '';
+      container.scrollTop = el.offsetTop - 4;
+    }
+  }
+
+  scrollToSubSection(key: string): void {
+    const container = this.el.nativeElement.querySelector('.settings-scroll') as HTMLElement;
+    const el = this.el.nativeElement.querySelector(`#${key}`) as HTMLElement;
+    if (container && el) {
+      this.scrollSpy?.lock();
+      this.activeSubKey = key;
+      container.scrollTop = el.offsetTop - 4;
+    }
   }
 
   onActiveSection(id: string): void {
     const num = parseInt(id.replace('section-', ''), 10);
-    if (!isNaN(num)) this.activeSection = num;
+    if (!isNaN(num) && num !== this.activeSection) {
+      this.activeSection = num;
+      // Reset sub-key to first child of the newly active section
+      const step = this.steps.find(s => s.id === num);
+      this.activeSubKey = step?.children?.[0]?.key ?? '';
+    }
   }
 
   goToStep(stepId: number): void {
@@ -472,47 +460,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
       ...this.xslTemplates.map(t => ({ value: t.name, label: t.name }))
     ];
   }
-
-  get printerOptions() {
-    return [
-      { value: '', label: '— wybierz —' },
-      ...this.availablePrinters.map(p => ({ value: p, label: p })),
-      { value: '__pdf__', label: 'Zapisz jako PDF' }
-    ];
-  }
-
-  readonly dateFormatOptions = [
-    { value: 'dd.MM.yyyy', label: 'dd.MM.yyyy' },
-    { value: 'yyyy-MM-dd', label: 'yyyy-MM-dd' },
-    { value: 'MM/dd/yyyy', label: 'MM/dd/yyyy' },
-  ];
-  readonly paperSizeOptions = [
-    { value: 'A4', label: 'A4' }, { value: 'A3', label: 'A3' }, { value: 'Letter', label: 'Letter' }
-  ];
-  readonly orientationOptions = [
-    { value: 'Portrait', label: 'Pionowa (Portrait)' }, { value: 'Landscape', label: 'Pozioma (Landscape)' }
-  ];
-  readonly seqResetOptions = [
-    { value: 'never', label: 'Nigdy' }, { value: 'yearly', label: 'Co rok' }, { value: 'monthly', label: 'Co miesiąc' }
-  ];
-  readonly inspectionTypeOptions = [
-    { value: 'field', label: 'Polowy' }, { value: 'orchard', label: 'Sadowniczy' }
-  ];
-  readonly themeOptions = [
-    { value: 'light', label: 'Jasny' }, { value: 'dark', label: 'Ciemny' }, { value: 'system', label: 'Systemowy' }
-  ];
-  readonly languageOptions = [
-    { value: 'pl', label: 'Polski' }, { value: 'en', label: 'English' }
-  ];
-  readonly exportFormatOptions = [
-    { value: 'pdf', label: 'PDF' }, { value: 'xlsx', label: 'Excel (XLSX)' }, { value: 'csv', label: 'CSV' }
-  ];
-  readonly backupScheduleOptions = [
-    { value: 'daily', label: 'Codziennie' }, { value: 'weekly', label: 'Co tydzień' }, { value: 'monthly', label: 'Co miesiąc' }
-  ];
-  readonly itemsPerPageOptions = [
-    { value: 10, label: '10' }, { value: 25, label: '25' }, { value: 50, label: '50' }, { value: 100, label: '100' }
-  ];
 
   loadAppSettings(): void {
     this.http.get<any>('/api/settings').subscribe({
@@ -727,19 +674,34 @@ export class SettingsComponent implements OnInit, OnDestroy {
     );
   }
 
+  // XSL templates stored per document type
+  private xslByKey: Record<string, { name: string; uploadedAt: string; size: number }[]> = {};
+
+  getXslTemplates(key: string) {
+    return this.xslByKey[key] || [];
+  }
+
   loadXslTemplates(): void {
     this.loadingXsl = true;
     this.http.get<{ templates: any[]; defaultTemplate: string }>('/api/settings/xsl-templates').subscribe({
       next: (res) => {
+        // All templates shared across document types for now
         this.xslTemplates = res.templates;
-        this.defaultXslTemplate = res.defaultTemplate;
+        this.xslByKey['protocol'] = res.templates;
+        this.xslByKey['register'] = res.templates;
+        this.xslByKey['controlMarks'] = res.templates;
         this.loadingXsl = false;
       },
       error: () => { this.loadingXsl = false; }
     });
   }
 
-  onXslFileSelected(event: any): void {
+  triggerXslUpload(key: string): void {
+    const el = document.getElementById('xslInput-' + key) as HTMLInputElement;
+    if (el) el.click();
+  }
+
+  onXslFileSelected(event: any, key: string = 'protocol'): void {
     const file: File = event.target.files[0];
     if (!file) return;
     if (!file.name.endsWith('.xsl')) { this.xslError = 'Dozwolone są tylko pliki .xsl'; return; }
@@ -753,14 +715,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  setDefaultXsl(name: string): void {
-    this.http.put('/api/settings/xsl-templates/default', { name }).subscribe({
-      next: () => { this.defaultXslTemplate = name; this.notificationService.success('Domyślny szablon ustawiony'); },
-      error: (err) => { this.notificationService.error(err.error?.message || 'Błąd'); }
-    });
-  }
-
-  deleteXsl(name: string): void {
+  deleteXsl(name: string, key: string = 'protocol'): void {
     if (!confirm(`Usunąć szablon ${name}?`)) return;
     this.http.delete(`/api/settings/xsl-templates/${encodeURIComponent(name)}`).subscribe({
       next: () => { this.loadXslTemplates(); this.notificationService.success('Usunięto'); },
