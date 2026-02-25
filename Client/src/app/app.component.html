@@ -19,6 +19,9 @@
   <div class="sidebar" [class.open]="sidebarOpen" role="navigation" aria-label="Menu główne">
     <div class="sidebar-header">
       <div class="sidebar-header-top">
+        <span class="sidebar-user-name" *ngIf="displayUserName">
+          {{ displayUserName }}
+        </span>
         <button
           class="close-btn"
           type="button"

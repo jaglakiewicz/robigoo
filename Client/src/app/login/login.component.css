@@ -6,7 +6,10 @@
 .login-container {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 15% 0, color-mix(in oklab, var(--primary) 12%, var(--bg)) 0, transparent 50%),
+    radial-gradient(circle at 85% 100%, color-mix(in oklab, var(--secondary) 10%, var(--bg)) 0, transparent 55%),
+    var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,7 +95,37 @@
   50% { transform: translateY(-8px); }
 }
 
-.logo-icon svg { width: 100%; height: 100%; color: var(--accent); }
+.logo-icon svg {
+  width: 100%;
+  height: 100%;
+  color: var(--primary);
+}
+
+/* Top logo sprayer color accents */
+.logo-icon .support-legs {
+  color: var(--sidebar-bg);
+}
+
+.logo-icon .boom-arm,
+.logo-icon .boom-line,
+.logo-icon .boom-joint,
+.logo-icon .boom-hinge,
+.logo-icon .boom-hinge-dot,
+.logo-icon .boom-truss {
+  color: var(--sidebar-bg);
+}
+
+.logo-icon .nozzle-group {
+  color: var(--secondary);
+}
+
+.logo-icon .spray-particles .spray-drop {
+  color: var(--primary-light);
+}
+
+.logo-icon .tank-cap-main .cap-body {
+  transform: translateY(-3px);
+}
 .logo-ring { fill: none; stroke: currentColor; stroke-width: 1.5; opacity: 0.3; }
 
 .sprayer-tank-main { animation: tankPulse 3s ease-in-out infinite; }
@@ -315,7 +348,7 @@
   display: block;
   width: 100%;
   height: auto;
-  opacity: 0.28;
+  opacity: 0.24;
   filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.35));
 }
 
@@ -383,6 +416,31 @@
 .sprayer-body rect { fill: rgba(255, 255, 255, 0.05); }
 .sprayer-wheels circle { fill: rgba(0, 0, 0, 0.08); stroke-width: 2.5; }
 .sprayer-boom circle { fill: rgba(255, 255, 255, 0.12); }
+
+.spray-cones polygon {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 0.8;
+  animation: sprayConePulse 4s ease-in-out infinite alternate;
+}
+
+.spray-cones polygon:nth-child(2) { animation-delay: 0.3s; }
+.spray-cones polygon:nth-child(3) { animation-delay: 0.6s; }
+
+.spray-droplets circle {
+  fill: rgba(255, 255, 255, 0.14);
+  stroke: none;
+  animation: sprayDrift 3.5s ease-in-out infinite;
+}
+
+.spray-droplets--tail circle { animation-delay: 0.7s; opacity: 0.4; }
+
+/* De-emphasize large background sprayer */
+.login-illustration .sprayer-assembly,
+.login-illustration .spray-cones,
+.login-illustration .spray-droplets {
+  opacity: 0.16;
+}
 
 .spray-cones polygon {
   fill: rgba(255, 255, 255, 0.05);
