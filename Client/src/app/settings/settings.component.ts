@@ -21,6 +21,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private editUserListener: any;
   SVG_ICONS = SVG_ICONS; // Make SVG_ICONS available in template
 
+  get saving(): boolean {
+    return this.savingAppSettings || this.savingSettings;
+  }
+
   steps: Step[] = [
     {
       id: 0, key: 'program', label: 'Ustawienia programu',
@@ -474,6 +478,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
       next: () => { this.notificationService.success('Ustawienia programu zapisane'); this.savingAppSettings = false; },
       error: (err) => { this.notificationService.error(err.error?.message || 'Błąd zapisu'); this.savingAppSettings = false; }
     });
+  }
+
+  saveAll(): void {
+    this.saveAppSettings();
+    this.saveUserSettings();
   }
 
   get visibleSteps(): Step[] {

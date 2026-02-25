@@ -16,38 +16,21 @@
   <!-- Skip Link for keyboard users -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <button class="hamburger" *ngIf="!sidebarOpen" (click)="toggle()" aria-label="Open menu">
-    &#9776;
-  </button>
-
-  <div class="sidebar" [class.open]="sidebarOpen" role="navigation" aria-label="Main navigation">
-    <div class="sidebar-header" *ngIf="sidebarOpen">
+  <div class="sidebar" [class.open]="sidebarOpen" role="navigation" aria-label="Menu główne">
+    <div class="sidebar-header">
       <div class="sidebar-header-top">
-        <button class="close-btn" (click)="toggle()" aria-label="Close menu">&times;</button>
-      </div>
-      <div class="user-menu sidebar-user-section" *ngIf="displayUserName" [class.open]="userMenuOpen" #userMenuSection>
-        <span class="user-section-label">{{ 'userMenu.loggedInAs' | text }}</span>
-        <button type="button" class="user-info-display" [class.active]="userMenuOpen" (click)="toggleUserMenu()" [attr.aria-expanded]="userMenuOpen" #userInfoButton>
-          <span class="user-avatar" [ngClass]="{'has-image': userAvatar}" [style.backgroundImage]="userAvatar ? 'url(' + userAvatar + ')' : 'none'">
-            <span *ngIf="!userAvatar" class="avatar-initials">{{ userInitials }}</span>
-          </span>
-          <span class="user-name-text">{{ currentUserLogin }}</span>
-          <span class="user-chevron" [innerHTML]="getSafeHtml(userChevronSvg)"></span>
-        </button>
-        <div class="user-menu-dropdown" *ngIf="userMenuOpen">
-          <div class="user-menu-item user-menu-info">
-            <span class="user-menu-name">{{ displayUserName }}</span>
-            <span *ngIf="currentUserPermissionNumber" class="user-menu-meta">
-              {{ 'userMenu.permissionLabel' | text }} {{ currentUserPermissionNumber }}
-            </span>
-          </div>
-          <div class="user-menu-item" (click)="editUser()">{{ 'userMenu.edit' | text }}</div>
-          <div class="user-menu-item" (click)="onLogout()">{{ 'userMenu.logout' | text }}</div>
-        </div>
+        <button
+          class="close-btn"
+          type="button"
+          (click)="toggle()"
+          [attr.aria-label]="sidebarOpen ? 'Zwiń menu boczne' : 'Rozwiń menu boczne'"
+          [attr.title]="sidebarOpen ? 'Zwiń menu boczne' : 'Rozwiń menu boczne'"
+          [innerHTML]="getSafeHtml(SVG_ICONS.menuIcon)">
+        </button>        
       </div>
     </div>
 
-    <ul class="menu" *ngIf="sidebarOpen" [class.blur]="userMenuOpen" appScrollFade aria-label="Main menu">
+    <ul class="menu" [class.blur]="userMenuOpen" appScrollFade aria-label="Main menu">
       <li *ngFor="let item of menuItems" 
           role="menuitem"
           tabindex="0"
@@ -58,67 +41,124 @@
           [class.restricted]="isMasterAdmin() && item.type !== 'settings'"
           [attr.aria-disabled]="isMasterAdmin() && item.type !== 'settings'"
           [attr.title]="isMasterAdmin() && item.type !== 'settings' ? 'Master administrator może koristiti samo Settings' : null">
-        <span class="menu-icon" aria-hidden="true" [innerHTML]="getSafeHtml(iconMap[item.type])"></span>
+        <span
+          class="menu-icon"
+          aria-hidden="true"
+          [innerHTML]="getSafeHtml(iconMap[item.type])"
+          [attr.title]="!sidebarOpen ? (item.titleKey | text) : null">
+        </span>
         <span>{{ item.titleKey | text }}</span>
         <span class="hint" aria-hidden="true">{{ item.hintKey | text }}</span>
       </li>
     </ul>
-
-    <div class="sidebar-footer" *ngIf="sidebarOpen">
-      <div class="sidebar-footer-content">
-        <div class="theme-section">
-          <span class="theme-label">{{ 'theme.toggle' | text }}</span>
-          <label class="toggle-switch">
-            <input type="checkbox" [checked]="darkMode" (change)="toggleTheme()" aria-label="Toggle dark mode">
-            <span class="toggle-slider">
-              <span class="toggle-icon toggle-icon-light">??</span>
-              <span class="toggle-icon toggle-icon-dark">??</span>
-            </span>
-          </label>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="app-shell" [class.shifted]="sidebarOpen">
     <div class="container">
-      <div class="top-bar" role="complementary" aria-label="Status bar">
-        <!-- Home button - always visible in top bar -->
-        <button class="home-button" 
-                [class.active]="isHomeActive()" 
-                (click)="goHome()" 
-                aria-label="Home" 
-                [innerHTML]="getSafeHtml(SVG_ICONS.home)">
-        </button>
-        
-        <div class="tabs" role="tablist" aria-label="Open programs" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="reorderTabs($event)">
-          <div *ngFor="let t of tabs; let i = index" 
-               class="tab" 
-               role="tab"
-               [attr.aria-selected]="i === activeIndex"
-               [attr.tabindex]="i === activeIndex ? 0 : -1"
-               cdkDrag 
-               cdkDragLockAxis="x" 
-               [class.active]="i === activeIndex"
-               (click)="activateTab(i)"
-               (keydown.enter)="activateTab(i)"
-               (keydown.space)="activateTab(i); $event.preventDefault()">
-            <span *ngIf="t.icon" class="tab-icon" aria-hidden="true" [innerHTML]="getSafeHtml(t.icon)"></span>
-            <span>{{ t.titleKey | text }}</span><span *ngIf="hasDuplicateType(t.type)" class="tab-instance">{{ t.instance }}</span>
-            <button class="tab-action pin" 
-                    [attr.aria-label]="t.pinned ? 'Unpin tab' : 'Pin tab'" 
-                    *ngIf="i === activeIndex || t.pinned" 
-                    (click)="togglePinTab(i, $event)" 
-                    [class.pinned]="t.pinned" 
-                    [innerHTML]="getSafeHtml(SVG_ICONS.pinIcon)"></button>
-            <button class="tab-action close" 
-                    aria-label="Close tab" 
-                    *ngIf="!t.pinned" 
-                    (click)="closeTab(i); $event.stopPropagation()" 
-                    [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></button>
+      <div class="top-bar" role="banner" aria-label="Application header">
+        <div class="top-bar-primary">
+          <div class="top-bar-left">
+            <!-- Home button - always visible in top bar -->
+            <button class="home-button" 
+                    [class.active]="isHomeActive()" 
+                    (click)="goHome()" 
+                    aria-label="Home" 
+                    [innerHTML]="getSafeHtml(SVG_ICONS.home)">
+            </button>
+
+            <div class="app-brand" aria-label="Stacja Kontroli Opryskiwaczy">
+              <span class="app-name">Stacja Kontroli Opryskiwaczy</span>
+            </div>
+          </div>
+
+          <div class="top-bar-center">
+            <div class="global-search" aria-hidden="true">
+              <input
+                type="search"
+                class="global-search-input"
+                [placeholder]="'globalSearch.placeholder' | text"
+                aria-label="Nazwa stacji"
+                disabled />
+            </div>
+          </div>
+
+          <div class="top-bar-right">
+            <div class="user-menu topbar-user-section" *ngIf="displayUserName" [class.open]="userMenuOpen">
+              <button
+                type="button"
+                class="user-info-display"
+                [class.active]="userMenuOpen"
+                (click)="toggleUserMenu()"
+                [attr.aria-expanded]="userMenuOpen">
+                <span class="user-avatar" [ngClass]="{'has-image': userAvatar}" [style.backgroundImage]="userAvatar ? 'url(' + userAvatar + ')' : 'none'">
+                  <span *ngIf="!userAvatar" class="avatar-initials">{{ userInitials }}</span>
+                </span>
+                <span class="user-name-text">{{ displayUserName }}</span>
+                <span class="user-chevron" [innerHTML]="getSafeHtml(userChevronSvg)"></span>
+              </button>
+
+              <div class="user-menu-dropdown" *ngIf="userMenuOpen">
+                <div class="user-menu-item user-menu-info">
+                  <span class="user-menu-name">{{ displayUserName }}</span>
+                  <span *ngIf="currentUserPermissionNumber" class="user-menu-meta">
+                    {{ 'userMenu.permissionLabel' | text }} {{ currentUserPermissionNumber }}
+                  </span>
+                </div>
+                <div class="user-menu-item">
+                  <div class="theme-section">
+                    <span class="theme-label">{{ 'theme.toggle' | text }}</span>
+                    <label class="toggle-switch">
+                      <input
+                        type="checkbox"
+                        [checked]="darkMode"
+                        (change)="toggleTheme()"
+                        [attr.aria-label]="'theme.toggle' | text">
+                      <span class="toggle-slider">
+                        <span class="toggle-icon toggle-icon-light">☀</span>
+                        <span class="toggle-icon toggle-icon-dark">☾</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <div class="user-menu-item" (click)="editUser()">{{ 'userMenu.edit' | text }}</div>
+                <div class="user-menu-item" (click)="onLogout()">{{ 'userMenu.logout' | text }}</div>
+              </div>
+            </div>
+
+            <div class="app-toolbar"></div>
           </div>
         </div>
-        <div class="app-toolbar"></div>
+
+        <div class="top-bar-tabs">
+          <div class="tabs" role="tablist" aria-label="Open programs" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="reorderTabs($event)">
+            <div *ngFor="let t of tabs; let i = index" 
+                 class="tab" 
+                 role="tab"
+                 [attr.aria-selected]="i === activeIndex"
+                 [attr.tabindex]="i === activeIndex ? 0 : -1"
+                 cdkDrag 
+                 cdkDragLockAxis="x" 
+                 [class.active]="i === activeIndex"
+                 [class.pinned]="t.pinned"
+                 (click)="activateTab(i)"
+                 (keydown.enter)="activateTab(i)"
+                 (keydown.space)="activateTab(i); $event.preventDefault()">
+              <span *ngIf="t.icon" class="tab-icon" aria-hidden="true" [innerHTML]="getSafeHtml(t.icon)"></span>
+              <span>{{ t.titleKey | text }}</span><span *ngIf="hasDuplicateType(t.type)" class="tab-instance">{{ t.instance }}</span>
+              <button class="tab-action pin" 
+                      [attr.aria-label]="t.pinned ? 'Unpin tab' : 'Pin tab'" 
+                      *ngIf="i === activeIndex || t.pinned" 
+                      (click)="togglePinTab(i, $event)" 
+                      [class.pinned]="t.pinned" 
+                      [innerHTML]="getSafeHtml(SVG_ICONS.pinIcon)"></button>
+              <button class="tab-action close" 
+                      aria-label="Close tab" 
+                      *ngIf="!t.pinned" 
+                      (click)="closeTab(i); $event.stopPropagation()" 
+                      [innerHTML]="getSafeHtml(SVG_ICONS.closeIcon)"></button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="main-area" [class.home-active]="isHomeActive()" appScrollFade id="main-content" role="main" aria-label="Main content">

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ROBIGOO FIELD SPRAYER CONTROL STATION
  * Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
@@ -61,6 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const saved = localStorage.getItem('theme');
     this.darkMode = saved === 'dark';
     this.applyTheme();
+    this.sidebarOpen = this.shouldSidebarBeOpen();
     
     // Subscribe to auth service for user changes
     this.currentUserSub = this.authService.currentUser$.subscribe(user => {
@@ -70,6 +71,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.userAvatar = user.avatarBase64 ? `data:image/jpeg;base64,${user.avatarBase64}` : null;
         this.currentUserPermissionNumber = user.permissionNumber ?? '';
         this.isLoggedIn = true;
+        this.sidebarOpen = this.shouldSidebarBeOpen();
         this.initializeHomeTabs();
         this.startSessionHeartbeat();
       } else {
@@ -79,6 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.userAvatar = null;
         this.userMenuOpen = false;
         this.currentUserPermissionNumber = '';
+        this.sidebarOpen = false;
         this.tabs = [];
         this.activeIndex = 0;
         this.stopSessionHeartbeat();
@@ -319,6 +322,16 @@ export class AppComponent implements OnInit, OnDestroy {
         // ignore
       }
       this.sessionHeartbeatId = null;
+    }
+  }
+
+  private shouldSidebarBeOpen(): boolean {
+    try {
+      // On phones we treat the sidebar as a drawer; default closed there.
+      const width = window.innerWidth;
+      return !!width && width > 600;
+    } catch {
+      return false;
     }
   }
 

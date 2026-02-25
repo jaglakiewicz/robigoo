@@ -35,6 +35,10 @@ const TEXTS: TextTree = {
   tabs: {
     empty: 'Brak otwartych kart. Użyj menu, aby rozpocząć.'
   },
+  globalSearch: {
+    placeholder: 'Nazwa stacji',
+    ariaLabel: 'Nazwa stacji'
+  },
   userMenu: {
     loggedInAs: 'Zalogowany jako',
     permissionLabel: 'Nr uprawnień',

@@ -662,7 +662,7 @@ app.MapGet("/api/clients", async (AppDbContext db, HttpContext context,
     {
         var term = q.Trim().ToLowerInvariant();
         queryable = queryable.Where(c =>
-            c.DisplayName.ToLower().Contains(term) ||
+            (c.DisplayName ?? string.Empty).ToLower().Contains(term) ||
             (c.City != null && c.City.ToLower().Contains(term)) ||
             (c.Nip != null && c.Nip.Contains(term)) ||
             (c.Pesel != null && c.Pesel.Contains(term)) ||
@@ -690,7 +690,7 @@ app.MapGet("/api/clients", async (AppDbContext db, HttpContext context,
     {
         Id = c.Id,
         ClientType = c.ClientType,
-        DisplayName = c.DisplayName,
+        DisplayName = c.DisplayName ?? string.Empty,
         FirstName = c.FirstName,
         LastName = c.LastName,
         Pesel = c.Pesel,

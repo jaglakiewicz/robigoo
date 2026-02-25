@@ -44,7 +44,7 @@ namespace Server.Infrastructure.Persistence.Repositories
             {
                 var term = filter.Q.Trim().ToLowerInvariant();
                 queryable = queryable.Where(c =>
-                    c.DisplayName.ToLower().Contains(term) ||
+                    (c.DisplayName ?? string.Empty).ToLower().Contains(term) ||
                     (c.City != null && c.City.ToLower().Contains(term)) ||
                     (c.Nip != null && c.Nip.Contains(term)) ||
                     (c.Pesel != null && c.Pesel.Contains(term)) ||

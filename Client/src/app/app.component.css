@@ -1,0 +1,14 @@
+/* Top-right user menu positioning and dropdown */
+.topbar-user-section {
+  position: relative;
+}
+
+.topbar-user-section .user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  left: auto;
+  z-index: 1200;
+  max-width: min(320px, 90vw);
+}
+
