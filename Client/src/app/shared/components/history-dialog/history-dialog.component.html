@@ -12,28 +12,45 @@
         Brak historii zmian.
       </div>
 
-      <table *ngIf="!loading && logs.length > 0" class="data-table text-sm">
-        <thead>
-          <tr>
-            <th>Kiedy</th>
-            <th>Kto</th>
-            <th>Zmiany</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let log of logs">
-            <td class="col-when">{{ log.when | date:'medium' }}</td>
-            <td class="col-who">
-              <div class="user-cell">
-                <div class="user-avatar" *ngIf="!hasAvatar(log)" [innerHTML]="getSafeHtml(userIcon)"></div>
-                <img class="user-avatar-img" *ngIf="hasAvatar(log)" [src]="getAvatarSrc(log)" alt="Avatar">
-                <span>{{ getUserDisplayName(log) }}</span>
+      <div *ngIf="!loading && logs.length > 0" class="history-list">
+        <div *ngFor="let log of logs; let last = last" class="history-item">
+          <div class="history-header">
+            <div class="user-info">
+              <div class="user-avatar" *ngIf="!hasAvatar(log)" [innerHTML]="getSafeHtml(userIcon)"></div>
+              <img class="user-avatar-img" *ngIf="hasAvatar(log)" [src]="getAvatarSrc(log)" alt="Avatar">
+              <div>
+                <div class="user-name">{{ getUserDisplayName(log) }}</div>
+                <div class="timestamp">{{ log.when | date:'medium' }}</div>
               </div>
-            </td>
-            <td class="col-changes" [innerHTML]="formatChanges(log.changes)"></td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div class="action-badge">{{ parseChanges(log.changes).action }}</div>
+          </div>
+          
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pole</th>
+                <th>Wartość</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let field of parseChanges(log.changes).fields">
+                <td>{{ field.label }}</td>
+                <td>
+                  <span *ngIf="!field.oldValue">{{ field.newValue }}</span>
+                  <span *ngIf="field.oldValue" class="value-change">
+                    <span class="old-value">{{ field.oldValue }}</span>
+                    <span class="arrow-icon" [innerHTML]="getSafeHtml(arrowIcon)"></span>
+                    <span class="new-value">{{ field.newValue }}</span>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div *ngIf="!last" class="history-separator"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

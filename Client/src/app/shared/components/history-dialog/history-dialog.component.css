@@ -1,36 +1,107 @@
-.text-sm { font-size: var(--font-size-sm); }
+.history-list {
+  display: flex;
+  flex-direction: column;
+}
 
-.user-cell {
+.history-item {
+  margin-bottom: var(--space-lg);
+}
+
+.history-header {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
 .user-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 2px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
   background-color: var(--bg-alt);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   color: var(--text-secondary);
   flex-shrink: 0;
 }
 
+.user-avatar svg { 
+  width: 20px; 
+  height: 20px; 
+}
+
 .user-avatar-img {
-  width: 24px;
-  height: 24px;
-  border-radius: 2px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
   object-fit: cover;
   flex-shrink: 0;
 }
 
-.user-avatar svg { width: 18px; height: 18px; }
+.user-name {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
 
-.col-when { width: 180px; white-space: nowrap; }
-.col-who { width: 150px; }
+.timestamp {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.action-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-color);
+  color: white;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.history-separator {
+  height: 2px;
+  background: var(--border-color);
+  margin: var(--space-xl) 0;
+}
+
+.value-change {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.old-value {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.arrow-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.arrow-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.new-value {
+  color: var(--primary-color);
+  font-weight: 600;
+}
 
 .loading, .no-data {
   text-align: center;

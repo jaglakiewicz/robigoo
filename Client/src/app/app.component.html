@@ -19,9 +19,10 @@
   <div class="sidebar" [class.open]="sidebarOpen" role="navigation" aria-label="Menu główne">
     <div class="sidebar-header">
       <div class="sidebar-header-top">
-        <span class="sidebar-user-name" *ngIf="displayUserName">
-          {{ displayUserName }}
-        </span>
+        <div class="sidebar-user-info" *ngIf="displayUserName">
+          <span class="sidebar-user-icon" [innerHTML]="getSafeHtml(SVG_ICONS.user)"></span>
+          <span class="sidebar-user-name">{{ displayUserName }}</span>
+        </div>
         <button
           class="close-btn"
           type="button"
@@ -54,6 +55,23 @@
         <span class="hint" aria-hidden="true">{{ item.hintKey | text }}</span>
       </li>
     </ul>
+
+    <div class="sidebar-footer">
+      <div class="theme-section">
+        <span class="theme-label" *ngIf="sidebarOpen">{{ 'theme.toggle' | text }}</span>
+        <label class="toggle-switch" [attr.title]="!sidebarOpen ? ('theme.toggle' | text) : null">
+          <input
+            type="checkbox"
+            [checked]="darkMode"
+            (change)="toggleTheme()"
+            [attr.aria-label]="'theme.toggle' | text">
+          <span class="toggle-slider">
+            <span class="toggle-icon toggle-icon-light" [innerHTML]="getSafeHtml(SVG_ICONS.sun)"></span>
+            <span class="toggle-icon toggle-icon-dark" [innerHTML]="getSafeHtml(SVG_ICONS.moon)"></span>
+          </span>
+        </label>
+      </div>
+    </div>
   </div>
 
   <div class="app-shell" [class.shifted]="sidebarOpen">
@@ -106,22 +124,6 @@
                   <span *ngIf="currentUserPermissionNumber" class="user-menu-meta">
                     {{ 'userMenu.permissionLabel' | text }} {{ currentUserPermissionNumber }}
                   </span>
-                </div>
-                <div class="user-menu-item">
-                  <div class="theme-section">
-                    <span class="theme-label">{{ 'theme.toggle' | text }}</span>
-                    <label class="toggle-switch">
-                      <input
-                        type="checkbox"
-                        [checked]="darkMode"
-                        (change)="toggleTheme()"
-                        [attr.aria-label]="'theme.toggle' | text">
-                      <span class="toggle-slider">
-                        <span class="toggle-icon toggle-icon-light">☀</span>
-                        <span class="toggle-icon toggle-icon-dark">☾</span>
-                      </span>
-                    </label>
-                  </div>
                 </div>
                 <div class="user-menu-item" (click)="editUser()">{{ 'userMenu.edit' | text }}</div>
                 <div class="user-menu-item" (click)="onLogout()">{{ 'userMenu.logout' | text }}</div>

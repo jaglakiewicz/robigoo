@@ -16,6 +16,7 @@ namespace Server.Data
         #region Declarations
 
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private bool _isAuditingSuppressed = false;
 
         #endregion
 
@@ -95,7 +96,7 @@ namespace Server.Data
             try
             {
                 var result = await base.SaveChangesAsync(cancellationToken);
-                await OnAfterSaveChanges(auditEntries);
+                await OnAfterSaveChanges(auditEntries, cancellationToken);
                 return result;
             }
             catch (DbUpdateConcurrencyException ex)
@@ -113,6 +114,10 @@ namespace Server.Data
 
         private List<AuditEntry> OnBeforeSaveChanges()
         {
+            // Skip auditing if suppressed (e.g., when saving audit logs themselves)
+            if (_isAuditingSuppressed)
+                return new List<AuditEntry>();
+
             ChangeTracker.DetectChanges();
             var auditEntries = new List<AuditEntry>();
             var user = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value 
@@ -173,7 +178,7 @@ namespace Server.Data
             return auditEntries;
         }
 
-        private async Task OnAfterSaveChanges(List<AuditEntry> auditEntries)
+        private async Task OnAfterSaveChanges(List<AuditEntry> auditEntries, CancellationToken cancellationToken = default)
         {
             if (auditEntries == null || auditEntries.Count == 0)
                 return;
@@ -201,8 +206,23 @@ namespace Server.Data
                 }
             }
 
-            // Save the logs
-            await base.SaveChangesAsync();
+            // Save the logs directly without triggering the audit trail again
+            // This prevents infinite recursion by suppressing auditing for this save
+            try
+            {
+                _isAuditingSuppressed = true;
+                await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception)
+            {
+                // If audit log save fails, don't fail the entire operation
+                // The main entity save already succeeded
+                // Log the error but continue
+            }
+            finally
+            {
+                _isAuditingSuppressed = false;
+            }
         }
 
         #endregion

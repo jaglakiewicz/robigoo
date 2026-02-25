@@ -90,7 +90,7 @@ namespace Server.Models
         /// PESEL number (Polish national ID, 11 digits).
         /// </summary>
         [MaxLength(11, ErrorMessage = "PESEL cannot exceed 11 characters")]
-        [RegularExpression("^[0-9]{11}$", ErrorMessage = "PESEL must be exactly 11 digits")]
+        [RegularExpression("^([0-9]{11})?$", ErrorMessage = "PESEL must be exactly 11 digits")]
         public string? Pesel { get; set; }
 
         /// <summary>
@@ -103,14 +103,14 @@ namespace Server.Models
         /// NIP number (Polish tax ID, 10 digits).
         /// </summary>
         [MaxLength(10, ErrorMessage = "NIP cannot exceed 10 characters")]
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "NIP must be exactly 10 digits")]
+        [RegularExpression("^([0-9]{10})?$", ErrorMessage = "NIP must be exactly 10 digits")]
         public string? Nip { get; set; }
 
         /// <summary>
         /// REGON number (Polish business registry, 9 or 14 digits).
         /// </summary>
         [MaxLength(14, ErrorMessage = "REGON cannot exceed 14 characters")]
-        [RegularExpression("^[0-9]{9}([0-9]{5})?$", ErrorMessage = "REGON must be 9 or 14 digits")]
+        [RegularExpression("^([0-9]{9}([0-9]{5})?)?$", ErrorMessage = "REGON must be 9 or 14 digits")]
         public string? Regon { get; set; }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Server.Models
         /// Zip/postal code (Polish format: XX-XXX).
         /// </summary>
         [MaxLength(10, ErrorMessage = "Zip code cannot exceed 10 characters")]
-        [RegularExpression("^[0-9]{2}-[0-9]{3}$", ErrorMessage = "Zip code must be in format XX-XXX")]
+        [RegularExpression("^([0-9]{2}-[0-9]{3})?$", ErrorMessage = "Zip code must be in format XX-XXX")]
         public string? ZipCode { get; set; }
     }
 

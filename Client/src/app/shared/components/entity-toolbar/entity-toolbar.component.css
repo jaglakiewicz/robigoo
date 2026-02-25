@@ -8,20 +8,23 @@
 .entity-toolbar {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-lg);
-  background: color-mix(in oklab, var(--bg-alt) 88%, var(--panel));
+  gap: var(--space-md);
+  padding: 10px var(--space-lg);
+  background: linear-gradient(to bottom, var(--surface), var(--bg-alt));
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.5);
   position: relative;
   z-index: 1;
   flex-wrap: wrap;
-  row-gap: 6px;
+  row-gap: 8px;
+  min-height: 56px;
 }
 
 :root[data-theme="dark"] .entity-toolbar {
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(to bottom, var(--surface), var(--bg));
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: var(--border-strong);
 }
 
 .toolbar-group {
@@ -34,7 +37,8 @@
 .toolbar-group:first-child { padding-left: 0; }
 
 .toolbar-group + .toolbar-group:not(:empty) {
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--border-strong);
+  padding-left: var(--space-md);
 }
 
 .toolbar-group.toolbar-left { justify-content: flex-start; }
@@ -72,20 +76,45 @@
 
 .entity-toolbar .btn-label { text-align: left; }
 
+/* Tablet optimization - keep labels visible */
+@media (max-width: 1024px) and (min-width: 601px) {
+  .entity-toolbar {
+    padding: 8px var(--space-md);
+    gap: var(--space-sm);
+  }
+  
+  .entity-toolbar .btn {
+    padding-inline: 10px;
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Mobile optimization - icon-only buttons */
 @media (max-width: 600px) {
   .entity-toolbar {
-    padding: 6px var(--space-md);
-    gap: 0;
+    padding: 8px var(--space-md);
+    gap: var(--space-sm);
+    min-height: 52px;
   }
 
-  .entity-toolbar .btn-label { display: none; }
-  .entity-toolbar .btn {
-    padding-inline: 9px;
-    height: 40px;
-    min-height: 40px;
+  .entity-toolbar .btn-label { 
+    display: none; 
   }
+  
+  .entity-toolbar .btn {
+    padding-inline: 0;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+  
   .entity-toolbar .btn-icon-only {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  .toolbar-group {
+    gap: 6px;
   }
 }

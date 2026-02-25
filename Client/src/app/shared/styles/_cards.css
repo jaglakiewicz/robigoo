@@ -68,15 +68,119 @@
    ENTITY CARD BADGES
    ============================================================ */
 .entity-card .badge {
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
+  padding: 2px 6px !important;
+  border-radius: 2px !important;
   font-size: var(--font-size-xs);
   line-height: 1.4;
   border: 1px solid var(--border-light);
   background: var(--surface-alt);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.2px;
 }
 
+/* Crop Sprayer Type Badges */
+.entity-card .badge-type-field {
+  border-color: #4ade80 !important;
+  background: #dcfce7 !important;
+  color: #16a34a !important;
+}
+
+.entity-card .badge-type-garden {
+  border-color: #c084fc !important;
+  background: #f3e8ff !important;
+  color: #9333ea !important;
+}
+
+/* Crop Sprayer Kind Badges */
+.entity-card .badge-kind-mounted {
+  border-color: #60a5fa !important;
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+
+.entity-card .badge-kind-trailed {
+  border-color: #fbbf24 !important;
+  background: #fef3c7 !important;
+  color: #d97706 !important;
+}
+
+.entity-card .badge-kind-self-propelled {
+  border-color: #f87171 !important;
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+.entity-card .badge-kind-other {
+  border-color: #9ca3af !important;
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+}
+
+/* Client Type Badges */
+.entity-card .badge-client-person {
+  border-color: #34d399 !important;
+  background: #d1fae5 !important;
+  color: #059669 !important;
+}
+
+.entity-card .badge-client-company {
+  border-color: #818cf8 !important;
+  background: #e0e7ff !important;
+  color: #4f46e5 !important;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .entity-card .badge-type-field {
+  border-color: #16a34a !important;
+  background: #14532d !important;
+  color: #86efac !important;
+}
+
+[data-theme="dark"] .entity-card .badge-type-garden {
+  border-color: #9333ea !important;
+  background: #581c87 !important;
+  color: #d8b4fe !important;
+}
+
+[data-theme="dark"] .entity-card .badge-kind-mounted {
+  border-color: #2563eb !important;
+  background: #1e3a8a !important;
+  color: #93c5fd !important;
+}
+
+[data-theme="dark"] .entity-card .badge-kind-trailed {
+  border-color: #d97706 !important;
+  background: #78350f !important;
+  color: #fcd34d !important;
+}
+
+[data-theme="dark"] .entity-card .badge-kind-self-propelled {
+  border-color: #dc2626 !important;
+  background: #7f1d1d !important;
+  color: #fca5a5 !important;
+}
+
+[data-theme="dark"] .entity-card .badge-kind-other {
+  border-color: #6b7280 !important;
+  background: #374151 !important;
+  color: #d1d5db !important;
+}
+
+[data-theme="dark"] .entity-card .badge-client-person {
+  border-color: #059669 !important;
+  background: #064e3b !important;
+  color: #6ee7b7 !important;
+}
+
+[data-theme="dark"] .entity-card .badge-client-company {
+  border-color: #4f46e5 !important;
+  background: #312e81 !important;
+  color: #a5b4fc !important;
+}
+
+/* Legacy badge classes for backward compatibility */
 .entity-card .badge-type {
   border-color: var(--primary-border);
   background: var(--primary-surface);

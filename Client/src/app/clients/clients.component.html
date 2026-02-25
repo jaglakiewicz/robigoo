@@ -68,10 +68,10 @@
         <ng-template #itemTemplate let-c>
           <div class="card-main">
             <div class="card-badges-row">
-              <span class="badge badge-type" *ngIf="c.clientType === 'person'">
+              <span class="badge badge-client-person" *ngIf="c.clientType === 'person'">
                 {{ 'clients.filters.typePerson' | text }}
               </span>
-              <span class="badge badge-type badge-company" *ngIf="c.clientType === 'company'">
+              <span class="badge badge-client-company" *ngIf="c.clientType === 'company'">
                 {{ 'clients.filters.typeCompany' | text }}
               </span>
             </div>
@@ -238,12 +238,12 @@
                   (keydown.enter)="navigateToSprayer(s.serialNumber)">
                   <div class="card-main">
                     <div class="card-badges-row">
-                      <span class="badge badge-type" *ngIf="s.type === '00'">{{ 'types.machines.filters.typeField' | text }}</span>
-                      <span class="badge badge-type" *ngIf="s.type === '01'">{{ 'types.machines.filters.typeGarden' | text }}</span>
-                      <span class="badge badge-kind" *ngIf="s.kind === '00'">{{ 'types.machines.filters.kindMounted' | text }}</span>
-                      <span class="badge badge-kind" *ngIf="s.kind === '01'">{{ 'types.machines.filters.kindTrailed' | text }}</span>
-                      <span class="badge badge-kind" *ngIf="s.kind === '02'">{{ 'types.machines.filters.kindSelfPropelled' | text }}</span>
-                      <span class="badge badge-kind" *ngIf="s.kind === '03'">{{ 'types.machines.filters.kindOther' | text }}</span>
+                      <span class="badge badge-type-field" *ngIf="s.type === '00'">{{ 'types.cropSprayers.filters.typeField' | text }}</span>
+                      <span class="badge badge-type-garden" *ngIf="s.type === '01'">{{ 'types.cropSprayers.filters.typeGarden' | text }}</span>
+                      <span class="badge badge-kind-mounted" *ngIf="s.kind === '00'">{{ 'types.cropSprayers.filters.kindMounted' | text }}</span>
+                      <span class="badge badge-kind-trailed" *ngIf="s.kind === '01'">{{ 'types.cropSprayers.filters.kindTrailed' | text }}</span>
+                      <span class="badge badge-kind-self-propelled" *ngIf="s.kind === '02'">{{ 'types.cropSprayers.filters.kindSelfPropelled' | text }}</span>
+                      <span class="badge badge-kind-other" *ngIf="s.kind === '03'">{{ 'types.cropSprayers.filters.kindOther' | text }}</span>
                     </div>
                     <div class="card-title">{{ s.serialNumber }}</div>
                     <div class="card-info-row">

@@ -69,22 +69,22 @@
         <ng-template #itemTemplate let-s>
           <div class="card-main">
             <div class="card-badges-row">
-              <span class="badge badge-type" *ngIf="s.type === '00'">
+              <span class="badge badge-type-field" *ngIf="s.type === '00'">
                 {{ 'types.cropSprayers.filters.typeField' | text }}
               </span>
-              <span class="badge badge-type" *ngIf="s.type === '01'">
+              <span class="badge badge-type-garden" *ngIf="s.type === '01'">
                 {{ 'types.cropSprayers.filters.typeGarden' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="s.kind === '00'">
+              <span class="badge badge-kind-mounted" *ngIf="s.kind === '00'">
                 {{ 'types.cropSprayers.filters.kindMounted' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="s.kind === '01'">
+              <span class="badge badge-kind-trailed" *ngIf="s.kind === '01'">
                 {{ 'types.cropSprayers.filters.kindTrailed' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="s.kind === '02'">
+              <span class="badge badge-kind-self-propelled" *ngIf="s.kind === '02'">
                 {{ 'types.cropSprayers.filters.kindSelfPropelled' | text }}
               </span>
-              <span class="badge badge-kind" *ngIf="s.kind === '03'">
+              <span class="badge badge-kind-other" *ngIf="s.kind === '03'">
                 {{ 'types.cropSprayers.filters.kindOther' | text }}
               </span>
             </div>

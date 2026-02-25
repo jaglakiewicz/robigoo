@@ -490,6 +490,7 @@ const TEXTS: TextTree = {
     },
     fields: {
       clientType: 'Typ klienta',
+      displayName: 'Nazwa wyświetlana',
       firstName: 'Imię',
       lastName: 'Nazwisko',
       pesel: 'PESEL',

@@ -24,6 +24,7 @@ interface MenuItem { type: string; titleKey: string; hintKey: string }
 export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   sidebarOpen = false;
+  private sidebarManuallyExpanded = false; // Track if user manually expanded sidebar
   tabs: Tab[] = [];
   activeIndex = -1; // -1 means home is active (no tab selected)
   private nextId = 1;
@@ -145,7 +146,15 @@ export class AppComponent implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
-  toggle() { this.sidebarOpen = !this.sidebarOpen; }
+  toggle() { 
+    this.sidebarOpen = !this.sidebarOpen;
+    // Track if user manually expanded the sidebar
+    if (this.sidebarOpen) {
+      this.sidebarManuallyExpanded = true;
+    } else {
+      this.sidebarManuallyExpanded = false;
+    }
+  }
 
   /**
    * Initialize - start with home view (no tabs open)
@@ -185,17 +194,25 @@ export class AppComponent implements OnInit, OnDestroy {
 
   /**
    * Obsługa kliknięcia pozycji menu w sidebarze.
-   * Na małych ekranach (smartfony/tablety) po otwarciu zakładki
-   * dodatkowo zwija sidebar, żeby odsłonić treść.
+   * - Jeśli sidebar jest rozwinięty (open=true): zwija go do stanu przypięcia
+   * - Jeśli sidebar jest przypięty (open=false): pozostaje przypięty
    */
   handleMenuClick(type: string, titleKey: string) {
     this.openTab(type, titleKey);
 
     try {
       const width = window.innerWidth;
-      // Ten sam breakpoint co w głównych stylach (max-width: 600px)
       if (width && width <= 600) {
+        // Mobile: zawsze zwijamy całkowicie
         this.sidebarOpen = false;
+        this.sidebarManuallyExpanded = false;
+      } else {
+        // Desktop: jeśli sidebar jest rozwinięty, zwijamy go do stanu przypięcia
+        if (this.sidebarOpen) {
+          this.sidebarOpen = false;
+          this.sidebarManuallyExpanded = false;
+        }
+        // Jeśli sidebar jest już przypięty (open=false), nie robimy nic
       }
     } catch {
       // Jeśli z jakiegoś powodu window nie jest dostępne, po prostu ignorujemy
