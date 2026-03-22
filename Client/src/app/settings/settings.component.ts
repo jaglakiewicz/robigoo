@@ -31,14 +31,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
       children: [
         { id: 0, key: 'sub-org',          label: 'Jednostka' },
         { id: 0, key: 'sub-docs',         label: 'Dokumenty' },
-        { id: 0, key: 'sub-protocol',     label: 'Protokól' },
+        { id: 0, key: 'sub-protocol',     label: 'Protokï¿½l' },
         { id: 0, key: 'sub-register',     label: 'Rejestr' },
         { id: 0, key: 'sub-controlmarks', label: 'Znaki kontrolne' },
       ]
     },
     { id: 1, key: 'user',  label: 'Ustawienia uzytkownika' },
     { id: 2, key: 'admin', label: 'Zarzadzanie uzytkownikami' },
-    { id: 3, key: 'sessions', label: 'Sesje uzytkowników' },
+    { id: 3, key: 'sessions', label: 'Sesje uzytkownikï¿½w' },
     { id: 4, key: 'activity', label: 'Dziennik aktywnosci' }
   ];
 
@@ -245,20 +245,17 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const currentUser = this.authService.getCurrentUser();
     const isAdmin = currentUser && currentUser.role === 'admin';
 
+    // Always include firstName and lastName (server requires them)
     // Regular users can only edit: email, phone, theme
     // Admins can also edit: firstName, lastName, permissionNumber
     const updateData: any = {
+      firstName: this.userSettings.firstName,
+      lastName: this.userSettings.lastName,
       email: this.userSettings.email,
       phone: this.userSettings.phone,
-      theme: this.userSettings.theme
+      theme: this.userSettings.theme,
+      permissionNumber: this.userSettings.permissionNumber
     };
-
-    // Only admins can modify firstName, lastName, and permissionNumber
-    if (isAdmin) {
-      updateData.firstName = this.userSettings.firstName;
-      updateData.lastName = this.userSettings.lastName;
-      updateData.permissionNumber = this.userSettings.permissionNumber;
-    }
 
     this.userService.updateProfile(updateData).subscribe(
       (response) => {
@@ -308,7 +305,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     if (this.passwordForm.newPassword.length < 6) {
-      this.notificationService.error('Haslo musi miec co najmniej 6 znaków');
+      this.notificationService.error('Haslo musi miec co najmniej 6 znakï¿½w');
       return;
     }
 
@@ -474,7 +471,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   get xslTemplateOptions() {
     return [
-      { value: '', label: '— brak —' },
+      { value: '', label: 'ï¿½ brak ï¿½' },
       ...this.xslTemplates.map(t => ({ value: t.name, label: t.name }))
     ];
   }
@@ -687,7 +684,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!currentUser || currentUser.login !== 'admin') {
       // Reload user to reset the role
       this.loadUsers();
-      this.notificationService.error('Tylko master administrator moze zmieniac role uzytkowników');
+      this.notificationService.error('Tylko master administrator moze zmieniac role uzytkownikï¿½w');
       return;
     }
 
