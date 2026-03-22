@@ -290,6 +290,129 @@
     </div>
   </section>
 
+  <!-- ── SESSION MANAGEMENT ── -->
+  <section id="section-3" class="settings-section" *ngIf="isCurrentUserAdmin()">
+    <div class="form-section-divider"><span class="form-section-label">Sesje użytkowników</span></div>
+
+    <div class="section-actions">
+      <button class="btn btn-secondary" (click)="loadActiveSessions()" [disabled]="loadingSessions">
+        <span [innerHTML]="getSafeHtml(SVG_ICONS.iconRefresh)"></span>
+        {{ loadingSessions ? 'Ładowanie...' : 'Odśwież' }}
+      </button>
+    </div>
+
+    <div *ngIf="loadingSessions" class="loading-message">Ładowanie sesji...</div>
+
+    <div *ngIf="!loadingSessions && activeSessions.length === 0" class="empty-message">
+      Brak aktywnych sesji
+    </div>
+
+    <table *ngIf="!loadingSessions && activeSessions.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Użytkownik</th>
+          <th>Login</th>
+          <th>Czas trwania</th>
+          <th>Ostatnia aktywność</th>
+          <th>Czas bezczynności</th>
+          <th>Adres IP</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let session of activeSessions">
+          <td>{{ session.userFullName }}</td>
+          <td>{{ session.userLogin }}</td>
+          <td>{{ formatDuration(session.sessionDuration) }}</td>
+          <td>{{ session.lastActivityAt | date:'dd.MM.yyyy HH:mm:ss' }}</td>
+          <td>{{ formatDuration(session.idleTime) }}</td>
+          <td>{{ session.ipAddress || 'N/A' }}</td>
+          <td>
+            <button 
+              class="btn btn-small btn-danger" 
+              (click)="terminateSession(session.id)"
+              [disabled]="terminatingSessionId === session.id"
+              title="Zakończ sesję">
+              {{ terminatingSessionId === session.id ? 'Kończenie...' : 'Wyrzuć' }}
+            </button>
+            <button 
+              class="btn btn-small btn-warning" 
+              (click)="terminateAllUserSessions(session.userId, session.userLogin)"
+              title="Zakończ wszystkie sesje użytkownika"
+              style="margin-left: 8px;">
+              Wyrzuć wszystkie
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── ACTIVITY LOG ── -->
+  <section id="section-4" class="settings-section" *ngIf="isCurrentUserAdmin()">
+    <div class="form-section-divider"><span class="form-section-label">Dziennik aktywności</span></div>
+
+    <div class="form-row form-row-3">
+      <div class="form-group">
+        <label>Użytkownik</label>
+        <select [(ngModel)]="selectedUserId" (change)="loadUserActivities(selectedUserId || undefined)">
+          <option [ngValue]="null">Wszyscy użytkownicy</option>
+          <option *ngFor="let user of users" [ngValue]="user.userId">
+            {{ user.firstName }} {{ user.lastName }} ({{ user.login }})
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Data od</label>
+        <input type="datetime-local" [(ngModel)]="activityDateFrom" />
+      </div>
+      <div class="form-group">
+        <label>Data do</label>
+        <input type="datetime-local" [(ngModel)]="activityDateTo" />
+      </div>
+    </div>
+
+    <div class="section-actions">
+      <button class="btn btn-primary" (click)="loadUserActivities(selectedUserId || undefined)" [disabled]="loadingActivities">
+        <span [innerHTML]="getSafeHtml(SVG_ICONS.iconSearch)"></span>
+        {{ loadingActivities ? 'Ładowanie...' : 'Szukaj' }}
+      </button>
+    </div>
+
+    <div *ngIf="loadingActivities" class="loading-message">Ładowanie dziennika...</div>
+
+    <div *ngIf="!loadingActivities && userActivities.length === 0" class="empty-message">
+      Brak aktywności do wyświetlenia
+    </div>
+
+    <table *ngIf="!loadingActivities && userActivities.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Data i czas</th>
+          <th>Użytkownik</th>
+          <th>Typ aktywności</th>
+          <th>Encja</th>
+          <th>Opis</th>
+          <th>Adres IP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let activity of userActivities">
+          <td>{{ activity.timestamp | date:'dd.MM.yyyy HH:mm:ss' }}</td>
+          <td>{{ activity.userLogin }}</td>
+          <td>
+            <span class="activity-badge" [class]="'activity-' + activity.activityType.toLowerCase()">
+              {{ getActivityTypeLabel(activity.activityType) }}
+            </span>
+          </td>
+          <td>{{ activity.entityType }}</td>
+          <td>{{ activity.description }}</td>
+          <td>{{ activity.ipAddress || 'N/A' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
 </div>
 
 <!-- ── PASSWORD DRAWER ── -->

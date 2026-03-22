@@ -21,6 +21,8 @@ namespace Server.Controllers
         private readonly ITokenService _tokenService;
         private readonly ISessionManagementService _sessionManagementService;
         private readonly ISecurityAuditService _securityAuditService;
+        private readonly IUserActivityService _userActivityService;
+        private readonly ILogger<AuthController> _logger;
 
         #endregion //Declarations
 
@@ -31,13 +33,17 @@ namespace Server.Controllers
             IPasswordService passwordService, 
             ITokenService tokenService,
             ISessionManagementService sessionManagementService,
-            ISecurityAuditService securityAuditService)
+            ISecurityAuditService securityAuditService,
+            IUserActivityService userActivityService,
+            ILogger<AuthController> logger)
         {
             _context = context;
             _passwordService = passwordService;
             _tokenService = tokenService;
             _sessionManagementService = sessionManagementService;
             _securityAuditService = securityAuditService;
+            _userActivityService = userActivityService;
+            _logger = logger;
         }
 
         #endregion //Constructor
@@ -132,30 +138,16 @@ namespace Server.Controllers
                 return Unauthorized(new { message = "Użytkownik jest nieaktywny" });
             }
 
-            // Requirement 3.2, 3.3: Check for existing active sessions
-            // Only return conflict when a truly active session exists
+            // One user - one session policy: Always invalidate existing sessions
+            // This eliminates the need for user confirmation dialogs
             var sessionCheck = await _sessionManagementService.CheckExistingSessionsAsync(user.Id);
             
-            if (sessionCheck.HasActiveSession && !dto.Force)
-            {
-                // Requirement 3.2: Only show conflict when active session truly exists
-                return Conflict(new 
-                { 
-                    error = "active_session_exists",
-                    message = "Użytkownik jest już zalogowany w innej sesji",
-                    hasActiveSession = true,
-                    sessionInfo = new
-                    {
-                        lastActivity = sessionCheck.ExistingSession?.LastActivityAt,
-                        ipAddress = sessionCheck.ExistingSession?.IpAddress
-                    }
-                });
-            }
-
-            // If force login is requested, invalidate all existing sessions
-            if (dto.Force && sessionCheck.HasActiveSession)
+            if (sessionCheck.HasActiveSession)
             {
                 await _sessionManagementService.InvalidateAllUserSessionsAsync(user.Id);
+                _logger.LogInformation(
+                    "Invalidated existing session for user {UserId} due to new login from {IpAddress}",
+                    user.Id, ipAddress);
             }
 
             user.LastLoginAt = DateTime.UtcNow;
@@ -181,6 +173,17 @@ namespace Server.Controllers
                 success: true);
             await _securityAuditService.ResetFailedAttemptsAsync(dto.Login);
 
+            // Log user activity
+            await _userActivityService.LogActivityAsync(
+                user.Id,
+                ActivityType.Login,
+                "Auth",
+                null,
+                $"User logged in from {ipAddress}",
+                ipAddress,
+                userAgent
+            );
+
             var response = new AuthResponseDto
             {
                 Token = new TokenResponseDto
@@ -201,6 +204,96 @@ namespace Server.Controllers
                     Role = user.Role,
                     AvatarBase64 = user.AvatarData != null ? Convert.ToBase64String(user.AvatarData) : null
                 }
+            };
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Handles user logout by invalidating the current session.
+        /// </summary>
+        [HttpPost("logout")]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
+            
+            var userIdClaim = User.FindFirst("userId");
+            if (userIdClaim != null && long.TryParse(userIdClaim.Value, out long userId))
+            {
+                // Log user activity
+                await _userActivityService.LogActivityAsync(
+                    userId,
+                    ActivityType.Logout,
+                    "Auth",
+                    null,
+                    "User logged out",
+                    ipAddress,
+                    userAgent
+                );
+            }
+            
+            if (!string.IsNullOrEmpty(token))
+            {
+                await _sessionManagementService.InvalidateSessionAsync(token);
+                _logger.LogInformation("User logged out, session invalidated");
+            }
+            
+            return Ok(new { message = "Logged out successfully" });
+        }
+
+        /// <summary>
+        /// Refreshes an access token using a valid refresh token.
+        /// </summary>
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.AccessToken) || string.IsNullOrEmpty(dto.RefreshToken))
+                return BadRequest(new { message = "Access token and refresh token are required" });
+
+            var principal = _tokenService.GetPrincipalFromExpiredToken(dto.AccessToken);
+            if (principal == null)
+                return Unauthorized(new { message = "Invalid access token" });
+
+            var userIdClaim = principal.FindFirst("userId");
+            if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out long userId))
+                return Unauthorized(new { message = "Invalid token claims" });
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null || !user.IsActive)
+                return Unauthorized(new { message = "User not found or inactive" });
+
+            // Verify refresh token is valid and matches the session
+            var session = _context.UserSessions
+                .FirstOrDefault(s => s.UserId == userId && 
+                                    s.RefreshToken == dto.RefreshToken && 
+                                    s.IsActive);
+
+            if (session == null)
+                return Unauthorized(new { message = "Invalid refresh token" });
+
+            if (session.RefreshTokenExpiresAt.HasValue && session.RefreshTokenExpiresAt.Value <= DateTime.UtcNow)
+                return Unauthorized(new { message = "Refresh token expired" });
+
+            // Generate new tokens
+            var newAccessToken = _tokenService.GenerateAccessToken(user.Id, user.Login, user.Role);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+            // Update session with new tokens
+            session.SessionToken = newAccessToken;
+            session.RefreshToken = newRefreshToken;
+            session.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(_tokenService.GetRefreshTokenExpirationDays());
+            session.LastActivityAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            var response = new RefreshTokenResponseDto
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken,
+                ExpiresIn = _tokenService.GetAccessTokenExpirationMinutes() * 60
             };
 
             return Ok(response);

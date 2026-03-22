@@ -86,20 +86,18 @@
                     aria-label="Home" 
                     [innerHTML]="getSafeHtml(SVG_ICONS.home)">
             </button>
-
-            <div class="app-brand" aria-label="Stacja Kontroli Opryskiwaczy">
-              <span class="app-name">Stacja Kontroli Opryskiwaczy</span>
-            </div>
           </div>
 
           <div class="top-bar-center">
-            <div class="global-search" aria-hidden="true">
-              <input
-                type="search"
-                class="global-search-input"
-                [placeholder]="'globalSearch.placeholder' | text"
-                aria-label="Nazwa stacji"
-                disabled />
+            <div class="global-search">
+              <div class="station-info-display">
+                <span class="station-icon" *ngIf="stationName" [innerHTML]="getSafeHtml(SVG_ICONS.building)"></span>
+                <span class="station-name" *ngIf="stationName">{{ stationName }}</span>
+                <span class="station-separator" *ngIf="stationName && stationAddress">•</span>
+                <span class="station-icon" *ngIf="stationAddress" [innerHTML]="getSafeHtml(SVG_ICONS.mapPin)"></span>
+                <span class="station-address" *ngIf="stationAddress">{{ stationAddress }}</span>
+                <span class="station-name" *ngIf="!stationName && !stationAddress">{{ 'globalSearch.placeholder' | text }}</span>
+              </div>
             </div>
           </div>
 

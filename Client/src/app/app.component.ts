@@ -7,6 +7,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subscription } from 'rxjs';
 import { AuthService } from './services/auth.service';
@@ -41,6 +42,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private navigationSub: Subscription | null = null;
   private sessionHeartbeatId: number | null = null;
 
+  // Station settings
+  stationName = '';
+  stationAddress = '';
+
   menuItems: MenuItem[] = [
     { type: 'new', titleKey: 'menu.newInspection', hintKey: 'menu.newInspectionHint' },
     { type: 'inspections', titleKey: 'menu.inspections', hintKey: 'menu.inspectionsHint' },
@@ -57,7 +62,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private authService: AuthService,
     private navigationService: NavigationService,
-    private location: Location
+    private location: Location,
+    private http: HttpClient
   ) {
     const saved = localStorage.getItem('theme');
     this.darkMode = saved === 'dark';
@@ -75,6 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.sidebarOpen = this.shouldSidebarBeOpen();
         this.initializeHomeTabs();
         this.startSessionHeartbeat();
+        this.loadStationSettings(); // Load station settings when user logs in
       } else {
         this.isLoggedIn = false;
         this.currentUserName = '';
@@ -86,13 +93,17 @@ export class AppComponent implements OnInit, OnDestroy {
         this.tabs = [];
         this.activeIndex = 0;
         this.stopSessionHeartbeat();
+        this.stationName = '';
+        this.stationAddress = '';
       }
     });
   }
 
   ngOnInit(): void {
+    // Load station settings immediately if already logged in
     if (this.isLoggedIn) {
       this.startSessionHeartbeat();
+      this.loadStationSettings();
     }
 
     // Listen for cross-component navigation requests
@@ -143,7 +154,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onLogout() {
-    this.authService.logout();
+    this.authService.logout().subscribe({
+      next: () => {
+        window.location.href = '/login';
+      },
+      error: (error) => {
+        console.error('Logout error:', error);
+        // Even on error, redirect to login
+        window.location.href = '/login';
+      }
+    });
   }
 
   toggle() { 
@@ -350,6 +370,35 @@ export class AppComponent implements OnInit, OnDestroy {
     } catch {
       return false;
     }
+  }
+
+  private loadStationSettings(): void {
+    console.log('[AppComponent] Loading station settings...');
+    // Load station settings from backend
+    this.http.get<any>('/api/settings').subscribe({
+      next: (data) => {
+        console.log('[AppComponent] Station settings loaded:', data);
+        if (data?.organization) {
+          this.stationName = data.organization.stationName || '';
+          console.log('[AppComponent] Station name:', this.stationName);
+          // Build address from components
+          const parts = [];
+          if (data.organization.addressLine1) parts.push(data.organization.addressLine1);
+          if (data.organization.addressLine2) parts.push(data.organization.addressLine2);
+          if (data.organization.city) {
+            const cityPart = [];
+            if (data.organization.postalCode) cityPart.push(data.organization.postalCode);
+            cityPart.push(data.organization.city);
+            parts.push(cityPart.join(' '));
+          }
+          this.stationAddress = parts.join(', ');
+          console.log('[AppComponent] Station address:', this.stationAddress);
+        }
+      },
+      error: (err) => {
+        console.error('[AppComponent] Failed to load station settings:', err);
+      }
+    });
   }
 
 }

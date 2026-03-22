@@ -182,7 +182,25 @@ export class AuthService {
     }
   }
 
-  logout(): void {
+  logout(): Observable<void> {
+    const token = this.getToken();
+    
+    if (token) {
+      return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
+        tap(() => this.clearLocalSession()),
+        catchError(() => {
+          // Even if server call fails, clear local session
+          this.clearLocalSession();
+          return of(void 0);
+        })
+      );
+    } else {
+      this.clearLocalSession();
+      return of(void 0);
+    }
+  }
+
+  private clearLocalSession(): void {
     this.stopRefreshTokenTimer();
     sessionStorage.removeItem('currentUser');
     sessionStorage.removeItem('token');

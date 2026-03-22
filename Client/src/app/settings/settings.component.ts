@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
@@ -31,16 +31,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
       children: [
         { id: 0, key: 'sub-org',          label: 'Jednostka' },
         { id: 0, key: 'sub-docs',         label: 'Dokumenty' },
-        { id: 0, key: 'sub-protocol',     label: 'Protokół' },
+        { id: 0, key: 'sub-protocol',     label: 'Protok�l' },
         { id: 0, key: 'sub-register',     label: 'Rejestr' },
         { id: 0, key: 'sub-controlmarks', label: 'Znaki kontrolne' },
       ]
     },
-    { id: 1, key: 'user',  label: 'Ustawienia użytkownika' },
-    { id: 2, key: 'admin', label: 'Zarządzanie użytkownikami' }
+    { id: 1, key: 'user',  label: 'Ustawienia uzytkownika' },
+    { id: 2, key: 'admin', label: 'Zarzadzanie uzytkownikami' },
+    { id: 3, key: 'sessions', label: 'Sesje uzytkownik�w' },
+    { id: 4, key: 'activity', label: 'Dziennik aktywnosci' }
   ];
 
-  // ── App Settings ──────────────────────────────────────────────────────
+  // -- App Settings ------------------------------------------------------
   appSettings = {
     organization: {
       stationName: '', unitAuthorizationNumber: '',
@@ -62,7 +64,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   readonly formatTokens = [
     { token: '{PREFIX}', hint: 'Prefiks (np. SKO)' },
     { token: '{YEAR}',   hint: 'Rok (np. 2025)' },
-    { token: '{MONTH}',  hint: 'Miesiąc (np. 06)' },
+    { token: '{MONTH}',  hint: 'Miesiac (np. 06)' },
     { token: '{SEQ}',    hint: 'Numer sekwencyjny (np. 001)' },
     { token: '{SEQ4}',   hint: 'Numer 4-cyfrowy (np. 0001)' },
   ];
@@ -158,6 +160,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
   // Role change
   updatingRoleUserId: number | null = null;
 
+  // Session Management
+  activeSessions: any[] = [];
+  loadingSessions = false;
+  terminatingSessionId: number | null = null;
+
+  // Activity Logs
+  userActivities: any[] = [];
+  loadingActivities = false;
+  selectedUserId: number | null = null;
+  activityDateFrom: string = '';
+  activityDateTo: string = '';
+
   constructor(
     private authService: AuthService,
     private userService: UserService,
@@ -249,7 +263,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.userService.updateProfile(updateData).subscribe(
       (response) => {
         console.log('[Settings] Profile updated:', response);
-        this.notificationService.success('Ustawienia zostały pomyślnie zapisane!');
+        this.notificationService.success('Ustawienia zostaly pomyslnie zapisane!');
         this.savingSettings = false;
 
         // Update current user in auth service
@@ -271,7 +285,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       },
       (error: any) => {
         console.error('[Settings] Error saving settings:', error);
-        const errorMsg = error.error?.message || 'Błąd podczas zapisywania ustawień';
+        const errorMsg = error.error?.message || 'Blad podczas zapisywania ustawien';
         this.notificationService.error(errorMsg);
         this.savingSettings = false;
       }
@@ -289,12 +303,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   changePassword(): void {
     if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-      this.notificationService.error('Hasła nie pasują do siebie');
+      this.notificationService.error('Hasla nie pasuja do siebie');
       return;
     }
 
     if (this.passwordForm.newPassword.length < 6) {
-      this.notificationService.error('Hasło musi mieć co najmniej 6 znaków');
+      this.notificationService.error('Haslo musi miec co najmniej 6 znak�w');
       return;
     }
 
@@ -306,7 +320,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }).subscribe(
       (response) => {
         console.log('[Settings] Password changed:', response);
-        this.notificationService.success('Hasło zostało zmienione pomyślnie!');
+        this.notificationService.success('Haslo zostalo zmienione pomyslnie!');
         this.changingPassword = false;
         this.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
         this.showPasswordForm = false;
@@ -314,7 +328,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       },
       (error: any) => {
         console.error('[Settings] Error changing password:', error);
-        const errorMsg = error.error?.message || 'Błąd podczas zmiany hasła';
+        const errorMsg = error.error?.message || 'Blad podczas zmiany hasla';
         this.notificationService.error(errorMsg);
         this.changingPassword = false;
       }
@@ -327,13 +341,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (file) {
       // Validate file size (max 2MB)
       if (file.size > 2097152) { // 2MB
-        this.avatarError = 'Plik jest za duży (maksymalnie 2MB)';
+        this.avatarError = 'Plik jest za duzy (maksymalnie 2MB)';
         return;
       }
 
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        this.avatarError = 'Plik musi być obrazem (JPG, PNG, GIF)';
+        this.avatarError = 'Plik musi byc obrazem (JPG, PNG, GIF)';
         return;
       }
 
@@ -350,7 +364,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
           },
           (error: any) => {
             console.error('[Settings] Error uploading avatar:', error);
-            this.avatarError = error.error?.message || 'Błąd podczas przesyłania avatara';
+            this.avatarError = error.error?.message || 'Blad podczas przesylania avatara';
           }
         );
       };
@@ -361,8 +375,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   onSignatureSelected(event: any): void {
     const file: File = event.target.files[0];
     if (!file) return;
-    if (file.size > 2097152) { this.signatureError = 'Plik jest za duży (max 2MB)'; return; }
-    if (!file.type.startsWith('image/')) { this.signatureError = 'Plik musi być obrazem'; return; }
+    if (file.size > 2097152) { this.signatureError = 'Plik jest za duzy (max 2MB)'; return; }
+    if (!file.type.startsWith('image/')) { this.signatureError = 'Plik musi byc obrazem'; return; }
     this.userService.uploadSignature(file).subscribe({
       next: (res) => {
         this.signatureImage = 'data:image/png;base64,' + res.signatureBase64;
@@ -370,7 +384,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.signatureError = '';
         setTimeout(() => { this.signatureSuccess = false; }, 3000);
       },
-      error: (err) => { this.signatureError = err.error?.message || 'Błąd podczas przesłania podpisu'; }
+      error: (err) => { this.signatureError = err.error?.message || 'Blad podczas przeslania podpisu'; }
     });
   }
 
@@ -417,8 +431,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   getPasswordStrengthLabel(): string {
     const c = this.getPasswordStrengthClass();
-    if (c === 'strength-weak') return 'Słabe';
-    if (c === 'strength-medium') return 'Średnie';
+    if (c === 'strength-weak') return 'Slabe';
+    if (c === 'strength-medium') return 'Srednie';
     return 'Silne';
   }
 
@@ -460,7 +474,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   get xslTemplateOptions() {
     return [
-      { value: '', label: '— brak —' },
+      { value: '', label: '� brak �' },
       ...this.xslTemplates.map(t => ({ value: t.name, label: t.name }))
     ];
   }
@@ -476,7 +490,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.savingAppSettings = true;
     this.http.put('/api/settings', this.appSettings).subscribe({
       next: () => { this.notificationService.success('Ustawienia programu zapisane'); this.savingAppSettings = false; },
-      error: (err) => { this.notificationService.error(err.error?.message || 'Błąd zapisu'); this.savingAppSettings = false; }
+      error: (err) => { this.notificationService.error(err.error?.message || 'Blad zapisu'); this.savingAppSettings = false; }
     });
   }
 
@@ -530,7 +544,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   createUser(): void {
     if (!this.newUserForm.login || !this.newUserForm.password || !this.newUserForm.firstName) {
-      this.notificationService.error('Login, hasło i imię są wymagane');
+      this.notificationService.error('Login, haslo i imie sa wymagane');
       return;
     }
 
@@ -550,7 +564,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.userService.createUser(newUser).subscribe(
       (response) => {
         console.log('[Settings] User created:', response);
-        this.notificationService.success('Użytkownik został pomyślnie utworzony!');
+        this.notificationService.success('Uzytkownik zostal pomyslnie utworzony!');
         this.creatingUser = false;
         this.resetCreateUserForm();
         this.showCreateUserForm = false;
@@ -561,7 +575,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       },
       (error: any) => {
         console.error('[Settings] Error creating user:', error);
-        const errorMsg = error.error?.error || error.error?.message || 'Błąd podczas tworzenia użytkownika';
+        const errorMsg = error.error?.error || error.error?.message || 'Blad podczas tworzenia uzytkownika';
         this.notificationService.error(errorMsg);
         this.creatingUser = false;
       }
@@ -576,8 +590,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return false;
 
+    const userId = user.id || user.userId;
+    const currentUserId = currentUser.userId;
+
     // Cannot delete self
-    if (currentUser.userId === user.userId) return false;
+    if (currentUserId === userId) return false;
 
     // Only admins can delete users
     if (currentUser.role !== 'admin') return false;
@@ -590,6 +607,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   openDeleteConfirmDialog(user: UserDTO): void {
+    console.log('[Settings] Opening delete dialog for user:', user);
     // Ask for password confirmation before deleting
     this.userToConfirm = user;
     this.confirmDialogAction = 'delete';
@@ -598,13 +616,26 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   confirmPasswordAction(): void {
     if (!this.confirmDialogPassword || !this.userToConfirm) {
+      console.error('[Settings] Missing password or user to confirm');
+      return;
+    }
+
+    // Use id or userId (backend returns 'id')
+    const userId = this.userToConfirm.id || this.userToConfirm.userId;
+    
+    console.log('[Settings] Confirming delete for user:', this.userToConfirm);
+    console.log('[Settings] User ID:', userId);
+
+    if (!userId) {
+      console.error('[Settings] User ID is undefined');
+      this.notificationService.error('Blad: Brak ID uzytkownika');
       return;
     }
 
     this.confirmDialogError = '';
     this.confirmingAction = true;
 
-    this.userService.deleteUser(this.userToConfirm.userId, this.confirmDialogPassword).subscribe(
+    this.userService.deleteUser(userId, this.confirmDialogPassword).subscribe(
       (response) => {
         console.log('[Settings] User deleted:', response);
         this.showPasswordConfirmDialog = false;
@@ -614,12 +645,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
         // Reload users list
         this.loadUsers();
-        this.notificationService.success('Użytkownik został pomyślnie usunięty!');
+        this.notificationService.success('Uzytkownik zostal pomyslnie usuniety!');
       },
       (error: any) => {
         console.error('[Settings] Error deleting user:', error);
-        const errorMsg = error.error?.message || error.error?.error || 'Błąd podczas usuwania użytkownika';
+        const errorMsg = error.error?.message || error.error?.error || 'Blad podczas usuwania uzytkownika';
         this.notificationService.error(errorMsg);
+        this.confirmingAction = false;
       }
     );
   }
@@ -635,8 +667,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return false;
 
+    const userId = user.id || user.userId;
+    const currentUserId = currentUser.userId;
+
     // Cannot change own role
-    if (currentUser.userId === user.userId) return false;
+    if (currentUserId === userId) return false;
 
     // Only master admin (login = admin) can change roles
     // Regular admin cannot change roles of existing users
@@ -652,7 +687,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!currentUser || currentUser.login !== 'admin') {
       // Reload user to reset the role
       this.loadUsers();
-      this.notificationService.error('Tylko master administrator może zmieniać role użytkowników');
+      this.notificationService.error('Tylko master administrator moze zmieniac role uzytkownik�w');
       return;
     }
 
@@ -660,21 +695,27 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!this.canChangeUserRole(user)) {
       // Reload user to reset the role
       this.loadUsers();
-      this.notificationService.error('Brak uprawnień do zmiany tej roli');
+      this.notificationService.error('Brak uprawnien do zmiany tej roli');
       return;
     }
 
-    this.updatingRoleUserId = user.userId;
+    const userId = user.id || user.userId;
+    if (!userId) {
+      this.notificationService.error('Blad: Brak ID uzytkownika');
+      return;
+    }
 
-    this.userService.updateUserRole(user.userId, user.role).subscribe(
+    this.updatingRoleUserId = userId;
+
+    this.userService.updateUserRole(userId, user.role).subscribe(
       (response) => {
         console.log('[Settings] User role updated:', response);
-        this.notificationService.success(`Rola użytkownika ${user.login} została zmieniona`);
+        this.notificationService.success(`Rola uzytkownika ${user.login} zostala zmieniona`);
         this.updatingRoleUserId = null;
       },
       (error: any) => {
         console.error('[Settings] Error updating user role:', error);
-        const errorMsg = error.error?.message || error.error?.error || 'Błąd podczas zmiany roli użytkownika';
+        const errorMsg = error.error?.message || error.error?.error || 'Blad podczas zmiany roli uzytkownika';
         this.notificationService.error(errorMsg);
         this.updatingRoleUserId = null;
         // Reload users to revert the role change
@@ -713,23 +754,138 @@ export class SettingsComponent implements OnInit, OnDestroy {
   onXslFileSelected(event: any, key: string = 'protocol'): void {
     const file: File = event.target.files[0];
     if (!file) return;
-    if (!file.name.endsWith('.xsl')) { this.xslError = 'Dozwolone są tylko pliki .xsl'; return; }
+    if (!file.name.endsWith('.xsl')) { this.xslError = 'Dozwolone sa tylko pliki .xsl'; return; }
     this.uploadingXsl = true;
     this.xslError = '';
     const fd = new FormData();
     fd.append('file', file);
     this.http.post<{ name: string }>('/api/settings/xsl-templates/upload', fd).subscribe({
-      next: () => { this.uploadingXsl = false; this.xslSuccess = 'Przesłano!'; this.loadXslTemplates(); setTimeout(() => this.xslSuccess = '', 3000); },
-      error: (err) => { this.uploadingXsl = false; this.xslError = err.error?.message || 'Błąd przesyłania'; }
+      next: () => { this.uploadingXsl = false; this.xslSuccess = 'Przeslano!'; this.loadXslTemplates(); setTimeout(() => this.xslSuccess = '', 3000); },
+      error: (err) => { this.uploadingXsl = false; this.xslError = err.error?.message || 'Blad przesylania'; }
     });
   }
 
   deleteXsl(name: string, key: string = 'protocol'): void {
-    if (!confirm(`Usunąć szablon ${name}?`)) return;
+    if (!confirm(`Usunac szablon ${name}?`)) return;
     this.http.delete(`/api/settings/xsl-templates/${encodeURIComponent(name)}`).subscribe({
-      next: () => { this.loadXslTemplates(); this.notificationService.success('Usunięto'); },
-      error: () => { this.notificationService.error('Błąd usuwania'); }
+      next: () => { this.loadXslTemplates(); this.notificationService.success('Usunieto'); },
+      error: () => { this.notificationService.error('Blad usuwania'); }
     });
+  }
+
+  // -- Session Management ------------------------------------------------------
+
+  loadActiveSessions(): void {
+    this.loadingSessions = true;
+    this.http.get<any[]>('/api/sessions/active').subscribe({
+      next: (sessions) => {
+        this.activeSessions = sessions;
+        this.loadingSessions = false;
+      },
+      error: (error) => {
+        console.error('Failed to load sessions:', error);
+        this.notificationService.error('Nie udalo sie zaladowac sesji');
+        this.loadingSessions = false;
+      }
+    });
+  }
+
+  terminateSession(sessionId: number): void {
+    if (!confirm('Czy na pewno chcesz zakonczyc te sesje?')) {
+      return;
+    }
+
+    this.terminatingSessionId = sessionId;
+    this.http.post(`/api/sessions/${sessionId}/terminate`, {}).subscribe({
+      next: () => {
+        this.notificationService.success('Sesja zostala zakonczona');
+        this.loadActiveSessions();
+        this.terminatingSessionId = null;
+      },
+      error: (error) => {
+        console.error('Failed to terminate session:', error);
+        this.notificationService.error('Nie udalo sie zakonczyc sesji');
+        this.terminatingSessionId = null;
+      }
+    });
+  }
+
+  terminateAllUserSessions(userId: number, userLogin: string): void {
+    if (!confirm(`Czy na pewno chcesz zakonczyc wszystkie sesje uzytkownika ${userLogin}?`)) {
+      return;
+    }
+
+    this.http.post(`/api/sessions/user/${userId}/terminate-all`, {}).subscribe({
+      next: () => {
+        this.notificationService.success('Wszystkie sesje uzytkownika zostaly zakonczone');
+        this.loadActiveSessions();
+      },
+      error: (error) => {
+        console.error('Failed to terminate user sessions:', error);
+        this.notificationService.error('Nie udalo sie zakonczyc sesji uzytkownika');
+      }
+    });
+  }
+
+  formatDuration(minutes: number): string {
+    if (minutes < 60) {
+      return `${minutes} min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}min`;
+  }
+
+  // -- Activity Logs ------------------------------------------------------
+
+  loadUserActivities(userId?: number): void {
+    this.loadingActivities = true;
+    
+    let url = '/api/activitylogs/all';
+    const params: any = { limit: 500 };
+    
+    if (userId) {
+      url = `/api/activitylogs/user/${userId}`;
+    }
+    
+    if (this.activityDateFrom) {
+      params.from = this.activityDateFrom;
+    }
+    
+    if (this.activityDateTo) {
+      params.to = this.activityDateTo;
+    }
+
+    this.http.get<any[]>(url, { params }).subscribe({
+      next: (activities) => {
+        this.userActivities = activities;
+        this.loadingActivities = false;
+      },
+      error: (error) => {
+        console.error('Failed to load activities:', error);
+        this.notificationService.error('Nie udalo sie zaladowac dziennika aktywnosci');
+        this.loadingActivities = false;
+      }
+    });
+  }
+
+  getActivityTypeLabel(type: string): string {
+    const labels: any = {
+      'Login': 'Logowanie',
+      'Logout': 'Wylogowanie',
+      'Create': 'Utworzenie',
+      'Update': 'Aktualizacja',
+      'Delete': 'Usuniecie',
+      'View': 'Podglad',
+      'Export': 'Eksport',
+      'Import': 'Import',
+      'PasswordChange': 'Zmiana hasla',
+      'SettingsChange': 'Zmiana ustawien',
+      'FileUpload': 'Przeslanie pliku',
+      'FileDownload': 'Pobranie pliku',
+      'SessionTerminated': 'Zakonczenie sesji'
+    };
+    return labels[type] || type;
   }
 
   getSafeHtml(html: string): SafeHtml {

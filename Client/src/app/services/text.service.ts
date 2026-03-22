@@ -71,7 +71,7 @@ const TEXTS: TextTree = {
     passwordHide: 'Ukryj hasło',
     submit: 'Zaloguj',
     submitting: 'Logowanie...',
-    demoHint: '© Copyright by Wojciech Salamon',
+    demoHint: '',
     errors: {
       invalidCredentials: 'Nieprawidłowy login lub hasło',
       sessionActive: 'Dla tego użytkownika istnieje już aktywna sesja.'

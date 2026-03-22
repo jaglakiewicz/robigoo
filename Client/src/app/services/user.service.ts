@@ -9,7 +9,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface UserDTO {
-  userId: number;
+  id?: number;  // Backend returns 'Id' which becomes 'id' in JSON
+  userId?: number;  // Keep for backward compatibility
   login: string;
   firstName: string;
   lastName: string;

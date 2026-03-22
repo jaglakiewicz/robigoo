@@ -36,6 +36,7 @@ namespace Server.Data
         public DbSet<InspectionProtocol> InspectionProtocols { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserSession> UserSessions { get; set; }
+        public DbSet<UserActivityLog> UserActivityLogs { get; set; }
         public DbSet<CropSprayer> CropSprayers { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<ChangeLog> ChangeLogs { get; set; }
@@ -83,6 +84,16 @@ namespace Server.Data
             
             modelBuilder.Entity<SecurityEventLog>()
                 .HasIndex(e => new { e.IpAddress, e.OccurredAt });
+
+            // Configure indexes for user activity logs
+            modelBuilder.Entity<UserActivityLog>()
+                .HasIndex(e => e.UserId);
+
+            modelBuilder.Entity<UserActivityLog>()
+                .HasIndex(e => e.Timestamp);
+
+            modelBuilder.Entity<UserActivityLog>()
+                .HasIndex(e => new { e.UserId, e.Timestamp });
         }
 
         #endregion

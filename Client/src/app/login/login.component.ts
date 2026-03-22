@@ -19,7 +19,6 @@ export class LoginComponent {
   password = '';
   errorKey = '';
   logoutMessage = '';
-  sessionConflictVisible = false;
   loading = false;
   passwordVisible = false;
 
@@ -42,39 +41,10 @@ export class LoginComponent {
         this.loginSuccess.emit();
       },
       (error) => {
-        // Konflikt sesji - zapytaj użytkownika, czy chce przejąć istniejącą sesję
-        if (error?.status === 409 && error.error?.error === 'active_session_exists') {
-          this.sessionConflictVisible = true;
-          this.loading = false;
-        } else {
-          this.errorKey = 'login.errors.invalidCredentials';
-          this.loading = false;
-        }
-      }
-    );
-  }
-
-  confirmSessionTakeover() {
-    this.errorKey = '';
-    this.loading = true;
-
-    this.authService.login(this.username, this.password, { force: true }).subscribe(
-      () => {
-        this.loading = false;
-        this.sessionConflictVisible = false;
-        this.loginSuccess.emit();
-      },
-      () => {
         this.errorKey = 'login.errors.invalidCredentials';
         this.loading = false;
-        this.sessionConflictVisible = false;
       }
     );
-  }
-
-  cancelSessionTakeover() {
-    this.sessionConflictVisible = false;
-    this.errorKey = 'login.errors.sessionActive';
   }
 
   onKeyPress(event: KeyboardEvent) {

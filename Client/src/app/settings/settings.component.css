@@ -654,3 +654,145 @@ select.disabled-input:focus {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+
+/* ── SESSION MANAGEMENT & ACTIVITY LOGS ── */
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-md);
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.data-table thead {
+  background: var(--primary-color);
+  color: white;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table tbody tr:hover {
+  background: var(--hover-bg);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.section-actions {
+  margin: var(--space-md) 0;
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.loading-message,
+.empty-message {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.activity-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.activity-login {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.activity-logout {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.activity-create {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.activity-update {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.activity-delete {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.activity-view {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.activity-export,
+.activity-import {
+  background: #e0f2f1;
+  color: #00796b;
+}
+
+.activity-passwordchange,
+.activity-settingschange {
+  background: #fff9c4;
+  color: #f57f17;
+}
+
+.activity-sessionterminated {
+  background: #ffccbc;
+  color: #e64a19;
+}
+
+.activity-fileupload,
+.activity-filedownload {
+  background: #e1f5fe;
+  color: #0277bd;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 0.9em;
+}
+
+.btn-warning {
+  background-color: #ff9800;
+  color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background-color: #f57c00;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .data-table {
+    font-size: 0.9em;
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: 8px;
+  }
+}
