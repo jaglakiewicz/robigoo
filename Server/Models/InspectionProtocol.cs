@@ -28,7 +28,7 @@ namespace Server.Models
         public long Id { get; set; }
 
         /// <summary>
-        /// Numer protokołu (np. "SKO/2026/001")
+        /// Numer protokołu (np. "0001/2026")
         /// </summary>
         [Required]
         [MaxLength(50)]
@@ -151,19 +151,34 @@ namespace Server.Models
         #region Inspection Sections - General (Sekcja 1: Stan ogólny)
 
         /// <summary>
-        /// 1.1 Stan techniczny ogólny - wynik
+        /// 1.1 Stan techniczny ogólny - wynik (napęd wyłączony)
         /// </summary>
         public bool? GeneralConditionPassed { get; set; }
 
         /// <summary>
-        /// 1.2 Czytelność oznaczeń - wynik
+        /// 1.1 Stan techniczny ogólny - wynik (napęd włączony)
+        /// </summary>
+        public bool? GeneralConditionPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 1.2 Czytelność oznaczeń - wynik (napęd wyłączony)
         /// </summary>
         public bool? MarkingsReadablePassed { get; set; }
 
         /// <summary>
-        /// 1.3 Kompletność wyposażenia - wynik
+        /// 1.2 Czytelność oznaczeń - wynik (napęd włączony)
+        /// </summary>
+        public bool? MarkingsReadablePassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 1.3 Kompletność wyposażenia - wynik (napęd wyłączony)
         /// </summary>
         public bool? EquipmentCompletePassed { get; set; }
+
+        /// <summary>
+        /// 1.3 Kompletność wyposażenia - wynik (napęd włączony)
+        /// </summary>
+        public bool? EquipmentCompletePassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 1
@@ -176,19 +191,34 @@ namespace Server.Models
         #region Inspection Sections - Pump (Sekcja 2: Pompa)
 
         /// <summary>
-        /// 2.1 Sprawność pompy - wynik
+        /// 2.1 Sprawność pompy - wynik (napęd wyłączony)
         /// </summary>
         public bool? PumpOperationPassed { get; set; }
 
         /// <summary>
-        /// 2.2 Szczelność pompy - wynik
+        /// 2.1 Sprawność pompy - wynik (napęd włączony)
+        /// </summary>
+        public bool? PumpOperationPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 2.2 Szczelność pompy - wynik (napęd wyłączony)
         /// </summary>
         public bool? PumpSealingPassed { get; set; }
 
         /// <summary>
-        /// 2.3 Pulsacja ciśnienia - wynik
+        /// 2.2 Szczelność pompy - wynik (napęd włączony)
+        /// </summary>
+        public bool? PumpSealingPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 2.3 Pulsacja ciśnienia - wynik (napęd wyłączony)
         /// </summary>
         public bool? PressurePulsationPassed { get; set; }
+
+        /// <summary>
+        /// 2.3 Pulsacja ciśnienia - wynik (napęd włączony)
+        /// </summary>
+        public bool? PressurePulsationPassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 2
@@ -201,9 +231,14 @@ namespace Server.Models
         #region Inspection Sections - Agitation (Sekcja 3: Mieszalnik)
 
         /// <summary>
-        /// 3.1 Sprawność mieszalnika - wynik
+        /// 3.1 Sprawność mieszalnika - wynik (napęd wyłączony)
         /// </summary>
         public bool? AgitatorOperationPassed { get; set; }
+
+        /// <summary>
+        /// 3.1 Sprawność mieszalnika - wynik (napęd włączony)
+        /// </summary>
+        public bool? AgitatorOperationPassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 3
@@ -216,24 +251,44 @@ namespace Server.Models
         #region Inspection Sections - Tank (Sekcja 4: Zbiornik)
 
         /// <summary>
-        /// 4.1 Stan zbiornika - wynik
+        /// 4.1 Stan zbiornika - wynik (napęd wyłączony)
         /// </summary>
         public bool? TankConditionPassed { get; set; }
 
         /// <summary>
-        /// 4.2 Szczelność zbiornika - wynik
+        /// 4.1 Stan zbiornika - wynik (napęd włączony)
+        /// </summary>
+        public bool? TankConditionPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 4.2 Szczelność zbiornika - wynik (napęd wyłączony)
         /// </summary>
         public bool? TankSealingPassed { get; set; }
 
         /// <summary>
-        /// 4.3 Wskaźnik poziomu cieczy - wynik
+        /// 4.2 Szczelność zbiornika - wynik (napęd włączony)
+        /// </summary>
+        public bool? TankSealingPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 4.3 Wskaźnik poziomu cieczy - wynik (napęd wyłączony)
         /// </summary>
         public bool? LevelIndicatorPassed { get; set; }
 
         /// <summary>
-        /// 4.4 System płukania - wynik
+        /// 4.3 Wskaźnik poziomu cieczy - wynik (napęd włączony)
+        /// </summary>
+        public bool? LevelIndicatorPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 4.4 System płukania - wynik (napęd wyłączony)
         /// </summary>
         public bool? FlushingSystemPassed { get; set; }
+
+        /// <summary>
+        /// 4.4 System płukania - wynik (napęd włączony)
+        /// </summary>
+        public bool? FlushingSystemPassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 4
@@ -246,9 +301,14 @@ namespace Server.Models
         #region Inspection Sections - Measuring (Sekcja 5: Przyrządy pomiarowe)
 
         /// <summary>
-        /// 5.1 Manometr - wynik
+        /// 5.1 Manometr - wynik (napęd wyłączony)
         /// </summary>
         public bool? ManometerPassed { get; set; }
+
+        /// <summary>
+        /// 5.1 Manometr - wynik (napęd włączony)
+        /// </summary>
+        public bool? ManometerPassedDriveOn { get; set; }
 
         /// <summary>
         /// 5.1a Odczyt przy ciśnieniu 2 bar [bar]
@@ -266,9 +326,14 @@ namespace Server.Models
         public decimal? ManometerReading6Bar { get; set; }
 
         /// <summary>
-        /// 5.2 Średnica tarczy manometru spełnia wymagania - wynik
+        /// 5.2 Średnica tarczy manometru spełnia wymagania - wynik (napęd wyłączony)
         /// </summary>
         public bool? ManometerDialSizePassed { get; set; }
+
+        /// <summary>
+        /// 5.2 Średnica tarczy manometru spełnia wymagania - wynik (napęd włączony)
+        /// </summary>
+        public bool? ManometerDialSizePassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 5
@@ -281,14 +346,24 @@ namespace Server.Models
         #region Inspection Sections - Piping (Sekcja 6: Przewody)
 
         /// <summary>
-        /// 6.1 Stan przewodów - wynik
+        /// 6.1 Stan przewodów - wynik (napęd wyłączony)
         /// </summary>
         public bool? PipesConditionPassed { get; set; }
 
         /// <summary>
-        /// 6.2 Szczelność połączeń - wynik
+        /// 6.1 Stan przewodów - wynik (napęd włączony)
+        /// </summary>
+        public bool? PipesConditionPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 6.2 Szczelność połączeń - wynik (napęd wyłączony)
         /// </summary>
         public bool? ConnectionsSealingPassed { get; set; }
+
+        /// <summary>
+        /// 6.2 Szczelność połączeń - wynik (napęd włączony)
+        /// </summary>
+        public bool? ConnectionsSealingPassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 6
@@ -301,19 +376,34 @@ namespace Server.Models
         #region Inspection Sections - Filtration (Sekcja 7: Filtracja)
 
         /// <summary>
-        /// 7.1 Filtr ssawny - wynik
+        /// 7.1 Filtr ssawny - wynik (napęd wyłączony)
         /// </summary>
         public bool? SuctionFilterPassed { get; set; }
 
         /// <summary>
-        /// 7.2 Filtr tłoczny - wynik
+        /// 7.1 Filtr ssawny - wynik (napęd włączony)
+        /// </summary>
+        public bool? SuctionFilterPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 7.2 Filtr tłoczny - wynik (napęd wyłączony)
         /// </summary>
         public bool? PressureFilterPassed { get; set; }
 
         /// <summary>
-        /// 7.3 Filtry rozpylaczy - wynik
+        /// 7.2 Filtr tłoczny - wynik (napęd włączony)
+        /// </summary>
+        public bool? PressureFilterPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 7.3 Filtry rozpylaczy - wynik (napęd wyłączony)
         /// </summary>
         public bool? NozzleFiltersPassed { get; set; }
+
+        /// <summary>
+        /// 7.3 Filtry rozpylaczy - wynik (napęd włączony)
+        /// </summary>
+        public bool? NozzleFiltersPassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 7
@@ -326,34 +416,64 @@ namespace Server.Models
         #region Inspection Sections - Boom/Spray Equipment (Sekcja 8: Belka/Urządzenie rozpylające)
 
         /// <summary>
-        /// 8.1 Stan belki polowej - wynik (dla opryskiwaczy polowych)
+        /// 8.1 Stan belki polowej - wynik (napęd wyłączony)
         /// </summary>
         public bool? FieldBoomConditionPassed { get; set; }
 
         /// <summary>
-        /// 8.2 Stabilność belki - wynik
+        /// 8.1 Stan belki polowej - wynik (napęd włączony)
+        /// </summary>
+        public bool? FieldBoomConditionPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 8.2 Stabilność belki - wynik (napęd wyłączony)
         /// </summary>
         public bool? BoomStabilityPassed { get; set; }
 
         /// <summary>
-        /// 8.3 Wysokość belki - wynik
+        /// 8.2 Stabilność belki - wynik (napęd włączony)
+        /// </summary>
+        public bool? BoomStabilityPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 8.3 Wysokość belki - wynik (napęd wyłączony)
         /// </summary>
         public bool? BoomHeightPassed { get; set; }
 
         /// <summary>
-        /// 8.4 Symetria belki - wynik
+        /// 8.3 Wysokość belki - wynik (napęd włączony)
+        /// </summary>
+        public bool? BoomHeightPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 8.4 Symetria belki - wynik (napęd wyłączony)
         /// </summary>
         public bool? BoomSymmetryPassed { get; set; }
 
         /// <summary>
-        /// 8.5 Stan urządzenia rozpylającego sadowniczego - wynik (dla opryskiwaczy sadowniczych)
+        /// 8.4 Symetria belki - wynik (napęd włączony)
+        /// </summary>
+        public bool? BoomSymmetryPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 8.5 Stan urządzenia rozpylającego sadowniczego - wynik (napęd wyłączony)
         /// </summary>
         public bool? OrchardSprayerConditionPassed { get; set; }
 
         /// <summary>
-        /// 8.6 Kierunek strumienia powietrza - wynik (dla opryskiwaczy sadowniczych)
+        /// 8.5 Stan urządzenia rozpylającego sadowniczego - wynik (napęd włączony)
+        /// </summary>
+        public bool? OrchardSprayerConditionPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 8.6 Kierunek strumienia powietrza - wynik (napęd wyłączony)
         /// </summary>
         public bool? AirStreamDirectionPassed { get; set; }
+
+        /// <summary>
+        /// 8.6 Kierunek strumienia powietrza - wynik (napęd włączony)
+        /// </summary>
+        public bool? AirStreamDirectionPassedDriveOn { get; set; }
 
         /// <summary>
         /// Uwagi do sekcji 8
@@ -366,19 +486,34 @@ namespace Server.Models
         #region Inspection Sections - Nozzles (Sekcja 9: Rozpylacze)
 
         /// <summary>
-        /// 9.1 Jednorodność rozpylaczy - wynik
+        /// 9.1 Jednorodność rozpylaczy - wynik (napęd wyłączony)
         /// </summary>
         public bool? NozzleUniformityPassed { get; set; }
 
         /// <summary>
-        /// 9.2 Wydatek rozpylaczy w normie - wynik
+        /// 9.1 Jednorodność rozpylaczy - wynik (napęd włączony)
+        /// </summary>
+        public bool? NozzleUniformityPassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 9.2 Wydatek rozpylaczy w normie - wynik (napęd wyłączony)
         /// </summary>
         public bool? NozzleFlowRatePassed { get; set; }
 
         /// <summary>
-        /// 9.3 Stan rozpylaczy - wynik
+        /// 9.2 Wydatek rozpylaczy w normie - wynik (napęd włączony)
+        /// </summary>
+        public bool? NozzleFlowRatePassedDriveOn { get; set; }
+
+        /// <summary>
+        /// 9.3 Stan rozpylaczy - wynik (napęd wyłączony)
         /// </summary>
         public bool? NozzleConditionPassed { get; set; }
+
+        /// <summary>
+        /// 9.3 Stan rozpylaczy - wynik (napęd włączony)
+        /// </summary>
+        public bool? NozzleConditionPassedDriveOn { get; set; }
 
         /// <summary>
         /// Dane pomiarowe rozpylaczy (JSON lub tekst)
@@ -397,9 +532,14 @@ namespace Server.Models
         #region Inspection Sections - Distribution (Sekcja 10: Równomierność rozprowadzania)
 
         /// <summary>
-        /// 10.1 Poprzeczna równomierność rozprowadzania - wynik
+        /// 10.1 Poprzeczna równomierność rozprowadzania - wynik (napęd wyłączony)
         /// </summary>
         public bool? TransverseDistributionPassed { get; set; }
+
+        /// <summary>
+        /// 10.1 Poprzeczna równomierność rozprowadzania - wynik (napęd włączony)
+        /// </summary>
+        public bool? TransverseDistributionPassedDriveOn { get; set; }
 
         /// <summary>
         /// 10.1a Współczynnik zmienności CV [%]

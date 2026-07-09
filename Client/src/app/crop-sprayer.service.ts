@@ -7,6 +7,7 @@
 
 import { Injectable } from '@angular/core';
 import { GenericCrudService } from './shared/services/generic-crud.service';
+import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 /** Crop sprayer list item for display in lists */
@@ -131,5 +132,11 @@ export class CropSprayerService extends GenericCrudService<any> {
   /** Delete a crop sprayer */
   deleteSprayer(serialNumber: string): Observable<void> {
     return this.delete(this.endpoint, serialNumber);
+  }
+
+  /** Get distinct values for a field (for autosuggestions) */
+  getSuggestions(field: string): Observable<string[]> {
+    const params = new HttpParams().set('field', field);
+    return this.http.get<string[]>(`/api/${this.endpoint}/suggestions`, { params });
   }
 }

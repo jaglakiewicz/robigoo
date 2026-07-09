@@ -4,27 +4,32 @@
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<h3 class="component-title">{{ 'newInspection.title' | text }}</h3>
-
 <!-- TOOLBAR AT TOP - Always visible -->
 <app-entity-toolbar>
-  <ng-container left>
-    <button class="btn btn-info" (click)="openPdfPreview()" [disabled]="generatingPdf">
-      <span class="btn-icon" [innerHTML]="getSafeHtml(iconEye)"></span>
-      <span class="btn-label">{{ 'inspectionProtocol.pdfPreview.generate' | text }}</span>
-    </button>
-  </ng-container>
-
-  <ng-container right>
-    <button class="btn btn-secondary" (click)="cancelInspection()">
-      <span class="btn-icon" [innerHTML]="getSafeHtml(iconCancel)"></span>
-      <span class="btn-label">{{ 'general.cancel' | text }}</span>
-    </button>
-    <button class="btn btn-success" (click)="submit()" [disabled]="saving || !canSubmit()">
-      <span class="btn-icon" [innerHTML]="getSafeHtml(iconSave)"></span>
-      <span class="btn-label">{{ saving ? 'Zapisywanie...' : ('general.save' | text) }}</span>
-    </button>
-  </ng-container>
+  <button class="btn btn-success" disabled>
+    <span class="btn-icon" [innerHTML]="getSafeHtml(iconAdd)"></span>
+    <span class="btn-label">{{ 'general.add' | text }}</span>
+  </button>
+  <button class="btn btn-primary" disabled>
+    <span class="btn-icon" [innerHTML]="getSafeHtml(SVG_ICONS.iconEdit)"></span>
+    <span class="btn-label">{{ 'general.edit' | text }}</span>
+  </button>
+  <button class="btn btn-primary" (click)="submit()" [disabled]="saving || !canSubmit()">
+    <span class="btn-icon" [innerHTML]="getSafeHtml(iconSave)"></span>
+    <span class="btn-label">{{ saving ? 'Zapisywanie...' : ('general.save' | text) }}</span>
+  </button>
+  <button class="btn btn-secondary" (click)="cancelInspection()">
+    <span class="btn-icon" [innerHTML]="getSafeHtml(iconCancel)"></span>
+    <span class="btn-label">{{ 'general.cancel' | text }}</span>
+  </button>
+  <button class="btn btn-danger" disabled>
+    <span class="btn-icon" [innerHTML]="getSafeHtml(SVG_ICONS.deleteIcon)"></span>
+    <span class="btn-label">{{ 'general.delete' | text }}</span>
+  </button>
+  <button class="btn btn-info" (click)="openPdfPreview()" [disabled]="generatingPdf">
+    <span class="btn-icon" [innerHTML]="getSafeHtml(iconEye)"></span>
+    <span class="btn-label">{{ 'general.preview' | text }}</span>
+  </button>
 </app-entity-toolbar>
 
 <div *ngIf="messageKey" class="message" [class.success]="messageType === 'success'" [class.error]="messageType === 'error'">{{ messageKey | text }}</div>
@@ -63,11 +68,7 @@
   <div *ngIf="currentStep === 0" class="step-content" (click)="onStepContentClick($event)">
     
     <!-- Section A: Client Selection -->
-    <div class="data-section">
-      <div class="section-header">
-        <h4>A. Dane klienta</h4>
-      </div>
-      <div class="section-body">
+    <div class="settings-subsection-title">Dane klienta</div>
         <div class="form-group">
           <label>{{ 'clients.title' | text }}</label>
           <div class="client-search-container" (click)="$event.stopPropagation()">
@@ -197,15 +198,9 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
     <!-- Section B: Sprayer Selection -->
-    <div class="data-section">
-      <div class="section-header">
-        <h4>B. Opryskiwacz</h4>
-      </div>
-      <div class="section-body">
+    <div class="settings-subsection-title">Opryskiwacz</div>
         <div *ngIf="!selectedClientId && !isAddingNewClient" class="info-message">
           <p>Wybierz klienta powyżej, aby zobaczyć przypisane opryskiwacze.</p>
         </div>
@@ -322,16 +317,10 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
     <!-- Section C: Inspection Metadata -->
-    <div class="data-section">
-      <div class="section-header">
-        <h4>C. Dane badania</h4>
-      </div>
-      <div class="section-body">
-        <div class="form-row metadata-row">
+    <div class="settings-subsection-title">Dane badania</div>
+        <div class="form-row form-row-2">
           <div class="form-group">
             <label>{{ 'newInspection.fields.inspectionDate' | text }}</label>
             <input type="date" [(ngModel)]="inspectionDate" />
@@ -345,12 +334,10 @@
             <input [(ngModel)]="inspectorName" [placeholder]="'newInspection.placeholders.inspectorName' | text" />
           </div>
           <div class="form-group">
-            <label>Nr uprawnień diagnosty</label>
-            <input [(ngModel)]="inspectorLicenseNumber" placeholder="np. DI-12345" />
+            <label>Nr jednostki upoważnionej do badań</label>
+            <input [(ngModel)]="inspectorLicenseNumber" placeholder="np. DI-001/23" />
           </div>
         </div>
-      </div>
-    </div>
   </div>
 
 <!-- ==================== STEP 1: PROTOCOL ==================== -->
@@ -358,27 +345,39 @@
 
     <!-- Protocol Section 0: General Condition -->
     <div *ngIf="currentProtocolSection === 0" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Stan ogólny i czystość opryskiwacza</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="generalConditionPassed === true" (click)="generalConditionPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="generalConditionPassed === false" (click)="generalConditionPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Czytelność oznaczeń i tabliczek</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="markingsReadablePassed === true" (click)="markingsReadablePassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="markingsReadablePassed === false" (click)="markingsReadablePassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Kompletność wyposażenia</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="equipmentCompletePassed === true" (click)="equipmentCompletePassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="equipmentCompletePassed === false" (click)="equipmentCompletePassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Ogólne — stan i czystość</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Stan ogólny i czystość opryskiwacza</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="generalConditionPassed === true" (click)="generalConditionPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="generalConditionPassed === false" (click)="generalConditionPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="generalConditionPassedDriveOn === true" (click)="generalConditionPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="generalConditionPassedDriveOn === false" (click)="generalConditionPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Czytelność oznaczeń i tabliczek</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="markingsReadablePassed === true" (click)="markingsReadablePassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="markingsReadablePassed === false" (click)="markingsReadablePassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="markingsReadablePassedDriveOn === true" (click)="markingsReadablePassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="markingsReadablePassedDriveOn === false" (click)="markingsReadablePassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Kompletność wyposażenia</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="equipmentCompletePassed === true" (click)="equipmentCompletePassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="equipmentCompletePassed === false" (click)="equipmentCompletePassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="equipmentCompletePassedDriveOn === true" (click)="equipmentCompletePassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="equipmentCompletePassedDriveOn === false" (click)="equipmentCompletePassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Uwagi:</label>
         <textarea [(ngModel)]="generalSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
@@ -387,27 +386,39 @@
 
     <!-- Protocol Section 1: Pump -->
     <div *ngIf="currentProtocolSection === 1" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Praca pompy i napędu</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="pumpOperationPassed === true" (click)="pumpOperationPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="pumpOperationPassed === false" (click)="pumpOperationPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Szczelność pompy</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="pumpSealingPassed === true" (click)="pumpSealingPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="pumpSealingPassed === false" (click)="pumpSealingPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Pulsacje ciśnienia</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="pressurePulsationPassed === true" (click)="pressurePulsationPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="pressurePulsationPassed === false" (click)="pressurePulsationPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Pompa</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Praca pompy i napędu</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pumpOperationPassed === true" (click)="pumpOperationPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pumpOperationPassed === false" (click)="pumpOperationPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pumpOperationPassedDriveOn === true" (click)="pumpOperationPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pumpOperationPassedDriveOn === false" (click)="pumpOperationPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Szczelność pompy</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pumpSealingPassed === true" (click)="pumpSealingPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pumpSealingPassed === false" (click)="pumpSealingPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pumpSealingPassedDriveOn === true" (click)="pumpSealingPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pumpSealingPassedDriveOn === false" (click)="pumpSealingPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Pulsacje ciśnienia</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pressurePulsationPassed === true" (click)="pressurePulsationPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pressurePulsationPassed === false" (click)="pressurePulsationPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pressurePulsationPassedDriveOn === true" (click)="pressurePulsationPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pressurePulsationPassedDriveOn === false" (click)="pressurePulsationPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Uwagi:</label>
         <textarea [(ngModel)]="pumpSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
@@ -416,13 +427,25 @@
 
     <!-- Protocol Section 2: Agitation -->
     <div *ngIf="currentProtocolSection === 2" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Działanie mieszadła</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="agitatorOperationPassed === true" (click)="agitatorOperationPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="agitatorOperationPassed === false" (click)="agitatorOperationPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Mieszanie</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Działanie mieszadła</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="agitatorOperationPassed === true" (click)="agitatorOperationPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="agitatorOperationPassed === false" (click)="agitatorOperationPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="agitatorOperationPassedDriveOn === true" (click)="agitatorOperationPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="agitatorOperationPassedDriveOn === false" (click)="agitatorOperationPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Uwagi:</label>
         <textarea [(ngModel)]="agitatorSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
@@ -431,34 +454,46 @@
 
     <!-- Protocol Section 3: Tank -->
     <div *ngIf="currentProtocolSection === 3" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Stan zbiornika</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="tankConditionPassed === true" (click)="tankConditionPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="tankConditionPassed === false" (click)="tankConditionPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Szczelność zbiornika</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="tankSealingPassed === true" (click)="tankSealingPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="tankSealingPassed === false" (click)="tankSealingPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Wskaźnik poziomu cieczy</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="levelIndicatorPassed === true" (click)="levelIndicatorPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="levelIndicatorPassed === false" (click)="levelIndicatorPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Układ płukania</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="flushingSystemPassed === true" (click)="flushingSystemPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="flushingSystemPassed === false" (click)="flushingSystemPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Zbiornik</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Stan zbiornika</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="tankConditionPassed === true" (click)="tankConditionPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="tankConditionPassed === false" (click)="tankConditionPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="tankConditionPassedDriveOn === true" (click)="tankConditionPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="tankConditionPassedDriveOn === false" (click)="tankConditionPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Szczelność zbiornika</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="tankSealingPassed === true" (click)="tankSealingPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="tankSealingPassed === false" (click)="tankSealingPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="tankSealingPassedDriveOn === true" (click)="tankSealingPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="tankSealingPassedDriveOn === false" (click)="tankSealingPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Wskaźnik poziomu cieczy</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="levelIndicatorPassed === true" (click)="levelIndicatorPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="levelIndicatorPassed === false" (click)="levelIndicatorPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="levelIndicatorPassedDriveOn === true" (click)="levelIndicatorPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="levelIndicatorPassedDriveOn === false" (click)="levelIndicatorPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Układ płukania</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="flushingSystemPassed === true" (click)="flushingSystemPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="flushingSystemPassed === false" (click)="flushingSystemPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="flushingSystemPassedDriveOn === true" (click)="flushingSystemPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="flushingSystemPassedDriveOn === false" (click)="flushingSystemPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Uwagi:</label>
         <textarea [(ngModel)]="tankSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
@@ -467,20 +502,32 @@
 
     <!-- Protocol Section 4: Measuring -->
     <div *ngIf="currentProtocolSection === 4" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Stan i czytelność manometru</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="manometerPassed === true" (click)="manometerPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="manometerPassed === false" (click)="manometerPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Średnica tarczy (min 63mm)</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="manometerDialSizePassed === true" (click)="manometerDialSizePassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="manometerDialSizePassed === false" (click)="manometerDialSizePassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Manometr i przyrządy pomiarowe</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Stan i czytelność manometru</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="manometerPassed === true" (click)="manometerPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="manometerPassed === false" (click)="manometerPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="manometerPassedDriveOn === true" (click)="manometerPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="manometerPassedDriveOn === false" (click)="manometerPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Średnica tarczy (min 63mm)</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="manometerDialSizePassed === true" (click)="manometerDialSizePassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="manometerDialSizePassed === false" (click)="manometerDialSizePassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="manometerDialSizePassedDriveOn === true" (click)="manometerDialSizePassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="manometerDialSizePassedDriveOn === false" (click)="manometerDialSizePassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="measurements-row">
         <label>Odczyty manometru:</label>
         <div class="measurement-inputs">
@@ -506,20 +553,32 @@
 
     <!-- Protocol Section 5: Piping -->
     <div *ngIf="currentProtocolSection === 5" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Stan przewodów i węży</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="pipesConditionPassed === true" (click)="pipesConditionPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="pipesConditionPassed === false" (click)="pipesConditionPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Szczelność połączeń</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="connectionsSealingPassed === true" (click)="connectionsSealingPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="connectionsSealingPassed === false" (click)="connectionsSealingPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Przewody</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Stan przewodów i węży</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pipesConditionPassed === true" (click)="pipesConditionPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pipesConditionPassed === false" (click)="pipesConditionPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pipesConditionPassedDriveOn === true" (click)="pipesConditionPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pipesConditionPassedDriveOn === false" (click)="pipesConditionPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Szczelność połączeń</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="connectionsSealingPassed === true" (click)="connectionsSealingPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="connectionsSealingPassed === false" (click)="connectionsSealingPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="connectionsSealingPassedDriveOn === true" (click)="connectionsSealingPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="connectionsSealingPassedDriveOn === false" (click)="connectionsSealingPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Uwagi:</label>
         <textarea [(ngModel)]="pipingSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
@@ -528,27 +587,39 @@
 
     <!-- Protocol Section 6: Filtration -->
     <div *ngIf="currentProtocolSection === 6" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Filtr ssawny</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="suctionFilterPassed === true" (click)="suctionFilterPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="suctionFilterPassed === false" (click)="suctionFilterPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Filtr ciśnieniowy</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="pressureFilterPassed === true" (click)="pressureFilterPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="pressureFilterPassed === false" (click)="pressureFilterPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Filtry rozpylaczy</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="nozzleFiltersPassed === true" (click)="nozzleFiltersPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="nozzleFiltersPassed === false" (click)="nozzleFiltersPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Filtracja</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Filtr ssawny</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="suctionFilterPassed === true" (click)="suctionFilterPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="suctionFilterPassed === false" (click)="suctionFilterPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="suctionFilterPassedDriveOn === true" (click)="suctionFilterPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="suctionFilterPassedDriveOn === false" (click)="suctionFilterPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Filtr ciśnieniowy</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pressureFilterPassed === true" (click)="pressureFilterPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pressureFilterPassed === false" (click)="pressureFilterPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="pressureFilterPassedDriveOn === true" (click)="pressureFilterPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="pressureFilterPassedDriveOn === false" (click)="pressureFilterPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Filtry rozpylaczy</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleFiltersPassed === true" (click)="nozzleFiltersPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleFiltersPassed === false" (click)="nozzleFiltersPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleFiltersPassedDriveOn === true" (click)="nozzleFiltersPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleFiltersPassedDriveOn === false" (click)="nozzleFiltersPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Uwagi:</label>
         <textarea [(ngModel)]="filtrationSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
@@ -557,34 +628,46 @@
 
     <!-- Protocol Section 7: Boom -->
     <div *ngIf="currentProtocolSection === 7" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Stan belki polowej</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="fieldBoomConditionPassed === true" (click)="fieldBoomConditionPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="fieldBoomConditionPassed === false" (click)="fieldBoomConditionPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Stabilność belki</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="boomStabilityPassed === true" (click)="boomStabilityPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="boomStabilityPassed === false" (click)="boomStabilityPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Wysokość belki</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="boomHeightPassed === true" (click)="boomHeightPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="boomHeightPassed === false" (click)="boomHeightPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Symetria belki</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="boomSymmetryPassed === true" (click)="boomSymmetryPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="boomSymmetryPassed === false" (click)="boomSymmetryPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Belka</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Stan belki polowej</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="fieldBoomConditionPassed === true" (click)="fieldBoomConditionPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="fieldBoomConditionPassed === false" (click)="fieldBoomConditionPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="fieldBoomConditionPassedDriveOn === true" (click)="fieldBoomConditionPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="fieldBoomConditionPassedDriveOn === false" (click)="fieldBoomConditionPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Stabilność belki</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="boomStabilityPassed === true" (click)="boomStabilityPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="boomStabilityPassed === false" (click)="boomStabilityPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="boomStabilityPassedDriveOn === true" (click)="boomStabilityPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="boomStabilityPassedDriveOn === false" (click)="boomStabilityPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Wysokość belki</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="boomHeightPassed === true" (click)="boomHeightPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="boomHeightPassed === false" (click)="boomHeightPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="boomHeightPassedDriveOn === true" (click)="boomHeightPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="boomHeightPassedDriveOn === false" (click)="boomHeightPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Symetria belki</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="boomSymmetryPassed === true" (click)="boomSymmetryPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="boomSymmetryPassed === false" (click)="boomSymmetryPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="boomSymmetryPassedDriveOn === true" (click)="boomSymmetryPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="boomSymmetryPassedDriveOn === false" (click)="boomSymmetryPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Uwagi:</label>
         <textarea [(ngModel)]="boomSectionNotes" rows="2" placeholder="Uwagi do sekcji..."></textarea>
@@ -593,27 +676,39 @@
 
     <!-- Protocol Section 8: Nozzles -->
     <div *ngIf="currentProtocolSection === 8" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Jednolitość rozpylaczy</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="nozzleUniformityPassed === true" (click)="nozzleUniformityPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="nozzleUniformityPassed === false" (click)="nozzleUniformityPassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Wydatek rozpylaczy</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="nozzleFlowRatePassed === true" (click)="nozzleFlowRatePassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="nozzleFlowRatePassed === false" (click)="nozzleFlowRatePassed = false">✗</button>
-        </div>
-      </div>
-      <div class="check-row">
-        <span class="check-label">Stan rozpylaczy</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="nozzleConditionPassed === true" (click)="nozzleConditionPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="nozzleConditionPassed === false" (click)="nozzleConditionPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Rozpylacze</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Jednolitość rozpylaczy</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleUniformityPassed === true" (click)="nozzleUniformityPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleUniformityPassed === false" (click)="nozzleUniformityPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleUniformityPassedDriveOn === true" (click)="nozzleUniformityPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleUniformityPassedDriveOn === false" (click)="nozzleUniformityPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Wydatek rozpylaczy</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleFlowRatePassed === true" (click)="nozzleFlowRatePassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleFlowRatePassed === false" (click)="nozzleFlowRatePassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleFlowRatePassedDriveOn === true" (click)="nozzleFlowRatePassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleFlowRatePassedDriveOn === false" (click)="nozzleFlowRatePassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+          <tr>
+            <td class="ct-label">Stan rozpylaczy</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleConditionPassed === true" (click)="nozzleConditionPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleConditionPassed === false" (click)="nozzleConditionPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="nozzleConditionPassedDriveOn === true" (click)="nozzleConditionPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="nozzleConditionPassedDriveOn === false" (click)="nozzleConditionPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="notes-row">
         <label>Pomiary rozpylaczy:</label>
         <textarea [(ngModel)]="nozzleMeasurements" rows="3" placeholder="Wprowadź pomiary wydatku rozpylaczy..."></textarea>
@@ -626,13 +721,25 @@
 
     <!-- Protocol Section 9: Distribution -->
     <div *ngIf="currentProtocolSection === 9" class="protocol-section-content">
-      <div class="check-row">
-        <span class="check-label">Rozkład poprzeczny</span>
-        <div class="check-buttons">
-          <button class="btn-check" [class.active]="transverseDistributionPassed === true" (click)="transverseDistributionPassed = true">✓</button>
-          <button class="btn-check fail" [class.active]="transverseDistributionPassed === false" (click)="transverseDistributionPassed = false">✗</button>
-        </div>
-      </div>
+      <div class="settings-subsection-title">Rozkład poprzeczny</div>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th class="ct-label">Przedmiot badania</th>
+            <th class="ct-header" colspan="2">WYŁ.</th>
+            <th class="ct-header" colspan="2">WŁ.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ct-label">Rozkład poprzeczny</td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="transverseDistributionPassed === true" (click)="transverseDistributionPassed = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="transverseDistributionPassed === false" (click)="transverseDistributionPassed = false" [innerHTML]="iconXSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check" [class.active]="transverseDistributionPassedDriveOn === true" (click)="transverseDistributionPassedDriveOn = true" [innerHTML]="iconCheckSafe"></button></td>
+            <td class="ct-btn"><button class="btn-check fail" [class.active]="transverseDistributionPassedDriveOn === false" (click)="transverseDistributionPassedDriveOn = false" [innerHTML]="iconXSafe"></button></td>
+          </tr>
+        </tbody>
+      </table>
       <div class="measurements-row">
         <label>Współczynnik zmienności (CV):</label>
         <div class="measurement-inputs">
@@ -650,6 +757,7 @@
 
     <!-- Protocol Section 10: Final Result -->
     <div *ngIf="currentProtocolSection === 10" class="protocol-section-content final-section-content">
+      <div class="settings-subsection-title">Wynik końcowy</div>
       <div class="final-result-row">
         <label>Wynik badania:</label>
         <div class="result-buttons">
@@ -677,7 +785,6 @@
       </div>
     </div>
   </div>
-</div>
 
 <!-- ==================== PDF PREVIEW MODAL ==================== -->
 <div *ngIf="isPdfPreviewOpen" class="dialog-backdrop dialog-backdrop--dismissible" (click)="onBackdropClick($event)">
@@ -688,437 +795,584 @@
     </div>
     <div class="dialog__body dialog__body--scroll print-preview-body">
       <!-- Protocol Preview Document - Matching XSL-FO Style -->
-      <div class="protocol-document">
-        <!-- Document Title -->
-        <div class="doc-title">
-          <h1>PROTOKÓŁ BADANIA TECHNICZNEGO</h1>
-          <h2>OPRYSKIWACZA {{ selectedSprayer?.type === '00' ? 'POLOWEGO' : (selectedSprayer?.type === '01' ? 'SADOWNICZEGO' : 'POLOWEGO/SADOWNICZEGO') }}</h2>
-        </div>
+      <!-- Official Protocol Preview - 1:1 with PDF layout -->
+      <div class="protocol-document official-form">
 
-        <!-- Protocol Info Box -->
-        <table class="doc-info-box">
-          <tr>
-            <td><strong>Nr protokołu:</strong> {{ protocolNumber || '—' }}</td>
-            <td><strong>Data badania:</strong> {{ inspectionDate || '—' }}</td>
-          </tr>
-          <tr>
-            <td colspan="2"><strong>Miejsce badania:</strong> {{ inspectionLocation || '—' }}</td>
-          </tr>
-        </table>
+        <!-- ============ PAGE 1 ============ -->
+        <div class="form-page" id="fp1">
 
-        <!-- Section A: Client Data -->
-        <div class="doc-section-header">A. DANE WŁAŚCICIELA / POSIADACZA</div>
-        <table class="doc-data-table">
-          <tr>
-            <td class="label-cell">Nazwa / Imię i nazwisko</td>
-            <td class="value-cell">{{ selectedClient ? (selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName) : '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Adres</td>
-            <td class="value-cell">
-              <ng-container *ngIf="selectedClient">{{ selectedClient.street }} {{ selectedClient.buildingNumber }}{{ selectedClient.apartmentNumber ? '/' + selectedClient.apartmentNumber : '' }}, {{ selectedClient.zipCode }} {{ selectedClient.city }}</ng-container>
-              <ng-container *ngIf="!selectedClient">—</ng-container>
-            </td>
-          </tr>
-          <tr>
-            <td class="label-cell">NIP / PESEL</td>
-            <td class="value-cell">{{ selectedClient ? (selectedClient.clientType === 'person' ? selectedClient.pesel : selectedClient.nip) : '—' }}</td>
-          </tr>
-        </table>
+          <!-- TOP GRID: Inspector+Owner left, Protocol+Sprayer right (per PBTO.xlsx) -->
+          <div class="fp-top">
+            <div class="fp-left-panel">
+              <div class="fp-lsec">Nr wpisu do rejestru przedsiębiorstw wykonujących działalność w zakresie potwierdzania sprawności technicznej sprzętu przeznaczonego do stosowania środków ochrony roślin:</div>
+              <div class="fp-lfield">{{ inspectorLicenseNumber || '' }}</div>
+              <div class="fp-lnote">Imię, nazwisko, miejsce zamieszkania, adres lub nazwa, siedziba i adres:</div>
+              <div class="fp-lfield">{{ inspectorName }}</div>
+              <div class="fp-stamp-label">Pieczęć podmiotu przeprowadzającego badanie</div>
+              <div class="fp-stamp-box"></div>
 
-        <!-- Section B: Sprayer Data -->
-        <div class="doc-section-header">B. DANE OPRYSKIWACZA</div>
-        <table class="doc-data-table">
-          <tr>
-            <td class="label-cell">Typ</td>
-            <td class="value-cell">{{ selectedSprayer?.type === '00' ? 'Polowy' : (selectedSprayer?.type === '01' ? 'Sadowniczy' : '—') }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Rodzaj</td>
-            <td class="value-cell">{{ selectedSprayer?.kind === '00' ? 'Zawieszany' : (selectedSprayer?.kind === '01' ? 'Przyczepiany' : (selectedSprayer?.kind === '02' ? 'Samobieżny' : (selectedSprayer?.kind === '03' ? 'Inny' : '—'))) }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Nazwa / Model</td>
-            <td class="value-cell">{{ selectedSprayer?.sprayerName || '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Producent</td>
-            <td class="value-cell">{{ selectedSprayer?.manufacturer || '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Numer seryjny</td>
-            <td class="value-cell">{{ selectedSprayer?.serialNumber || selectedSprayerSerialNumber || '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Rok produkcji</td>
-            <td class="value-cell">{{ selectedSprayer?.productionYear || '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Pojemność zbiornika</td>
-            <td class="value-cell">{{ selectedSprayer?.tankCapacity ? selectedSprayer.tankCapacity + ' l' : '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Szerokość robocza belki</td>
-            <td class="value-cell">{{ selectedSprayer?.boomWidth ? selectedSprayer.boomWidth + ' m' : '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Liczba sekcji</td>
-            <td class="value-cell">{{ selectedSprayer?.sectionCount || '—' }}</td>
-          </tr>
-        </table>
-
-        <!-- Section C: Inspection Results -->
-        <div class="doc-section-header">C. WYNIKI BADANIA</div>
-        
-        <table class="doc-results-table">
-          <thead>
-            <tr class="results-header">
-              <th class="col-num">Lp.</th>
-              <th class="col-item">Przedmiot badania</th>
-              <th class="col-result">Wynik</th>
-              <th class="col-notes">Uwagi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Section 1: General Condition -->
-            <tr class="section-title-row">
-              <td class="section-num">1</td>
-              <td class="section-title" colspan="3">STAN OGÓLNY OPRYSKIWACZA</td>
-            </tr>
-            <tr>
-              <td class="item-num">1.1</td>
-              <td class="item-name">Stan techniczny ogólny i czystość</td>
-              <td class="item-result" [class.pass]="generalConditionPassed === true" [class.fail]="generalConditionPassed === false">
-                {{ generalConditionPassed === true ? '✓' : (generalConditionPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">1.2</td>
-              <td class="item-name">Czytelność oznaczeń i tabliczek</td>
-              <td class="item-result" [class.pass]="markingsReadablePassed === true" [class.fail]="markingsReadablePassed === false">
-                {{ markingsReadablePassed === true ? '✓' : (markingsReadablePassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">1.3</td>
-              <td class="item-name">Kompletność wyposażenia</td>
-              <td class="item-result" [class.pass]="equipmentCompletePassed === true" [class.fail]="equipmentCompletePassed === false">
-                {{ equipmentCompletePassed === true ? '✓' : (equipmentCompletePassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ generalSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 2: Pump -->
-            <tr class="section-title-row">
-              <td class="section-num">2</td>
-              <td class="section-title" colspan="3">POMPA</td>
-            </tr>
-            <tr>
-              <td class="item-num">2.1</td>
-              <td class="item-name">Praca pompy i napędu</td>
-              <td class="item-result" [class.pass]="pumpOperationPassed === true" [class.fail]="pumpOperationPassed === false">
-                {{ pumpOperationPassed === true ? '✓' : (pumpOperationPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">2.2</td>
-              <td class="item-name">Szczelność pompy</td>
-              <td class="item-result" [class.pass]="pumpSealingPassed === true" [class.fail]="pumpSealingPassed === false">
-                {{ pumpSealingPassed === true ? '✓' : (pumpSealingPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">2.3</td>
-              <td class="item-name">Pulsacje ciśnienia</td>
-              <td class="item-result" [class.pass]="pressurePulsationPassed === true" [class.fail]="pressurePulsationPassed === false">
-                {{ pressurePulsationPassed === true ? '✓' : (pressurePulsationPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ pumpSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 3: Agitation -->
-            <tr class="section-title-row">
-              <td class="section-num">3</td>
-              <td class="section-title" colspan="3">MIESZALNIK</td>
-            </tr>
-            <tr>
-              <td class="item-num">3.1</td>
-              <td class="item-name">Sprawność mieszalnika</td>
-              <td class="item-result" [class.pass]="agitatorOperationPassed === true" [class.fail]="agitatorOperationPassed === false">
-                {{ agitatorOperationPassed === true ? '✓' : (agitatorOperationPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ agitatorSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 4: Tank -->
-            <tr class="section-title-row">
-              <td class="section-num">4</td>
-              <td class="section-title" colspan="3">ZBIORNIK</td>
-            </tr>
-            <tr>
-              <td class="item-num">4.1</td>
-              <td class="item-name">Stan zbiornika</td>
-              <td class="item-result" [class.pass]="tankConditionPassed === true" [class.fail]="tankConditionPassed === false">
-                {{ tankConditionPassed === true ? '✓' : (tankConditionPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">4.2</td>
-              <td class="item-name">Szczelność zbiornika</td>
-              <td class="item-result" [class.pass]="tankSealingPassed === true" [class.fail]="tankSealingPassed === false">
-                {{ tankSealingPassed === true ? '✓' : (tankSealingPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">4.3</td>
-              <td class="item-name">Wskaźnik poziomu cieczy</td>
-              <td class="item-result" [class.pass]="levelIndicatorPassed === true" [class.fail]="levelIndicatorPassed === false">
-                {{ levelIndicatorPassed === true ? '✓' : (levelIndicatorPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">4.4</td>
-              <td class="item-name">Układ płukania</td>
-              <td class="item-result" [class.pass]="flushingSystemPassed === true" [class.fail]="flushingSystemPassed === false">
-                {{ flushingSystemPassed === true ? '✓' : (flushingSystemPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ tankSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 5: Measuring -->
-            <tr class="section-title-row">
-              <td class="section-num">5</td>
-              <td class="section-title" colspan="3">PRZYRZĄDY POMIAROWE (MANOMETR)</td>
-            </tr>
-            <tr>
-              <td class="item-num">5.1</td>
-              <td class="item-name">Stan i czytelność manometru</td>
-              <td class="item-result" [class.pass]="manometerPassed === true" [class.fail]="manometerPassed === false">
-                {{ manometerPassed === true ? '✓' : (manometerPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">5.2</td>
-              <td class="item-name">Średnica tarczy (min 63mm)</td>
-              <td class="item-result" [class.pass]="manometerDialSizePassed === true" [class.fail]="manometerDialSizePassed === false">
-                {{ manometerDialSizePassed === true ? '✓' : (manometerDialSizePassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">5.3</td>
-              <td class="item-measurements" colspan="3">
-                Odczyty manometru:
-                2 bar → <strong>{{ manometerReading2Bar || '—' }} bar</strong> |
-                4 bar → <strong>{{ manometerReading4Bar || '—' }} bar</strong> |
-                6 bar → <strong>{{ manometerReading6Bar || '—' }} bar</strong>
-              </td>
-            </tr>
-
-            <!-- Section 6: Piping -->
-            <tr class="section-title-row">
-              <td class="section-num">6</td>
-              <td class="section-title" colspan="3">PRZEWODY</td>
-            </tr>
-            <tr>
-              <td class="item-num">6.1</td>
-              <td class="item-name">Stan przewodów i węży</td>
-              <td class="item-result" [class.pass]="pipesConditionPassed === true" [class.fail]="pipesConditionPassed === false">
-                {{ pipesConditionPassed === true ? '✓' : (pipesConditionPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">6.2</td>
-              <td class="item-name">Szczelność połączeń</td>
-              <td class="item-result" [class.pass]="connectionsSealingPassed === true" [class.fail]="connectionsSealingPassed === false">
-                {{ connectionsSealingPassed === true ? '✓' : (connectionsSealingPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ pipingSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 7: Filtration -->
-            <tr class="section-title-row">
-              <td class="section-num">7</td>
-              <td class="section-title" colspan="3">FILTRACJA</td>
-            </tr>
-            <tr>
-              <td class="item-num">7.1</td>
-              <td class="item-name">Filtr ssawny</td>
-              <td class="item-result" [class.pass]="suctionFilterPassed === true" [class.fail]="suctionFilterPassed === false">
-                {{ suctionFilterPassed === true ? '✓' : (suctionFilterPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">7.2</td>
-              <td class="item-name">Filtr ciśnieniowy (tłoczny)</td>
-              <td class="item-result" [class.pass]="pressureFilterPassed === true" [class.fail]="pressureFilterPassed === false">
-                {{ pressureFilterPassed === true ? '✓' : (pressureFilterPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">7.3</td>
-              <td class="item-name">Filtry rozpylaczy</td>
-              <td class="item-result" [class.pass]="nozzleFiltersPassed === true" [class.fail]="nozzleFiltersPassed === false">
-                {{ nozzleFiltersPassed === true ? '✓' : (nozzleFiltersPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ filtrationSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 8: Boom -->
-            <tr class="section-title-row">
-              <td class="section-num">8</td>
-              <td class="section-title" colspan="3">BELKA / URZĄDZENIE ROZPYLAJĄCE</td>
-            </tr>
-            <tr>
-              <td class="item-num">8.1</td>
-              <td class="item-name">Stan belki polowej</td>
-              <td class="item-result" [class.pass]="fieldBoomConditionPassed === true" [class.fail]="fieldBoomConditionPassed === false">
-                {{ fieldBoomConditionPassed === true ? '✓' : (fieldBoomConditionPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">8.2</td>
-              <td class="item-name">Stabilność belki</td>
-              <td class="item-result" [class.pass]="boomStabilityPassed === true" [class.fail]="boomStabilityPassed === false">
-                {{ boomStabilityPassed === true ? '✓' : (boomStabilityPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">8.3</td>
-              <td class="item-name">Wysokość belki</td>
-              <td class="item-result" [class.pass]="boomHeightPassed === true" [class.fail]="boomHeightPassed === false">
-                {{ boomHeightPassed === true ? '✓' : (boomHeightPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">8.4</td>
-              <td class="item-name">Symetria belki</td>
-              <td class="item-result" [class.pass]="boomSymmetryPassed === true" [class.fail]="boomSymmetryPassed === false">
-                {{ boomSymmetryPassed === true ? '✓' : (boomSymmetryPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ boomSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 9: Nozzles -->
-            <tr class="section-title-row">
-              <td class="section-num">9</td>
-              <td class="section-title" colspan="3">ROZPYLACZE</td>
-            </tr>
-            <tr>
-              <td class="item-num">9.1</td>
-              <td class="item-name">Jednorodność rozpylaczy</td>
-              <td class="item-result" [class.pass]="nozzleUniformityPassed === true" [class.fail]="nozzleUniformityPassed === false">
-                {{ nozzleUniformityPassed === true ? '✓' : (nozzleUniformityPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">9.2</td>
-              <td class="item-name">Wydatek rozpylaczy</td>
-              <td class="item-result" [class.pass]="nozzleFlowRatePassed === true" [class.fail]="nozzleFlowRatePassed === false">
-                {{ nozzleFlowRatePassed === true ? '✓' : (nozzleFlowRatePassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">9.3</td>
-              <td class="item-name">Stan rozpylaczy</td>
-              <td class="item-result" [class.pass]="nozzleConditionPassed === true" [class.fail]="nozzleConditionPassed === false">
-                {{ nozzleConditionPassed === true ? '✓' : (nozzleConditionPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes">{{ nozzlesSectionNotes }}</td>
-            </tr>
-
-            <!-- Section 10: Distribution -->
-            <tr class="section-title-row">
-              <td class="section-num">10</td>
-              <td class="section-title" colspan="3">RÓWNOMIERNOŚĆ ROZPROWADZANIA</td>
-            </tr>
-            <tr>
-              <td class="item-num">10.1</td>
-              <td class="item-name">Poprzeczna równomierność rozprowadzania</td>
-              <td class="item-result" [class.pass]="transverseDistributionPassed === true" [class.fail]="transverseDistributionPassed === false">
-                {{ transverseDistributionPassed === true ? '✓' : (transverseDistributionPassed === false ? '✗' : '—') }}
-              </td>
-              <td class="item-notes"></td>
-            </tr>
-            <tr>
-              <td class="item-num">10.2</td>
-              <td class="item-measurements" colspan="3">
-                Współczynnik zmienności CV: <strong>{{ coefficientOfVariation || '—' }} %</strong>
-                <span *ngIf="distributionSectionNotes" class="measurement-note">Uwagi: {{ distributionSectionNotes }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Section D: Final Result -->
-        <div class="doc-section-header">D. WYNIK KOŃCOWY BADANIA</div>
-        
-        <div class="doc-final-result" [class.positive]="finalResult === true" [class.negative]="finalResult === false">
-          <span *ngIf="finalResult === true">WYNIK POZYTYWNY</span>
-          <span *ngIf="finalResult === false">WYNIK NEGATYWNY</span>
-          <span *ngIf="finalResult === null">—</span>
-        </div>
-
-        <table *ngIf="finalResult === true" class="doc-data-table">
-          <tr>
-            <td class="label-cell">Data ważności badania</td>
-            <td class="value-cell">{{ validUntil || '—' }}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Numer nalepki kontrolnej</td>
-            <td class="value-cell">{{ controlStickerNumber || '—' }}</td>
-          </tr>
-        </table>
-
-        <div *ngIf="generalNotes" class="doc-general-notes">
-          <strong>Uwagi ogólne / Zalecenia:</strong><br/>
-          {{ generalNotes }}
-        </div>
-
-        <!-- Section E: Signatures -->
-        <div class="doc-section-header">E. PODPISY</div>
-        
-        <div class="doc-signatures">
-          <div class="signature-column">
-            <div class="signature-info">
-              <strong>Diagnosta:</strong><br/>
-              {{ inspectorName || '—' }}<br/>
-              <span class="signature-detail">Nr uprawnień: {{ inspectorLicenseNumber || '—' }}</span>
+              <!-- Owner / Posiadacz (per XLSX: left column, below stamp) -->
+              <div class="fp-owner-left">
+                <div class="fp-lnote" style="margin-top:4mm">Imię i nazwisko lub nazwa posiadacza opryskiwacza:</div>
+                <div class="fp-lfield">
+                  {{ selectedClient ? (selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName) : '' }}
+                </div>
+                <div class="fp-lrow">Adres:</div>
+                <div class="fp-lfield">
+                  <ng-container *ngIf="selectedClient?.street">{{ selectedClient?.street }} {{ selectedClient?.buildingNumber }}{{ selectedClient?.apartmentNumber ? '/' + selectedClient?.apartmentNumber : '' }}</ng-container>
+                </div>
+                <div class="fp-lfield">
+                  <ng-container *ngIf="selectedClient?.zipCode">{{ selectedClient?.zipCode }} {{ selectedClient?.city }}</ng-container>
+                </div>
+                <div class="fp-lrow">
+                  Pesel lub NIP: <span class="fp-uline" style="min-width:28mm">{{ selectedClient ? (selectedClient.clientType === 'person' ? selectedClient.pesel : selectedClient.nip) : '' }}</span>
+                </div>
+              </div>
             </div>
-            <div class="signature-line"></div>
-            <span class="signature-label">(podpis diagnosty)</span>
-          </div>
-          <div class="signature-column">
-            <div class="signature-info">
-              <strong>Właściciel / Posiadacz:</strong><br/>
-              {{ selectedClient ? (selectedClient.clientType === 'person' ? (selectedClient.firstName + ' ' + selectedClient.lastName) : selectedClient.companyName) : '—' }}<br/>
-              <span class="signature-detail">&nbsp;</span>
-            </div>
-            <div class="signature-line"></div>
-            <span class="signature-label">(podpis właściciela/posiadacza)</span>
-          </div>
-        </div>
 
-        <!-- Footer -->
-        <div class="doc-footer">
-          <span>Wygenerowano: {{ today }}</span>
-        </div>
+            <div class="fp-right-panel">
+              <div class="fp-proto-title">Protokół badania technicznego opryskiwacza</div>
+              <div class="fp-sb-row" style="margin-top:2mm">
+                Nr <span class="fp-uline" style="min-width:50mm">{{ protocolNumber }}</span>
+              </div>
+              <div class="fp-sb-row" style="margin-top:2mm">
+                Opryskiwacz wprowadzony do obrotu <span class="fp-sq">□</span>
+                &nbsp;&nbsp;
+                Opryskiwacz będący w eksploatacji* <span class="fp-sq">■</span>
+              </div>
+              <div class="fp-sb-row fp-small">(*- niepotrzebne skreślić)</div>
+
+              <div class="fp-sb-row">
+                <strong>Numer seryjny lub ewidencyjny opryskiwacza:</strong>
+                ew. <span class="fp-uline">{{ selectedSprayer?.serialNumber || selectedSprayerSerialNumber || '' }}</span>
+                fab. <span class="fp-uline" style="min-width:15mm"></span>
+              </div>
+              <div class="fp-sb-row">
+                <strong>Typ opryskiwacza:</strong>
+                <span class="fp-uline" style="min-width:30mm">{{ (selectedSprayer?.type || newSprayer.type) === '00' ? 'polowy' : (selectedSprayer?.type || newSprayer.type) === '01' ? 'sadowniczy' : '' }}</span>
+              </div>
+              <div class="fp-sb-row">
+                <strong>Rodzaj opryskiwacza:</strong>
+                zawieszany <span class="fp-sq">{{ (selectedSprayer?.kind || newSprayer.kind) === '00' ? '■' : '□' }}</span>
+                przyczepiany <span class="fp-sq">{{ (selectedSprayer?.kind || newSprayer.kind) === '01' ? '■' : '□' }}</span>
+                samobieżny <span class="fp-sq">{{ (selectedSprayer?.kind || newSprayer.kind) === '02' ? '■' : '□' }}</span>
+                inny <span class="fp-sq">{{ (selectedSprayer?.kind || newSprayer.kind) === '03' ? '■' : '□' }}</span>
+              </div>
+
+              <!-- Sprayer details (aligned with owner area per XLSX) -->
+              <div class="fp-sprayer-details">
+                <div class="fp-sb-detail-row">
+                  <span class="fp-sb-label">Nazwa:</span>
+                  <span class="fp-uline">{{ selectedSprayer?.sprayerName || '' }}</span>
+                </div>
+                <div class="fp-sb-detail-row">
+                  <span class="fp-sb-label">Producent:</span>
+                  <span class="fp-uline">{{ selectedSprayer?.manufacturer || newSprayer.manufacturer || '' }}</span>
+                </div>
+                <div class="fp-sb-detail-row">
+                  <span class="fp-sb-label">Rok produkcji:</span>
+                  <span class="fp-uline">{{ selectedSprayer?.productionYear || newSprayer.productionYear || '' }}</span>
+                </div>
+                <div class="fp-sb-detail-row">
+                  <span class="fp-sb-label">Data ostatniego badania:</span>
+                  <span class="fp-uline" style="min-width:30mm"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 1: Badanie ogólne (simpler 2-column assessment per PBTO.xlsx) -->
+          <table class="fp-it fp-sect1">
+            <thead>
+              <tr class="fp-sec"><th colspan="4">1. Badanie ogólne opryskiwacza</th></tr>
+              <tr>
+                <th rowspan="2">Przedmiot badań</th>
+                <th colspan="2">Wynik badań</th>
+                <th rowspan="2">Uwagi i zalecenia</th>
+              </tr>
+              <tr>
+                <th class="fp-chk">wada</th>
+                <th class="fp-chk">w normie</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1.1&nbsp;&nbsp;Kompletność, stan techniczny osłon części wirujących</td>
+                <td class="fp-chk">{{ equipmentCompletePassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ equipmentCompletePassed === true ? '■' : '□' }}</td>
+                <td rowspan="5">{{ generalSectionNotes }}</td>
+              </tr>
+              <tr>
+                <td>1.2&nbsp;&nbsp;Pewność mocowania</td>
+                <td class="fp-chk">{{ markingsReadablePassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ markingsReadablePassed === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>1.3&nbsp;&nbsp;Stan zużycia części – zespołów</td>
+                <td class="fp-chk">{{ generalConditionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ generalConditionPassed === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>1.4&nbsp;&nbsp;Szczelność zbiornika</td>
+                <td class="fp-chk">{{ tankSealingPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ tankSealingPassed === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>1.5&nbsp;&nbsp;Czystość</td>
+                <td class="fp-chk">□</td>
+                <td class="fp-chk">□</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- MAIN INSPECTION TABLE page 1: Section 2 -->
+          <table class="fp-it">
+            <thead>
+              <tr>
+                <th class="fp-col-urz" rowspan="2">Urządzenie opryskiwacza</th>
+                <th class="fp-col-rodz" rowspan="2">Rodzaj wyposażenia</th>
+                <th class="fp-col-pred" rowspan="2">Przedmiot badań</th>
+                <th colspan="2">Ocena przy wyłączonym napędzie</th>
+                <th colspan="2">Ocena przy włączonym napędzie</th>
+                <th class="fp-col-uw" rowspan="2">Uwagi i zalecenia</th>
+              </tr>
+              <tr>
+                <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+                <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 2. Badanie stanu technicznego -->
+              <tr class="fp-sec"><td colspan="8">2. Badanie stanu technicznego poszczególnych części i urządzeń opryskiwacza</td></tr>
+
+              <!-- 2.1 Pompa -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="5"><strong>2.1 Pompa</strong><br/>Natężenie wypływu<br/>[dm³/min]<br/>............</td>
+                <td class="fp-col-rodz" rowspan="2">
+                  {{ selectedSprayer?.pumpPiston !== false ? '■' : '□' }} tłokowa<br/>
+                  □<br/>membranova<br/>
+                  □ inna<br/>typ..........
+                </td>
+                <td>2.1.1&nbsp;Szczelność</td>
+                <td class="fp-chk">{{ pumpSealingPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pumpSealingPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pumpSealingPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ pumpSealingPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="5">{{ pumpSectionNotes }}</td>
+              </tr>
+              <tr>
+                <td>2.1.2&nbsp;Smarowanie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td class="fp-col-rodz"></td>
+                <td>2.1.3&nbsp;Tłumienie pulsacji</td>
+                <td class="fp-chk">{{ pressurePulsationPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pressurePulsationPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pressurePulsationPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ pressurePulsationPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td class="fp-col-rodz"></td>
+                <td>2.1.4&nbsp;Wydajność</td>
+                <td class="fp-chk">{{ pumpOperationPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pumpOperationPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pumpOperationPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ pumpOperationPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td class="fp-col-rodz"></td>
+                <td>2.1.5&nbsp;Zawór bezpieczeństwa</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+
+              <!-- 2.2 Zbiornik -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="9"><strong>2.2<br/>Zbiornik</strong><br/>Pojemność zbiornika<br/>{{ selectedSprayer?.tankCapacity || newSprayer.tankCapacity || '............' }}</td>
+                <td class="fp-col-rodz" rowspan="9"></td>
+                <td>2.2.1&nbsp;Pokrywa otworu wlewowego</td>
+                <td class="fp-chk">{{ tankConditionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ tankConditionPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ tankConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ tankConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="9">{{ tankSectionNotes }}</td>
+              </tr>
+              <tr>
+                <td>2.2.2&nbsp;System uniemożliwiający nad- lub podciśnienie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.2.3&nbsp;Mieszanie cieczy</td>
+                <td class="fp-chk">{{ agitatorOperationPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ agitatorOperationPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ agitatorOperationPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ agitatorOperationPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>2.2.4&nbsp;Wstępne filtrowanie&nbsp;&nbsp;w tym sito wlewowe</td>
+                <td class="fp-chk">{{ suctionFilterPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ suctionFilterPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ suctionFilterPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ suctionFilterPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>2.2.5&nbsp;Wskaźnik poziomu cieczy</td>
+                <td class="fp-chk">{{ levelIndicatorPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ levelIndicatorPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ levelIndicatorPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ levelIndicatorPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>2.2.6&nbsp;Zawór spustowy zbiornika</td>
+                <td class="fp-chk">{{ flushingSystemPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ flushingSystemPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ flushingSystemPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ flushingSystemPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>□ Przepłukiwanie<br/>2.2.7&nbsp;Przepłukiwanie stan techniczny i działanie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>□ Rozcieńcz.<br/>2.2.8&nbsp;Rozcieńczacz stan techniczny i działanie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>□ Urządz. myjące<br/>2.2.9&nbsp;Urządzenie myjące stan techn. i działanie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="fp-footnote">* Niepotrzebne skreślić</div>
+        </div><!-- /page 1 -->
+
+        <!-- ============ PAGE 2 ============ -->
+        <div class="form-page fp-page-break" id="fp2">
+          <div class="fp-cont-hdr">
+            <span>Protokół nr: <strong>{{ protocolNumber }}</strong></span>
+            <span>{{ selectedSprayer?.sprayerName || '' }} / {{ selectedSprayer?.serialNumber || selectedSprayerSerialNumber || '' }}</span>
+            <span>Data: {{ inspectionDate }}</span>
+          </div>
+
+          <table class="fp-it">
+            <thead>
+              <tr>
+                <th class="fp-col-urz" rowspan="2">Urządzenie opryskiwacza</th>
+                <th class="fp-col-rodz" rowspan="2">Rodzaj wyposażenia</th>
+                <th class="fp-col-pred" rowspan="2">Przedmiot badań</th>
+                <th colspan="2">Ocena przy wyłączonym napędzie</th>
+                <th colspan="2">Ocena przy włączonym napędzie</th>
+                <th class="fp-col-uw" rowspan="2">Uwagi i zalecenia</th>
+              </tr>
+              <tr>
+                <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+                <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 2.3 Urządzenia pomiarowo-sterujące -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="6"><strong>2.3<br/>Urządzenia<br/>pomiarowo&#8209;<br/>sterujące</strong></td>
+                <td class="fp-col-rodz" rowspan="3">□ Manometr<br/>□ Komputer</td>
+                <td>2.3.1&nbsp;Średnica obudowy</td>
+                <td class="fp-chk">{{ manometerDialSizePassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ manometerDialSizePassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ manometerDialSizePassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ manometerDialSizePassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="6">{{ measuringSectionNotes }}</td>
+              </tr>
+              <tr>
+                <td>2.3.2&nbsp;Zakres wskazań, działka elementarna</td>
+                <td class="fp-chk">{{ manometerPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ manometerPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ manometerPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ manometerPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>2.3.3&nbsp;Stabilność wskazań manometru</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td class="fp-col-rodz" rowspan="3"></td>
+                <td>2.3.4&nbsp;Błąd pomiaru</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.3.5&nbsp;Stabilność i powtarzalność ciśnienia</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.3.6&nbsp;Zawory (funkcjonowanie)</td>
+                <td class="fp-chk">{{ connectionsSealingPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ connectionsSealingPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ connectionsSealingPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ connectionsSealingPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+
+              <!-- 2.4 Układ cieczowy -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.4 Układ<br/>cieczowy</strong></td>
+                <td class="fp-col-rodz" rowspan="2"></td>
+                <td>2.4.1&nbsp;Szczelność i stan techniczny</td>
+                <td class="fp-chk">{{ pipesConditionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pipesConditionPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pipesConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ pipesConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="2">{{ pipingSectionNotes }}</td>
+              </tr>
+              <tr>
+                <td>2.4.2&nbsp;Zabezpieczenie przed samoopryskiem</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+
+              <!-- 2.5 System filtracji -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.5 System<br/>filtracji</strong></td>
+                <td class="fp-col-rodz" rowspan="2"></td>
+                <td>2.5.1&nbsp;Kompletność, stan techniczny i wielkość oczek po stronie tłocznej</td>
+                <td class="fp-chk">{{ pressureFilterPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pressureFilterPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ pressureFilterPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ pressureFilterPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="2">{{ filtrationSectionNotes }}</td>
+              </tr>
+              <tr>
+                <td>2.5.2&nbsp;Filtry rozpylaczy — stan i kompletność</td>
+                <td class="fp-chk">{{ nozzleFiltersPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleFiltersPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleFiltersPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ nozzleFiltersPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+
+              <!-- 2.6 Belka polowa -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="9"><strong>2.6<br/>Belka polowa<br/>opryskiwacza</strong><br/>Szerokość<br/>m..........
+                <br/><br/>Mokra □<br/>Sucha □<br/><br/>Mechanizm<br/>tłumienia wahań<br/>belki □</td>
+                <td class="fp-col-rodz" rowspan="9"></td>
+                <td>2.6.1&nbsp;Stabilność i stan techniczny</td>
+                <td class="fp-chk">{{ fieldBoomConditionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ fieldBoomConditionPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ fieldBoomConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ fieldBoomConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="9">{{ boomSectionNotes }}</td>
+              </tr>
+              <tr>
+                <td>2.6.2&nbsp;Składanie i stan techniczny</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.6.3&nbsp;Blokada belki polowej, działanie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.6.4&nbsp;Regulacja wysokości działanie</td>
+                <td class="fp-chk">{{ boomHeightPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ boomHeightPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ boomHeightPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ boomHeightPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>2.6.5&nbsp;Położenie względem powierzchni</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.6.6&nbsp;Ustawienie rozpylaczy</td>
+                <td class="fp-chk">{{ boomSymmetryPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ boomSymmetryPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ boomSymmetryPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ boomSymmetryPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>2.6.7&nbsp;Mechanizm odchylania-powrotu</td>
+                <td class="fp-chk">{{ boomStabilityPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ boomStabilityPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ boomStabilityPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ boomStabilityPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td>2.6.8&nbsp;Tłumienie wahań belki, działanie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.6.9&nbsp;Zawory przeciwkroplowe, działanie</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+
+              <!-- 2.7 Sekcje (sadowniczy) -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.7 Sekcje<br/>(sadowniczy)</strong><br/>Liczba sekcji<br/>{{ selectedSprayer?.sectionCount || newSprayer.sectionCount || '...........' }}</td>
+                <td class="fp-col-rodz" rowspan="2"></td>
+                <td>2.7.1&nbsp;Ustawienie rozpylaczy</td>
+                <td class="fp-chk">{{ nozzleUniformityPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleUniformityPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleUniformityPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ nozzleUniformityPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="2"></td>
+              </tr>
+              <tr>
+                <td>2.7.2&nbsp;Zawory przeciwkroplowe, działanie</td>
+                <td class="fp-chk">{{ nozzleFlowRatePassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleFlowRatePassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleFlowRatePassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ nozzleFlowRatePassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+
+              <!-- 2.8 Rozpylacze (polowy) -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="7"><strong>2.8<br/>Rozpylacze<br/>(polowy)</strong><br/><br/>Cechy i<br/>oznaczenie:<br/>............</td>
+                <td class="fp-col-rodz" rowspan="7"></td>
+                <td>2.8.1&nbsp;Stan techniczny typ, rozmiar, kąt, materiał</td>
+                <td class="fp-chk">{{ nozzleConditionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleConditionPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ nozzleConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="7">{{ nozzlesSectionNotes }}<ng-container *ngIf="coefficientOfVariation"><br/>CV = {{ coefficientOfVariation }}%</ng-container></td>
+              </tr>
+              <tr>
+                <td>2.8.2&nbsp;Filtry rozpylaczy, typ, rozmiar</td>
+                <td class="fp-chk">{{ nozzleFiltersPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleFiltersPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ nozzleFiltersPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ nozzleFiltersPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td><strong>2.8.3&nbsp;Sprawdzenie dystrybucji cieczy jedną z metod:</strong></td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td class="fp-indent">2.8.3.1 Pomiar <strong>na ręcznym stole rowkowym:</strong><br/>% rynienk z odchyleniem &gt;15%: ...........</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td class="fp-indent">2.8.3.2 Pomiar <strong>na elektronicznym stole rowkowym:</strong> CV%: ........%</td>
+                <td class="fp-chk">{{ transverseDistributionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ transverseDistributionPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ transverseDistributionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ transverseDistributionPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+              <tr>
+                <td class="fp-indent">2.8.3.3 Jednoczesny pomiar <strong>natężenia wypływu cieczy z rozpylaczy</strong></td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+              <tr>
+                <td>2.8.4&nbsp;Pomiar spadku wartości ciśnienia**</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+              </tr>
+
+              <!-- 2.9 Rozpylacze (sadowniczy) -->
+              <tr>
+                <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.9 Rozpylacze<br/>(sadowniczy)</strong><br/>Cechy i<br/>oznaczenie:<br/>............</td>
+                <td class="fp-col-rodz" rowspan="2"></td>
+                <td>2.9.1&nbsp;Stan techniczny, typ, rozmiar, kąt, materiał</td>
+                <td class="fp-chk">{{ orchardSprayerConditionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ orchardSprayerConditionPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ orchardSprayerConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ orchardSprayerConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                <td class="fp-col-uw" rowspan="2"></td>
+              </tr>
+              <tr>
+                <td>2.9.2&nbsp;Jednoczesny <strong>pomiar natężenia wypływu cieczy z rozpylaczy</strong></td>
+                <td class="fp-chk">{{ airStreamDirectionPassed === false ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ airStreamDirectionPassed === true ? '■' : '□' }}</td>
+                <td class="fp-chk">{{ airStreamDirectionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ airStreamDirectionPassedDriveOn === true ? '■' : '□' }}</td>
+              </tr>
+
+              <!-- 2.10 Wentylator -->
+              <tr>
+                <td class="fp-col-urz fp-urz"><strong>2.10 Wentylator</strong><br/>Typ........</td>
+                <td class="fp-col-rodz"></td>
+                <td>2.10.1&nbsp;Stan techniczny i urządzenia sterujące</td>
+                <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                <td class="fp-col-uw"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Manometer table -->
+          <div class="fp-btitle">Różnice wskazań pomiędzy badanym manometrem a manometrem wzorcowym [2.3.4]</div>
+          <table class="fp-mano">
+            <thead>
+              <tr>
+                <th colspan="2">Wskazania manometru wzorcowego (MPa)</th>
+                <th rowspan="2">Odchylenie wskazań (%)</th>
+              </tr>
+              <tr>
+                <th>Manometr badany</th>
+                <th>Manometr wzorcowy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ manometerReading2Bar ? manometerReading2Bar + ' bar' : '' }}</td>
+                <td>0,1 MPa</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>{{ manometerReading4Bar ? manometerReading4Bar + ' bar' : '' }}</td>
+                <td>0,3 MPa</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>{{ manometerReading6Bar ? manometerReading6Bar + ' bar' : '' }}</td>
+                <td>0,5 MPa</td><td>&nbsp;</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Nozzle flow table -->
+          <div class="fp-btitle">Pomiar natężenia wypływu cieczy z rozpylaczy w opryskiwaczu polowym lub sadowniczym [2.8.3.3 lub 2.9.2]</div>
+          <table class="fp-nozzle">
+            <tbody>
+              <tr>
+                <td class="fp-nlbl">Nr rozpylacza</td>
+                <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td>
+                <td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td>
+              </tr>
+              <tr>
+                <td class="fp-nlbl">Odchylenie od wart. nominalnej (%)</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="fp-nlbl">Nr rozpylacza</td>
+                <td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td>
+                <td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td>
+              </tr>
+              <tr>
+                <td class="fp-nlbl">Odchylenie od wart. nominalnej (%)</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="fp-nlbl">Nr rozpylacza</td>
+                <td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td>
+                <td>31</td><td>32</td><td>33</td><td>34</td><td>35</td><td>36</td>
+              </tr>
+              <tr>
+                <td class="fp-nlbl">Odchylenie od wart. nominalnej (%)</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="fp-footnote">
+            * Niepotrzebne skreślić<br/>
+            ** Pomiaru (pkt 2.8.4) nie przeprowadza się, jeżeli został przeprowadzony pomiar nierównomierności rozkładu poprzecznego na stole rowkowym<br/>
+            Protokół opracowano w ramach zadania nr 2.4 „Opracowanie i ocena metod ograniczania ryzyka związanego ze stosowaniem środków ochrony roślin", Programu Wieloletniego „Działania na rzecz poprawy konkurencyjności i innowacyjności sektora agrotechnicznego z uwzględnieniem jakości i bezpieczeństwa żywności oraz ochrony środowiska naturalnego", finansowanego przez MRiRW
+          </div>
+
+          <!-- Wyniki badań / Results section (per XLSX: bottom of page 2) -->
+          <div class="fp-results-footer">
+            <div class="fp-btitle">Wyniki badań</div>
+            <table class="fp-results-tbl">
+              <tr>
+                <td>
+                  <span class="fp-sq">{{ finalResult === true ? '■' : '□' }}</span>
+                  <strong>Pozytywny</strong>
+                </td>
+                <td>
+                  <span class="fp-sq">{{ finalResult === false ? '■' : '□' }}</span>
+                  <strong>Negatywny</strong>&nbsp;&nbsp;
+                  Powód: <span class="fp-uline" style="min-width:40mm">{{ generalNotes }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Znak kontrolny nr: <span class="fp-uline" style="min-width:35mm">{{ controlStickerNumber }}</span></td>
+                <td>Termin ważności badania: <span class="fp-uline" style="min-width:35mm">{{ validUntil }}</span></td>
+              </tr>
+            </table>
+            <div class="fp-legal-note">
+              Protokół badania technicznego opryskiwacza jest dokumentem urzędowym w rozumieniu art. 76 § 1 kodeksu postępowania administracyjnego.
+            </div>
+            <div class="fp-signatures">
+              <div class="fp-sig-left"></div>
+              <div class="fp-sig-center">
+                <div><strong>Data</strong></div>
+                <div>Badania: <span class="fp-uline" style="min-width:25mm">{{ inspectionDate }}</span></div>
+              </div>
+              <div class="fp-sig-right">
+                <strong>Podpis posiadacza</strong><br/>
+                <span class="fp-uline" style="min-width:35mm"></span>
+              </div>
+            </div>
+          </div>
+        </div><!-- /page 2 -->
+
       </div>
     </div>
     <div class="dialog__footer">

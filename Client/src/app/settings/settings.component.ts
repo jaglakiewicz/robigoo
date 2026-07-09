@@ -20,6 +20,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   currentStep = 0; // kept for compatibility
   private editUserListener: any;
   SVG_ICONS = SVG_ICONS; // Make SVG_ICONS available in template
+  private focusMode = false; // Track if we're in focus mode
+  private scrollTimeout: any;
 
   get saving(): boolean {
     return this.savingAppSettings || this.savingSettings;
@@ -31,15 +33,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
       children: [
         { id: 0, key: 'sub-org',          label: 'Jednostka' },
         { id: 0, key: 'sub-docs',         label: 'Dokumenty' },
-        { id: 0, key: 'sub-protocol',     label: 'Protok�l' },
+        { id: 0, key: 'sub-protocol',     label: 'Protokół' },
         { id: 0, key: 'sub-register',     label: 'Rejestr' },
         { id: 0, key: 'sub-controlmarks', label: 'Znaki kontrolne' },
       ]
     },
-    { id: 1, key: 'user',  label: 'Ustawienia uzytkownika' },
-    { id: 2, key: 'admin', label: 'Zarzadzanie uzytkownikami' },
-    { id: 3, key: 'sessions', label: 'Sesje uzytkownik�w' },
-    { id: 4, key: 'activity', label: 'Dziennik aktywnosci' }
+    { id: 1, key: 'user',  label: 'Ustawienia użytkownika' },
+    { id: 2, key: 'admin', label: 'Zarządzanie użytkownikami' }
   ];
 
   // -- App Settings ------------------------------------------------------
@@ -52,10 +52,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     documents: {
       protocol: {
         inspectionValidityYears: 3, numberPrefix: '', sequencePadding: 3,
-        numberFormat: '{PREFIX}/{YEAR}/{SEQ}', header: '', footer: '', defaultXslTemplate: ''
+        numberFormat: '{PREFIX}/{YEAR}/{SEQ}', header: '', footer: ''
       },
-      register: { header: '', footer: '', defaultXslTemplate: '' },
-      controlMarks: { header: '', footer: '', defaultXslTemplate: '' }
+      register: { header: '', footer: '' },
+      controlMarks: { header: '', footer: '' }
     }
   };
 
@@ -68,14 +68,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
     { token: '{SEQ}',    hint: 'Numer sekwencyjny (np. 001)' },
     { token: '{SEQ4}',   hint: 'Numer 4-cyfrowy (np. 0001)' },
   ];
-
-  // XSL Templates (per-document-type, loaded once)
-  xslTemplates: { name: string; uploadedAt: string; size: number }[] = [];
-  defaultXslTemplate = '';
-  loadingXsl = false;
-  uploadingXsl = false;
-  xslError = '';
-  xslSuccess = '';
 
   get protocolNumberPreview(): string {
     const now = new Date();
@@ -160,18 +152,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   // Role change
   updatingRoleUserId: number | null = null;
 
-  // Session Management
-  activeSessions: any[] = [];
-  loadingSessions = false;
-  terminatingSessionId: number | null = null;
-
-  // Activity Logs
-  userActivities: any[] = [];
-  loadingActivities = false;
-  selectedUserId: number | null = null;
-  activityDateFrom: string = '';
-  activityDateTo: string = '';
-
   constructor(
     private authService: AuthService,
     private userService: UserService,
@@ -193,8 +173,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
       this.loadUserSettings();
       this.loadUsers();
-      this.loadXslTemplates();
       this.loadAppSettings();
+
+      // Listen for scroll events to clear focus mode
+      const container = this.el.nativeElement.querySelector('.settings-scroll');
+      if (container) {
+        container.addEventListener('scroll', this.onManualScroll.bind(this));
+      }
     } catch (error) {
       console.error('[Settings] Error during initialization:', error);
     }
@@ -202,6 +187,48 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener('editUserEvent', this.editUserListener);
+    const container = this.el.nativeElement.querySelector('.settings-scroll');
+    if (container) {
+      container.removeEventListener('scroll', this.onManualScroll.bind(this));
+    }
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
+  }
+
+  private onManualScroll(): void {
+    // Clear any pending timeout
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
+    
+    // Set a timeout to clear focus mode after user stops scrolling
+    this.scrollTimeout = setTimeout(() => {
+      if (this.focusMode) {
+        this.clearFocusMode();
+      }
+    }, 150);
+  }
+
+  private applyFocusMode(targetSectionId: number): void {
+    this.focusMode = true;
+    const sections = this.el.nativeElement.querySelectorAll('.settings-section');
+    sections.forEach((section: HTMLElement) => {
+      const sectionId = section.id.replace('section-', '');
+      if (parseInt(sectionId) === targetSectionId) {
+        section.classList.remove('blurred');
+      } else {
+        section.classList.add('blurred');
+      }
+    });
+  }
+
+  private clearFocusMode(): void {
+    this.focusMode = false;
+    const sections = this.el.nativeElement.querySelectorAll('.settings-section');
+    sections.forEach((section: HTMLElement) => {
+      section.classList.remove('blurred');
+    });
   }
 
   loadUserSettings(): void {
@@ -213,6 +240,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.userSettings.email = currentUser.email;
       this.userSettings.phone = currentUser.phone;
       this.userSettings.permissionNumber = currentUser.permissionNumber;
+      this.userSettings.theme = (currentUser as any).theme || 'light';
       if (currentUser.avatarBase64) {
         this.userSettings.avatar = 'data:image/png;base64,' + currentUser.avatarBase64;
       }
@@ -238,55 +266,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   saveUserSettings(): void {
-    this.userSettingsError = '';
-    this.userSettingsSuccess = false;
-    this.savingSettings = true;
-
-    const currentUser = this.authService.getCurrentUser();
-    const isAdmin = currentUser && currentUser.role === 'admin';
-
-    // Always include firstName and lastName (server requires them)
-    // Regular users can only edit: email, phone, theme
-    // Admins can also edit: firstName, lastName, permissionNumber
-    const updateData: any = {
-      firstName: this.userSettings.firstName,
-      lastName: this.userSettings.lastName,
-      email: this.userSettings.email,
-      phone: this.userSettings.phone,
-      theme: this.userSettings.theme,
-      permissionNumber: this.userSettings.permissionNumber
-    };
-
-    this.userService.updateProfile(updateData).subscribe(
-      (response) => {
-        console.log('[Settings] Profile updated:', response);
-        this.notificationService.success('Ustawienia zostaly pomyslnie zapisane!');
-        this.savingSettings = false;
-
-        // Update current user in auth service
-        const currentUser = this.authService.getCurrentUser();
-        if (currentUser) {
-          // Always update these fields
-          currentUser.email = this.userSettings.email;
-          currentUser.phone = this.userSettings.phone;
-          
-          // Update admin-only fields if user is admin
-          if (isAdmin) {
-            currentUser.firstName = this.userSettings.firstName;
-            currentUser.lastName = this.userSettings.lastName;
-            currentUser.permissionNumber = this.userSettings.permissionNumber;
-          }
-
-          sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-        }
-      },
-      (error: any) => {
-        console.error('[Settings] Error saving settings:', error);
-        const errorMsg = error.error?.message || 'Blad podczas zapisywania ustawien';
-        this.notificationService.error(errorMsg);
-        this.savingSettings = false;
-      }
-    );
+    this.saveUserSettingsInternal();
   }
 
   togglePasswordForm(): void {
@@ -305,7 +285,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     if (this.passwordForm.newPassword.length < 6) {
-      this.notificationService.error('Haslo musi miec co najmniej 6 znak�w');
+      this.notificationService.error('Hasło musi mieć co najmniej 6 znaków');
       return;
     }
 
@@ -434,25 +414,95 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   scrollToSection(sectionId: number): void {
+    console.log('[Settings] Scrolling to section:', sectionId);
+    
     const container = this.el.nativeElement.querySelector('.settings-scroll') as HTMLElement;
-    const el = this.el.nativeElement.querySelector(`#section-${sectionId}`) as HTMLElement;
-    if (container && el) {
-      this.scrollSpy?.lock();
-      this.activeSection = sectionId;
-      const step = this.steps.find(s => s.id === sectionId);
-      this.activeSubKey = step?.children?.[0]?.key ?? '';
-      container.scrollTop = el.offsetTop - 4;
+    const section = this.el.nativeElement.querySelector(`#section-${sectionId}`) as HTMLElement;
+    
+    if (!container || !section) {
+      console.error('[Settings] Container or section not found');
+      return;
     }
+
+    // Update active section
+    this.activeSection = sectionId;
+    const step = this.steps.find(s => s.id === sectionId);
+    this.activeSubKey = step?.children?.[0]?.key ?? '';
+    
+    // Apply focus mode
+    this.applyFocusMode(sectionId);
+    
+    // Lock scroll spy temporarily
+    if (this.scrollSpy) {
+      this.scrollSpy.lock();
+    }
+    
+    // Calculate scroll position
+    // We want the section to appear at the top of the container
+    const containerTop = container.getBoundingClientRect().top;
+    const sectionTop = section.getBoundingClientRect().top;
+    const currentScroll = container.scrollTop;
+    const targetScroll = currentScroll + (sectionTop - containerTop) - 20; // 20px padding
+    
+    console.log('[Settings] Scroll calculation:', {
+      containerTop,
+      sectionTop,
+      currentScroll,
+      targetScroll
+    });
+    
+    // Perform smooth scroll
+    container.scrollTo({
+      top: targetScroll,
+      behavior: 'smooth'
+    });
   }
 
   scrollToSubSection(key: string): void {
+    console.log('[Settings] Scrolling to subsection:', key);
+    
     const container = this.el.nativeElement.querySelector('.settings-scroll') as HTMLElement;
-    const el = this.el.nativeElement.querySelector(`#${key}`) as HTMLElement;
-    if (container && el) {
-      this.scrollSpy?.lock();
-      this.activeSubKey = key;
-      container.scrollTop = el.offsetTop - 4;
+    const element = this.el.nativeElement.querySelector(`#${key}`) as HTMLElement;
+    
+    if (!container || !element) {
+      console.error('[Settings] Container or element not found');
+      return;
     }
+
+    // Update active subsection
+    this.activeSubKey = key;
+    
+    // Find parent section
+    const parentSection = element.closest('.settings-section') as HTMLElement;
+    if (parentSection) {
+      const sectionId = parseInt(parentSection.id.replace('section-', ''));
+      this.activeSection = sectionId;
+      this.applyFocusMode(sectionId);
+    }
+    
+    // Lock scroll spy temporarily
+    if (this.scrollSpy) {
+      this.scrollSpy.lock();
+    }
+    
+    // Calculate scroll position
+    const containerTop = container.getBoundingClientRect().top;
+    const elementTop = element.getBoundingClientRect().top;
+    const currentScroll = container.scrollTop;
+    const targetScroll = currentScroll + (elementTop - containerTop) - 20; // 20px padding
+    
+    console.log('[Settings] Scroll calculation:', {
+      containerTop,
+      elementTop,
+      currentScroll,
+      targetScroll
+    });
+    
+    // Perform smooth scroll
+    container.scrollTo({
+      top: targetScroll,
+      behavior: 'smooth'
+    });
   }
 
   onActiveSection(id: string): void {
@@ -467,13 +517,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   goToStep(stepId: number): void {
     this.scrollToSection(stepId);
-  }
-
-  get xslTemplateOptions() {
-    return [
-      { value: '', label: '� brak �' },
-      ...this.xslTemplates.map(t => ({ value: t.name, label: t.name }))
-    ];
   }
 
   loadAppSettings(): void {
@@ -492,8 +535,128 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   saveAll(): void {
-    this.saveAppSettings();
-    this.saveUserSettings();
+    // Save both app settings and user settings, show single success message
+    let appSettingsSaved = false;
+    let userSettingsSaved = false;
+    let hasError = false;
+
+    // Save app settings (admin only)
+    if (this.isCurrentUserAdmin()) {
+      this.savingAppSettings = true;
+      this.http.put('/api/settings', this.appSettings).subscribe({
+        next: () => {
+          this.savingAppSettings = false;
+          appSettingsSaved = true;
+          if (userSettingsSaved && !hasError) {
+            this.notificationService.success('Wszystkie ustawienia zostaly zapisane');
+          }
+        },
+        error: (err) => {
+          this.notificationService.error(err.error?.message || 'Blad zapisu ustawien programu');
+          this.savingAppSettings = false;
+          hasError = true;
+        }
+      });
+    } else {
+      appSettingsSaved = true; // Skip for non-admin
+    }
+
+    // Save user settings
+    this.saveUserSettingsInternal((success) => {
+      userSettingsSaved = success;
+      if (appSettingsSaved && success && !hasError) {
+        this.notificationService.success('Wszystkie ustawienia zostaly zapisane');
+      }
+    });
+  }
+
+  private saveUserSettingsInternal(callback?: (success: boolean) => void): void {
+    this.userSettingsError = '';
+    this.userSettingsSuccess = false;
+    this.savingSettings = true;
+
+    const currentUser = this.authService.getCurrentUser();
+    const isAdmin = currentUser && currentUser.role === 'admin';
+
+    // Validate required fields
+    if (!this.userSettings.firstName || !this.userSettings.lastName) {
+      this.notificationService.error('Imie i nazwisko sa wymagane');
+      this.savingSettings = false;
+      if (callback) callback(false);
+      return;
+    }
+
+    if (!this.userSettings.email) {
+      this.notificationService.error('Email jest wymagany');
+      this.savingSettings = false;
+      if (callback) callback(false);
+      return;
+    }
+
+    // Build update data with all required fields
+    // Server requires: firstName, lastName, email, language, theme
+    // Phone and permissionNumber are optional
+    const updateData: any = {
+      firstName: this.userSettings.firstName.trim(),
+      lastName: this.userSettings.lastName.trim(),
+      email: this.userSettings.email.trim(),
+      language: 'pl',  // Always Polish
+      theme: this.userSettings.theme || 'light'
+    };
+
+    // Only include phone if it has a value
+    if (this.userSettings.phone && this.userSettings.phone.trim()) {
+      updateData.phone = this.userSettings.phone.trim();
+    }
+
+    // Only include permissionNumber if it has a value
+    if (this.userSettings.permissionNumber && this.userSettings.permissionNumber.trim()) {
+      updateData.permissionNumber = this.userSettings.permissionNumber.trim();
+    }
+
+    console.log('[Settings] Saving user settings with data:', JSON.stringify(updateData, null, 2));
+
+    this.userService.updateProfile(updateData).subscribe(
+      (response) => {
+        console.log('[Settings] Profile updated successfully:', response);
+        if (!callback) {
+          // Only show message if not called from saveAll
+          this.notificationService.success('Ustawienia zostaly pomyslnie zapisane!');
+        }
+        this.savingSettings = false;
+
+        // Update current user in session storage
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser) {
+          // Update all fields that were changed
+          currentUser.email = this.userSettings.email;
+          currentUser.phone = this.userSettings.phone;
+          (currentUser as any).theme = this.userSettings.theme;
+          
+          // Update admin-editable fields if user is admin
+          if (isAdmin) {
+            currentUser.firstName = this.userSettings.firstName;
+            currentUser.lastName = this.userSettings.lastName;
+            currentUser.permissionNumber = this.userSettings.permissionNumber;
+          }
+
+          sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        
+        if (callback) callback(true);
+      },
+      (error: any) => {
+        console.error('[Settings] Error saving settings:', error);
+        console.error('[Settings] Error details:', JSON.stringify(error, null, 2));
+        if (error.error) {
+          console.error('[Settings] Server error response:', error.error);
+        }
+        const errorMsg = error.error?.message || 'Blad podczas zapisywania ustawien';
+        this.notificationService.error(errorMsg);
+        this.savingSettings = false;
+        if (callback) callback(false);
+      }
+    );
   }
 
   get visibleSteps(): Step[] {
@@ -684,7 +847,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!currentUser || currentUser.login !== 'admin') {
       // Reload user to reset the role
       this.loadUsers();
-      this.notificationService.error('Tylko master administrator moze zmieniac role uzytkownik�w');
+      this.notificationService.error('Tylko master administrator może zmieniać role użytkowników');
       return;
     }
 
@@ -719,170 +882,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.loadUsers();
       }
     );
-  }
-
-  // XSL templates stored per document type
-  private xslByKey: Record<string, { name: string; uploadedAt: string; size: number }[]> = {};
-
-  getXslTemplates(key: string) {
-    return this.xslByKey[key] || [];
-  }
-
-  loadXslTemplates(): void {
-    this.loadingXsl = true;
-    this.http.get<{ templates: any[]; defaultTemplate: string }>('/api/settings/xsl-templates').subscribe({
-      next: (res) => {
-        // All templates shared across document types for now
-        this.xslTemplates = res.templates;
-        this.xslByKey['protocol'] = res.templates;
-        this.xslByKey['register'] = res.templates;
-        this.xslByKey['controlMarks'] = res.templates;
-        this.loadingXsl = false;
-      },
-      error: () => { this.loadingXsl = false; }
-    });
-  }
-
-  triggerXslUpload(key: string): void {
-    const el = document.getElementById('xslInput-' + key) as HTMLInputElement;
-    if (el) el.click();
-  }
-
-  onXslFileSelected(event: any, key: string = 'protocol'): void {
-    const file: File = event.target.files[0];
-    if (!file) return;
-    if (!file.name.endsWith('.xsl')) { this.xslError = 'Dozwolone sa tylko pliki .xsl'; return; }
-    this.uploadingXsl = true;
-    this.xslError = '';
-    const fd = new FormData();
-    fd.append('file', file);
-    this.http.post<{ name: string }>('/api/settings/xsl-templates/upload', fd).subscribe({
-      next: () => { this.uploadingXsl = false; this.xslSuccess = 'Przeslano!'; this.loadXslTemplates(); setTimeout(() => this.xslSuccess = '', 3000); },
-      error: (err) => { this.uploadingXsl = false; this.xslError = err.error?.message || 'Blad przesylania'; }
-    });
-  }
-
-  deleteXsl(name: string, key: string = 'protocol'): void {
-    if (!confirm(`Usunac szablon ${name}?`)) return;
-    this.http.delete(`/api/settings/xsl-templates/${encodeURIComponent(name)}`).subscribe({
-      next: () => { this.loadXslTemplates(); this.notificationService.success('Usunieto'); },
-      error: () => { this.notificationService.error('Blad usuwania'); }
-    });
-  }
-
-  // -- Session Management ------------------------------------------------------
-
-  loadActiveSessions(): void {
-    this.loadingSessions = true;
-    this.http.get<any[]>('/api/sessions/active').subscribe({
-      next: (sessions) => {
-        this.activeSessions = sessions;
-        this.loadingSessions = false;
-      },
-      error: (error) => {
-        console.error('Failed to load sessions:', error);
-        this.notificationService.error('Nie udalo sie zaladowac sesji');
-        this.loadingSessions = false;
-      }
-    });
-  }
-
-  terminateSession(sessionId: number): void {
-    if (!confirm('Czy na pewno chcesz zakonczyc te sesje?')) {
-      return;
-    }
-
-    this.terminatingSessionId = sessionId;
-    this.http.post(`/api/sessions/${sessionId}/terminate`, {}).subscribe({
-      next: () => {
-        this.notificationService.success('Sesja zostala zakonczona');
-        this.loadActiveSessions();
-        this.terminatingSessionId = null;
-      },
-      error: (error) => {
-        console.error('Failed to terminate session:', error);
-        this.notificationService.error('Nie udalo sie zakonczyc sesji');
-        this.terminatingSessionId = null;
-      }
-    });
-  }
-
-  terminateAllUserSessions(userId: number, userLogin: string): void {
-    if (!confirm(`Czy na pewno chcesz zakonczyc wszystkie sesje uzytkownika ${userLogin}?`)) {
-      return;
-    }
-
-    this.http.post(`/api/sessions/user/${userId}/terminate-all`, {}).subscribe({
-      next: () => {
-        this.notificationService.success('Wszystkie sesje uzytkownika zostaly zakonczone');
-        this.loadActiveSessions();
-      },
-      error: (error) => {
-        console.error('Failed to terminate user sessions:', error);
-        this.notificationService.error('Nie udalo sie zakonczyc sesji uzytkownika');
-      }
-    });
-  }
-
-  formatDuration(minutes: number): string {
-    if (minutes < 60) {
-      return `${minutes} min`;
-    }
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}min`;
-  }
-
-  // -- Activity Logs ------------------------------------------------------
-
-  loadUserActivities(userId?: number): void {
-    this.loadingActivities = true;
-    
-    let url = '/api/activitylogs/all';
-    const params: any = { limit: 500 };
-    
-    if (userId) {
-      url = `/api/activitylogs/user/${userId}`;
-    }
-    
-    if (this.activityDateFrom) {
-      params.from = this.activityDateFrom;
-    }
-    
-    if (this.activityDateTo) {
-      params.to = this.activityDateTo;
-    }
-
-    this.http.get<any[]>(url, { params }).subscribe({
-      next: (activities) => {
-        this.userActivities = activities;
-        this.loadingActivities = false;
-      },
-      error: (error) => {
-        console.error('Failed to load activities:', error);
-        this.notificationService.error('Nie udalo sie zaladowac dziennika aktywnosci');
-        this.loadingActivities = false;
-      }
-    });
-  }
-
-  getActivityTypeLabel(type: string): string {
-    const labels: any = {
-      'Login': 'Logowanie',
-      'Logout': 'Wylogowanie',
-      'Create': 'Utworzenie',
-      'Update': 'Aktualizacja',
-      'Delete': 'Usuniecie',
-      'View': 'Podglad',
-      'Export': 'Eksport',
-      'Import': 'Import',
-      'PasswordChange': 'Zmiana hasla',
-      'SettingsChange': 'Zmiana ustawien',
-      'FileUpload': 'Przeslanie pliku',
-      'FileDownload': 'Pobranie pliku',
-      'SessionTerminated': 'Zakonczenie sesji'
-    };
-    return labels[type] || type;
   }
 
   getSafeHtml(html: string): SafeHtml {

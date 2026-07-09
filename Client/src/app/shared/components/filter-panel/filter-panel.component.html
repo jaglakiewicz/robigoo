@@ -1,5 +1,5 @@
 <!--
-  Robigoo - Reusable Filter Panel
+  Robigoo - Reusable Filter Panel (Filter Builder)
   Copyright (c) 2025 Wojciech Salamon
 -->
 
@@ -18,109 +18,133 @@
   <!-- Mobile Backdrop -->
   <div class="filter-backdrop" *ngIf="isOpen" (click)="toggle()"></div>
 
-  <!-- Dropdown Panel - connected to button -->
+  <!-- Dropdown Panel -->
   <div class="filter-dropdown" *ngIf="isOpen" (click)="$event.stopPropagation()">
     <div class="filter-body">
-      <ng-container *ngFor="let field of fields">
-        <!-- Text Input -->
-        <div class="filter-field" *ngIf="field.type === 'text'">
-          <label class="filter-label">{{ field.label }}</label>
+      <!-- Active filter rows -->
+      <div class="filter-row" *ngFor="let filter of activeFilters; let i = index">
+        <div class="filter-row-header">
+          <span class="filter-row-label">{{ getFieldForFilter(filter)?.label }}</span>
+          <button type="button" class="filter-row-remove" (click)="removeFilter(i)" aria-label="Usuń filtr">
+            <span [innerHTML]="removeIcon"></span>
+          </button>
+        </div>
+        <div class="filter-row-controls">
+          <!-- Operator select -->
+          <select
+            class="filter-operator"
+            [value]="filter.operator"
+            (change)="onOperatorChange(i, $any($event.target).value)"
+            *ngIf="getOperators(getFieldForFilter(filter)?.type || 'text').length > 1">
+            <option *ngFor="let op of getOperators(getFieldForFilter(filter)?.type || 'text')" [value]="op.value">{{ op.label }}</option>
+          </select>
+
+          <!-- Value input: TEXT -->
           <input
+            *ngIf="getFieldForFilter(filter)?.type === 'text'"
             type="text"
-            [placeholder]="field.placeholder || ''"
-            [value]="getFieldValue(field.key)"
-            (input)="onFieldChange(field.key, $any($event.target).value)" />
-        </div>
+            class="filter-value-input"
+            [value]="filter.value"
+            (input)="onValueChange(i, $any($event.target).value)"
+            placeholder="Wpisz wartość..." />
 
-        <!-- Number Input -->
-        <div class="filter-field" *ngIf="field.type === 'number'">
-          <label class="filter-label">{{ field.label }}</label>
-          <app-numeric-input
-            [placeholder]="field.placeholder || ''"
-            [min]="field.min ?? -Infinity"
-            [max]="field.max ?? Infinity"
-            [step]="field.step || 1"
-            [ngModel]="getFieldValue(field.key)"
-            (ngModelChange)="onFieldChange(field.key, $event)">
-          </app-numeric-input>
-        </div>
-
-        <!-- Custom Select (matching app-custom-select design) -->
-        <div class="filter-field" *ngIf="field.type === 'select'">
-          <label class="filter-label">{{ field.label }}</label>
-          <div class="custom-select" [class.open]="openSelectKey === field.key">
-            <div class="select-trigger" (click)="toggleSelect(field.key)">
-              <span class="select-value" [class.placeholder]="!hasValue(field.key)">
-                {{ getSelectedLabel(field) }}
-              </span>
-              <span class="select-chevron">
-                <svg viewBox="0 0 243.626667 151.893333" width="16" height="16">
-                  <path d="M121.813333 151.893333 0 30.2933333 30.2933333 0 121.813333 91.7333333 213.333333 0 243.626667 30.2933333 121.813333 151.893333" fill="currentColor"/>
-                </svg>
-              </span>
-            </div>
-            <div class="select-dropdown" *ngIf="openSelectKey === field.key">
-              <div
-                class="select-option"
-                [class.selected]="!hasValue(field.key)"
-                (click)="selectOption(field.key, '')">
-                {{ field.placeholder || 'Wszystkie' }}
-              </div>
-              <div
-                class="select-option"
-                *ngFor="let opt of field.options"
-                [class.selected]="getFieldValue(field.key) === opt.value"
-                (click)="selectOption(field.key, opt.value)">
-                {{ opt.label }}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Date Input -->
-        <div class="filter-field" *ngIf="field.type === 'date'">
-          <label class="filter-label">{{ field.label }}</label>
+          <!-- Value input: NUMBER -->
           <input
+            *ngIf="getFieldForFilter(filter)?.type === 'number' && filter.operator !== 'between'"
+            type="number"
+            class="filter-value-input"
+            [value]="filter.value"
+            [min]="getFieldForFilter(filter)?.min"
+            [max]="getFieldForFilter(filter)?.max"
+            [step]="getFieldForFilter(filter)?.step || 1"
+            (input)="onValueChange(i, $any($event.target).value)" />
+
+          <!-- Value input: NUMBER BETWEEN -->
+          <ng-container *ngIf="getFieldForFilter(filter)?.type === 'number' && filter.operator === 'between'">
+            <div class="filter-between-inputs">
+              <input
+                type="number"
+                class="filter-value-input"
+                [value]="filter.value"
+                [min]="getFieldForFilter(filter)?.min"
+                [max]="getFieldForFilter(filter)?.max"
+                [step]="getFieldForFilter(filter)?.step || 1"
+                (input)="onValueChange(i, $any($event.target).value)"
+                placeholder="Od" />
+              <span class="filter-between-sep">–</span>
+              <input
+                type="number"
+                class="filter-value-input"
+                [value]="filter.valueTo || ''"
+                [min]="getFieldForFilter(filter)?.min"
+                [max]="getFieldForFilter(filter)?.max"
+                [step]="getFieldForFilter(filter)?.step || 1"
+                (input)="onValueToChange(i, $any($event.target).value)"
+                placeholder="Do" />
+            </div>
+          </ng-container>
+
+          <!-- Value input: DATE -->
+          <input
+            *ngIf="getFieldForFilter(filter)?.type === 'date' && filter.operator !== 'between'"
             type="date"
-            [value]="getFieldValue(field.key)"
-            (change)="onFieldChange(field.key, $any($event.target).value)" />
-        </div>
+            class="filter-value-input"
+            [value]="filter.value"
+            (change)="onValueChange(i, $any($event.target).value)" />
 
-        <!-- Checkbox -->
-        <div class="filter-field filter-field-checkbox" *ngIf="field.type === 'checkbox'">
-          <label class="filter-checkbox-label">
-            <input
-              type="checkbox"
-              [checked]="getFieldValue(field.key)"
-              (change)="onFieldChange(field.key, $any($event.target).checked)" />
-            <span>{{ field.label }}</span>
-          </label>
-        </div>
+          <!-- Value input: DATE BETWEEN -->
+          <ng-container *ngIf="getFieldForFilter(filter)?.type === 'date' && filter.operator === 'between'">
+            <div class="filter-between-inputs">
+              <input
+                type="date"
+                class="filter-value-input"
+                [value]="filter.value"
+                (change)="onValueChange(i, $any($event.target).value)" />
+              <span class="filter-between-sep">–</span>
+              <input
+                type="date"
+                class="filter-value-input"
+                [value]="filter.valueTo || ''"
+                (change)="onValueToChange(i, $any($event.target).value)" />
+            </div>
+          </ng-container>
 
-        <!-- Range (From - To) -->
-        <div class="filter-field" *ngIf="field.type === 'range'">
-          <label class="filter-label">{{ field.label }}</label>
-          <div class="filter-range-inputs">
-            <app-numeric-input
-              [placeholder]="field.rangeFromPlaceholder || 'Od'"
-              [min]="field.min ?? -Infinity"
-              [max]="field.max ?? Infinity"
-              [step]="field.step || 1"
-              [ngModel]="getRangeValue(field.rangeFromKey || field.key + 'From')"
-              (ngModelChange)="onRangeChange(field.rangeFromKey || field.key + 'From', field.rangeToKey || field.key + 'To', true, $event)">
-            </app-numeric-input>
-            <span class="filter-range-separator">–</span>
-            <app-numeric-input
-              [placeholder]="field.rangeToPlaceholder || 'Do'"
-              [min]="field.min ?? -Infinity"
-              [max]="field.max ?? Infinity"
-              [step]="field.step || 1"
-              [ngModel]="getRangeValue(field.rangeToKey || field.key + 'To')"
-              (ngModelChange)="onRangeChange(field.rangeFromKey || field.key + 'From', field.rangeToKey || field.key + 'To', false, $event)">
-            </app-numeric-input>
+          <!-- Value input: SELECT -->
+          <select
+            *ngIf="getFieldForFilter(filter)?.type === 'select' || getFieldForFilter(filter)?.type === 'boolean'"
+            class="filter-value-input"
+            [value]="filter.value"
+            (change)="onValueChange(i, $any($event.target).value)">
+            <option *ngFor="let opt of getFieldForFilter(filter)?.options" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="filter-empty" *ngIf="activeFilters.length === 0">
+        Brak aktywnych filtrów
+      </div>
+
+      <!-- Column picker -->
+      <div class="filter-add-section">
+        <button
+          type="button"
+          class="filter-add-btn"
+          (click)="toggleColumnPicker()"
+          [disabled]="availableColumns.length === 0">
+          <span [innerHTML]="addIcon"></span>
+          <span>Dodaj filtr</span>
+        </button>
+
+        <div class="column-picker" *ngIf="showColumnPicker && availableColumns.length > 0">
+          <div
+            class="column-option"
+            *ngFor="let col of availableColumns"
+            (click)="addFilter(col)">
+            {{ col.label }}
           </div>
         </div>
-      </ng-container>
+      </div>
     </div>
 
     <div class="filter-footer">

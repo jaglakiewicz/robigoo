@@ -90,6 +90,12 @@ namespace Server.Models
         [MaxLength(10)]
         public string? ZipCode { get; set; }
 
+        /// <summary>
+        /// Post office name (Poczta)
+        /// </summary>
+        [MaxLength(255)]
+        public string? Post { get; set; }
+
         #endregion
 
         #region Timestamps

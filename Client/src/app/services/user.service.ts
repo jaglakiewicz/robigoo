@@ -38,6 +38,7 @@ export interface UpdateProfileRequest {
   email: string;
   phone: string;
   permissionNumber: string;
+  language: string;
   theme: string;
 }
 

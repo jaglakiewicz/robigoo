@@ -56,6 +56,9 @@ namespace Server.Infrastructure.Persistence.Repositories
                     (mc.Client != null && mc.Client.DisplayName.ToLower().Contains(term)));
             }
 
+            if (!string.IsNullOrWhiteSpace(filter.OwnerId))
+                joinedQuery = joinedQuery.Where(mc => mc.CropSprayer.OwnerId == filter.OwnerId);
+
             if (!string.IsNullOrWhiteSpace(filter.Type))
                 joinedQuery = joinedQuery.Where(mc => mc.CropSprayer.Type == filter.Type);
 
@@ -138,6 +141,19 @@ namespace Server.Infrastructure.Persistence.Repositories
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task<IReadOnlyList<string>> GetDistinctColumnValuesAsync(Func<CropSprayer, string?> selector, CancellationToken cancellationToken = default)
+        {
+            var entities = await _context.CropSprayers.AsNoTracking().ToListAsync(cancellationToken);
+            return entities
+                .Select(selector)
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Select(v => v!.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(v => v, StringComparer.OrdinalIgnoreCase)
+                .ToList();
         }
 
         #endregion

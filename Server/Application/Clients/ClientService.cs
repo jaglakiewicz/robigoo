@@ -69,6 +69,7 @@ namespace Server.Application.Clients
                 BuildingNumber = dto.BuildingNumber,
                 ApartmentNumber = dto.ApartmentNumber,
                 ZipCode = dto.ZipCode,
+                Post = dto.Post,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -97,6 +98,7 @@ namespace Server.Application.Clients
             entity.BuildingNumber = dto.BuildingNumber;
             entity.ApartmentNumber = dto.ApartmentNumber;
             entity.ZipCode = dto.ZipCode;
+            entity.Post = dto.Post;
             entity.UpdatedAt = DateTime.UtcNow;
 
             await _repository.UpdateAsync(entity, cancellationToken);
@@ -143,6 +145,7 @@ namespace Server.Application.Clients
                 BuildingNumber = c.BuildingNumber,
                 ApartmentNumber = c.ApartmentNumber,
                 ZipCode = c.ZipCode,
+                Post = c.Post,
                 CreatedAt = c.CreatedAt,
                 UpdatedAt = c.UpdatedAt
             };

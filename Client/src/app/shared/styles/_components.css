@@ -263,7 +263,7 @@
 }
 
 .dialog__title {
-  margin: 0;
+  margin: 0 0 var(--space-md) 0;
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--text);
@@ -298,6 +298,24 @@
 .dialog__body {
   color: var(--text);
   font-size: var(--font-size-base);
+}
+
+.dialog__body p {
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.dialog__body p:last-child {
+  margin-bottom: 0;
+}
+
+.dialog__item-details {
+  text-align: center;
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+  background: var(--warning-surface, #fff3cd);
+  border-radius: var(--radius-sm);
+  color: var(--warning, #856404);
+  font-weight: var(--font-weight-semibold);
 }
 
 .dialog__body--scroll {
@@ -500,4 +518,68 @@
   margin: 0 6px;
   flex-shrink: 0;
   align-self: center;
+}
+
+/* ============================================================
+   FORM SECTION HEADING HIERARCHY (L1 – L4)
+   Used by Settings, New Inspection, and any future form views.
+   ============================================================ */
+
+/* L1 — Top-level section divider (muted uppercase label + bottom border) */
+.form-section-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0 0 var(--space-xl) 0;
+  pointer-events: none;
+  border-bottom: 1px solid var(--border);
+  opacity: 0.6;
+  padding-bottom: var(--space-xs);
+}
+
+.form-section-divider::before,
+.form-section-divider::after { display: none; }
+
+.form-section-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  opacity: 1;
+}
+
+/* L2 — Subsection: large, bold, primary underline */
+.settings-subsection-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--primary);
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-lg);
+}
+
+/* L3 — Nested: base size, semibold, muted, left border */
+.settings-nested-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--border);
+}
+
+/* L4 — Nested subtitle: xs muted uppercase */
+.settings-nested-subtitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+  padding-left: var(--space-md);
 }

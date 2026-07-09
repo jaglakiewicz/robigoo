@@ -16,7 +16,7 @@
 .master-detail-layout {
   display: grid;
   grid-template-columns: minmax(320px, 1.1fr) minmax(0, 2.4fr);
-  gap: var(--space-lg);
+  gap: var(--space-md);
   flex: 1;
   min-height: 0;
 }

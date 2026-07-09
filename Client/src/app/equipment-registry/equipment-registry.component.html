@@ -1,0 +1,148 @@
+<!--
+  Robigoo
+  Copyright (c) 2025 Wojciech Salamon <wojciech.salamon@yahoo.com>
+  All rights reserved. Unauthorized distribution or disclosure is prohibited.
+-->
+
+<div class="settings-subsection-title">{{ 'registry.title' | text }}</div>
+
+<!-- Date range controls -->
+<div class="registry-controls">
+  <div class="registry-date-range">
+    <div class="registry-field">
+      <label>{{ 'registry.dateFrom' | text }}</label>
+      <input type="date" [(ngModel)]="dateFrom" class="registry-input" />
+    </div>
+    <span class="registry-separator">–</span>
+    <div class="registry-field">
+      <label>{{ 'registry.dateTo' | text }}</label>
+      <input type="date" [(ngModel)]="dateTo" class="registry-input" />
+    </div>
+  </div>
+  <div class="registry-actions">
+    <button class="btn btn-primary" (click)="generate()" [disabled]="!dateFrom || !dateTo || loading">
+      <span [innerHTML]="iconSearchSafe"></span>
+      {{ 'registry.generate' | text }}
+    </button>
+    <button class="btn btn-secondary" *ngIf="generated && rows.length" (click)="openPrintPreview()">
+      <span [innerHTML]="iconPrintSafe"></span>
+      {{ 'registry.print' | text }}
+    </button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="loading" class="registry-loading">
+  {{ 'general.loading' | text }}
+</div>
+
+<!-- No data -->
+<div *ngIf="generated && !loading && !rows.length" class="registry-empty">
+  {{ 'registry.noData' | text }}
+</div>
+
+<!-- Registry table -->
+<div *ngIf="generated && !loading && rows.length" class="registry-table-wrapper">
+  <table class="registry-table">
+    <thead>
+      <tr>
+        <th>{{ 'registry.columns.lp' | text }}</th>
+        <th>{{ 'registry.columns.protocolNumber' | text }}</th>
+        <th>{{ 'registry.columns.inspectionDate' | text }}</th>
+        <th>{{ 'registry.columns.owner' | text }}</th>
+        <th>{{ 'registry.columns.ownerAddress' | text }}</th>
+        <th>{{ 'registry.columns.sprayerType' | text }}</th>
+        <th>{{ 'registry.columns.sprayerKind' | text }}</th>
+        <th>{{ 'registry.columns.manufacturer' | text }}</th>
+        <th>{{ 'registry.columns.serialNumber' | text }}</th>
+        <th>{{ 'registry.columns.productionYear' | text }}</th>
+        <th>{{ 'registry.columns.result' | text }}</th>
+        <th>{{ 'registry.columns.stickerNumber' | text }}</th>
+        <th>{{ 'registry.columns.validUntil' | text }}</th>
+        <th>{{ 'registry.columns.inspector' | text }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows">
+        <td class="cell-center">{{ row.lp }}</td>
+        <td>{{ row.protocolNumber }}</td>
+        <td class="cell-center">{{ row.inspectionDate }}</td>
+        <td>{{ row.owner }}</td>
+        <td>{{ row.ownerAddress }}</td>
+        <td class="cell-center">{{ row.sprayerType }}</td>
+        <td class="cell-center">{{ row.sprayerKind }}</td>
+        <td>{{ row.manufacturer }}</td>
+        <td>{{ row.serialNumber }}</td>
+        <td class="cell-center">{{ row.productionYear }}</td>
+        <td class="cell-center" [class.result-positive]="row.result === 'Pozytywny'" [class.result-negative]="row.result === 'Negatywny'">{{ row.result }}</td>
+        <td>{{ row.stickerNumber }}</td>
+        <td class="cell-center">{{ row.validUntil }}</td>
+        <td>{{ row.inspector }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Print preview modal -->
+<div class="print-overlay" *ngIf="isPrintPreview" (click)="closePrintPreview()">
+  <div class="print-modal" (click)="$event.stopPropagation()">
+    <div class="print-modal-header">
+      <h3>{{ 'registry.title' | text }}</h3>
+      <div class="print-modal-actions">
+        <button class="btn btn-primary" (click)="printRegistry()">
+          <span [innerHTML]="iconPrintSafe"></span>
+          {{ 'registry.print' | text }}
+        </button>
+        <button class="btn btn-secondary" (click)="closePrintPreview()">
+          {{ 'general.close' | text }}
+        </button>
+      </div>
+    </div>
+    <div class="print-modal-body">
+      <div class="print-page">
+        <div class="print-header">
+          <h2>REJESTR PRZEBADANEGO SPRZĘTU</h2>
+          <p class="print-date-range">Okres: {{ formatDateRange() }}</p>
+        </div>
+        <table class="print-table">
+          <thead>
+            <tr>
+              <th>Lp.</th>
+              <th>Nr protokołu</th>
+              <th>Data badania</th>
+              <th>Posiadacz sprzętu</th>
+              <th>Adres posiadacza</th>
+              <th>Typ</th>
+              <th>Rodzaj</th>
+              <th>Producent</th>
+              <th>Nr fabryczny</th>
+              <th>Rok prod.</th>
+              <th>Wynik</th>
+              <th>Nr naklejki</th>
+              <th>Ważne do</th>
+              <th>Diagnosta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of rows">
+              <td class="cell-center">{{ row.lp }}</td>
+              <td>{{ row.protocolNumber }}</td>
+              <td class="cell-center">{{ row.inspectionDate }}</td>
+              <td>{{ row.owner }}</td>
+              <td>{{ row.ownerAddress }}</td>
+              <td class="cell-center">{{ row.sprayerType }}</td>
+              <td class="cell-center">{{ row.sprayerKind }}</td>
+              <td>{{ row.manufacturer }}</td>
+              <td>{{ row.serialNumber }}</td>
+              <td class="cell-center">{{ row.productionYear }}</td>
+              <td class="cell-center">{{ row.result }}</td>
+              <td>{{ row.stickerNumber }}</td>
+              <td class="cell-center">{{ row.validUntil }}</td>
+              <td>{{ row.inspector }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

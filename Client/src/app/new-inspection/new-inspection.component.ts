@@ -6,6 +6,7 @@
 */
 
 import { Component, EventEmitter, Input, Output, OnInit, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { InspectionProtocolService, InspectionProtocolCreateUpdateRequest, InspectionProtocolDetail } from '../inspection-protocol.service';
@@ -64,65 +65,93 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
   today = new Date().toLocaleDateString('pl-PL');
 
   // Section 1: General condition
-  generalConditionPassed: boolean | null = true;
-  markingsReadablePassed: boolean | null = true;
-  equipmentCompletePassed: boolean | null = true;
+  generalConditionPassed: boolean | null = null;
+  generalConditionPassedDriveOn: boolean | null = null;
+  markingsReadablePassed: boolean | null = null;
+  markingsReadablePassedDriveOn: boolean | null = null;
+  equipmentCompletePassed: boolean | null = null;
+  equipmentCompletePassedDriveOn: boolean | null = null;
   generalSectionNotes = '';
 
   // Section 2: Pump
-  pumpOperationPassed: boolean | null = true;
-  pumpSealingPassed: boolean | null = true;
-  pressurePulsationPassed: boolean | null = true;
+  pumpOperationPassed: boolean | null = null;
+  pumpOperationPassedDriveOn: boolean | null = null;
+  pumpSealingPassed: boolean | null = null;
+  pumpSealingPassedDriveOn: boolean | null = null;
+  pressurePulsationPassed: boolean | null = null;
+  pressurePulsationPassedDriveOn: boolean | null = null;
   pumpSectionNotes = '';
 
   // Section 3: Agitation
-  agitatorOperationPassed: boolean | null = true;
+  agitatorOperationPassed: boolean | null = null;
+  agitatorOperationPassedDriveOn: boolean | null = null;
   agitatorSectionNotes = '';
 
   // Section 4: Tank
-  tankConditionPassed: boolean | null = true;
-  tankSealingPassed: boolean | null = true;
-  levelIndicatorPassed: boolean | null = true;
-  flushingSystemPassed: boolean | null = true;
+  tankConditionPassed: boolean | null = null;
+  tankConditionPassedDriveOn: boolean | null = null;
+  tankSealingPassed: boolean | null = null;
+  tankSealingPassedDriveOn: boolean | null = null;
+  levelIndicatorPassed: boolean | null = null;
+  levelIndicatorPassedDriveOn: boolean | null = null;
+  flushingSystemPassed: boolean | null = null;
+  flushingSystemPassedDriveOn: boolean | null = null;
   tankSectionNotes = '';
 
   // Section 5: Measuring instruments
-  manometerPassed: boolean | null = true;
+  manometerPassed: boolean | null = null;
+  manometerPassedDriveOn: boolean | null = null;
   manometerReading2Bar: number | null = null;
   manometerReading4Bar: number | null = null;
   manometerReading6Bar: number | null = null;
-  manometerDialSizePassed: boolean | null = true;
+  manometerDialSizePassed: boolean | null = null;
+  manometerDialSizePassedDriveOn: boolean | null = null;
   measuringSectionNotes = '';
 
   // Section 6: Piping
-  pipesConditionPassed: boolean | null = true;
-  connectionsSealingPassed: boolean | null = true;
+  pipesConditionPassed: boolean | null = null;
+  pipesConditionPassedDriveOn: boolean | null = null;
+  connectionsSealingPassed: boolean | null = null;
+  connectionsSealingPassedDriveOn: boolean | null = null;
   pipingSectionNotes = '';
 
   // Section 7: Filtration
-  suctionFilterPassed: boolean | null = true;
-  pressureFilterPassed: boolean | null = true;
-  nozzleFiltersPassed: boolean | null = true;
+  suctionFilterPassed: boolean | null = null;
+  suctionFilterPassedDriveOn: boolean | null = null;
+  pressureFilterPassed: boolean | null = null;
+  pressureFilterPassedDriveOn: boolean | null = null;
+  nozzleFiltersPassed: boolean | null = null;
+  nozzleFiltersPassedDriveOn: boolean | null = null;
   filtrationSectionNotes = '';
 
   // Section 8: Boom/Spray equipment
-  fieldBoomConditionPassed: boolean | null = true;
-  boomStabilityPassed: boolean | null = true;
-  boomHeightPassed: boolean | null = true;
-  boomSymmetryPassed: boolean | null = true;
-  orchardSprayerConditionPassed: boolean | null = true;
-  airStreamDirectionPassed: boolean | null = true;
+  fieldBoomConditionPassed: boolean | null = null;
+  fieldBoomConditionPassedDriveOn: boolean | null = null;
+  boomStabilityPassed: boolean | null = null;
+  boomStabilityPassedDriveOn: boolean | null = null;
+  boomHeightPassed: boolean | null = null;
+  boomHeightPassedDriveOn: boolean | null = null;
+  boomSymmetryPassed: boolean | null = null;
+  boomSymmetryPassedDriveOn: boolean | null = null;
+  orchardSprayerConditionPassed: boolean | null = null;
+  orchardSprayerConditionPassedDriveOn: boolean | null = null;
+  airStreamDirectionPassed: boolean | null = null;
+  airStreamDirectionPassedDriveOn: boolean | null = null;
   boomSectionNotes = '';
 
   // Section 9: Nozzles
-  nozzleUniformityPassed: boolean | null = true;
-  nozzleFlowRatePassed: boolean | null = true;
-  nozzleConditionPassed: boolean | null = true;
+  nozzleUniformityPassed: boolean | null = null;
+  nozzleUniformityPassedDriveOn: boolean | null = null;
+  nozzleFlowRatePassed: boolean | null = null;
+  nozzleFlowRatePassedDriveOn: boolean | null = null;
+  nozzleConditionPassed: boolean | null = null;
+  nozzleConditionPassedDriveOn: boolean | null = null;
   nozzleMeasurements = '';
   nozzlesSectionNotes = '';
 
   // Section 10: Distribution
-  transverseDistributionPassed: boolean | null = true;
+  transverseDistributionPassed: boolean | null = null;
+  transverseDistributionPassedDriveOn: boolean | null = null;
   coefficientOfVariation: number | null = null;
   distributionSectionNotes = '';
 
@@ -154,6 +183,8 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
   iconAdd = SVG_ICONS.iconAdd;
   iconPdf = SVG_ICONS.iconPdf;
   iconEye = SVG_ICONS.iconEye;
+  iconCheckSafe: any;
+  iconXSafe: any;
 
   private subscriptions: Subscription[] = [];
 
@@ -164,13 +195,16 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
     private textService: TextService,
     private authService: AuthService,
     private sanitizer: DomSanitizer,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private http: HttpClient
   ) {}
 
   private readonly STORAGE_KEY_BASE = 'robigoo_new_inspection_state';
   private get STORAGE_KEY(): string { return `${this.STORAGE_KEY_BASE}_${this.instanceId}`; }
 
   ngOnInit(): void {
+    this.iconCheckSafe = this.getSafeHtml(SVG_ICONS.iconCheck);
+    this.iconXSafe = this.getSafeHtml(SVG_ICONS.iconCancel);
     this.initSteps();
     this.loadClients();
     this.loadInspectorInfo();
@@ -208,55 +242,83 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
       inspectorLicenseNumber: this.inspectorLicenseNumber,
       // Section 1
       generalConditionPassed: this.generalConditionPassed,
+      generalConditionPassedDriveOn: this.generalConditionPassedDriveOn,
       markingsReadablePassed: this.markingsReadablePassed,
+      markingsReadablePassedDriveOn: this.markingsReadablePassedDriveOn,
       equipmentCompletePassed: this.equipmentCompletePassed,
+      equipmentCompletePassedDriveOn: this.equipmentCompletePassedDriveOn,
       generalSectionNotes: this.generalSectionNotes,
       // Section 2
       pumpOperationPassed: this.pumpOperationPassed,
+      pumpOperationPassedDriveOn: this.pumpOperationPassedDriveOn,
       pumpSealingPassed: this.pumpSealingPassed,
+      pumpSealingPassedDriveOn: this.pumpSealingPassedDriveOn,
       pressurePulsationPassed: this.pressurePulsationPassed,
+      pressurePulsationPassedDriveOn: this.pressurePulsationPassedDriveOn,
       pumpSectionNotes: this.pumpSectionNotes,
       // Section 3
       agitatorOperationPassed: this.agitatorOperationPassed,
+      agitatorOperationPassedDriveOn: this.agitatorOperationPassedDriveOn,
       agitatorSectionNotes: this.agitatorSectionNotes,
       // Section 4
       tankConditionPassed: this.tankConditionPassed,
+      tankConditionPassedDriveOn: this.tankConditionPassedDriveOn,
       tankSealingPassed: this.tankSealingPassed,
+      tankSealingPassedDriveOn: this.tankSealingPassedDriveOn,
       levelIndicatorPassed: this.levelIndicatorPassed,
+      levelIndicatorPassedDriveOn: this.levelIndicatorPassedDriveOn,
       flushingSystemPassed: this.flushingSystemPassed,
+      flushingSystemPassedDriveOn: this.flushingSystemPassedDriveOn,
       tankSectionNotes: this.tankSectionNotes,
       // Section 5
       manometerPassed: this.manometerPassed,
+      manometerPassedDriveOn: this.manometerPassedDriveOn,
       manometerReading2Bar: this.manometerReading2Bar,
       manometerReading4Bar: this.manometerReading4Bar,
       manometerReading6Bar: this.manometerReading6Bar,
       manometerDialSizePassed: this.manometerDialSizePassed,
+      manometerDialSizePassedDriveOn: this.manometerDialSizePassedDriveOn,
       measuringSectionNotes: this.measuringSectionNotes,
       // Section 6
       pipesConditionPassed: this.pipesConditionPassed,
+      pipesConditionPassedDriveOn: this.pipesConditionPassedDriveOn,
       connectionsSealingPassed: this.connectionsSealingPassed,
+      connectionsSealingPassedDriveOn: this.connectionsSealingPassedDriveOn,
       pipingSectionNotes: this.pipingSectionNotes,
       // Section 7
       suctionFilterPassed: this.suctionFilterPassed,
+      suctionFilterPassedDriveOn: this.suctionFilterPassedDriveOn,
       pressureFilterPassed: this.pressureFilterPassed,
+      pressureFilterPassedDriveOn: this.pressureFilterPassedDriveOn,
       nozzleFiltersPassed: this.nozzleFiltersPassed,
+      nozzleFiltersPassedDriveOn: this.nozzleFiltersPassedDriveOn,
       filtrationSectionNotes: this.filtrationSectionNotes,
       // Section 8
       fieldBoomConditionPassed: this.fieldBoomConditionPassed,
+      fieldBoomConditionPassedDriveOn: this.fieldBoomConditionPassedDriveOn,
       boomStabilityPassed: this.boomStabilityPassed,
+      boomStabilityPassedDriveOn: this.boomStabilityPassedDriveOn,
       boomHeightPassed: this.boomHeightPassed,
+      boomHeightPassedDriveOn: this.boomHeightPassedDriveOn,
       boomSymmetryPassed: this.boomSymmetryPassed,
+      boomSymmetryPassedDriveOn: this.boomSymmetryPassedDriveOn,
       orchardSprayerConditionPassed: this.orchardSprayerConditionPassed,
+      orchardSprayerConditionPassedDriveOn: this.orchardSprayerConditionPassedDriveOn,
       airStreamDirectionPassed: this.airStreamDirectionPassed,
+      airStreamDirectionPassedDriveOn: this.airStreamDirectionPassedDriveOn,
       boomSectionNotes: this.boomSectionNotes,
       // Section 9
       nozzleUniformityPassed: this.nozzleUniformityPassed,
+      nozzleUniformityPassedDriveOn: this.nozzleUniformityPassedDriveOn,
       nozzleFlowRatePassed: this.nozzleFlowRatePassed,
+      nozzleFlowRatePassedDriveOn: this.nozzleFlowRatePassedDriveOn,
       nozzleConditionPassed: this.nozzleConditionPassed,
+      nozzleConditionPassedDriveOn: this.nozzleConditionPassedDriveOn,
       nozzleMeasurements: this.nozzleMeasurements,
       nozzlesSectionNotes: this.nozzlesSectionNotes,
       // Section 10
       transverseDistributionPassed: this.transverseDistributionPassed,
+      transverseDistributionPassedDriveOn: this.transverseDistributionPassedDriveOn,
       coefficientOfVariation: this.coefficientOfVariation,
       distributionSectionNotes: this.distributionSectionNotes,
       // Final
@@ -285,55 +347,83 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
       this.inspectorLicenseNumber = state.inspectorLicenseNumber ?? '';
       // Section 1
       this.generalConditionPassed = state.generalConditionPassed ?? true;
+      this.generalConditionPassedDriveOn = state.generalConditionPassedDriveOn ?? true;
       this.markingsReadablePassed = state.markingsReadablePassed ?? true;
+      this.markingsReadablePassedDriveOn = state.markingsReadablePassedDriveOn ?? true;
       this.equipmentCompletePassed = state.equipmentCompletePassed ?? true;
+      this.equipmentCompletePassedDriveOn = state.equipmentCompletePassedDriveOn ?? true;
       this.generalSectionNotes = state.generalSectionNotes ?? '';
       // Section 2
       this.pumpOperationPassed = state.pumpOperationPassed ?? true;
+      this.pumpOperationPassedDriveOn = state.pumpOperationPassedDriveOn ?? true;
       this.pumpSealingPassed = state.pumpSealingPassed ?? true;
+      this.pumpSealingPassedDriveOn = state.pumpSealingPassedDriveOn ?? true;
       this.pressurePulsationPassed = state.pressurePulsationPassed ?? true;
+      this.pressurePulsationPassedDriveOn = state.pressurePulsationPassedDriveOn ?? true;
       this.pumpSectionNotes = state.pumpSectionNotes ?? '';
       // Section 3
       this.agitatorOperationPassed = state.agitatorOperationPassed ?? true;
+      this.agitatorOperationPassedDriveOn = state.agitatorOperationPassedDriveOn ?? true;
       this.agitatorSectionNotes = state.agitatorSectionNotes ?? '';
       // Section 4
       this.tankConditionPassed = state.tankConditionPassed ?? true;
+      this.tankConditionPassedDriveOn = state.tankConditionPassedDriveOn ?? true;
       this.tankSealingPassed = state.tankSealingPassed ?? true;
+      this.tankSealingPassedDriveOn = state.tankSealingPassedDriveOn ?? true;
       this.levelIndicatorPassed = state.levelIndicatorPassed ?? true;
+      this.levelIndicatorPassedDriveOn = state.levelIndicatorPassedDriveOn ?? true;
       this.flushingSystemPassed = state.flushingSystemPassed ?? true;
+      this.flushingSystemPassedDriveOn = state.flushingSystemPassedDriveOn ?? true;
       this.tankSectionNotes = state.tankSectionNotes ?? '';
       // Section 5
       this.manometerPassed = state.manometerPassed ?? true;
+      this.manometerPassedDriveOn = state.manometerPassedDriveOn ?? true;
       this.manometerReading2Bar = state.manometerReading2Bar ?? null;
       this.manometerReading4Bar = state.manometerReading4Bar ?? null;
       this.manometerReading6Bar = state.manometerReading6Bar ?? null;
       this.manometerDialSizePassed = state.manometerDialSizePassed ?? true;
+      this.manometerDialSizePassedDriveOn = state.manometerDialSizePassedDriveOn ?? true;
       this.measuringSectionNotes = state.measuringSectionNotes ?? '';
       // Section 6
       this.pipesConditionPassed = state.pipesConditionPassed ?? true;
+      this.pipesConditionPassedDriveOn = state.pipesConditionPassedDriveOn ?? true;
       this.connectionsSealingPassed = state.connectionsSealingPassed ?? true;
+      this.connectionsSealingPassedDriveOn = state.connectionsSealingPassedDriveOn ?? true;
       this.pipingSectionNotes = state.pipingSectionNotes ?? '';
       // Section 7
       this.suctionFilterPassed = state.suctionFilterPassed ?? true;
+      this.suctionFilterPassedDriveOn = state.suctionFilterPassedDriveOn ?? true;
       this.pressureFilterPassed = state.pressureFilterPassed ?? true;
+      this.pressureFilterPassedDriveOn = state.pressureFilterPassedDriveOn ?? true;
       this.nozzleFiltersPassed = state.nozzleFiltersPassed ?? true;
+      this.nozzleFiltersPassedDriveOn = state.nozzleFiltersPassedDriveOn ?? true;
       this.filtrationSectionNotes = state.filtrationSectionNotes ?? '';
       // Section 8
       this.fieldBoomConditionPassed = state.fieldBoomConditionPassed ?? true;
+      this.fieldBoomConditionPassedDriveOn = state.fieldBoomConditionPassedDriveOn ?? true;
       this.boomStabilityPassed = state.boomStabilityPassed ?? true;
+      this.boomStabilityPassedDriveOn = state.boomStabilityPassedDriveOn ?? true;
       this.boomHeightPassed = state.boomHeightPassed ?? true;
+      this.boomHeightPassedDriveOn = state.boomHeightPassedDriveOn ?? true;
       this.boomSymmetryPassed = state.boomSymmetryPassed ?? true;
+      this.boomSymmetryPassedDriveOn = state.boomSymmetryPassedDriveOn ?? true;
       this.orchardSprayerConditionPassed = state.orchardSprayerConditionPassed ?? true;
+      this.orchardSprayerConditionPassedDriveOn = state.orchardSprayerConditionPassedDriveOn ?? true;
       this.airStreamDirectionPassed = state.airStreamDirectionPassed ?? true;
+      this.airStreamDirectionPassedDriveOn = state.airStreamDirectionPassedDriveOn ?? true;
       this.boomSectionNotes = state.boomSectionNotes ?? '';
       // Section 9
       this.nozzleUniformityPassed = state.nozzleUniformityPassed ?? true;
+      this.nozzleUniformityPassedDriveOn = state.nozzleUniformityPassedDriveOn ?? true;
       this.nozzleFlowRatePassed = state.nozzleFlowRatePassed ?? true;
+      this.nozzleFlowRatePassedDriveOn = state.nozzleFlowRatePassedDriveOn ?? true;
       this.nozzleConditionPassed = state.nozzleConditionPassed ?? true;
+      this.nozzleConditionPassedDriveOn = state.nozzleConditionPassedDriveOn ?? true;
       this.nozzleMeasurements = state.nozzleMeasurements ?? '';
       this.nozzlesSectionNotes = state.nozzlesSectionNotes ?? '';
       // Section 10
       this.transverseDistributionPassed = state.transverseDistributionPassed ?? true;
+      this.transverseDistributionPassedDriveOn = state.transverseDistributionPassedDriveOn ?? true;
       this.coefficientOfVariation = state.coefficientOfVariation ?? null;
       this.distributionSectionNotes = state.distributionSectionNotes ?? '';
       // Final
@@ -363,55 +453,83 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
         this.protocolNumber = p.protocolNumber || '';
 
         this.generalConditionPassed = p.generalConditionPassed ?? null;
+        this.generalConditionPassedDriveOn = p.generalConditionPassedDriveOn ?? null;
         this.markingsReadablePassed = p.markingsReadablePassed ?? null;
+        this.markingsReadablePassedDriveOn = p.markingsReadablePassedDriveOn ?? null;
         this.equipmentCompletePassed = p.equipmentCompletePassed ?? null;
+        this.equipmentCompletePassedDriveOn = p.equipmentCompletePassedDriveOn ?? null;
         this.generalSectionNotes = p.generalSectionNotes || '';
 
         this.pumpOperationPassed = p.pumpOperationPassed ?? null;
+        this.pumpOperationPassedDriveOn = p.pumpOperationPassedDriveOn ?? null;
         this.pumpSealingPassed = p.pumpSealingPassed ?? null;
+        this.pumpSealingPassedDriveOn = p.pumpSealingPassedDriveOn ?? null;
         this.pressurePulsationPassed = p.pressurePulsationPassed ?? null;
+        this.pressurePulsationPassedDriveOn = p.pressurePulsationPassedDriveOn ?? null;
         this.pumpSectionNotes = p.pumpSectionNotes || '';
 
         this.agitatorOperationPassed = p.agitatorOperationPassed ?? null;
+        this.agitatorOperationPassedDriveOn = p.agitatorOperationPassedDriveOn ?? null;
         this.agitatorSectionNotes = p.agitatorSectionNotes || '';
 
         this.tankConditionPassed = p.tankConditionPassed ?? null;
+        this.tankConditionPassedDriveOn = p.tankConditionPassedDriveOn ?? null;
         this.tankSealingPassed = p.tankSealingPassed ?? null;
+        this.tankSealingPassedDriveOn = p.tankSealingPassedDriveOn ?? null;
         this.levelIndicatorPassed = p.levelIndicatorPassed ?? null;
+        this.levelIndicatorPassedDriveOn = p.levelIndicatorPassedDriveOn ?? null;
         this.flushingSystemPassed = p.flushingSystemPassed ?? null;
+        this.flushingSystemPassedDriveOn = p.flushingSystemPassedDriveOn ?? null;
         this.tankSectionNotes = p.tankSectionNotes || '';
 
         this.manometerPassed = p.manometerPassed ?? null;
+        this.manometerPassedDriveOn = p.manometerPassedDriveOn ?? null;
         this.manometerReading2Bar = p.manometerReading2Bar ?? null;
         this.manometerReading4Bar = p.manometerReading4Bar ?? null;
         this.manometerReading6Bar = p.manometerReading6Bar ?? null;
         this.manometerDialSizePassed = p.manometerDialSizePassed ?? null;
+        this.manometerDialSizePassedDriveOn = p.manometerDialSizePassedDriveOn ?? null;
         this.measuringSectionNotes = p.measuringSectionNotes || '';
 
         this.pipesConditionPassed = p.pipesConditionPassed ?? null;
+        this.pipesConditionPassedDriveOn = p.pipesConditionPassedDriveOn ?? null;
         this.connectionsSealingPassed = p.connectionsSealingPassed ?? null;
+        this.connectionsSealingPassedDriveOn = p.connectionsSealingPassedDriveOn ?? null;
         this.pipingSectionNotes = p.pipingSectionNotes || '';
 
         this.suctionFilterPassed = p.suctionFilterPassed ?? null;
+        this.suctionFilterPassedDriveOn = p.suctionFilterPassedDriveOn ?? null;
         this.pressureFilterPassed = p.pressureFilterPassed ?? null;
+        this.pressureFilterPassedDriveOn = p.pressureFilterPassedDriveOn ?? null;
         this.nozzleFiltersPassed = p.nozzleFiltersPassed ?? null;
+        this.nozzleFiltersPassedDriveOn = p.nozzleFiltersPassedDriveOn ?? null;
         this.filtrationSectionNotes = p.filtrationSectionNotes || '';
 
         this.fieldBoomConditionPassed = p.fieldBoomConditionPassed ?? null;
+        this.fieldBoomConditionPassedDriveOn = p.fieldBoomConditionPassedDriveOn ?? null;
         this.boomStabilityPassed = p.boomStabilityPassed ?? null;
+        this.boomStabilityPassedDriveOn = p.boomStabilityPassedDriveOn ?? null;
         this.boomHeightPassed = p.boomHeightPassed ?? null;
+        this.boomHeightPassedDriveOn = p.boomHeightPassedDriveOn ?? null;
         this.boomSymmetryPassed = p.boomSymmetryPassed ?? null;
+        this.boomSymmetryPassedDriveOn = p.boomSymmetryPassedDriveOn ?? null;
         this.orchardSprayerConditionPassed = p.orchardSprayerConditionPassed ?? null;
+        this.orchardSprayerConditionPassedDriveOn = p.orchardSprayerConditionPassedDriveOn ?? null;
         this.airStreamDirectionPassed = p.airStreamDirectionPassed ?? null;
+        this.airStreamDirectionPassedDriveOn = p.airStreamDirectionPassedDriveOn ?? null;
         this.boomSectionNotes = p.boomSectionNotes || '';
 
         this.nozzleUniformityPassed = p.nozzleUniformityPassed ?? null;
+        this.nozzleUniformityPassedDriveOn = p.nozzleUniformityPassedDriveOn ?? null;
         this.nozzleFlowRatePassed = p.nozzleFlowRatePassed ?? null;
+        this.nozzleFlowRatePassedDriveOn = p.nozzleFlowRatePassedDriveOn ?? null;
         this.nozzleConditionPassed = p.nozzleConditionPassed ?? null;
+        this.nozzleConditionPassedDriveOn = p.nozzleConditionPassedDriveOn ?? null;
         this.nozzleMeasurements = p.nozzleMeasurements || '';
         this.nozzlesSectionNotes = p.nozzlesSectionNotes || '';
 
         this.transverseDistributionPassed = p.transverseDistributionPassed ?? null;
+        this.transverseDistributionPassedDriveOn = p.transverseDistributionPassedDriveOn ?? null;
         this.coefficientOfVariation = p.coefficientOfVariation ?? null;
         this.distributionSectionNotes = p.distributionSectionNotes || '';
 
@@ -497,8 +615,16 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       this.inspectorName = `${currentUser.firstName} ${currentUser.lastName}`.trim() || currentUser.login || '';
-      this.inspectorLicenseNumber = currentUser.permissionNumber || '';
     }
+    // Load global unit number from app settings
+    this.http.get<any>('/api/settings').subscribe({
+      next: (data) => {
+        if (data?.organization?.unitAuthorizationNumber) {
+          this.inspectorLicenseNumber = data.organization.unitAuthorizationNumber;
+        }
+      },
+      error: () => {}
+    });
   }
 
   onClientSearchChange(term: string): void {
@@ -581,7 +707,8 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
       street: '',
       buildingNumber: '',
       apartmentNumber: '',
-      zipCode: ''
+      zipCode: '',
+      post: ''
     };
   }
 
@@ -735,20 +862,19 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
   }
 
   private validateCurrentStep(): boolean {
+    // Only validate when moving forward or submitting, not when just switching tabs
     if (this.currentStep === 0) {
       if (!this.selectedClientId && !this.isAddingNewClient) {
-        this.showMessage('inspectionProtocol.errors.selectClient', 'error');
+        // Don't show error, just return false to prevent navigation
         return false;
       }
       if (this.isAddingNewClient) {
         if (this.newClient.clientType === 'person') {
           if (!this.newClient.firstName || !this.newClient.lastName) {
-            this.showMessage('inspectionProtocol.errors.clientNameRequired', 'error');
             return false;
           }
         } else {
           if (!this.newClient.companyName) {
-            this.showMessage('inspectionProtocol.errors.companyNameRequired', 'error');
             return false;
           }
         }
@@ -757,12 +883,10 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
 
     if (this.currentStep === 1) {
       if (!this.selectedSprayerSerialNumber && !this.isAddingNewSprayer) {
-        this.showMessage('inspectionProtocol.errors.selectSprayer', 'error');
         return false;
       }
       if (this.isAddingNewSprayer) {
         if (!this.newSprayer.serialNumber || !this.newSprayer.sprayerName || !this.newSprayer.manufacturer) {
-          this.showMessage('inspectionProtocol.errors.sprayerDataRequired', 'error');
           return false;
         }
       }
@@ -783,31 +907,57 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
   calculateFinalResult(): void {
     const allChecks = [
       this.generalConditionPassed,
+      this.generalConditionPassedDriveOn,
       this.markingsReadablePassed,
+      this.markingsReadablePassedDriveOn,
       this.equipmentCompletePassed,
+      this.equipmentCompletePassedDriveOn,
       this.pumpOperationPassed,
+      this.pumpOperationPassedDriveOn,
       this.pumpSealingPassed,
+      this.pumpSealingPassedDriveOn,
       this.pressurePulsationPassed,
+      this.pressurePulsationPassedDriveOn,
       this.agitatorOperationPassed,
+      this.agitatorOperationPassedDriveOn,
       this.tankConditionPassed,
+      this.tankConditionPassedDriveOn,
       this.tankSealingPassed,
+      this.tankSealingPassedDriveOn,
       this.levelIndicatorPassed,
+      this.levelIndicatorPassedDriveOn,
       this.flushingSystemPassed,
+      this.flushingSystemPassedDriveOn,
       this.manometerPassed,
+      this.manometerPassedDriveOn,
       this.manometerDialSizePassed,
+      this.manometerDialSizePassedDriveOn,
       this.pipesConditionPassed,
+      this.pipesConditionPassedDriveOn,
       this.connectionsSealingPassed,
+      this.connectionsSealingPassedDriveOn,
       this.suctionFilterPassed,
+      this.suctionFilterPassedDriveOn,
       this.pressureFilterPassed,
+      this.pressureFilterPassedDriveOn,
       this.nozzleFiltersPassed,
+      this.nozzleFiltersPassedDriveOn,
       this.fieldBoomConditionPassed,
+      this.fieldBoomConditionPassedDriveOn,
       this.boomStabilityPassed,
+      this.boomStabilityPassedDriveOn,
       this.boomHeightPassed,
+      this.boomHeightPassedDriveOn,
       this.boomSymmetryPassed,
+      this.boomSymmetryPassedDriveOn,
       this.nozzleUniformityPassed,
+      this.nozzleUniformityPassedDriveOn,
       this.nozzleFlowRatePassed,
+      this.nozzleFlowRatePassedDriveOn,
       this.nozzleConditionPassed,
-      this.transverseDistributionPassed
+      this.nozzleConditionPassedDriveOn,
+      this.transverseDistributionPassed,
+      this.transverseDistributionPassedDriveOn
     ];
 
     const inspectedChecks = allChecks.filter(c => c !== null);
@@ -944,55 +1094,83 @@ export class NewInspectionComponent implements OnInit, OnDestroy {
         sectionCount: sprayerDetail?.sectionCount ?? this.newSprayer.sectionCount ?? null,
 
         generalConditionPassed: this.generalConditionPassed,
+        generalConditionPassedDriveOn: this.generalConditionPassedDriveOn,
         markingsReadablePassed: this.markingsReadablePassed,
+        markingsReadablePassedDriveOn: this.markingsReadablePassedDriveOn,
         equipmentCompletePassed: this.equipmentCompletePassed,
+        equipmentCompletePassedDriveOn: this.equipmentCompletePassedDriveOn,
         generalSectionNotes: this.generalSectionNotes || null,
 
         pumpOperationPassed: this.pumpOperationPassed,
+        pumpOperationPassedDriveOn: this.pumpOperationPassedDriveOn,
         pumpSealingPassed: this.pumpSealingPassed,
+        pumpSealingPassedDriveOn: this.pumpSealingPassedDriveOn,
         pressurePulsationPassed: this.pressurePulsationPassed,
+        pressurePulsationPassedDriveOn: this.pressurePulsationPassedDriveOn,
         pumpSectionNotes: this.pumpSectionNotes || null,
 
         agitatorOperationPassed: this.agitatorOperationPassed,
+        agitatorOperationPassedDriveOn: this.agitatorOperationPassedDriveOn,
         agitatorSectionNotes: this.agitatorSectionNotes || null,
 
         tankConditionPassed: this.tankConditionPassed,
+        tankConditionPassedDriveOn: this.tankConditionPassedDriveOn,
         tankSealingPassed: this.tankSealingPassed,
+        tankSealingPassedDriveOn: this.tankSealingPassedDriveOn,
         levelIndicatorPassed: this.levelIndicatorPassed,
+        levelIndicatorPassedDriveOn: this.levelIndicatorPassedDriveOn,
         flushingSystemPassed: this.flushingSystemPassed,
+        flushingSystemPassedDriveOn: this.flushingSystemPassedDriveOn,
         tankSectionNotes: this.tankSectionNotes || null,
 
         manometerPassed: this.manometerPassed,
+        manometerPassedDriveOn: this.manometerPassedDriveOn,
         manometerReading2Bar: this.manometerReading2Bar,
         manometerReading4Bar: this.manometerReading4Bar,
         manometerReading6Bar: this.manometerReading6Bar,
         manometerDialSizePassed: this.manometerDialSizePassed,
+        manometerDialSizePassedDriveOn: this.manometerDialSizePassedDriveOn,
         measuringSectionNotes: this.measuringSectionNotes || null,
 
         pipesConditionPassed: this.pipesConditionPassed,
+        pipesConditionPassedDriveOn: this.pipesConditionPassedDriveOn,
         connectionsSealingPassed: this.connectionsSealingPassed,
+        connectionsSealingPassedDriveOn: this.connectionsSealingPassedDriveOn,
         pipingSectionNotes: this.pipingSectionNotes || null,
 
         suctionFilterPassed: this.suctionFilterPassed,
+        suctionFilterPassedDriveOn: this.suctionFilterPassedDriveOn,
         pressureFilterPassed: this.pressureFilterPassed,
+        pressureFilterPassedDriveOn: this.pressureFilterPassedDriveOn,
         nozzleFiltersPassed: this.nozzleFiltersPassed,
+        nozzleFiltersPassedDriveOn: this.nozzleFiltersPassedDriveOn,
         filtrationSectionNotes: this.filtrationSectionNotes || null,
 
         fieldBoomConditionPassed: this.fieldBoomConditionPassed,
+        fieldBoomConditionPassedDriveOn: this.fieldBoomConditionPassedDriveOn,
         boomStabilityPassed: this.boomStabilityPassed,
+        boomStabilityPassedDriveOn: this.boomStabilityPassedDriveOn,
         boomHeightPassed: this.boomHeightPassed,
+        boomHeightPassedDriveOn: this.boomHeightPassedDriveOn,
         boomSymmetryPassed: this.boomSymmetryPassed,
+        boomSymmetryPassedDriveOn: this.boomSymmetryPassedDriveOn,
         orchardSprayerConditionPassed: this.orchardSprayerConditionPassed,
+        orchardSprayerConditionPassedDriveOn: this.orchardSprayerConditionPassedDriveOn,
         airStreamDirectionPassed: this.airStreamDirectionPassed,
+        airStreamDirectionPassedDriveOn: this.airStreamDirectionPassedDriveOn,
         boomSectionNotes: this.boomSectionNotes || null,
 
         nozzleUniformityPassed: this.nozzleUniformityPassed,
+        nozzleUniformityPassedDriveOn: this.nozzleUniformityPassedDriveOn,
         nozzleFlowRatePassed: this.nozzleFlowRatePassed,
+        nozzleFlowRatePassedDriveOn: this.nozzleFlowRatePassedDriveOn,
         nozzleConditionPassed: this.nozzleConditionPassed,
+        nozzleConditionPassedDriveOn: this.nozzleConditionPassedDriveOn,
         nozzleMeasurements: this.nozzleMeasurements || null,
         nozzlesSectionNotes: this.nozzlesSectionNotes || null,
 
         transverseDistributionPassed: this.transverseDistributionPassed,
+        transverseDistributionPassedDriveOn: this.transverseDistributionPassedDriveOn,
         coefficientOfVariation: this.coefficientOfVariation,
         distributionSectionNotes: this.distributionSectionNotes || null,
 

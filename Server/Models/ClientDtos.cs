@@ -24,6 +24,7 @@ namespace Server.Models
         public string? BuildingNumber { get; set; }
         public string? ApartmentNumber { get; set; }
         public string? ZipCode { get; set; }
+        public string? Post { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 
@@ -50,6 +51,7 @@ namespace Server.Models
         public string? BuildingNumber { get; set; }
         public string? ApartmentNumber { get; set; }
         public string? ZipCode { get; set; }
+        public string? Post { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
@@ -149,6 +151,12 @@ namespace Server.Models
         [MaxLength(10, ErrorMessage = "Zip code cannot exceed 10 characters")]
         [RegularExpression("^([0-9]{2}-[0-9]{3})?$", ErrorMessage = "Zip code must be in format XX-XXX")]
         public string? ZipCode { get; set; }
+
+        /// <summary>
+        /// Post office name (Poczta).
+        /// </summary>
+        [MaxLength(255, ErrorMessage = "Post office name cannot exceed 255 characters")]
+        public string? Post { get; set; }
     }
 
     #endregion

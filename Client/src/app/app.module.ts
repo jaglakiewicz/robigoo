@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -22,7 +21,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { TextPipe } from './shared/text.pipe';
 import { ClientsComponent } from './clients/clients.component';
 import { InspectionMarksComponent } from './inspection-marks/inspection-marks.component';
-import { NotificationsComponent } from './notifications/notifications.component';
+import { EquipmentRegistryComponent } from './equipment-registry/equipment-registry.component';
 import { ToastNotificationComponent } from './shared/toast-notification/toast-notification.component';
 import { GenericListComponent } from './shared/components/generic-list/generic-list.component';
 import { HistoryDialogComponent } from './shared/components/history-dialog/history-dialog.component';
@@ -43,10 +42,12 @@ import { EntityToolbarComponent } from './shared/components/entity-toolbar/entit
 import { BusyIndicatorComponent } from './shared/busy-indicator/busy-indicator.component';
 import { ScrollSpyDirective } from './shared/directives/scroll-spy.directive';
 import { ClientAutocompleteComponent } from './shared/components/client-autocomplete/client-autocomplete.component';
+import { TextSuggestComponent } from './shared/components/text-suggest/text-suggest.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, NotificationsComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent, ScrollSpyDirective],
-  imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule, RouterModule.forRoot([], { useHash: false })],
+  declarations: [AppComponent, LoginComponent, NewInspectionComponent, CropSprayersComponent, InspectionsComponent, SettingsComponent, TextPipe, ClientsComponent, InspectionMarksComponent, EquipmentRegistryComponent, ToastNotificationComponent, GenericListComponent, HistoryDialogComponent, CustomSelectComponent, NumericInputComponent, DatePickerComponent, ScrollFadeDirective, ScrollCenterDirective, BusyOverlayDirective, FilterPanelComponent, EntityListPanelComponent, EntityDetailPanelComponent, StepIndicatorComponent, MasterDetailLayoutComponent, EntityToolbarComponent, BusyIndicatorComponent, ClientAutocompleteComponent, TextSuggestComponent, ScrollSpyDirective, DashboardComponent],
+  imports: [BrowserModule, BrowserAnimationsModule, FormsModule, HttpClientModule, CommonModule, DragDropModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: BusyInterceptor, multi: true }

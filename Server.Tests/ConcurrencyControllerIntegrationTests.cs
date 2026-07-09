@@ -57,7 +57,7 @@ namespace Server.Tests
             var protocol = new InspectionProtocol
             {
                 Id = 1,
-                ProtocolNumber = "SKO/2025/001",
+                ProtocolNumber = "0001/2025",
                 InspectionDate = DateTime.UtcNow,
                 InspectorName = "Test Inspector",
                 ClientName = "Test Client",

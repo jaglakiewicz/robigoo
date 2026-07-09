@@ -41,7 +41,8 @@ namespace Server.Controllers
             [FromQuery] string? kind,
             [FromQuery] string? manufacturer,
             [FromQuery] string? yearFrom,
-            [FromQuery] string? yearTo)
+            [FromQuery] string? yearTo,
+            [FromQuery] string? ownerId)
         {
             var filter = new CropSprayerFilterDto
             {
@@ -50,11 +51,29 @@ namespace Server.Controllers
                 Kind = kind,
                 Manufacturer = manufacturer,
                 YearFrom = yearFrom,
-                YearTo = yearTo
+                YearTo = yearTo,
+                OwnerId = ownerId
             };
 
             var result = await _cropSprayerService.GetListAsync(filter);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Unique field values for autosuggestions.
+        /// GET /api/machines/suggestions?field=manufacturer|sprayerName
+        /// </summary>
+        [HttpGet("suggestions")]
+        public async Task<ActionResult<IEnumerable<string>>> GetSuggestions([FromQuery] string field)
+        {
+            if (string.IsNullOrWhiteSpace(field))
+                return BadRequest(new { message = "Field parameter is required." });
+
+            var values = await _cropSprayerService.GetDistinctValuesAsync(field);
+            if (values == null)
+                return BadRequest(new { message = $"Unsupported field: {field}" });
+
+            return Ok(values);
         }
 
         /// <summary>

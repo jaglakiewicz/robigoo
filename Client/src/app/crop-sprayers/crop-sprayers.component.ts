@@ -16,7 +16,7 @@ import { NotificationService } from '../services/notification.service';
 import { DataRefreshService } from '../services/data-refresh.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { SelectOption } from '../shared/components/custom-select/custom-select.component';
-import { FilterField, FilterValues } from '../shared/components/filter-panel/filter-panel.component';
+import { FilterField, FilterValues, FilterPanelComponent } from '../shared/components/filter-panel/filter-panel.component';
 import { Step } from '../shared/components/step-indicator/step-indicator.component';
 
 interface SprayerStep {
@@ -38,6 +38,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   // List
   sprayers: CropSprayerListItem[] = [];
+  private allSprayers: CropSprayerListItem[] = [];
   selectedSerialNumber: string | null = null;
   searchTerm = '';
 
@@ -77,7 +78,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   saving = false;
   deleting = false;
 
-  toolbarIcons!: Record<'add' | 'edit' | 'delete' | 'save' | 'cancel', SafeHtml>;
+  toolbarIcons!: Record<'add' | 'edit' | 'delete' | 'save' | 'cancel' | 'preview', SafeHtml>;
 
   // Unsaved-changes dialog state
   pendingSerialNumber: string | null = null;
@@ -98,6 +99,10 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   pumpTypeOptions: SelectOption[] = [];
   ownerOptions: SelectOption[] = [];
 
+  // Autosuggestions
+  manufacturerSuggestions: string[] = [];
+  sprayerNameSuggestions: string[] = [];
+
   // Subscription for clients data refresh
   private clientsRefreshSub?: Subscription;
 
@@ -116,8 +121,9 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
       add: this.getSafeHtml(SVG_ICONS.iconAdd),
       edit: this.getSafeHtml(SVG_ICONS.iconEdit),
       delete: this.getSafeHtml(SVG_ICONS.deleteIcon),
-      save: this.getSafeHtml(SVG_ICONS.iconCheck),
-      cancel: this.getSafeHtml(SVG_ICONS.iconCancel)
+      save: this.getSafeHtml(SVG_ICONS.iconSave),
+      cancel: this.getSafeHtml(SVG_ICONS.iconCancel),
+      preview: this.getSafeHtml(SVG_ICONS.iconEye)
     };
   }
 
@@ -179,6 +185,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     this.initSelectOptions();
     this.initFilterFields();
     this.loadOwnerOptions();
+    this.loadSuggestions();
 
     // Check for pending navigation params from clients module
     const navParams = this.navigationService.getPendingParams();
@@ -200,7 +207,6 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         key: 'type',
         label: this.textService.get('types.cropSprayers.fields.type'),
         type: 'select',
-        placeholder: this.textService.get('types.cropSprayers.filters.allTypes'),
         options: [
           { value: '00', label: this.textService.get('types.cropSprayers.filters.typeField') },
           { value: '01', label: this.textService.get('types.cropSprayers.filters.typeGarden') }
@@ -210,7 +216,6 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         key: 'kind',
         label: this.textService.get('types.cropSprayers.fields.kind'),
         type: 'select',
-        placeholder: this.textService.get('types.cropSprayers.filters.allKinds'),
         options: [
           { value: '00', label: this.textService.get('types.cropSprayers.filters.kindMounted') },
           { value: '01', label: this.textService.get('types.cropSprayers.filters.kindTrailed') },
@@ -219,21 +224,36 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         ]
       },
       {
+        key: 'serialNumber',
+        label: this.textService.get('types.cropSprayers.fields.serialNumber'),
+        type: 'text'
+      },
+      {
+        key: 'sprayerName',
+        label: this.textService.get('types.cropSprayers.fields.sprayerName'),
+        type: 'text'
+      },
+      {
         key: 'manufacturer',
         label: this.textService.get('types.cropSprayers.fields.manufacturer'),
-        type: 'text',
-        placeholder: this.textService.get('types.cropSprayers.filters.manufacturer')
+        type: 'text'
       },
       {
         key: 'productionYear',
         label: this.textService.get('types.cropSprayers.fields.productionYear'),
-        type: 'range',
-        rangeFromKey: 'yearFrom',
-        rangeToKey: 'yearTo',
-        rangeFromPlaceholder: this.textService.get('types.cropSprayers.filters.yearFrom'),
-        rangeToPlaceholder: this.textService.get('types.cropSprayers.filters.yearTo'),
+        type: 'number',
         min: 1900,
-        max: 2100
+        max: this.currentYear
+      },
+      {
+        key: 'ownerName',
+        label: this.textService.get('types.cropSprayers.fields.owner'),
+        type: 'text'
+      },
+      {
+        key: 'createdAt',
+        label: this.textService.get('types.cropSprayers.fields.createdAt'),
+        type: 'date'
       }
     ];
   }
@@ -271,6 +291,16 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** Load unique field values for autosuggestions */
+  private loadSuggestions(): void {
+    this.sprayersService.getSuggestions('manufacturer').subscribe({
+      next: (values) => this.manufacturerSuggestions = values
+    });
+    this.sprayersService.getSuggestions('sprayerName').subscribe({
+      next: (values) => this.sprayerNameSuggestions = values
+    });
+  }
+
   ngOnDestroy(): void {
     this.dirtyFormService.unregisterForm(this.formId);
     this.clientsRefreshSub?.unsubscribe();
@@ -281,15 +311,11 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
   loadSprayers(): void {
     this.loadingList = true;
     this.sprayersService.getList({
-      q: this.searchTerm || undefined,
-      type: this.filterValues['type'] || undefined,
-      kind: this.filterValues['kind'] || undefined,
-      manufacturer: this.filterValues['manufacturer'] || undefined,
-      yearFrom: this.filterValues['yearFrom'] || undefined,
-      yearTo: this.filterValues['yearTo'] || undefined
+      q: this.searchTerm || undefined
     }).subscribe({
       next: list => {
-        this.sprayers = list;
+        this.allSprayers = list;
+        this.sprayers = FilterPanelComponent.applyFilters(list, this.filterValues, this.filterFields);
         this.loadingList = false;
 
         // Handle pending selection from navigation
@@ -297,7 +323,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
           this.selectSprayerBySerialNumber(this.pendingSelectSerial);
           this.pendingSelectSerial = null;
         } else {
-          this.reconcileSelection(list);
+          this.reconcileSelection(this.sprayers);
         }
       },
       error: () => {
@@ -321,12 +347,14 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
 
   onFilterChange(values: FilterValues): void {
     this.filterValues = values;
-    this.loadSprayers();
+    this.sprayers = FilterPanelComponent.applyFilters(this.allSprayers, this.filterValues, this.filterFields);
+    this.reconcileSelection(this.sprayers);
   }
 
   onFilterClear(): void {
     this.filterValues = {};
-    this.loadSprayers();
+    this.sprayers = [...this.allSprayers];
+    this.reconcileSelection(this.sprayers);
   }
 
   onFilterPanelOpenChange(isOpen: boolean): void {
@@ -611,6 +639,7 @@ export class CropSprayersComponent implements OnInit, OnDestroy {
         this.saving = false;
         this.setDirty(false);
         this.loadSprayers();
+        this.loadSuggestions();
         this.notificationService.success(this.textService.get('types.cropSprayers.messages.saved'));
         // Notify other components that machines data has changed
         this.dataRefreshService.notifyMachinesChanged(this.isNew ? 'create' : 'update', detail.serialNumber);

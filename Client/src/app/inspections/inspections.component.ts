@@ -14,7 +14,7 @@ import { NotificationService } from '../services/notification.service';
 import { NavigationService } from '../services/navigation.service';
 import { SVG_ICONS } from '../shared/svg-icons';
 import { SelectOption } from '../shared/components/custom-select/custom-select.component';
-import { FilterField, FilterValues } from '../shared/components/filter-panel/filter-panel.component';
+import { FilterField, FilterValues, FilterPanelComponent } from '../shared/components/filter-panel/filter-panel.component';
 import { Step } from '../shared/components/step-indicator/step-indicator.component';
 
 interface ProtocolStep {
@@ -31,6 +31,7 @@ interface ProtocolStep {
 export class InspectionsComponent implements OnInit, OnDestroy {
   // List
   protocols: InspectionProtocolListItem[] = [];
+  private allProtocols: InspectionProtocolListItem[] = [];
   selectedProtocolId: number | null = null;
   searchTerm = '';
 
@@ -73,7 +74,10 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   // Delete confirmation dialog state
   deleteDialogVisible = false;
 
-  toolbarIcons!: Record<'add' | 'edit' | 'delete' | 'pdf' | 'print', SafeHtml>;
+  // Pending navigation selection
+  private pendingSelectId: number | null = null;
+
+  toolbarIcons!: Record<'add' | 'edit' | 'save' | 'cancel' | 'delete' | 'preview' | 'pdf' | 'print', SafeHtml>;
 
   // Select options for filters
   yearOptions: SelectOption[] = [];
@@ -93,7 +97,10 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     this.toolbarIcons = {
       add: this.getSafeHtml(SVG_ICONS.iconAdd),
       edit: this.getSafeHtml(SVG_ICONS.iconEdit),
+      save: this.getSafeHtml(SVG_ICONS.iconSave),
+      cancel: this.getSafeHtml(SVG_ICONS.iconCancel),
       delete: this.getSafeHtml(SVG_ICONS.deleteIcon),
+      preview: this.getSafeHtml(SVG_ICONS.iconEye),
       pdf: this.getSafeHtml(SVG_ICONS.iconPdf),
       print: this.getSafeHtml(SVG_ICONS.iconPdf)
     };
@@ -111,6 +118,16 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initFilterFields();
     this.initSelectOptions();
+
+    // Check for pending navigation params from dashboard
+    const navParams = this.navigationService.getPendingParams();
+    if (navParams?.['select']) {
+      const id = parseInt(navParams['select'], 10);
+      if (!isNaN(id)) {
+        this.pendingSelectId = id;
+      }
+    }
+
     this.loadProtocols();
   }
 
@@ -119,81 +136,59 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   }
 
   private initFilterFields(): void {
-    // Generate year options (last 10 years)
-    const currentYear = new Date().getFullYear();
-    const yearOpts: SelectOption[] = [];
-    for (let y = currentYear; y >= currentYear - 10; y--) {
-      yearOpts.push({ value: y.toString(), label: y.toString() });
-    }
-    this.yearOptions = yearOpts;
-
     this.filterFields = [
       {
-        key: 'year',
-        label: this.textService.get('inspections.filters.year'),
+        key: 'protocolNumber',
+        label: this.textService.get('inspections.detail.protocolNumber'),
+        type: 'text'
+      },
+      {
+        key: 'inspectionDate',
+        label: this.textService.get('inspections.detail.inspectionDate'),
+        type: 'date'
+      },
+      {
+        key: 'inspectorName',
+        label: this.textService.get('inspections.filters.inspector'),
+        type: 'text'
+      },
+      {
+        key: 'clientName',
+        label: this.textService.get('inspections.detail.clientName'),
+        type: 'text'
+      },
+      {
+        key: 'cropSprayerName',
+        label: this.textService.get('inspections.detail.sprayerType'),
+        type: 'text'
+      },
+      {
+        key: 'cropSprayerSerialNumber',
+        label: this.textService.get('inspections.detail.sprayerSerial'),
+        type: 'text'
+      },
+      {
+        key: 'cropSprayerType',
+        label: this.textService.get('inspections.filters.sprayerType'),
         type: 'select',
-        placeholder: this.textService.get('inspections.filters.allYears'),
-        options: yearOpts
+        options: [
+          { value: '00', label: this.textService.get('types.cropSprayers.filters.typeField') },
+          { value: '01', label: this.textService.get('types.cropSprayers.filters.typeGarden') }
+        ]
       },
       {
         key: 'finalResult',
         label: this.textService.get('inspections.filters.result'),
         type: 'select',
-        placeholder: this.textService.get('inspections.filters.allResults'),
         options: [
           { value: 'true', label: this.textService.get('inspections.filters.resultPositive') },
           { value: 'false', label: this.textService.get('inspections.filters.resultNegative') }
         ]
       },
       {
-        key: 'inspectorName',
-        label: this.textService.get('inspections.filters.inspector'),
-        type: 'text',
-        placeholder: this.textService.get('inspections.placeholders.inspector')
-      },
-      {
-        key: 'city',
-        label: this.textService.get('inspections.filters.city'),
-        type: 'text',
-        placeholder: this.textService.get('inspections.filters.cityPlaceholder')
-      },
-      {
-        key: 'voivodeship',
-        label: this.textService.get('inspections.filters.voivodeship'),
-        type: 'text',
-        placeholder: this.textService.get('inspections.filters.voivodeshipPlaceholder')
-      },
-      {
-        key: 'distance',
-        label: this.textService.get('inspections.filters.distance'),
-        type: 'select',
-        placeholder: this.textService.get('inspections.filters.noDistanceLimit'),
-        options: [
-          { value: '10', label: '+10 km' },
-          { value: '15', label: '+15 km' },
-          { value: '20', label: '+20 km' },
-          { value: '30', label: '+30 km' },
-          { value: '50', label: '+50 km' }
-        ]
-      },
-      {
-        key: 'dateRange',
-        label: this.textService.get('inspections.filters.dateRange'),
-        type: 'range',
-        rangeFromKey: 'dateFrom',
-        rangeToKey: 'dateTo',
-        rangeFromPlaceholder: this.textService.get('inspections.placeholders.dateFrom'),
-        rangeToPlaceholder: this.textService.get('inspections.placeholders.dateTo')
-      },
-      {
-        key: 'sprayerType',
-        label: this.textService.get('inspections.filters.sprayerType'),
-        type: 'select',
-        placeholder: this.textService.get('inspections.filters.allSprayerTypes'),
-        options: [
-          { value: '00', label: this.textService.get('types.cropSprayers.filters.typeField') },
-          { value: '01', label: this.textService.get('types.cropSprayers.filters.typeGarden') }
-        ]
+        key: 'validUntil',
+        label: this.textService.get('inspections.detail.validUntil'),
+        type: 'date'
       }
     ];
   }
@@ -220,54 +215,17 @@ export class InspectionsComponent implements OnInit, OnDestroy {
   loadProtocols(): void {
     this.loadingList = true;
     
-    // Build search params from filter values
     const params: any = {};
-    
     if (this.searchTerm) {
       params.q = this.searchTerm;
     }
-    
-    if (this.filterValues['year']) {
-      // Convert year to date range
-      const year = parseInt(this.filterValues['year'], 10);
-      params.dateFrom = `${year}-01-01`;
-      params.dateTo = `${year}-12-31`;
-    } else {
-      if (this.filterValues['dateFrom']) {
-        params.dateFrom = this.filterValues['dateFrom'];
-      }
-      if (this.filterValues['dateTo']) {
-        params.dateTo = this.filterValues['dateTo'];
-      }
-    }
-    
-    if (this.filterValues['finalResult'] !== undefined && this.filterValues['finalResult'] !== '') {
-      params.finalResult = this.filterValues['finalResult'] === 'true';
-    }
-    
-    // Note: City/distance/voivodeship filtering would require backend geo-coordinates support
-    // For now, we apply client-side filtering for these fields
 
     this.protocolService.getList(params).subscribe({
       next: list => {
-        // Apply client-side filters for city/inspector/voivodeship/sprayerType
-        let filtered = list;
-        
-        if (this.filterValues['inspectorName']) {
-          const term = this.filterValues['inspectorName'].toLowerCase();
-          filtered = filtered.filter(p => p.inspectorName?.toLowerCase().includes(term));
-        }
-        
-        if (this.filterValues['sprayerType']) {
-          filtered = filtered.filter(p => p.cropSprayerType === this.filterValues['sprayerType']);
-        }
-        
-        // City and voivodeship filtering would need client data from backend
-        // This is a placeholder for future implementation
-        
-        this.protocols = filtered;
+        this.allProtocols = list;
+        this.protocols = FilterPanelComponent.applyFilters(list, this.filterValues, this.filterFields);
         this.loadingList = false;
-        this.reconcileSelection(filtered);
+        this.reconcileSelection(this.protocols);
       },
       error: () => {
         this.loadingList = false;
@@ -283,12 +241,14 @@ export class InspectionsComponent implements OnInit, OnDestroy {
 
   onFilterChange(values: FilterValues): void {
     this.filterValues = values;
-    this.loadProtocols();
+    this.protocols = FilterPanelComponent.applyFilters(this.allProtocols, this.filterValues, this.filterFields);
+    this.reconcileSelection(this.protocols);
   }
 
   onFilterClear(): void {
     this.filterValues = {};
-    this.loadProtocols();
+    this.protocols = [...this.allProtocols];
+    this.reconcileSelection(this.protocols);
   }
 
   onFilterPanelOpenChange(isOpen: boolean): void {
@@ -323,6 +283,20 @@ export class InspectionsComponent implements OnInit, OnDestroy {
     if (list.length === 0) {
       this.selectedProtocolId = null;
       this.currentProtocol = null;
+      return;
+    }
+
+    // Handle pending navigation selection
+    if (this.pendingSelectId !== null) {
+      const id = this.pendingSelectId;
+      this.pendingSelectId = null;
+      const found = list.some(p => p.id === id);
+      if (found) {
+        this.loadProtocolDetail(id);
+        return;
+      }
+      // Even if not in current list, try to load the detail directly
+      this.loadProtocolDetail(id);
       return;
     }
 

@@ -261,14 +261,13 @@ namespace Server.Models
         /// User's phone number.
         /// </summary>
         [MaxLength(20, ErrorMessage = "Phone number cannot exceed 20 characters")]
-        [Phone(ErrorMessage = "Invalid phone number format")]
-        public string Phone { get; set; } = string.Empty;
+        public string? Phone { get; set; }
 
         /// <summary>
         /// User's permission/license number.
         /// </summary>
         [MaxLength(50, ErrorMessage = "Permission number cannot exceed 50 characters")]
-        public string PermissionNumber { get; set; } = string.Empty;
+        public string? PermissionNumber { get; set; }
 
         /// <summary>
         /// User's preferred language.

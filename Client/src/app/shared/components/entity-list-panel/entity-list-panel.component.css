@@ -37,9 +37,10 @@
 .filters-row {
   display: flex;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-md) var(--space-md) var(--space-sm);
   align-items: center;
   border-bottom: 1px solid var(--border-light);
+  overflow: visible;
 }
 
 .filters-row .search-input {

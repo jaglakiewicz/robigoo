@@ -273,8 +273,8 @@ button[class*="btn-"]:active:not(:disabled) {
 .btn-small {
   padding: 0 10px;
   font-size: var(--font-size-xs);
-  min-height: 26px;
-  height: 26px;
+  min-height: 24px;
+  height: 24px;
   border-radius: 3px;
 }
 

@@ -18,6 +18,7 @@ const TEXTS: TextTree = {
     delete: 'Usuń',
     edit: 'Edytuj',
     add: 'Dodaj',
+    preview: 'Podgląd',
     search: 'Szukaj',
     loading: 'Ładowanie...',
     noData: 'Brak danych',
@@ -59,8 +60,8 @@ const TEXTS: TextTree = {
     clientsHint: 'Kartoteka klientów i flot',
     marks: 'Ewidencja znaków',
     marksHint: 'Śledź znaki kontrolne',
-    notifications: 'Powiadomienia',
-    notificationsHint: 'Ostatnie alerty systemowe'
+    registry: 'Rejestr sprzętu',
+    registryHint: 'Rejestr przebadanego sprzętu'
   },
   login: {
     username: 'Użytkownik',
@@ -447,7 +448,8 @@ const TEXTS: TextTree = {
         sectionCount: 'Liczba sekcji',
         nozzlesFieldFeatures: 'Rozpylacze polowe – cechy i oznaczenia',
         nozzlesGardenFeatures: 'Rozpylacze sadownicze – cechy i oznaczenia',
-        fanType: 'Typ wentylatora'
+        fanType: 'Typ wentylatora',
+        createdAt: 'Data utworzenia'
       },
       actions: {
         save: 'Zapisz',
@@ -503,6 +505,8 @@ const TEXTS: TextTree = {
       buildingNumber: 'Nr budynku',
       apartmentNumber: 'Nr lokalu',
       zipCode: 'Kod pocztowy',
+      post: 'Poczta',
+      createdAt: 'Data utworzenia',
       newClient: 'Nowy klient',
       mapPreview: 'Podgląd lokalizacji',
       mapPlaceholder: 'Wprowadź pełny adres, aby wyświetlić mapę'
@@ -546,36 +550,53 @@ const TEXTS: TextTree = {
   },
   marks: {
     title: 'Ewidencja znaków kontrolnych',
-    description: 'Monitoruj wydane nalepki i terminy ważności.',
+    description: 'Ewidencja znaków kontrolnych potwierdzających sprawność techniczną sprzętu.',
+    dateFrom: 'Data od',
+    dateTo: 'Data do',
+    generate: 'Generuj',
+    print: 'Drukuj',
+    noData: 'Brak danych dla wybranego zakresu dat.',
     columns: {
-      number: 'Numer znaku',
-      vehicle: 'Pojazd',
-      issued: 'Wydano',
-      expires: 'Ważne do'
+      lp: 'Lp.',
+      stickerNumber: 'Nr znaku kontrolnego',
+      issueDate: 'Data wydania',
+      owner: 'Właściciel opryskiwacza',
+      protocolNumber: 'Nr protokołu kontroli'
     }
   },
-  notifications: {
-    title: 'Powiadomienia',
-    empty: 'Brak powiadomień.',
-    items: {
-      maintenance: {
-        title: 'Zaplanowano przerwę serwisową',
-        body: 'System będzie niedostępny dziś o 22:00.'
-      },
-      newAssignments: {
-        title: '3 nowe badania przydzielone',
-        body: 'Sprawdź panel zleceń, aby potwierdzić.'
-      },
-      backup: {
-        title: 'Kopia bazy zakończona',
-        body: 'Ostatnia kopia bezpieczeństwa została wykonana pomyślnie.'
-      }
+  registry: {
+    title: 'Rejestr przebadanego sprzętu',
+    description: 'Generuj rejestr przebadanego sprzętu za wybrany okres.',
+    dateFrom: 'Data od',
+    dateTo: 'Data do',
+    generate: 'Generuj',
+    print: 'Drukuj',
+    noData: 'Brak danych dla wybranego zakresu dat.',
+    columns: {
+      lp: 'Lp.',
+      protocolNumber: 'Nr protokołu',
+      inspectionDate: 'Data badania',
+      owner: 'Posiadacz sprzętu',
+      ownerAddress: 'Adres posiadacza',
+      sprayerType: 'Typ opryskiwacza',
+      sprayerKind: 'Rodzaj',
+      manufacturer: 'Producent',
+      serialNumber: 'Nr fabryczny',
+      productionYear: 'Rok produkcji',
+      result: 'Wynik badania',
+      stickerNumber: 'Nr naklejki',
+      validUntil: 'Termin ważności',
+      inspector: 'Diagnosta'
     },
-    times: {
-      minutes5: '5 min temu',
-      hour1: '1 h temu',
-      todayMorning: 'Dziś 07:45'
-    }
+    resultPositive: 'Pozytywny',
+    resultNegative: 'Negatywny',
+    resultPending: '—',
+    typeField: 'Polowy',
+    typeGarden: 'Sadowniczy',
+    kindMounted: 'Zawieszany',
+    kindTrailed: 'Przyczepiany',
+    kindSelfPropelled: 'Samobieżny',
+    kindOther: 'Inny'
   }
 };
 

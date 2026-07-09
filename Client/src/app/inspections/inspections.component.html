@@ -9,26 +9,30 @@
 <div class="inspections-container">
   <!-- Toolbar -->
   <app-entity-toolbar>
-    <ng-container left>
-      <button class="btn btn-success" (click)="onAddNew()" [disabled]="deleting">
-        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
-        <span class="btn-label">{{ 'general.add' | text }}</span>
-      </button>
-      <button
-        class="btn btn-primary"
-        (click)="onEdit()"
-        [disabled]="!currentProtocol || deleting">
-        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
-        <span class="btn-label">{{ 'general.edit' | text }}</span>
-      </button>
-      <button
-        class="btn btn-danger"
-        (click)="onDelete()"
-        [disabled]="!currentProtocol || deleting">
-        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
-        <span class="btn-label">{{ 'general.delete' | text }}</span>
-      </button>
-    </ng-container>
+    <button class="btn btn-success" (click)="onAddNew()" [disabled]="deleting">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
+      <span class="btn-label">{{ 'general.add' | text }}</span>
+    </button>
+    <button class="btn btn-primary" (click)="onEdit()" [disabled]="!currentProtocol || deleting">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
+      <span class="btn-label">{{ 'general.edit' | text }}</span>
+    </button>
+    <button class="btn btn-primary" disabled>
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.save"></span>
+      <span class="btn-label">{{ 'general.save' | text }}</span>
+    </button>
+    <button class="btn btn-secondary" disabled>
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.cancel"></span>
+      <span class="btn-label">{{ 'general.cancel' | text }}</span>
+    </button>
+    <button class="btn btn-danger" (click)="onDelete()" [disabled]="!currentProtocol || deleting">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
+      <span class="btn-label">{{ 'general.delete' | text }}</span>
+    </button>
+    <button class="btn btn-info" disabled>
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.preview"></span>
+      <span class="btn-label">{{ 'general.preview' | text }}</span>
+    </button>
   </app-entity-toolbar>
 
   <div class="inspections-layout">
@@ -501,177 +505,580 @@
            DOCUMENT VIEW (Toggle)
            ============================================================ -->
       <div class="protocol-document-wrapper" *ngIf="viewMode === 'document'">
-        <div class="protocol-document">
-          <!-- Document Title -->
-          <div class="doc-title">
-            <h1>PROTOKÓŁ BADANIA TECHNICZNEGO</h1>
-            <h2>OPRYSKIWACZA {{ protocol.cropSprayerType === '00' ? 'POLOWEGO' : (protocol.cropSprayerType === '01' ? 'SADOWNICZEGO' : 'POLOWEGO/SADOWNICZEGO') }}</h2>
-          </div>
+        <div class="protocol-document official-form">
 
-          <!-- Protocol Info Box -->
-          <table class="doc-info-box">
-            <tr>
-              <td><strong>Nr protokołu:</strong> {{ protocol.protocolNumber }}</td>
-              <td><strong>Data badania:</strong> {{ formatDate(protocol.inspectionDate) }}</td>
-            </tr>
-            <tr>
-              <td colspan="2"><strong>Miejsce badania:</strong> {{ protocol.inspectionLocation || '—' }}</td>
-            </tr>
-            <tr>
-              <td><strong>Kontroler:</strong> {{ protocol.inspectorName || '—' }}</td>
-              <td><strong>Nr uprawnień:</strong> {{ protocol.inspectorLicenseNumber || '—' }}</td>
-            </tr>
-          </table>
+          <!-- ============ PAGE 1 ============ -->
+          <div class="form-page" id="fp1">
 
-          <!-- Section A: Client Data -->
-          <div class="doc-section-header">A. DANE WŁAŚCICIELA / POSIADACZA</div>
-          <table class="doc-data-table">
-            <tr>
-              <td class="label-cell">Nazwa / Imię i nazwisko</td>
-              <td class="value-cell">{{ protocol.clientName || '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Adres</td>
-              <td class="value-cell">{{ protocol.clientAddress || '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">NIP / PESEL</td>
-              <td class="value-cell">{{ protocol.clientTaxId || '—' }}</td>
-            </tr>
-          </table>
+            <!-- TOP GRID: Inspector+Owner left, Protocol+Sprayer right (per PBTO.xlsx) -->
+            <div class="fp-top">
+              <div class="fp-left-panel">
+                <div class="fp-lsec">Nr wpisu do rejestru przedsiębiorstw wykonujących działalność w zakresie potwierdzania sprawności technicznej sprzętu przeznaczonego do stosowania środków ochrony roślin:</div>
+                <div class="fp-lfield">{{ protocol.inspectorLicenseNumber || '' }}</div>
+                <div class="fp-lnote">Imię, nazwisko, miejsce zamieszkania, adres lub nazwa, siedziba i adres:</div>
+                <div class="fp-lfield">{{ protocol.inspectorName }}</div>
+                <div class="fp-stamp-label">Pieczęć podmiotu przeprowadzającego badanie</div>
+                <div class="fp-stamp-box"></div>
 
-          <!-- Section B: Sprayer Data -->
-          <div class="doc-section-header">B. DANE OPRYSKIWACZA</div>
-          <table class="doc-data-table">
-            <tr>
-              <td class="label-cell">Typ</td>
-              <td class="value-cell">{{ protocol.cropSprayerType === '00' ? 'Polowy' : (protocol.cropSprayerType === '01' ? 'Sadowniczy' : '—') }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Rodzaj</td>
-              <td class="value-cell">{{ getSprayerKindText(protocol.cropSprayerKind) }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Nazwa / Model</td>
-              <td class="value-cell">{{ protocol.cropSprayerName || '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Producent</td>
-              <td class="value-cell">{{ protocol.cropSprayerManufacturer || '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Numer seryjny</td>
-              <td class="value-cell">{{ protocol.cropSprayerSerialNumber || '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Rok produkcji</td>
-              <td class="value-cell">{{ protocol.cropSprayerProductionYear || '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Pojemność zbiornika</td>
-              <td class="value-cell">{{ protocol.tankCapacity ? protocol.tankCapacity + ' l' : '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Szerokość robocza belki</td>
-              <td class="value-cell">{{ protocol.boomWidth ? protocol.boomWidth + ' m' : '—' }}</td>
-            </tr>
-            <tr>
-              <td class="label-cell">Liczba sekcji</td>
-              <td class="value-cell">{{ protocol.sectionCount || '—' }}</td>
-            </tr>
-          </table>
+                <!-- Owner / Posiadacz (per XLSX: left column, below stamp) -->
+                <div class="fp-owner-left">
+                  <div class="fp-lnote" style="margin-top:4mm">Imię i nazwisko lub nazwa posiadacza opryskiwacza:</div>
+                  <div class="fp-lfield">
+                    {{ protocol.clientName || '' }}
+                  </div>
+                  <div class="fp-lrow">Adres:</div>
+                  <div class="fp-lfield">
+                    <ng-container *ngIf="protocol.clientAddress">{{ protocol.clientAddress }}</ng-container>
+                  </div>
+                  <div class="fp-lrow">
+                    Pesel lub NIP: <span class="fp-uline" style="min-width:28mm">{{ protocol.clientTaxId || '' }}</span>
+                  </div>
+                </div>
+              </div>
 
-          <!-- Section C: Inspection Results -->
-          <div class="doc-section-header">C. WYNIKI BADANIA</div>
-          
-          <table class="doc-results-table">
-            <thead>
-              <tr class="results-header">
-                <th class="col-num">Lp.</th>
-                <th class="col-item">Przedmiot badania</th>
-                <th class="col-result">Wynik</th>
-                <th class="col-notes">Uwagi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- All sections condensed for document view -->
-              <tr class="section-title-row"><td class="section-num">1</td><td class="section-title" colspan="3">STAN OGÓLNY OPRYSKIWACZA</td></tr>
-              <tr><td class="item-num">1.1</td><td class="item-name">Stan techniczny ogólny i czystość</td><td class="item-result" [class.pass]="protocol.generalConditionPassed === true" [class.fail]="protocol.generalConditionPassed === false">{{ getCheckResult(protocol.generalConditionPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">1.2</td><td class="item-name">Czytelność oznaczeń i tabliczek</td><td class="item-result" [class.pass]="protocol.markingsReadablePassed === true" [class.fail]="protocol.markingsReadablePassed === false">{{ getCheckResult(protocol.markingsReadablePassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">1.3</td><td class="item-name">Kompletność wyposażenia</td><td class="item-result" [class.pass]="protocol.equipmentCompletePassed === true" [class.fail]="protocol.equipmentCompletePassed === false">{{ getCheckResult(protocol.equipmentCompletePassed) }}</td><td class="item-notes">{{ protocol.generalSectionNotes }}</td></tr>
+              <div class="fp-right-panel">
+                <div class="fp-proto-title">Protokół badania technicznego opryskiwacza</div>
+                <div class="fp-sb-row" style="margin-top:2mm">
+                  Nr <span class="fp-uline" style="min-width:50mm">{{ protocol.protocolNumber }}</span>
+                </div>
+                <div class="fp-sb-row" style="margin-top:2mm">
+                  Opryskiwacz wprowadzony do obrotu <span class="fp-sq">□</span>
+                  &nbsp;&nbsp;
+                  Opryskiwacz będący w eksploatacji* <span class="fp-sq">■</span>
+                </div>
+                <div class="fp-sb-row fp-small">(*- niepotrzebne skreślić)</div>
 
-              <tr class="section-title-row"><td class="section-num">2</td><td class="section-title" colspan="3">POMPA</td></tr>
-              <tr><td class="item-num">2.1</td><td class="item-name">Praca pompy i napędu</td><td class="item-result" [class.pass]="protocol.pumpOperationPassed === true" [class.fail]="protocol.pumpOperationPassed === false">{{ getCheckResult(protocol.pumpOperationPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">2.2</td><td class="item-name">Szczelność pompy</td><td class="item-result" [class.pass]="protocol.pumpSealingPassed === true" [class.fail]="protocol.pumpSealingPassed === false">{{ getCheckResult(protocol.pumpSealingPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">2.3</td><td class="item-name">Pulsacje ciśnienia</td><td class="item-result" [class.pass]="protocol.pressurePulsationPassed === true" [class.fail]="protocol.pressurePulsationPassed === false">{{ getCheckResult(protocol.pressurePulsationPassed) }}</td><td class="item-notes">{{ protocol.pumpSectionNotes }}</td></tr>
+                <div class="fp-sb-row">
+                  <strong>Numer seryjny lub ewidencyjny opryskiwacza:</strong>
+                  ew. <span class="fp-uline">{{ protocol.cropSprayerSerialNumber || '' }}</span>
+                  fab. <span class="fp-uline" style="min-width:15mm"></span>
+                </div>
+                <div class="fp-sb-row">
+                  <strong>Typ opryskiwacza:</strong>
+                  <span class="fp-uline" style="min-width:30mm">{{ protocol.cropSprayerType === '00' ? 'polowy' : protocol.cropSprayerType === '01' ? 'sadowniczy' : '' }}</span>
+                </div>
+                <div class="fp-sb-row">
+                  <strong>Rodzaj opryskiwacza:</strong>
+                  zawieszany <span class="fp-sq">{{ protocol.cropSprayerKind === '00' ? '■' : '□' }}</span>
+                  przyczepiany <span class="fp-sq">{{ protocol.cropSprayerKind === '01' ? '■' : '□' }}</span>
+                  samobieżny <span class="fp-sq">{{ protocol.cropSprayerKind === '02' ? '■' : '□' }}</span>
+                  inny <span class="fp-sq">{{ protocol.cropSprayerKind === '03' ? '■' : '□' }}</span>
+                </div>
 
-              <tr class="section-title-row"><td class="section-num">3</td><td class="section-title" colspan="3">MIESZALNIK</td></tr>
-              <tr><td class="item-num">3.1</td><td class="item-name">Sprawność mieszalnika</td><td class="item-result" [class.pass]="protocol.agitatorOperationPassed === true" [class.fail]="protocol.agitatorOperationPassed === false">{{ getCheckResult(protocol.agitatorOperationPassed) }}</td><td class="item-notes">{{ protocol.agitatorSectionNotes }}</td></tr>
+                <!-- Sprayer details (aligned with owner area per XLSX) -->
+                <div class="fp-sprayer-details">
+                  <div class="fp-sb-detail-row">
+                    <span class="fp-sb-label">Nazwa:</span>
+                    <span class="fp-uline">{{ protocol.cropSprayerName || '' }}</span>
+                  </div>
+                  <div class="fp-sb-detail-row">
+                    <span class="fp-sb-label">Producent:</span>
+                    <span class="fp-uline">{{ protocol.cropSprayerManufacturer || '' }}</span>
+                  </div>
+                  <div class="fp-sb-detail-row">
+                    <span class="fp-sb-label">Rok produkcji:</span>
+                    <span class="fp-uline">{{ protocol.cropSprayerProductionYear || '' }}</span>
+                  </div>
+                  <div class="fp-sb-detail-row">
+                    <span class="fp-sb-label">Data ostatniego badania:</span>
+                    <span class="fp-uline" style="min-width:30mm"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              <tr class="section-title-row"><td class="section-num">4</td><td class="section-title" colspan="3">ZBIORNIK</td></tr>
-              <tr><td class="item-num">4.1</td><td class="item-name">Stan zbiornika</td><td class="item-result" [class.pass]="protocol.tankConditionPassed === true" [class.fail]="protocol.tankConditionPassed === false">{{ getCheckResult(protocol.tankConditionPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">4.2</td><td class="item-name">Szczelność zbiornika</td><td class="item-result" [class.pass]="protocol.tankSealingPassed === true" [class.fail]="protocol.tankSealingPassed === false">{{ getCheckResult(protocol.tankSealingPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">4.3</td><td class="item-name">Wskaźnik poziomu cieczy</td><td class="item-result" [class.pass]="protocol.levelIndicatorPassed === true" [class.fail]="protocol.levelIndicatorPassed === false">{{ getCheckResult(protocol.levelIndicatorPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">4.4</td><td class="item-name">Układ płukania</td><td class="item-result" [class.pass]="protocol.flushingSystemPassed === true" [class.fail]="protocol.flushingSystemPassed === false">{{ getCheckResult(protocol.flushingSystemPassed) }}</td><td class="item-notes">{{ protocol.tankSectionNotes }}</td></tr>
+            <!-- SECTION 1: Badanie ogólne (simpler 2-column assessment per PBTO.xlsx) -->
+            <table class="fp-it fp-sect1">
+              <thead>
+                <tr class="fp-sec"><th colspan="4">1. Badanie ogólne opryskiwacza</th></tr>
+                <tr>
+                  <th rowspan="2">Przedmiot badań</th>
+                  <th colspan="2">Wynik badań</th>
+                  <th rowspan="2">Uwagi i zalecenia</th>
+                </tr>
+                <tr>
+                  <th class="fp-chk">wada</th>
+                  <th class="fp-chk">w normie</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1.1&nbsp;&nbsp;Kompletność, stan techniczny osłon części wirujących</td>
+                  <td class="fp-chk">{{ protocol.equipmentCompletePassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.equipmentCompletePassed === true ? '■' : '□' }}</td>
+                  <td rowspan="5">{{ protocol.generalSectionNotes }}</td>
+                </tr>
+                <tr>
+                  <td>1.2&nbsp;&nbsp;Pewność mocowania</td>
+                  <td class="fp-chk">{{ protocol.markingsReadablePassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.markingsReadablePassed === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>1.3&nbsp;&nbsp;Stan zużycia części – zespołów</td>
+                  <td class="fp-chk">{{ protocol.generalConditionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.generalConditionPassed === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>1.4&nbsp;&nbsp;Szczelność zbiornika</td>
+                  <td class="fp-chk">{{ protocol.tankSealingPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.tankSealingPassed === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>1.5&nbsp;&nbsp;Czystość</td>
+                  <td class="fp-chk">□</td>
+                  <td class="fp-chk">□</td>
+                </tr>
+              </tbody>
+            </table>
 
-              <tr class="section-title-row"><td class="section-num">5</td><td class="section-title" colspan="3">PRZYRZĄDY POMIAROWE (MANOMETR)</td></tr>
-              <tr><td class="item-num">5.1</td><td class="item-name">Stan i sprawność manometru</td><td class="item-result" [class.pass]="protocol.manometerPassed === true" [class.fail]="protocol.manometerPassed === false">{{ getCheckResult(protocol.manometerPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">5.2</td><td class="item-name">Średnica tarczy manometru (min. 63 mm)</td><td class="item-result" [class.pass]="protocol.manometerDialSizePassed === true" [class.fail]="protocol.manometerDialSizePassed === false">{{ getCheckResult(protocol.manometerDialSizePassed) }}</td><td class="item-notes">{{ protocol.measuringSectionNotes }}</td></tr>
+            <!-- MAIN INSPECTION TABLE page 1: Section 2 -->
+            <table class="fp-it">
+              <thead>
+                <tr>
+                  <th class="fp-col-urz" rowspan="2">Urządzenie opryskiwacza</th>
+                  <th class="fp-col-rodz" rowspan="2">Rodzaj wyposażenia</th>
+                  <th class="fp-col-pred" rowspan="2">Przedmiot badań</th>
+                  <th colspan="2">Ocena przy wyłączonym napędzie</th>
+                  <th colspan="2">Ocena przy włączonym napędzie</th>
+                  <th class="fp-col-uw" rowspan="2">Uwagi i zalecenia</th>
+                </tr>
+                <tr>
+                  <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+                  <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- 2. Badanie stanu technicznego -->
+                <tr class="fp-sec"><td colspan="8">2. Badanie stanu technicznego poszczególnych części i urządzeń opryskiwacza</td></tr>
 
-              <tr class="section-title-row"><td class="section-num">6</td><td class="section-title" colspan="3">PRZEWODY I WĘŻE</td></tr>
-              <tr><td class="item-num">6.1</td><td class="item-name">Stan przewodów</td><td class="item-result" [class.pass]="protocol.pipesConditionPassed === true" [class.fail]="protocol.pipesConditionPassed === false">{{ getCheckResult(protocol.pipesConditionPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">6.2</td><td class="item-name">Szczelność połączeń</td><td class="item-result" [class.pass]="protocol.connectionsSealingPassed === true" [class.fail]="protocol.connectionsSealingPassed === false">{{ getCheckResult(protocol.connectionsSealingPassed) }}</td><td class="item-notes">{{ protocol.pipingSectionNotes }}</td></tr>
+                <!-- 2.1 Pompa -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="5"><strong>2.1 Pompa</strong><br/>Natężenie wypływu<br/>[dm³/min]<br/>............</td>
+                  <td class="fp-col-rodz" rowspan="2">
+                    □ tłokowa<br/>
+                    □<br/>membranova<br/>
+                    □ inna<br/>typ..........
+                  </td>
+                  <td>2.1.1&nbsp;Szczelność</td>
+                  <td class="fp-chk">{{ protocol.pumpSealingPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pumpSealingPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pumpSealingPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.pumpSealingPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="5">{{ protocol.pumpSectionNotes }}</td>
+                </tr>
+                <tr>
+                  <td>2.1.2&nbsp;Smarowanie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td class="fp-col-rodz"></td>
+                  <td>2.1.3&nbsp;Tłumienie pulsacji</td>
+                  <td class="fp-chk">{{ protocol.pressurePulsationPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pressurePulsationPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pressurePulsationPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.pressurePulsationPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td class="fp-col-rodz"></td>
+                  <td>2.1.4&nbsp;&nbsp;Wydajność</td>
+                  <td class="fp-chk">{{ protocol.pumpOperationPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pumpOperationPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pumpOperationPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.pumpOperationPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td class="fp-col-rodz"></td>
+                  <td>2.1.5&nbsp;Zawór bezpieczeństwa</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
 
-              <tr class="section-title-row"><td class="section-num">7</td><td class="section-title" colspan="3">FILTRACJA</td></tr>
-              <tr><td class="item-num">7.1</td><td class="item-name">Filtr ssawny</td><td class="item-result" [class.pass]="protocol.suctionFilterPassed === true" [class.fail]="protocol.suctionFilterPassed === false">{{ getCheckResult(protocol.suctionFilterPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">7.2</td><td class="item-name">Filtr tłoczny</td><td class="item-result" [class.pass]="protocol.pressureFilterPassed === true" [class.fail]="protocol.pressureFilterPassed === false">{{ getCheckResult(protocol.pressureFilterPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">7.3</td><td class="item-name">Filtry rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleFiltersPassed === true" [class.fail]="protocol.nozzleFiltersPassed === false">{{ getCheckResult(protocol.nozzleFiltersPassed) }}</td><td class="item-notes">{{ protocol.filtrationSectionNotes }}</td></tr>
+                <!-- 2.2 Zbiornik -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="9"><strong>2.2<br/>Zbiornik</strong><br/>Pojemność zbiornika<br/>{{ protocol.tankCapacity || '............' }}</td>
+                  <td class="fp-col-rodz" rowspan="9"></td>
+                  <td>2.2.1&nbsp;Pokrywa otworu wlewowego</td>
+                  <td class="fp-chk">{{ protocol.tankConditionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.tankConditionPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.tankConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.tankConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="9">{{ protocol.tankSectionNotes }}</td>
+                </tr>
+                <tr>
+                  <td>2.2.2&nbsp;System uniemożliwiający nad- lub podciśnienie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.2.3&nbsp;Mieszanie cieczy</td>
+                  <td class="fp-chk">{{ protocol.agitatorOperationPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.agitatorOperationPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.agitatorOperationPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.agitatorOperationPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>2.2.4&nbsp;Wstępne filtrowanie&nbsp;&nbsp;w tym sito wlewowe</td>
+                  <td class="fp-chk">{{ protocol.suctionFilterPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.suctionFilterPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.suctionFilterPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.suctionFilterPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>2.2.5&nbsp;Wskaźnik poziomu cieczy</td>
+                  <td class="fp-chk">{{ protocol.levelIndicatorPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.levelIndicatorPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.levelIndicatorPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.levelIndicatorPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>2.2.6&nbsp;Zawór spustowy zbiornika</td>
+                  <td class="fp-chk">{{ protocol.flushingSystemPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.flushingSystemPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.flushingSystemPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.flushingSystemPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>□ Przepłukiwanie<br/>2.2.7&nbsp;Przepłukiwanie stan techniczny i działanie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>□ Rozcieńcz.<br/>2.2.8&nbsp;Rozcieńczacz stan techniczny i działanie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>□ Urządz. myjące<br/>2.2.9&nbsp;Urządzenie myjące stan techn. i działanie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="fp-footnote">* Niepotrzebne skreślić</div>
+          </div><!-- /page 1 -->
 
-              <tr class="section-title-row"><td class="section-num">8</td><td class="section-title" colspan="3">BELKA POLOWA / OPRYSKIWACZ SADOWNICZY</td></tr>
-              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.1</td><td class="item-name">Stan belki polowej</td><td class="item-result" [class.pass]="protocol.fieldBoomConditionPassed === true" [class.fail]="protocol.fieldBoomConditionPassed === false">{{ getCheckResult(protocol.fieldBoomConditionPassed) }}</td><td class="item-notes"></td></tr>
-              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.2</td><td class="item-name">Stabilność belki</td><td class="item-result" [class.pass]="protocol.boomStabilityPassed === true" [class.fail]="protocol.boomStabilityPassed === false">{{ getCheckResult(protocol.boomStabilityPassed) }}</td><td class="item-notes"></td></tr>
-              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.3</td><td class="item-name">Regulacja wysokości</td><td class="item-result" [class.pass]="protocol.boomHeightPassed === true" [class.fail]="protocol.boomHeightPassed === false">{{ getCheckResult(protocol.boomHeightPassed) }}</td><td class="item-notes"></td></tr>
-              <tr *ngIf="protocol.cropSprayerType === '00'"><td class="item-num">8.4</td><td class="item-name">Symetria belki</td><td class="item-result" [class.pass]="protocol.boomSymmetryPassed === true" [class.fail]="protocol.boomSymmetryPassed === false">{{ getCheckResult(protocol.boomSymmetryPassed) }}</td><td class="item-notes">{{ protocol.boomSectionNotes }}</td></tr>
-              <tr *ngIf="protocol.cropSprayerType === '01'"><td class="item-num">8.1</td><td class="item-name">Stan opryskiwacza sadowniczego</td><td class="item-result" [class.pass]="protocol.orchardSprayerConditionPassed === true" [class.fail]="protocol.orchardSprayerConditionPassed === false">{{ getCheckResult(protocol.orchardSprayerConditionPassed) }}</td><td class="item-notes"></td></tr>
-              <tr *ngIf="protocol.cropSprayerType === '01'"><td class="item-num">8.2</td><td class="item-name">Kierunek strumienia powietrza</td><td class="item-result" [class.pass]="protocol.airStreamDirectionPassed === true" [class.fail]="protocol.airStreamDirectionPassed === false">{{ getCheckResult(protocol.airStreamDirectionPassed) }}</td><td class="item-notes">{{ protocol.boomSectionNotes }}</td></tr>
+          <!-- ============ PAGE 2 ============ -->
+          <div class="form-page fp-page-break" id="fp2">
+            <div class="fp-cont-hdr">
+              <span>Protokół nr: <strong>{{ protocol.protocolNumber }}</strong></span>
+              <span>{{ protocol.cropSprayerName || '' }} / {{ protocol.cropSprayerSerialNumber || '' }}</span>
+              <span>Data: {{ formatDate(protocol.inspectionDate) }}</span>
+            </div>
 
-              <tr class="section-title-row"><td class="section-num">9</td><td class="section-title" colspan="3">ROZPYLACZE</td></tr>
-              <tr><td class="item-num">9.1</td><td class="item-name">Jednorodność typu rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleUniformityPassed === true" [class.fail]="protocol.nozzleUniformityPassed === false">{{ getCheckResult(protocol.nozzleUniformityPassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">9.2</td><td class="item-name">Wydajność rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleFlowRatePassed === true" [class.fail]="protocol.nozzleFlowRatePassed === false">{{ getCheckResult(protocol.nozzleFlowRatePassed) }}</td><td class="item-notes"></td></tr>
-              <tr><td class="item-num">9.3</td><td class="item-name">Stan rozpylaczy</td><td class="item-result" [class.pass]="protocol.nozzleConditionPassed === true" [class.fail]="protocol.nozzleConditionPassed === false">{{ getCheckResult(protocol.nozzleConditionPassed) }}</td><td class="item-notes">{{ protocol.nozzlesSectionNotes }}</td></tr>
+            <table class="fp-it">
+              <thead>
+                <tr>
+                  <th class="fp-col-urz" rowspan="2">Urządzenie opryskiwacza</th>
+                  <th class="fp-col-rodz" rowspan="2">Rodzaj wyposażenia</th>
+                  <th class="fp-col-pred" rowspan="2">Przedmiot badań</th>
+                  <th colspan="2">Ocena przy wyłączonym napędzie</th>
+                  <th colspan="2">Ocena przy włączonym napędzie</th>
+                  <th class="fp-col-uw" rowspan="2">Uwagi i zalecenia</th>
+                </tr>
+                <tr>
+                  <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+                  <th class="fp-chk">wada</th><th class="fp-chk">w normie</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- 2.3 Urządzenia pomiarowo-sterujące -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="6"><strong>2.3<br/>Urządzenia<br/>pomiarowo&#8209;<br/>sterujące</strong></td>
+                  <td class="fp-col-rodz" rowspan="3">□ Manometr<br/>□ Komputer</td>
+                  <td>2.3.1&nbsp;Średnica obudowy</td>
+                  <td class="fp-chk">{{ protocol.manometerDialSizePassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.manometerDialSizePassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.manometerDialSizePassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.manometerDialSizePassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="6">{{ protocol.measuringSectionNotes }}</td>
+                </tr>
+                <tr>
+                  <td>2.3.2&nbsp;Zakres wskazań, działka elementarna</td>
+                  <td class="fp-chk">{{ protocol.manometerPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.manometerPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.manometerPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.manometerPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>2.3.3&nbsp;Stabilność wskazań manometru</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td class="fp-col-rodz" rowspan="3"></td>
+                  <td>2.3.4&nbsp;Błąd pomiaru</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.3.5&nbsp;Stabilność i powtarzalność ciśnienia</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.3.6&nbsp;Zawory (funkcjonowanie)</td>
+                  <td class="fp-chk">{{ protocol.connectionsSealingPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.connectionsSealingPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.connectionsSealingPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.connectionsSealingPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
 
-              <tr class="section-title-row"><td class="section-num">10</td><td class="section-title" colspan="3">ROZKŁAD POPRZECZNY CIECZY</td></tr>
-              <tr><td class="item-num">10.1</td><td class="item-name">Równomierność rozkładu poprzecznego</td><td class="item-result" [class.pass]="protocol.transverseDistributionPassed === true" [class.fail]="protocol.transverseDistributionPassed === false">{{ getCheckResult(protocol.transverseDistributionPassed) }}</td><td class="item-notes"><span *ngIf="protocol.coefficientOfVariation">CV = {{ protocol.coefficientOfVariation }}%</span> {{ protocol.distributionSectionNotes }}</td></tr>
-            </tbody>
-          </table>
+                <!-- 2.4 Układ cieczowy -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.4 Układ<br/>cieczowy</strong></td>
+                  <td class="fp-col-rodz" rowspan="2"></td>
+                  <td>2.4.1&nbsp;Szczelność i stan techniczny</td>
+                  <td class="fp-chk">{{ protocol.pipesConditionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pipesConditionPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pipesConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.pipesConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="2">{{ protocol.pipingSectionNotes }}</td>
+                </tr>
+                <tr>
+                  <td>2.4.2&nbsp;Zabezpieczenie przed samoopryskiem</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
 
-          <!-- Section D: Final Result -->
-          <div class="doc-section-header">D. WYNIK KOŃCOWY BADANIA</div>
-          <table class="doc-final-result">
-            <tr>
-              <td class="final-result-cell" [class.positive]="protocol.finalResult === true" [class.negative]="protocol.finalResult === false">
-                {{ protocol.finalResult === true ? 'POZYTYWNY' : (protocol.finalResult === false ? 'NEGATYWNY' : 'BRAK WYNIKU') }}
-              </td>
-            </tr>
-          </table>
+                <!-- 2.5 System filtracji -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.5 System<br/>filtracji</strong></td>
+                  <td class="fp-col-rodz" rowspan="2"></td>
+                  <td>2.5.1&nbsp;Kompletność, stan techniczny i wielkość oczek po stronie tłocznej</td>
+                  <td class="fp-chk">{{ protocol.pressureFilterPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pressureFilterPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.pressureFilterPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.pressureFilterPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="2">{{ protocol.filtrationSectionNotes }}</td>
+                </tr>
+                <tr>
+                  <td>2.5.2&nbsp;Filtry rozpylaczy — stan i kompletność</td>
+                  <td class="fp-chk">{{ protocol.nozzleFiltersPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleFiltersPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleFiltersPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.nozzleFiltersPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
 
-          <!-- Additional Info -->
-          <table class="doc-data-table" *ngIf="protocol.validUntil || protocol.controlStickerNumber">
-            <tr *ngIf="protocol.validUntil">
-              <td class="label-cell">Badanie ważne do</td>
-              <td class="value-cell">{{ formatDate(protocol.validUntil) }}</td>
-            </tr>
-            <tr *ngIf="protocol.controlStickerNumber">
-              <td class="label-cell">Numer naklejki kontrolnej</td>
-              <td class="value-cell">{{ protocol.controlStickerNumber }}</td>
-            </tr>
-          </table>
+                <!-- 2.6 Belka polowa -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="9"><strong>2.6<br/>Belka polowa<br/>opryskiwacza</strong><br/>Szerokość<br/>m..........
+                  <br/><br/>Mokra □<br/>Sucha □<br/><br/>Mechanizm<br/>tłumienia wahań<br/>belki □</td>
+                  <td class="fp-col-rodz" rowspan="9"></td>
+                  <td>2.6.1&nbsp;Stabilność i stan techniczny</td>
+                  <td class="fp-chk">{{ protocol.fieldBoomConditionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.fieldBoomConditionPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.fieldBoomConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.fieldBoomConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="9">{{ protocol.boomSectionNotes }}</td>
+                </tr>
+                <tr>
+                  <td>2.6.2&nbsp;Składanie i stan techniczny</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.6.3&nbsp;Blokada belki polowej, działanie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.6.4&nbsp;Regulacja wysokości działanie</td>
+                  <td class="fp-chk">{{ protocol.boomHeightPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.boomHeightPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.boomHeightPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.boomHeightPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>2.6.5&nbsp;Położenie względem powierzchni</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.6.6&nbsp;Ustawienie rozpylaczy</td>
+                  <td class="fp-chk">{{ protocol.boomSymmetryPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.boomSymmetryPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.boomSymmetryPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.boomSymmetryPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>2.6.7&nbsp;Mechanizm odchylania-powrotu</td>
+                  <td class="fp-chk">{{ protocol.boomStabilityPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.boomStabilityPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.boomStabilityPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.boomStabilityPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td>2.6.8&nbsp;Tłumienie wahań belki, działanie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.6.9&nbsp;Zawory przeciwkroplowe, działanie</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
 
-          <!-- General Notes -->
-          <div *ngIf="protocol.generalNotes" class="doc-notes">
-            <div class="doc-notes-label">Uwagi ogólne:</div>
-            <div class="doc-notes-content">{{ protocol.generalNotes }}</div>
-          </div>
+                <!-- 2.7 Sekcje (sadowniczy) -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.7 Sekcje<br/>(sadowniczy)</strong><br/>Liczba sekcji<br/>{{ protocol.sectionCount || '...........' }}</td>
+                  <td class="fp-col-rodz" rowspan="2"></td>
+                  <td>2.7.1&nbsp;Ustawienie rozpylaczy</td>
+                  <td class="fp-chk">{{ protocol.nozzleUniformityPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleUniformityPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleUniformityPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.nozzleUniformityPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="2"></td>
+                </tr>
+                <tr>
+                  <td>2.7.2&nbsp;Zawory przeciwkroplowe, działanie</td>
+                  <td class="fp-chk">{{ protocol.nozzleFlowRatePassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleFlowRatePassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleFlowRatePassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.nozzleFlowRatePassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+
+                <!-- 2.8 Rozpylacze (polowy) -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="7"><strong>2.8<br/>Rozpylacze<br/>(polowy)</strong><br/><br/>Cechy i<br/>oznaczenie:<br/>............</td>
+                  <td class="fp-col-rodz" rowspan="7"></td>
+                  <td>2.8.1&nbsp;Stan techniczny typ, rozmiar, kąt, materiał</td>
+                  <td class="fp-chk">{{ protocol.nozzleConditionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleConditionPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.nozzleConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="7">{{ protocol.nozzlesSectionNotes }}<ng-container *ngIf="protocol.coefficientOfVariation"><br/>CV = {{ protocol.coefficientOfVariation }}%</ng-container></td>
+                </tr>
+                <tr>
+                  <td>2.8.2&nbsp;Filtry rozpylaczy, typ, rozmiar</td>
+                  <td class="fp-chk">{{ protocol.nozzleFiltersPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleFiltersPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.nozzleFiltersPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.nozzleFiltersPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td><strong>2.8.3&nbsp;Sprawdzenie dystrybucji cieczy jedną z metod:</strong></td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td class="fp-indent">2.8.3.1 Pomiar <strong>na ręcznym stole rowkowym:</strong><br/>% rynienk z odchyleniem &gt;15%: ...........</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td class="fp-indent">2.8.3.2 Pomiar <strong>na elektronicznym stole rowkowym:</strong> CV%: ........%</td>
+                  <td class="fp-chk">{{ protocol.transverseDistributionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.transverseDistributionPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.transverseDistributionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.transverseDistributionPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+                <tr>
+                  <td class="fp-indent">2.8.3.3 Jednoczesny pomiar <strong>natężenia wypływu cieczy z rozpylaczy</strong></td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+                <tr>
+                  <td>2.8.4&nbsp;Pomiar spadku wartości ciśnienia**</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                </tr>
+
+                <!-- 2.9 Rozpylacze (sadowniczy) -->
+                <tr>
+                  <td class="fp-col-urz fp-urz" rowspan="2"><strong>2.9 Rozpylacze<br/>(sadowniczy)</strong><br/>Cechy i<br/>oznaczenie:<br/>............</td>
+                  <td class="fp-col-rodz" rowspan="2"></td>
+                  <td>2.9.1&nbsp;Stan techniczny, typ, rozmiar, kąt, materiał</td>
+                  <td class="fp-chk">{{ protocol.orchardSprayerConditionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.orchardSprayerConditionPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.orchardSprayerConditionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.orchardSprayerConditionPassedDriveOn === true ? '■' : '□' }}</td>
+                  <td class="fp-col-uw" rowspan="2"></td>
+                </tr>
+                <tr>
+                  <td>2.9.2&nbsp;Jednoczesny <strong>pomiar natężenia wypływu cieczy z rozpylaczy</strong></td>
+                  <td class="fp-chk">{{ protocol.airStreamDirectionPassed === false ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.airStreamDirectionPassed === true ? '■' : '□' }}</td>
+                  <td class="fp-chk">{{ protocol.airStreamDirectionPassedDriveOn === false ? '■' : '□' }}</td><td class="fp-chk">{{ protocol.airStreamDirectionPassedDriveOn === true ? '■' : '□' }}</td>
+                </tr>
+
+                <!-- 2.10 Wentylator -->
+                <tr>
+                  <td class="fp-col-urz fp-urz"><strong>2.10 Wentylator</strong><br/>Typ........</td>
+                  <td class="fp-col-rodz"></td>
+                  <td>2.10.1&nbsp;Stan techniczny i urządzenia sterujące</td>
+                  <td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td><td class="fp-chk">□</td>
+                  <td class="fp-col-uw"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Manometer table -->
+            <div class="fp-btitle">Różnice wskazań pomiędzy badanym manometrem a manometrem wzorcowym [2.3.4]</div>
+            <table class="fp-mano">
+              <thead>
+                <tr>
+                  <th colspan="2">Wskazania manometru wzorcowego (MPa)</th>
+                  <th rowspan="2">Odchylenie wskazań (%)</th>
+                </tr>
+                <tr>
+                  <th>Manometr badany</th>
+                  <th>Manometr wzorcowy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ protocol.manometerReading2Bar ? protocol.manometerReading2Bar + ' bar' : '' }}</td>
+                  <td>0,1 MPa</td><td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>{{ protocol.manometerReading4Bar ? protocol.manometerReading4Bar + ' bar' : '' }}</td>
+                  <td>0,3 MPa</td><td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>{{ protocol.manometerReading6Bar ? protocol.manometerReading6Bar + ' bar' : '' }}</td>
+                  <td>0,5 MPa</td><td>&nbsp;</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Nozzle flow table -->
+            <div class="fp-btitle">Pomiar natężenia wypływu cieczy z rozpylaczy w opryskiwaczu polowym lub sadowniczym [2.8.3.3 lub 2.9.2]</div>
+            <table class="fp-nozzle">
+              <tbody>
+                <tr>
+                  <td class="fp-nlbl">Nr rozpylacza</td>
+                  <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td>
+                  <td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td>
+                </tr>
+                <tr>
+                  <td class="fp-nlbl">Odchylenie od wart. nominalnej (%)</td>
+                  <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                  <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td class="fp-nlbl">Nr rozpylacza</td>
+                  <td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td>
+                  <td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td>
+                </tr>
+                <tr>
+                  <td class="fp-nlbl">Odchylenie od wart. nominalnej (%)</td>
+                  <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                  <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td class="fp-nlbl">Nr rozpylacza</td>
+                  <td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td>
+                  <td>31</td><td>32</td><td>33</td><td>34</td><td>35</td><td>36</td>
+                </tr>
+                <tr>
+                  <td class="fp-nlbl">Odchylenie od wart. nominalnej (%)</td>
+                  <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                  <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="fp-footnote">
+              * Niepotrzebne skreślić<br/>
+              ** Pomiaru (pkt 2.8.4) nie przeprowadza się, jeżeli został przeprowadzony pomiar nierównomierności rozkładu poprzecznego na stole rowkowym<br/>
+              Protokół opracowano w ramach zadania nr 2.4 „Opracowanie i ocena metod ograniczania ryzyka związanego ze stosowaniem środków ochrony roślin", Programu Wieloletniego „Działania na rzecz poprawy konkurencyjności i innowacyjności sektora agrotechnicznego z uwzględnieniem jakości i bezpieczeństwa żywności oraz ochrony środowiska naturalnego", finansowanego przez MRiRW
+            </div>
+
+            <!-- Wyniki badań / Results section (per XLSX: bottom of page 2) -->
+            <div class="fp-results-footer">
+              <div class="fp-btitle">Wyniki badań</div>
+              <table class="fp-results-tbl">
+                <tr>
+                  <td>
+                    <span class="fp-sq">{{ protocol.finalResult === true ? '■' : '□' }}</span>
+                    <strong>Pozytywny</strong>
+                  </td>
+                  <td>
+                    <span class="fp-sq">{{ protocol.finalResult === false ? '■' : '□' }}</span>
+                    <strong>Negatywny</strong>&nbsp;&nbsp;
+                    Powód: <span class="fp-uline" style="min-width:40mm">{{ protocol.generalNotes }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Znak kontrolny nr: <span class="fp-uline" style="min-width:35mm">{{ protocol.controlStickerNumber }}</span></td>
+                  <td>Termin ważności badania: <span class="fp-uline" style="min-width:35mm">{{ formatDate(protocol.validUntil) }}</span></td>
+                </tr>
+              </table>
+              <div class="fp-legal-note">
+                Protokół badania technicznego opryskiwacza jest dokumentem urzędowym w rozumieniu art. 76 § 1 kodeksu postępowania administracyjnego.
+              </div>
+              <div class="fp-signatures">
+                <div class="fp-sig-left"></div>
+                <div class="fp-sig-center">
+                  <div><strong>Data</strong></div>
+                  <div>Badania: <span class="fp-uline" style="min-width:25mm">{{ formatDate(protocol.inspectionDate) }}</span></div>
+                </div>
+                <div class="fp-sig-right">
+                  <strong>Podpis posiadacza</strong><br/>
+                  <span class="fp-uline" style="min-width:35mm"></span>
+                </div>
+              </div>
+            </div>
+          </div><!-- /page 2 -->
+
         </div>
       </div>
     </div>
@@ -696,16 +1103,14 @@
 <!-- Delete Confirmation Dialog -->
 <div class="dialog-backdrop" *ngIf="deleteDialogVisible" (click)="onDeleteCancel()">
   <div class="dialog" (click)="$event.stopPropagation()">
-    <div class="dialog-header">
-      <h3>{{ 'inspections.deleteDialog.title' | text }}</h3>
-    </div>
-    <div class="dialog-body">
+    <h4 class="dialog__title">{{ 'inspections.deleteDialog.title' | text }}</h4>
+    <div class="dialog__body">
       <p>{{ 'inspections.deleteDialog.message' | text }}</p>
-      <p class="delete-warning">
-        <strong>{{ currentProtocol?.protocolNumber }}</strong>
-      </p>
+      <div class="dialog__item-details" *ngIf="currentProtocol">
+        <strong>{{ currentProtocol.protocolNumber }}</strong>
+      </div>
     </div>
-    <div class="dialog-footer">
+    <div class="dialog__actions">
       <button class="btn btn-secondary" (click)="onDeleteCancel()">
         {{ 'general.cancel' | text }}
       </button>

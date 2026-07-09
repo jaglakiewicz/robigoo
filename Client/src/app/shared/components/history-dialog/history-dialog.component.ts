@@ -117,10 +117,10 @@ export class HistoryDialogComponent implements OnInit {
         // Check if it's a modification (contains ->)
         if (valuesPart.includes(' -> ')) {
           const [oldVal, newVal] = valuesPart.split(' -> ').map(v => v.trim());
-          fields.push({ label, oldValue: oldVal, newValue: newVal });
+          fields.push({ label, oldValue: this.translateValue(fieldName, oldVal), newValue: this.translateValue(fieldName, newVal) });
         } else {
           // It's a creation or single value
-          fields.push({ label, newValue: valuesPart });
+          fields.push({ label, newValue: this.translateValue(fieldName, valuesPart) });
         }
       }
     });
@@ -144,7 +144,9 @@ export class HistoryDialogComponent implements OnInit {
       'BuildingNumber': 'clients.fields.buildingNumber',
       'ApartmentNumber': 'clients.fields.apartmentNumber',
       'ZipCode': 'clients.fields.zipCode',
-      'DisplayName': 'clients.fields.displayName'
+      'Post': 'clients.fields.post',
+      'DisplayName': 'clients.fields.displayName',
+      'CreatedAt': 'clients.fields.createdAt'
     };
 
     const key = fieldMap[fieldName];
@@ -154,5 +156,20 @@ export class HistoryDialogComponent implements OnInit {
     
     // Fallback to field name
     return fieldName;
+  }
+
+  translateValue(fieldName: string, value: string): string {
+    const valueMap: Record<string, Record<string, string>> = {
+      'ClientType': {
+        'person': 'Osoba fizyczna',
+        'company': 'Firma'
+      }
+    };
+
+    const fieldValues = valueMap[fieldName];
+    if (fieldValues && fieldValues[value]) {
+      return fieldValues[value];
+    }
+    return value;
   }
 }

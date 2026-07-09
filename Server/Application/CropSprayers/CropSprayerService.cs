@@ -125,6 +125,17 @@ namespace Server.Application.CropSprayers
             return true;
         }
 
+        /// <inheritdoc />
+        public async Task<IReadOnlyList<string>?> GetDistinctValuesAsync(string field, CancellationToken cancellationToken = default)
+        {
+            return field.ToLowerInvariant() switch
+            {
+                "manufacturer" => await _repository.GetDistinctColumnValuesAsync(cs => cs.Manufacturer, cancellationToken),
+                "sprayername" => await _repository.GetDistinctColumnValuesAsync(cs => cs.SprayerName, cancellationToken),
+                _ => null
+            };
+        }
+
         #endregion
 
         #region Methods - Private

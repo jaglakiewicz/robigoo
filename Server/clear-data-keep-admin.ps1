@@ -22,7 +22,6 @@ Write-Host "  - All clients" -ForegroundColor Yellow
 Write-Host "  - All crop sprayers" -ForegroundColor Yellow
 Write-Host "  - All users except admin" -ForegroundColor Yellow
 Write-Host "  - All sessions" -ForegroundColor Yellow
-Write-Host "  - All activity logs" -ForegroundColor Yellow
 Write-Host "  - All login attempts" -ForegroundColor Yellow
 Write-Host "  - All security events" -ForegroundColor Yellow
 Write-Host "  - All change logs" -ForegroundColor Yellow

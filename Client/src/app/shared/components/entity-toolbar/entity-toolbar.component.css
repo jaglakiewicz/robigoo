@@ -1,120 +1,321 @@
-@import '../../styles/globals.css';
+/* ============================================================
+   ENTITY TOOLBAR — Office-style command bar
+   
+   ViewEncapsulation.None — styles are global, scoped via
+   .entity-toolbar class prefix. Buttons projected via
+   ng-content are styled as integrated toolbar zones with
+   subtle gradient, semantic color backgrounds, and proper
+   breathing room.
+   ============================================================ */
 
-:host {
+/* --- Host element ------------------------------------------ */
+app-entity-toolbar {
   display: block;
-  margin-bottom: var(--space-md);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  /* Pull to edges of .main-area (padding: --space-lg = 16px) */
+  margin: calc(-1 * var(--space-lg)) calc(-1 * var(--space-lg)) var(--space-lg) calc(-1 * var(--space-lg));
 }
 
+/* --- The bar itself ---------------------------------------- */
 .entity-toolbar {
   display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: 10px var(--space-lg);
-  background: linear-gradient(to bottom, var(--surface), var(--bg-alt));
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  position: relative;
-  z-index: 1;
-  flex-wrap: wrap;
-  row-gap: 8px;
-  min-height: 56px;
+  align-items: stretch;
+  padding: 0;
+  height: 50px;
+  background: linear-gradient(to bottom, #e8eaed, #dfe1e5);
+  border-bottom: 1px solid #c4c9d0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
 :root[data-theme="dark"] .entity-toolbar {
-  background: linear-gradient(to bottom, var(--surface), var(--bg));
-  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  border-color: var(--border-strong);
+  background: linear-gradient(to bottom, #2a3142, #232938);
+  border-bottom-color: #3a4255;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
-.toolbar-group {
+/* --- Group ------------------------------------------------- */
+.entity-toolbar .toolbar-group {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 var(--space-sm);
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
 }
 
-.toolbar-group:first-child { padding-left: 0; }
+.entity-toolbar .toolbar-left { justify-content: flex-start; }
 
-.toolbar-group + .toolbar-group:not(:empty) {
-  border-left: 1px solid var(--border-strong);
-  padding-left: var(--space-md);
+/* ============================================================
+   BUTTONS — Toolbar zones
+   Every rule uses !important to beat the global .btn /
+   .btn-primary / .btn-success etc. styles from _buttons.css.
+   Auto width with generous horizontal padding. Full height.
+   ============================================================ */
+.entity-toolbar .btn,
+.entity-toolbar button[class*="btn-"] {
+  /* Kill all standalone button chrome */
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  outline: none !important;
+
+  /* Auto width with generous padding */
+  width: auto;
+  min-width: 90px;
+  flex-shrink: 0;
+  padding: 0 22px !important;
+
+  /* Full bar height */
+  height: 50px !important;
+  min-height: 50px !important;
+
+  /* Centered content */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px;
+
+  /* Typography */
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.015em;
+
+  /* Default color */
+  color: var(--text) !important;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden !important;
 }
 
-.toolbar-group.toolbar-left { justify-content: flex-start; }
-
-.toolbar-group.toolbar-right {
-  margin-left: auto;
-  justify-content: flex-end;
-  border-left: none !important;
-  padding-right: 0;
+/* Vertical separator between adjacent buttons via ::before pseudo-element */
+.entity-toolbar .toolbar-group .btn + .btn::before,
+.entity-toolbar .toolbar-group button + button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.18);
+  pointer-events: none;
 }
 
-.entity-toolbar .btn {
-  padding-inline: 11px;
-  height: var(--control-height);
-  min-height: var(--control-height);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+:root[data-theme="dark"] .entity-toolbar .toolbar-group .btn + .btn::before,
+:root[data-theme="dark"] .entity-toolbar .toolbar-group button + button::before {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.entity-toolbar .btn-icon-only {
-  width: var(--control-height);
-  height: var(--control-height);
+/* ============================================================
+   HOVER — zone lights up
+   ============================================================ */
+.entity-toolbar .btn:hover:not(:disabled),
+.entity-toolbar button[class*="btn-"]:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.07) !important;
+  color: var(--text) !important;
 }
 
+/* ============================================================
+   ACTIVE / PRESSED
+   ============================================================ */
+.entity-toolbar .btn:active:not(:disabled),
+.entity-toolbar button[class*="btn-"]:active:not(:disabled) {
+  background: rgba(0, 0, 0, 0.12) !important;
+  color: var(--text) !important;
+}
+
+/* ============================================================
+   SEMANTIC COLORS — strong visible tint backgrounds
+   Using solid rgba backgrounds against the toolbar gradient
+   so colors are clearly visible, not washed-out.
+   ============================================================ */
+
+/* --- SUCCESS (Add) ----------------------------------------- */
+.entity-toolbar .btn-success {
+  color: #166534 !important;
+  background: rgba(22, 163, 74, 0.15) !important;
+  box-shadow: inset 0 -3px 0 0 #1f845a !important;
+}
+.entity-toolbar .btn-success:hover:not(:disabled) {
+  background: rgba(22, 163, 74, 0.25) !important;
+  color: #14532d !important;
+  box-shadow: inset 0 -3px 0 0 #166534 !important;
+}
+.entity-toolbar .btn-success:active:not(:disabled) {
+  background: rgba(22, 163, 74, 0.32) !important;
+}
+:root[data-theme="dark"] .entity-toolbar .btn-success {
+  color: #4bce97 !important;
+  background: rgba(75, 206, 151, 0.15) !important;
+  box-shadow: inset 0 -3px 0 0 #4bce97 !important;
+}
+
+/* --- PRIMARY (Edit, Save) ---------------------------------- */
+.entity-toolbar .btn-primary {
+  color: #1d4ed8 !important;
+  background: rgba(12, 102, 228, 0.14) !important;
+  box-shadow: inset 0 -3px 0 0 #0c66e4 !important;
+}
+.entity-toolbar .btn-primary:hover:not(:disabled) {
+  background: rgba(12, 102, 228, 0.24) !important;
+  color: #1e3a8a !important;
+  box-shadow: inset 0 -3px 0 0 #1d4ed8 !important;
+}
+.entity-toolbar .btn-primary:active:not(:disabled) {
+  background: rgba(12, 102, 228, 0.30) !important;
+}
+:root[data-theme="dark"] .entity-toolbar .btn-primary {
+  color: #579dff !important;
+  background: rgba(87, 157, 255, 0.15) !important;
+  box-shadow: inset 0 -3px 0 0 #579dff !important;
+}
+
+/* --- DANGER (Delete) --------------------------------------- */
+.entity-toolbar .btn-danger {
+  color: #b91c1c !important;
+  background: rgba(201, 55, 44, 0.12) !important;
+  box-shadow: inset 0 -3px 0 0 #c9372c !important;
+}
+.entity-toolbar .btn-danger:hover:not(:disabled) {
+  background: rgba(201, 55, 44, 0.22) !important;
+  color: #991b1b !important;
+  box-shadow: inset 0 -3px 0 0 #b91c1c !important;
+}
+.entity-toolbar .btn-danger:active:not(:disabled) {
+  background: rgba(201, 55, 44, 0.28) !important;
+}
+:root[data-theme="dark"] .entity-toolbar .btn-danger {
+  color: #f87168 !important;
+  background: rgba(248, 113, 104, 0.15) !important;
+  box-shadow: inset 0 -3px 0 0 #f87168 !important;
+}
+
+/* --- SECONDARY (Cancel) ------------------------------------ */
+.entity-toolbar .btn-secondary {
+  color: var(--text) !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  box-shadow: inset 0 -2px 0 0 rgba(0, 0, 0, 0.15) !important;
+}
+.entity-toolbar .btn-secondary:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.10) !important;
+  color: var(--text) !important;
+  box-shadow: inset 0 -3px 0 0 rgba(0, 0, 0, 0.25) !important;
+}
+:root[data-theme="dark"] .entity-toolbar .btn-secondary {
+  background: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: inset 0 -2px 0 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+/* --- INFO (Preview, etc.) ---------------------------------- */
+.entity-toolbar .btn-info {
+  color: #1d4ed8 !important;
+  background: rgba(12, 102, 228, 0.12) !important;
+  box-shadow: inset 0 -3px 0 0 #0c66e4 !important;
+}
+.entity-toolbar .btn-info:hover:not(:disabled) {
+  background: rgba(12, 102, 228, 0.22) !important;
+  color: #1e3a8a !important;
+  box-shadow: inset 0 -3px 0 0 #1d4ed8 !important;
+}
+.entity-toolbar .btn-info:active:not(:disabled) {
+  background: rgba(12, 102, 228, 0.28) !important;
+}
+:root[data-theme="dark"] .entity-toolbar .btn-info {
+  color: #579dff !important;
+  background: rgba(87, 157, 255, 0.15) !important;
+  box-shadow: inset 0 -3px 0 0 #579dff !important;
+}
+
+/* ============================================================
+   ICONS — 16 × 16, centered
+   ============================================================ */
 .entity-toolbar .btn-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.entity-toolbar .btn-icon svg { width: 14px; height: 14px; }
+.entity-toolbar .btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
 
-.entity-toolbar .btn-label { text-align: left; }
+.entity-toolbar .btn-label {
+  text-align: center;
+  white-space: nowrap;
+}
 
-/* Tablet optimization - keep labels visible */
+/* ============================================================
+   DISABLED — faded zone, not clickable
+   ============================================================ */
+.entity-toolbar .btn:disabled,
+.entity-toolbar button[class*="btn-"]:disabled {
+  color: #a0a5ad !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+:root[data-theme="dark"] .entity-toolbar .btn:disabled,
+:root[data-theme="dark"] .entity-toolbar button[class*="btn-"]:disabled {
+  color: #555d6e !important;
+}
+
+/* ============================================================
+   FOCUS — keyboard ring (inset, no outline)
+   ============================================================ */
+.entity-toolbar .btn:focus-visible,
+.entity-toolbar button[class*="btn-"]:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--primary) !important;
+  outline: none !important;
+}
+
+/* ============================================================
+   RESPONSIVE — Tablet
+   ============================================================ */
 @media (max-width: 1024px) and (min-width: 601px) {
-  .entity-toolbar {
-    padding: 8px var(--space-md);
-    gap: var(--space-sm);
-  }
-  
-  .entity-toolbar .btn {
-    padding-inline: 10px;
-    font-size: var(--font-size-sm);
+  .entity-toolbar .btn,
+  .entity-toolbar button[class*="btn-"] {
+    min-width: 76px;
+    padding: 0 14px !important;
   }
 }
 
-/* Mobile optimization - icon-only buttons */
+/* ============================================================
+   RESPONSIVE — Mobile
+   ============================================================ */
 @media (max-width: 600px) {
-  .entity-toolbar {
-    padding: 8px var(--space-md);
-    gap: var(--space-sm);
-    min-height: 52px;
+  app-entity-toolbar {
+    margin: calc(-1 * var(--space-md)) calc(-1 * var(--space-md)) var(--space-sm) calc(-1 * var(--space-md));
   }
 
-  .entity-toolbar .btn-label { 
-    display: none; 
+  .entity-toolbar {
+    height: 46px;
   }
-  
-  .entity-toolbar .btn {
-    padding-inline: 0;
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
-    justify-content: center;
+
+  .entity-toolbar .btn-label {
+    display: none !important;
   }
-  
-  .entity-toolbar .btn-icon-only {
-    width: 44px;
-    height: 44px;
+
+  .entity-toolbar .btn,
+  .entity-toolbar button[class*="btn-"] {
+    min-width: 48px;
+    padding: 0 12px !important;
+    height: 46px !important;
+    min-height: 46px !important;
   }
-  
-  .toolbar-group {
-    gap: 6px;
+
+  .entity-toolbar .toolbar-group + .toolbar-group:not(:empty)::before {
+    height: 24px;
   }
 }

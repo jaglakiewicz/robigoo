@@ -52,64 +52,92 @@ export interface InspectionProtocolDetail {
 
   // Section 1: General
   generalConditionPassed?: boolean | null;
+  generalConditionPassedDriveOn?: boolean | null;
   markingsReadablePassed?: boolean | null;
+  markingsReadablePassedDriveOn?: boolean | null;
   equipmentCompletePassed?: boolean | null;
+  equipmentCompletePassedDriveOn?: boolean | null;
   generalSectionNotes?: string | null;
 
   // Section 2: Pump
   pumpOperationPassed?: boolean | null;
+  pumpOperationPassedDriveOn?: boolean | null;
   pumpSealingPassed?: boolean | null;
+  pumpSealingPassedDriveOn?: boolean | null;
   pressurePulsationPassed?: boolean | null;
+  pressurePulsationPassedDriveOn?: boolean | null;
   pumpSectionNotes?: string | null;
 
   // Section 3: Agitation
   agitatorOperationPassed?: boolean | null;
+  agitatorOperationPassedDriveOn?: boolean | null;
   agitatorSectionNotes?: string | null;
 
   // Section 4: Tank
   tankConditionPassed?: boolean | null;
+  tankConditionPassedDriveOn?: boolean | null;
   tankSealingPassed?: boolean | null;
+  tankSealingPassedDriveOn?: boolean | null;
   levelIndicatorPassed?: boolean | null;
+  levelIndicatorPassedDriveOn?: boolean | null;
   flushingSystemPassed?: boolean | null;
+  flushingSystemPassedDriveOn?: boolean | null;
   tankSectionNotes?: string | null;
 
   // Section 5: Measuring
   manometerPassed?: boolean | null;
+  manometerPassedDriveOn?: boolean | null;
   manometerReading2Bar?: number | null;
   manometerReading4Bar?: number | null;
   manometerReading6Bar?: number | null;
   manometerDialSizePassed?: boolean | null;
+  manometerDialSizePassedDriveOn?: boolean | null;
   measuringSectionNotes?: string | null;
 
   // Section 6: Piping
   pipesConditionPassed?: boolean | null;
+  pipesConditionPassedDriveOn?: boolean | null;
   connectionsSealingPassed?: boolean | null;
+  connectionsSealingPassedDriveOn?: boolean | null;
   pipingSectionNotes?: string | null;
 
   // Section 7: Filtration
   suctionFilterPassed?: boolean | null;
+  suctionFilterPassedDriveOn?: boolean | null;
   pressureFilterPassed?: boolean | null;
+  pressureFilterPassedDriveOn?: boolean | null;
   nozzleFiltersPassed?: boolean | null;
+  nozzleFiltersPassedDriveOn?: boolean | null;
   filtrationSectionNotes?: string | null;
 
   // Section 8: Boom
   fieldBoomConditionPassed?: boolean | null;
+  fieldBoomConditionPassedDriveOn?: boolean | null;
   boomStabilityPassed?: boolean | null;
+  boomStabilityPassedDriveOn?: boolean | null;
   boomHeightPassed?: boolean | null;
+  boomHeightPassedDriveOn?: boolean | null;
   boomSymmetryPassed?: boolean | null;
+  boomSymmetryPassedDriveOn?: boolean | null;
   orchardSprayerConditionPassed?: boolean | null;
+  orchardSprayerConditionPassedDriveOn?: boolean | null;
   airStreamDirectionPassed?: boolean | null;
+  airStreamDirectionPassedDriveOn?: boolean | null;
   boomSectionNotes?: string | null;
 
   // Section 9: Nozzles
   nozzleUniformityPassed?: boolean | null;
+  nozzleUniformityPassedDriveOn?: boolean | null;
   nozzleFlowRatePassed?: boolean | null;
+  nozzleFlowRatePassedDriveOn?: boolean | null;
   nozzleConditionPassed?: boolean | null;
+  nozzleConditionPassedDriveOn?: boolean | null;
   nozzleMeasurements?: string | null;
   nozzlesSectionNotes?: string | null;
 
   // Section 10: Distribution
   transverseDistributionPassed?: boolean | null;
+  transverseDistributionPassedDriveOn?: boolean | null;
   coefficientOfVariation?: number | null;
   distributionSectionNotes?: string | null;
 
@@ -149,64 +177,92 @@ export interface InspectionProtocolCreateUpdateRequest {
 
   // Section 1
   generalConditionPassed?: boolean | null;
+  generalConditionPassedDriveOn?: boolean | null;
   markingsReadablePassed?: boolean | null;
+  markingsReadablePassedDriveOn?: boolean | null;
   equipmentCompletePassed?: boolean | null;
+  equipmentCompletePassedDriveOn?: boolean | null;
   generalSectionNotes?: string | null;
 
   // Section 2
   pumpOperationPassed?: boolean | null;
+  pumpOperationPassedDriveOn?: boolean | null;
   pumpSealingPassed?: boolean | null;
+  pumpSealingPassedDriveOn?: boolean | null;
   pressurePulsationPassed?: boolean | null;
+  pressurePulsationPassedDriveOn?: boolean | null;
   pumpSectionNotes?: string | null;
 
   // Section 3
   agitatorOperationPassed?: boolean | null;
+  agitatorOperationPassedDriveOn?: boolean | null;
   agitatorSectionNotes?: string | null;
 
   // Section 4
   tankConditionPassed?: boolean | null;
+  tankConditionPassedDriveOn?: boolean | null;
   tankSealingPassed?: boolean | null;
+  tankSealingPassedDriveOn?: boolean | null;
   levelIndicatorPassed?: boolean | null;
+  levelIndicatorPassedDriveOn?: boolean | null;
   flushingSystemPassed?: boolean | null;
+  flushingSystemPassedDriveOn?: boolean | null;
   tankSectionNotes?: string | null;
 
   // Section 5
   manometerPassed?: boolean | null;
+  manometerPassedDriveOn?: boolean | null;
   manometerReading2Bar?: number | null;
   manometerReading4Bar?: number | null;
   manometerReading6Bar?: number | null;
   manometerDialSizePassed?: boolean | null;
+  manometerDialSizePassedDriveOn?: boolean | null;
   measuringSectionNotes?: string | null;
 
   // Section 6
   pipesConditionPassed?: boolean | null;
+  pipesConditionPassedDriveOn?: boolean | null;
   connectionsSealingPassed?: boolean | null;
+  connectionsSealingPassedDriveOn?: boolean | null;
   pipingSectionNotes?: string | null;
 
   // Section 7
   suctionFilterPassed?: boolean | null;
+  suctionFilterPassedDriveOn?: boolean | null;
   pressureFilterPassed?: boolean | null;
+  pressureFilterPassedDriveOn?: boolean | null;
   nozzleFiltersPassed?: boolean | null;
+  nozzleFiltersPassedDriveOn?: boolean | null;
   filtrationSectionNotes?: string | null;
 
   // Section 8
   fieldBoomConditionPassed?: boolean | null;
+  fieldBoomConditionPassedDriveOn?: boolean | null;
   boomStabilityPassed?: boolean | null;
+  boomStabilityPassedDriveOn?: boolean | null;
   boomHeightPassed?: boolean | null;
+  boomHeightPassedDriveOn?: boolean | null;
   boomSymmetryPassed?: boolean | null;
+  boomSymmetryPassedDriveOn?: boolean | null;
   orchardSprayerConditionPassed?: boolean | null;
+  orchardSprayerConditionPassedDriveOn?: boolean | null;
   airStreamDirectionPassed?: boolean | null;
+  airStreamDirectionPassedDriveOn?: boolean | null;
   boomSectionNotes?: string | null;
 
   // Section 9
   nozzleUniformityPassed?: boolean | null;
+  nozzleUniformityPassedDriveOn?: boolean | null;
   nozzleFlowRatePassed?: boolean | null;
+  nozzleFlowRatePassedDriveOn?: boolean | null;
   nozzleConditionPassed?: boolean | null;
+  nozzleConditionPassedDriveOn?: boolean | null;
   nozzleMeasurements?: string | null;
   nozzlesSectionNotes?: string | null;
 
   // Section 10
   transverseDistributionPassed?: boolean | null;
+  transverseDistributionPassedDriveOn?: boolean | null;
   coefficientOfVariation?: number | null;
   distributionSectionNotes?: string | null;
 

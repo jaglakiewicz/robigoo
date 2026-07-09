@@ -125,6 +125,81 @@ namespace Server.Controllers
         }
 
         /// <summary>
+        /// Rejestr przebadanego sprzętu za wybrany okres
+        /// </summary>
+        [HttpGet("registry")]
+        public async Task<ActionResult<IEnumerable<EquipmentRegistryItemDto>>> GetRegistry(
+            [FromQuery] DateTime? dateFrom,
+            [FromQuery] DateTime? dateTo)
+        {
+            var query = _context.Set<InspectionProtocol>().AsQueryable();
+
+            if (dateFrom.HasValue)
+                query = query.Where(p => p.InspectionDate >= dateFrom.Value);
+
+            if (dateTo.HasValue)
+                query = query.Where(p => p.InspectionDate <= dateTo.Value);
+
+            var result = await query
+                .OrderBy(p => p.InspectionDate)
+                .ThenBy(p => p.ProtocolNumber)
+                .Select(p => new EquipmentRegistryItemDto(
+                    p.Id,
+                    p.ProtocolNumber,
+                    p.InspectionDate,
+                    p.InspectorName,
+                    p.ClientName,
+                    p.ClientAddress,
+                    p.ClientTaxId,
+                    p.CropSprayerType,
+                    p.CropSprayerKind,
+                    p.CropSprayerManufacturer,
+                    p.CropSprayerSerialNumber,
+                    p.CropSprayerName,
+                    p.CropSprayerProductionYear,
+                    p.FinalResult,
+                    p.ControlStickerNumber,
+                    p.ValidUntil
+                ))
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Ewidencja znaków kontrolnych za wybrany okres
+        /// </summary>
+        [HttpGet("control-marks")]
+        public async Task<ActionResult<IEnumerable<ControlMarkRegistryItemDto>>> GetControlMarks(
+            [FromQuery] DateTime? dateFrom,
+            [FromQuery] DateTime? dateTo)
+        {
+            var query = _context.Set<InspectionProtocol>()
+                .Where(p => p.ControlStickerNumber != null && p.ControlStickerNumber != "")
+                .AsQueryable();
+
+            if (dateFrom.HasValue)
+                query = query.Where(p => p.InspectionDate >= dateFrom.Value);
+
+            if (dateTo.HasValue)
+                query = query.Where(p => p.InspectionDate <= dateTo.Value);
+
+            var result = await query
+                .OrderBy(p => p.ControlStickerNumber)
+                .ThenBy(p => p.InspectionDate)
+                .Select(p => new ControlMarkRegistryItemDto(
+                    p.Id,
+                    p.ControlStickerNumber,
+                    p.InspectionDate,
+                    p.ClientName,
+                    p.ProtocolNumber
+                ))
+                .ToListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Szczegóły protokołu
         /// </summary>
         [HttpGet("{id:long}")]
@@ -145,24 +220,24 @@ namespace Server.Controllers
         public async Task<ActionResult<object>> GetNextProtocolNumber()
         {
             var year = DateTime.UtcNow.Year;
-            var prefix = $"SKO/{year}/";
+            var suffix = $"/{year}";
 
             var lastProtocol = await _context.Set<InspectionProtocol>()
-                .Where(p => p.ProtocolNumber.StartsWith(prefix))
+                .Where(p => p.ProtocolNumber.EndsWith(suffix))
                 .OrderByDescending(p => p.ProtocolNumber)
                 .FirstOrDefaultAsync();
 
             int nextNumber = 1;
             if (lastProtocol != null)
             {
-                var lastNumberPart = lastProtocol.ProtocolNumber.Replace(prefix, "");
+                var lastNumberPart = lastProtocol.ProtocolNumber.Replace(suffix, "");
                 if (int.TryParse(lastNumberPart, out int lastNumber))
                 {
                     nextNumber = lastNumber + 1;
                 }
             }
 
-            var nextProtocolNumber = $"{prefix}{nextNumber:D3}";
+            var nextProtocolNumber = $"{nextNumber:D4}{suffix}";
             return Ok(new { protocolNumber = nextProtocolNumber });
         }
 
@@ -187,24 +262,24 @@ namespace Server.Controllers
                 {
                     // Generate protocol number
                     var year = dto.InspectionDate.Year;
-                    var prefix = $"SKO/{year}/";
+                    var suffix = $"/{year}";
 
                     var lastProtocol = await _context.Set<InspectionProtocol>()
-                        .Where(p => p.ProtocolNumber.StartsWith(prefix))
+                        .Where(p => p.ProtocolNumber.EndsWith(suffix))
                         .OrderByDescending(p => p.ProtocolNumber)
                         .FirstOrDefaultAsync(cancellationToken);
 
                     int nextNumber = 1;
                     if (lastProtocol != null)
                     {
-                        var lastNumberPart = lastProtocol.ProtocolNumber.Replace(prefix, "");
+                        var lastNumberPart = lastProtocol.ProtocolNumber.Replace(suffix, "");
                         if (int.TryParse(lastNumberPart, out int lastNumber))
                         {
                             nextNumber = lastNumber + 1;
                         }
                     }
 
-                    var protocolNumber = $"{prefix}{nextNumber:D3}";
+                    var protocolNumber = $"{nextNumber:D4}{suffix}";
 
                     protocol = new InspectionProtocol
                     {
@@ -230,55 +305,83 @@ namespace Server.Controllers
                         SectionCount = dto.SectionCount,
 
                         GeneralConditionPassed = dto.GeneralConditionPassed,
+                        GeneralConditionPassedDriveOn = dto.GeneralConditionPassedDriveOn,
                         MarkingsReadablePassed = dto.MarkingsReadablePassed,
+                        MarkingsReadablePassedDriveOn = dto.MarkingsReadablePassedDriveOn,
                         EquipmentCompletePassed = dto.EquipmentCompletePassed,
+                        EquipmentCompletePassedDriveOn = dto.EquipmentCompletePassedDriveOn,
                         GeneralSectionNotes = dto.GeneralSectionNotes,
 
                         PumpOperationPassed = dto.PumpOperationPassed,
+                        PumpOperationPassedDriveOn = dto.PumpOperationPassedDriveOn,
                         PumpSealingPassed = dto.PumpSealingPassed,
+                        PumpSealingPassedDriveOn = dto.PumpSealingPassedDriveOn,
                         PressurePulsationPassed = dto.PressurePulsationPassed,
+                        PressurePulsationPassedDriveOn = dto.PressurePulsationPassedDriveOn,
                         PumpSectionNotes = dto.PumpSectionNotes,
 
                         AgitatorOperationPassed = dto.AgitatorOperationPassed,
+                        AgitatorOperationPassedDriveOn = dto.AgitatorOperationPassedDriveOn,
                         AgitatorSectionNotes = dto.AgitatorSectionNotes,
 
                         TankConditionPassed = dto.TankConditionPassed,
+                        TankConditionPassedDriveOn = dto.TankConditionPassedDriveOn,
                         TankSealingPassed = dto.TankSealingPassed,
+                        TankSealingPassedDriveOn = dto.TankSealingPassedDriveOn,
                         LevelIndicatorPassed = dto.LevelIndicatorPassed,
+                        LevelIndicatorPassedDriveOn = dto.LevelIndicatorPassedDriveOn,
                         FlushingSystemPassed = dto.FlushingSystemPassed,
+                        FlushingSystemPassedDriveOn = dto.FlushingSystemPassedDriveOn,
                         TankSectionNotes = dto.TankSectionNotes,
 
                         ManometerPassed = dto.ManometerPassed,
+                        ManometerPassedDriveOn = dto.ManometerPassedDriveOn,
                         ManometerReading2Bar = dto.ManometerReading2Bar,
                         ManometerReading4Bar = dto.ManometerReading4Bar,
                         ManometerReading6Bar = dto.ManometerReading6Bar,
                         ManometerDialSizePassed = dto.ManometerDialSizePassed,
+                        ManometerDialSizePassedDriveOn = dto.ManometerDialSizePassedDriveOn,
                         MeasuringSectionNotes = dto.MeasuringSectionNotes,
 
                         PipesConditionPassed = dto.PipesConditionPassed,
+                        PipesConditionPassedDriveOn = dto.PipesConditionPassedDriveOn,
                         ConnectionsSealingPassed = dto.ConnectionsSealingPassed,
+                        ConnectionsSealingPassedDriveOn = dto.ConnectionsSealingPassedDriveOn,
                         PipingSectionNotes = dto.PipingSectionNotes,
 
                         SuctionFilterPassed = dto.SuctionFilterPassed,
+                        SuctionFilterPassedDriveOn = dto.SuctionFilterPassedDriveOn,
                         PressureFilterPassed = dto.PressureFilterPassed,
+                        PressureFilterPassedDriveOn = dto.PressureFilterPassedDriveOn,
                         NozzleFiltersPassed = dto.NozzleFiltersPassed,
+                        NozzleFiltersPassedDriveOn = dto.NozzleFiltersPassedDriveOn,
                         FiltrationSectionNotes = dto.FiltrationSectionNotes,
 
                         FieldBoomConditionPassed = dto.FieldBoomConditionPassed,
+                        FieldBoomConditionPassedDriveOn = dto.FieldBoomConditionPassedDriveOn,
                         BoomStabilityPassed = dto.BoomStabilityPassed,
+                        BoomStabilityPassedDriveOn = dto.BoomStabilityPassedDriveOn,
                         BoomHeightPassed = dto.BoomHeightPassed,
+                        BoomHeightPassedDriveOn = dto.BoomHeightPassedDriveOn,
                         BoomSymmetryPassed = dto.BoomSymmetryPassed,
+                        BoomSymmetryPassedDriveOn = dto.BoomSymmetryPassedDriveOn,
                         OrchardSprayerConditionPassed = dto.OrchardSprayerConditionPassed,
+                        OrchardSprayerConditionPassedDriveOn = dto.OrchardSprayerConditionPassedDriveOn,
                         AirStreamDirectionPassed = dto.AirStreamDirectionPassed,
+                        AirStreamDirectionPassedDriveOn = dto.AirStreamDirectionPassedDriveOn,
                         BoomSectionNotes = dto.BoomSectionNotes,
 
                         NozzleUniformityPassed = dto.NozzleUniformityPassed,
+                        NozzleUniformityPassedDriveOn = dto.NozzleUniformityPassedDriveOn,
                         NozzleFlowRatePassed = dto.NozzleFlowRatePassed,
+                        NozzleFlowRatePassedDriveOn = dto.NozzleFlowRatePassedDriveOn,
                         NozzleConditionPassed = dto.NozzleConditionPassed,
+                        NozzleConditionPassedDriveOn = dto.NozzleConditionPassedDriveOn,
                         NozzleMeasurements = dto.NozzleMeasurements,
                         NozzlesSectionNotes = dto.NozzlesSectionNotes,
 
                         TransverseDistributionPassed = dto.TransverseDistributionPassed,
+                        TransverseDistributionPassedDriveOn = dto.TransverseDistributionPassedDriveOn,
                         CoefficientOfVariation = dto.CoefficientOfVariation,
                         DistributionSectionNotes = dto.DistributionSectionNotes,
 
@@ -375,55 +478,83 @@ namespace Server.Controllers
                         entity.SectionCount = dto.SectionCount;
 
                         entity.GeneralConditionPassed = dto.GeneralConditionPassed;
+                        entity.GeneralConditionPassedDriveOn = dto.GeneralConditionPassedDriveOn;
                         entity.MarkingsReadablePassed = dto.MarkingsReadablePassed;
+                        entity.MarkingsReadablePassedDriveOn = dto.MarkingsReadablePassedDriveOn;
                         entity.EquipmentCompletePassed = dto.EquipmentCompletePassed;
+                        entity.EquipmentCompletePassedDriveOn = dto.EquipmentCompletePassedDriveOn;
                         entity.GeneralSectionNotes = dto.GeneralSectionNotes;
 
                         entity.PumpOperationPassed = dto.PumpOperationPassed;
+                        entity.PumpOperationPassedDriveOn = dto.PumpOperationPassedDriveOn;
                         entity.PumpSealingPassed = dto.PumpSealingPassed;
+                        entity.PumpSealingPassedDriveOn = dto.PumpSealingPassedDriveOn;
                         entity.PressurePulsationPassed = dto.PressurePulsationPassed;
+                        entity.PressurePulsationPassedDriveOn = dto.PressurePulsationPassedDriveOn;
                         entity.PumpSectionNotes = dto.PumpSectionNotes;
 
                         entity.AgitatorOperationPassed = dto.AgitatorOperationPassed;
+                        entity.AgitatorOperationPassedDriveOn = dto.AgitatorOperationPassedDriveOn;
                         entity.AgitatorSectionNotes = dto.AgitatorSectionNotes;
 
                         entity.TankConditionPassed = dto.TankConditionPassed;
+                        entity.TankConditionPassedDriveOn = dto.TankConditionPassedDriveOn;
                         entity.TankSealingPassed = dto.TankSealingPassed;
+                        entity.TankSealingPassedDriveOn = dto.TankSealingPassedDriveOn;
                         entity.LevelIndicatorPassed = dto.LevelIndicatorPassed;
+                        entity.LevelIndicatorPassedDriveOn = dto.LevelIndicatorPassedDriveOn;
                         entity.FlushingSystemPassed = dto.FlushingSystemPassed;
+                        entity.FlushingSystemPassedDriveOn = dto.FlushingSystemPassedDriveOn;
                         entity.TankSectionNotes = dto.TankSectionNotes;
 
                         entity.ManometerPassed = dto.ManometerPassed;
+                        entity.ManometerPassedDriveOn = dto.ManometerPassedDriveOn;
                         entity.ManometerReading2Bar = dto.ManometerReading2Bar;
                         entity.ManometerReading4Bar = dto.ManometerReading4Bar;
                         entity.ManometerReading6Bar = dto.ManometerReading6Bar;
                         entity.ManometerDialSizePassed = dto.ManometerDialSizePassed;
+                        entity.ManometerDialSizePassedDriveOn = dto.ManometerDialSizePassedDriveOn;
                         entity.MeasuringSectionNotes = dto.MeasuringSectionNotes;
 
                         entity.PipesConditionPassed = dto.PipesConditionPassed;
+                        entity.PipesConditionPassedDriveOn = dto.PipesConditionPassedDriveOn;
                         entity.ConnectionsSealingPassed = dto.ConnectionsSealingPassed;
+                        entity.ConnectionsSealingPassedDriveOn = dto.ConnectionsSealingPassedDriveOn;
                         entity.PipingSectionNotes = dto.PipingSectionNotes;
 
                         entity.SuctionFilterPassed = dto.SuctionFilterPassed;
+                        entity.SuctionFilterPassedDriveOn = dto.SuctionFilterPassedDriveOn;
                         entity.PressureFilterPassed = dto.PressureFilterPassed;
+                        entity.PressureFilterPassedDriveOn = dto.PressureFilterPassedDriveOn;
                         entity.NozzleFiltersPassed = dto.NozzleFiltersPassed;
+                        entity.NozzleFiltersPassedDriveOn = dto.NozzleFiltersPassedDriveOn;
                         entity.FiltrationSectionNotes = dto.FiltrationSectionNotes;
 
                         entity.FieldBoomConditionPassed = dto.FieldBoomConditionPassed;
+                        entity.FieldBoomConditionPassedDriveOn = dto.FieldBoomConditionPassedDriveOn;
                         entity.BoomStabilityPassed = dto.BoomStabilityPassed;
+                        entity.BoomStabilityPassedDriveOn = dto.BoomStabilityPassedDriveOn;
                         entity.BoomHeightPassed = dto.BoomHeightPassed;
+                        entity.BoomHeightPassedDriveOn = dto.BoomHeightPassedDriveOn;
                         entity.BoomSymmetryPassed = dto.BoomSymmetryPassed;
+                        entity.BoomSymmetryPassedDriveOn = dto.BoomSymmetryPassedDriveOn;
                         entity.OrchardSprayerConditionPassed = dto.OrchardSprayerConditionPassed;
+                        entity.OrchardSprayerConditionPassedDriveOn = dto.OrchardSprayerConditionPassedDriveOn;
                         entity.AirStreamDirectionPassed = dto.AirStreamDirectionPassed;
+                        entity.AirStreamDirectionPassedDriveOn = dto.AirStreamDirectionPassedDriveOn;
                         entity.BoomSectionNotes = dto.BoomSectionNotes;
 
                         entity.NozzleUniformityPassed = dto.NozzleUniformityPassed;
+                        entity.NozzleUniformityPassedDriveOn = dto.NozzleUniformityPassedDriveOn;
                         entity.NozzleFlowRatePassed = dto.NozzleFlowRatePassed;
+                        entity.NozzleFlowRatePassedDriveOn = dto.NozzleFlowRatePassedDriveOn;
                         entity.NozzleConditionPassed = dto.NozzleConditionPassed;
+                        entity.NozzleConditionPassedDriveOn = dto.NozzleConditionPassedDriveOn;
                         entity.NozzleMeasurements = dto.NozzleMeasurements;
                         entity.NozzlesSectionNotes = dto.NozzlesSectionNotes;
 
                         entity.TransverseDistributionPassed = dto.TransverseDistributionPassed;
+                        entity.TransverseDistributionPassedDriveOn = dto.TransverseDistributionPassedDriveOn;
                         entity.CoefficientOfVariation = dto.CoefficientOfVariation;
                         entity.DistributionSectionNotes = dto.DistributionSectionNotes;
 
@@ -708,55 +839,83 @@ namespace Server.Controllers
                 p.SectionCount,
 
                 p.GeneralConditionPassed,
+                p.GeneralConditionPassedDriveOn,
                 p.MarkingsReadablePassed,
+                p.MarkingsReadablePassedDriveOn,
                 p.EquipmentCompletePassed,
+                p.EquipmentCompletePassedDriveOn,
                 p.GeneralSectionNotes,
 
                 p.PumpOperationPassed,
+                p.PumpOperationPassedDriveOn,
                 p.PumpSealingPassed,
+                p.PumpSealingPassedDriveOn,
                 p.PressurePulsationPassed,
+                p.PressurePulsationPassedDriveOn,
                 p.PumpSectionNotes,
 
                 p.AgitatorOperationPassed,
+                p.AgitatorOperationPassedDriveOn,
                 p.AgitatorSectionNotes,
 
                 p.TankConditionPassed,
+                p.TankConditionPassedDriveOn,
                 p.TankSealingPassed,
+                p.TankSealingPassedDriveOn,
                 p.LevelIndicatorPassed,
+                p.LevelIndicatorPassedDriveOn,
                 p.FlushingSystemPassed,
+                p.FlushingSystemPassedDriveOn,
                 p.TankSectionNotes,
 
                 p.ManometerPassed,
+                p.ManometerPassedDriveOn,
                 p.ManometerReading2Bar,
                 p.ManometerReading4Bar,
                 p.ManometerReading6Bar,
                 p.ManometerDialSizePassed,
+                p.ManometerDialSizePassedDriveOn,
                 p.MeasuringSectionNotes,
 
                 p.PipesConditionPassed,
+                p.PipesConditionPassedDriveOn,
                 p.ConnectionsSealingPassed,
+                p.ConnectionsSealingPassedDriveOn,
                 p.PipingSectionNotes,
 
                 p.SuctionFilterPassed,
+                p.SuctionFilterPassedDriveOn,
                 p.PressureFilterPassed,
+                p.PressureFilterPassedDriveOn,
                 p.NozzleFiltersPassed,
+                p.NozzleFiltersPassedDriveOn,
                 p.FiltrationSectionNotes,
 
                 p.FieldBoomConditionPassed,
+                p.FieldBoomConditionPassedDriveOn,
                 p.BoomStabilityPassed,
+                p.BoomStabilityPassedDriveOn,
                 p.BoomHeightPassed,
+                p.BoomHeightPassedDriveOn,
                 p.BoomSymmetryPassed,
+                p.BoomSymmetryPassedDriveOn,
                 p.OrchardSprayerConditionPassed,
+                p.OrchardSprayerConditionPassedDriveOn,
                 p.AirStreamDirectionPassed,
+                p.AirStreamDirectionPassedDriveOn,
                 p.BoomSectionNotes,
 
                 p.NozzleUniformityPassed,
+                p.NozzleUniformityPassedDriveOn,
                 p.NozzleFlowRatePassed,
+                p.NozzleFlowRatePassedDriveOn,
                 p.NozzleConditionPassed,
+                p.NozzleConditionPassedDriveOn,
                 p.NozzleMeasurements,
                 p.NozzlesSectionNotes,
 
                 p.TransverseDistributionPassed,
+                p.TransverseDistributionPassedDriveOn,
                 p.CoefficientOfVariation,
                 p.DistributionSectionNotes,
 

@@ -1,0 +1,337 @@
+@import '../shared/styles/globals.css';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+.registry-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.registry-date-range {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.registry-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.registry-field label {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.registry-input {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--font-size-base);
+  min-height: 36px;
+}
+
+.registry-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.registry-separator {
+  font-size: var(--font-size-lg);
+  color: var(--text-muted);
+  padding-bottom: var(--space-xs);
+}
+
+.registry-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.registry-actions .btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* ============================================================
+   LOADING / EMPTY
+   ============================================================ */
+.registry-loading,
+.registry-empty {
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-base);
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.registry-table-wrapper {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.registry-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.registry-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+  color: var(--text);
+  font-weight: 700;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: var(--space-sm) var(--space-sm);
+  border-bottom: 2px solid var(--border);
+  border-right: 1px solid var(--border-light);
+  text-align: left;
+}
+
+.registry-table thead th:last-child {
+  border-right: none;
+}
+
+.registry-table tbody td {
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  color: var(--text);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.registry-table tbody td:last-child {
+  border-right: none;
+}
+
+.registry-table tbody tr:hover {
+  background: color-mix(in srgb, var(--primary) 4%, transparent);
+}
+
+.cell-center {
+  text-align: center;
+}
+
+.result-positive {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.result-negative {
+  color: var(--error);
+  font-weight: 600;
+}
+
+/* ============================================================
+   PRINT PREVIEW MODAL
+   ============================================================ */
+.print-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.print-modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 95vw;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.print-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+}
+
+.print-modal-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--text);
+}
+
+.print-modal-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.print-modal-body {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-lg);
+  background: var(--bg-muted, #f0f0f0);
+}
+
+/* ============================================================
+   PRINT PAGE (inside modal)
+   ============================================================ */
+.print-page {
+  background: white;
+  color: #000;
+  padding: 15mm;
+  min-height: 280mm;
+  margin: 0 auto;
+  max-width: 297mm;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.print-header {
+  text-align: center;
+  margin-bottom: 10mm;
+}
+
+.print-header h2 {
+  font-size: 16pt;
+  margin: 0 0 4mm 0;
+  color: #000;
+}
+
+.print-date-range {
+  font-size: 11pt;
+  color: #333;
+  margin: 0;
+}
+
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7pt;
+}
+
+.print-table th,
+.print-table td {
+  border: 1px solid #000;
+  padding: 2px 3px;
+  vertical-align: top;
+  color: #000;
+}
+
+.print-table th {
+  background: #e8e8e8;
+  font-weight: 700;
+  text-align: center;
+  font-size: 7pt;
+}
+
+.print-table td {
+  font-size: 7pt;
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print {
+  :host {
+    overflow: visible !important;
+  }
+
+  .component-title,
+  .component-subtitle,
+  .registry-controls,
+  .registry-table-wrapper,
+  .registry-loading,
+  .registry-empty,
+  .print-overlay,
+  .print-modal-header,
+  .print-modal-actions {
+    display: none !important;
+  }
+
+  .print-modal {
+    position: static;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .print-modal-body {
+    padding: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .print-page {
+    box-shadow: none;
+    padding: 5mm;
+    margin: 0;
+    max-width: none;
+    min-height: auto;
+  }
+
+  .print-table th {
+    background: #ddd !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 767px) {
+  .registry-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .registry-date-range {
+    flex-direction: column;
+  }
+
+  .registry-separator {
+    display: none;
+  }
+
+  .registry-actions {
+    justify-content: stretch;
+  }
+
+  .registry-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

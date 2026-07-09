@@ -89,16 +89,6 @@
           </div>
 
           <div class="top-bar-center">
-            <div class="global-search">
-              <div class="station-info-display">
-                <span class="station-icon" *ngIf="stationName" [innerHTML]="getSafeHtml(SVG_ICONS.building)"></span>
-                <span class="station-name" *ngIf="stationName">{{ stationName }}</span>
-                <span class="station-separator" *ngIf="stationName && stationAddress">•</span>
-                <span class="station-icon" *ngIf="stationAddress" [innerHTML]="getSafeHtml(SVG_ICONS.mapPin)"></span>
-                <span class="station-address" *ngIf="stationAddress">{{ stationAddress }}</span>
-                <span class="station-name" *ngIf="!stationName && !stationAddress">{{ 'globalSearch.placeholder' | text }}</span>
-              </div>
-            </div>
           </div>
 
           <div class="top-bar-right">
@@ -167,7 +157,7 @@
       <div class="main-area" [class.home-active]="isHomeActive()" appScrollFade id="main-content" role="main" aria-label="Main content">
         <!-- Home content when no tab is selected -->
         <div *ngIf="isHomeActive()" class="home-content">
-          <!-- Home page content - empty for now -->
+          <app-dashboard></app-dashboard>
         </div>
         
         <!-- Tab content when a tab is selected -->
@@ -177,7 +167,7 @@
             <app-inspections *ngSwitchCase="'inspections'" [instanceId]="tabs[activeIndex].id"></app-inspections>
             <app-clients *ngSwitchCase="'clients'" [instanceId]="tabs[activeIndex].id"></app-clients>
             <app-inspection-marks *ngSwitchCase="'marks'" [instanceId]="tabs[activeIndex].id"></app-inspection-marks>
-            <app-notifications *ngSwitchCase="'notifications'" [instanceId]="tabs[activeIndex].id"></app-notifications>
+            <app-equipment-registry *ngSwitchCase="'registry'" [instanceId]="tabs[activeIndex].id"></app-equipment-registry>
             <app-crop-sprayers *ngSwitchCase="'types'" [instanceId]="tabs[activeIndex].id"></app-crop-sprayers>
             <app-settings *ngSwitchCase="'settings'"></app-settings>
           </ng-container>

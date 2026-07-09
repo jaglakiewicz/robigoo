@@ -4,7 +4,7 @@
  * All rights reserved. Unauthorized distribution or disclosure is prohibited.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 
 /**
  * Toolbar component for entity management actions.
@@ -12,6 +12,10 @@ import { Component, Input } from '@angular/core';
  * Provides a consistent layout for action buttons with:
  * - Left-aligned primary actions (add, edit, delete)
  * - Right-aligned contextual actions (save, cancel)
+ * 
+ * Uses ViewEncapsulation.None so styles can reach projected
+ * <ng-content> children. All selectors are scoped via the
+ * .entity-toolbar class prefix to prevent leaking.
  * 
  * Usage example:
  * ```html
@@ -31,7 +35,8 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-entity-toolbar',
   templateUrl: './entity-toolbar.component.html',
-  styleUrls: ['./entity-toolbar.component.css']
+  styleUrls: ['./entity-toolbar.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EntityToolbarComponent {
   /** Additional CSS class for the toolbar container */

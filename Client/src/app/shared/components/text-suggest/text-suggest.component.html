@@ -1,0 +1,24 @@
+<div class="suggest-container" [class.disabled]="disabled" [class.open]="isOpen">
+  <input
+    type="text"
+    class="suggest-input"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [value]="inputText"
+    (input)="onInput($event)"
+    (focus)="onFocus()"
+    (keydown)="onKeyDown($event)"
+    autocomplete="off"
+  />
+
+  <div class="suggest-dropdown" *ngIf="isOpen && filtered.length > 0">
+    <div
+      *ngFor="let item of filtered; let i = index"
+      class="suggest-item"
+      [class.highlighted]="i === highlightedIndex"
+      (mousedown)="select(item)"
+      (mouseenter)="highlightedIndex = i">
+      {{ item }}
+    </div>
+  </div>
+</div>

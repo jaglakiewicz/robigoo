@@ -1,5 +1,6 @@
 .filter-panel {
   position: relative;
+  overflow: visible;
 }
 
 /* ============================================================
@@ -8,6 +9,10 @@
 .filter-toggle-btn {
   position: relative;
   min-width: var(--touch-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
 }
 
 /* Override shared .btn padding with higher specificity instead of !important */
@@ -29,6 +34,9 @@ button.filter-toggle-btn {
 .filter-icon {
   width: 18px;
   height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .filter-badge {
@@ -50,15 +58,15 @@ button.filter-toggle-btn {
 }
 
 /* ============================================================
-   DROPDOWN PANEL - Absolute positioned overlay
+   DROPDOWN PANEL
    ============================================================ */
 .filter-dropdown {
   position: absolute;
   top: calc(100% + 2px);
   right: 0;
   z-index: 1000;
-  min-width: 280px;
-  max-width: 320px;
+  min-width: 340px;
+  max-width: 420px;
   background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: 0;
@@ -84,69 +92,177 @@ button.filter-toggle-btn {
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  max-height: 400px;
+  gap: var(--space-sm);
+  min-height: 220px;
+  max-height: 70vh;
   overflow-y: auto;
 }
 
 /* ============================================================
-   FIELD
+   FILTER ROW - Each active filter
    ============================================================ */
-.filter-field {
+.filter-row {
+  border: 1px solid var(--panel-border);
+  border-radius: 0;
+  padding: var(--space-sm);
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  background: var(--surface);
 }
 
-.filter-label {
+.filter-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-row-label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   color: var(--text);
-  margin: 0;
 }
 
-/* ============================================================
-   CHECKBOX FIELD
-   ============================================================ */
-.filter-field-checkbox {
-  flex-direction: row;
-  align-items: center;
-}
-
-.filter-checkbox-label {
+.filter-row-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 2px;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-regular);
-  color: var(--text);
-  margin: 0;
+  justify-content: center;
+  transition: color 0.15s ease;
 }
 
-.filter-checkbox-label input[type="checkbox"] {
-  margin: 0;
+.filter-row-remove:hover {
+  color: var(--error);
+}
+
+.filter-row-controls {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: stretch;
+}
+
+.filter-operator {
+  flex: 0 0 auto;
+  min-width: 80px;
+  max-width: 110px;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.filter-value-input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.filter-value-input::placeholder {
+  color: var(--text-muted);
+}
+
+.filter-value-input:focus,
+.filter-operator:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
 /* ============================================================
-   RANGE FIELD
+   BETWEEN INPUTS
    ============================================================ */
-.filter-range-inputs {
+.filter-between-inputs {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-}
-
-.filter-range-inputs app-numeric-input {
   flex: 1;
   min-width: 0;
 }
 
-.filter-range-separator {
+.filter-between-inputs .filter-value-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-between-sep {
   color: var(--text-muted);
   font-size: var(--font-size-sm);
   flex-shrink: 0;
-  padding: 0 var(--space-xs);
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.filter-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  padding: var(--space-sm) 0;
+}
+
+/* ============================================================
+   ADD FILTER SECTION
+   ============================================================ */
+.filter-add-section {
+  position: relative;
+}
+
+.filter-add-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: none;
+  border: 1px dashed var(--panel-border);
+  color: var(--primary);
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  width: 100%;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.filter-add-btn:hover:not(:disabled) {
+  background: var(--surface);
+  border-color: var(--primary);
+}
+
+.filter-add-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.column-picker {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow-md);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.column-option {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.column-option:hover {
+  background: var(--surface);
 }
 
 /* ============================================================

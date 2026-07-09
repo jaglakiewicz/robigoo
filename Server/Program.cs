@@ -9,6 +9,7 @@
 
 using Server.Application.Clients;
 using Server.Application.CropSprayers;
+using Server.Application.Dashboard;
 using Server.Application.Inspections;
 using Server.Application.History;
 using Server.Infrastructure.Persistence.Repositories;
@@ -40,7 +41,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ISecurityAuditService, SecurityAuditService>();
-builder.Services.AddScoped<IUserActivityService, UserActivityService>();
 builder.Services.AddScoped<IProtocolXmlService, ProtocolXmlService>();
 
 // Add security services
@@ -83,6 +83,7 @@ builder.Services.AddScoped<ICropSprayerService, CropSprayerService>();
 builder.Services.AddScoped<IInspectionRepository, InspectionRepository>();
 builder.Services.AddScoped<IInspectionService, InspectionService>();
 builder.Services.AddScoped<IHistoryService, HistoryService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // Add rate limit blocking service
 // Requirement 12.6: IF sustained rate limit violations occur, THEN THE Backend SHALL temporarily block the source
@@ -376,9 +377,6 @@ app.UseCorrelationId();
 // Requirement 10.7: Cache-Control headers for sensitive endpoints
 app.UseSecurityHeaders();
 
-// Map Controllers
-app.MapControllers();
-
 // Helper: verify that the JWT token belongs to an active user session
 static async Task<bool> IsSessionActiveAsync(AppDbContext db, HttpContext context)
 {
@@ -437,17 +435,17 @@ using (var scope = app.Services.CreateScope())
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_UserSessions_RefreshToken"" ON ""UserSessions"" (""RefreshToken"");");
 
     // Add new columns to UserSessions if they don't exist (migration for existing databases)
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""RefreshToken"" TEXT NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""RefreshTokenExpiresAt"" TEXT NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""IpAddress"" TEXT NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""UserAgent"" TEXT NULL;"); } catch { }
-    // Session management enhancements (Requirements 3.4, 3.7)
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""SessionTimeoutMinutes"" INTEGER NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""InvalidatedAt"" TEXT NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""UserSessions"" ADD COLUMN ""InvalidationReason"" TEXT NULL;"); } catch { }
+    // Check column existence first to avoid error logs
+    AddColumnIfNotExists(db, "UserSessions", "RefreshToken", "TEXT NULL");
+    AddColumnIfNotExists(db, "UserSessions", "RefreshTokenExpiresAt", "TEXT NULL");
+    AddColumnIfNotExists(db, "UserSessions", "IpAddress", "TEXT NULL");
+    AddColumnIfNotExists(db, "UserSessions", "UserAgent", "TEXT NULL");
+    AddColumnIfNotExists(db, "UserSessions", "SessionTimeoutMinutes", "INTEGER NULL");
+    AddColumnIfNotExists(db, "UserSessions", "InvalidatedAt", "TEXT NULL");
+    AddColumnIfNotExists(db, "UserSessions", "InvalidationReason", "TEXT NULL");
 
     // Add SignatureData column to Users if not exists
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""Users"" ADD COLUMN ""SignatureData"" BLOB NULL;"); } catch { }
+    AddColumnIfNotExists(db, "Users", "SignatureData", "BLOB NULL");
 
     // Create LoginAttempts table for security auditing
     db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""LoginAttempts"" (
@@ -570,6 +568,10 @@ using (var scope = app.Services.CreateScope())
         ""XmlGeneratedAt"" TEXT NULL
     );");
 
+    // Add missing columns to InspectionProtocols if they don't exist
+    AddColumnIfNotExists(db, "InspectionProtocols", "RowVersion", "BLOB NULL");
+    AddColumnIfNotExists(db, "InspectionProtocols", "Version", "INTEGER NOT NULL DEFAULT 0");
+
     // Create SecurityEventLogs table for security auditing
     // Requirement 9.7: Log sensitive data access for compliance purposes
     db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS ""SecurityEventLogs"" (
@@ -585,9 +587,9 @@ using (var scope = app.Services.CreateScope())
         ""OccurredAt"" TEXT NOT NULL
     );");
     
-    // Add missing columns to SecurityEventLogs if they don't exist (ignore errors if columns already exist)
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""SecurityEventLogs"" ADD COLUMN ""UserId"" INTEGER NULL;"); } catch { }
-    try { db.Database.ExecuteSqlRaw(@"ALTER TABLE ""SecurityEventLogs"" ADD COLUMN ""CorrelationId"" TEXT NULL;"); } catch { }
+    // Add missing columns to SecurityEventLogs if they don't exist
+    AddColumnIfNotExists(db, "SecurityEventLogs", "UserId", "INTEGER NULL");
+    AddColumnIfNotExists(db, "SecurityEventLogs", "CorrelationId", "TEXT NULL");
 
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_SecurityEventLogs_OccurredAt"" ON ""SecurityEventLogs"" (""OccurredAt"");");
     db.Database.ExecuteSqlRaw(@"CREATE INDEX IF NOT EXISTS ""IX_SecurityEventLogs_EventType_OccurredAt"" ON ""SecurityEventLogs"" (""EventType"", ""OccurredAt"");");
@@ -643,6 +645,9 @@ app.UseAntiforgery();
 // Add input validation middleware (validates all incoming request bodies)
 // Requirement 2.7: Returns 400 Bad Request with specific validation error messages on failure
 app.UseInputValidation();
+
+// Map Controllers (after auth middleware so [Authorize] works correctly)
+app.MapControllers();
 
 // ==================== ORIGINAL ENDPOINTS ====================
 
@@ -711,3 +716,20 @@ app.UseHttpsRedirection();
 app.Run();
 
 #endregion
+
+// Helper method to add column only if it doesn't exist (avoids error logs)
+static void AddColumnIfNotExists(AppDbContext db, string tableName, string columnName, string columnDefinition)
+{
+    // Use FormattableString to safely construct the query
+    // Table and column names are hardcoded in our code, not user input, so this is safe
+    var checkSql = $"SELECT COUNT(*) FROM pragma_table_info('{tableName}') WHERE name = '{columnName}'";
+    var exists = db.Database.SqlQueryRaw<int>(checkSql).AsEnumerable().FirstOrDefault() > 0;
+    
+    if (!exists)
+    {
+        // Suppress warning - table/column names are hardcoded constants, not user input
+        #pragma warning disable EF1002
+        db.Database.ExecuteSqlRaw($@"ALTER TABLE ""{tableName}"" ADD COLUMN ""{columnName}"" {columnDefinition};");
+        #pragma warning restore EF1002
+    }
+}

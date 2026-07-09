@@ -52,6 +52,11 @@ namespace Server.Application.CropSprayers
         /// Saves all pending changes.
         /// </summary>
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets distinct non-empty values for a given column.
+        /// </summary>
+        Task<IReadOnlyList<string>> GetDistinctColumnValuesAsync(Func<CropSprayer, string?> selector, CancellationToken cancellationToken = default);
     }
 
     #endregion

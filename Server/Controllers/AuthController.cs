@@ -21,7 +21,6 @@ namespace Server.Controllers
         private readonly ITokenService _tokenService;
         private readonly ISessionManagementService _sessionManagementService;
         private readonly ISecurityAuditService _securityAuditService;
-        private readonly IUserActivityService _userActivityService;
         private readonly ILogger<AuthController> _logger;
 
         #endregion //Declarations
@@ -34,7 +33,6 @@ namespace Server.Controllers
             ITokenService tokenService,
             ISessionManagementService sessionManagementService,
             ISecurityAuditService securityAuditService,
-            IUserActivityService userActivityService,
             ILogger<AuthController> logger)
         {
             _context = context;
@@ -42,7 +40,6 @@ namespace Server.Controllers
             _tokenService = tokenService;
             _sessionManagementService = sessionManagementService;
             _securityAuditService = securityAuditService;
-            _userActivityService = userActivityService;
             _logger = logger;
         }
 
@@ -173,17 +170,6 @@ namespace Server.Controllers
                 success: true);
             await _securityAuditService.ResetFailedAttemptsAsync(dto.Login);
 
-            // Log user activity
-            await _userActivityService.LogActivityAsync(
-                user.Id,
-                ActivityType.Login,
-                "Auth",
-                null,
-                $"User logged in from {ipAddress}",
-                ipAddress,
-                userAgent
-            );
-
             var response = new AuthResponseDto
             {
                 Token = new TokenResponseDto
@@ -217,23 +203,6 @@ namespace Server.Controllers
         public async Task<IActionResult> Logout()
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
-            
-            var userIdClaim = User.FindFirst("userId");
-            if (userIdClaim != null && long.TryParse(userIdClaim.Value, out long userId))
-            {
-                // Log user activity
-                await _userActivityService.LogActivityAsync(
-                    userId,
-                    ActivityType.Logout,
-                    "Auth",
-                    null,
-                    "User logged out",
-                    ipAddress,
-                    userAgent
-                );
-            }
             
             if (!string.IsNullOrEmpty(token))
             {

@@ -11,7 +11,7 @@
   background: var(--panel);
   border-radius: var(--radius-lg);
   border: 1px solid var(--panel-border);
-  padding: var(--space-lg);
+  padding: var(--space-md);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -27,7 +27,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
   gap: var(--space-md);
 }
 
@@ -99,6 +99,9 @@
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  /* Extra padding so focus rings (box-shadow 4px) are not clipped by overflow */
+  padding: var(--space-xs) var(--space-xs);
+  margin: calc(-1 * var(--space-xs)) calc(-1 * var(--space-xs));
 }
 
 @media (max-width: 1024px) {

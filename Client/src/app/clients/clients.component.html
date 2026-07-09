@@ -8,41 +8,30 @@
 
 <div class="clients-container">
   <app-entity-toolbar>
-    <ng-container left>
-      <button class="btn btn-success" (click)="onAddNew()" [disabled]="deleting">
-        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
-        <span class="btn-label">{{ 'clients.addButton' | text }}</span>
-      </button>
-      <button
-        class="btn btn-primary"
-        (click)="onEdit()"
-        [disabled]="!currentClient || isEditMode || deleting">
-        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
-        <span class="btn-label">{{ 'clients.actions.edit' | text }}</span>
-      </button>
-      <button
-        class="btn btn-danger"
-        (click)="onDelete()"
-        [disabled]="!currentClient || isNew || deleting || saving">
-        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
-        <span class="btn-label">{{ 'clients.actions.delete' | text }}</span>
-      </button>
-    </ng-container>
-
-    <ng-container right *ngIf="isEditMode">
-      <button class="btn btn-primary" (click)="save()" [disabled]="saving || deleting">
-        <span class="btn-icon" aria-hidden="true">
-          <svg fill="currentColor" viewBox="0 0 342 342" width="16" height="16">
-            <path d="M243.498667,0 L341.333333,97.8346667 L341.333333,341.333333 L0,341.333333 L0,0 L243.498667,0 Z M213.333333,234.666667 L128,234.666667 L128,298.688 L213.333333,298.688 L213.333333,234.666667 Z M85.3333333,42.6666667 L42.6666667,42.6666667 L42.6666667,298.666667 L85.3333333,298.666667 L85.3333333,192 L256,192 L256,298.666667 L298.666667,298.666667 L298.666667,115.498667 L256,72.8533333 L256,149.333333 L85.3333333,149.333333 L85.3333333,42.6666667 Z M213.333333,42.6666667 L128,42.6666667 L128,106.688 L213.333333,106.688 L213.333333,42.6666667 Z"/>
-          </svg>
-        </span>
-        <span class="btn-label">{{ 'clients.actions.save' | text }}</span>
-      </button>
-      <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="deleting">
-        <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.cancel" style="color: inherit;"></span>
-        <span class="btn-label">{{ 'clients.actions.cancel' | text }}</span>
-      </button>
-    </ng-container>
+    <button class="btn btn-success" (click)="onAddNew()" [disabled]="isEditMode || deleting">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.add"></span>
+      <span class="btn-label">{{ 'general.add' | text }}</span>
+    </button>
+    <button class="btn btn-primary" (click)="onEdit()" [disabled]="!currentClient || isEditMode || deleting">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.edit"></span>
+      <span class="btn-label">{{ 'general.edit' | text }}</span>
+    </button>
+    <button class="btn btn-primary" (click)="save()" [disabled]="!isEditMode || saving || deleting">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.save"></span>
+      <span class="btn-label">{{ 'general.save' | text }}</span>
+    </button>
+    <button class="btn btn-secondary" (click)="cancelEditing()" [disabled]="!isEditMode || deleting">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.cancel"></span>
+      <span class="btn-label">{{ 'general.cancel' | text }}</span>
+    </button>
+    <button class="btn btn-danger" (click)="onDelete()" [disabled]="!currentClient || isNew || deleting || saving">
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.delete"></span>
+      <span class="btn-label">{{ 'general.delete' | text }}</span>
+    </button>
+    <button class="btn btn-info" disabled>
+      <span class="btn-icon" aria-hidden="true" [innerHTML]="toolbarIcons.preview"></span>
+      <span class="btn-label">{{ 'general.preview' | text }}</span>
+    </button>
   </app-entity-toolbar>
 
   <app-master-detail-layout [hasSelection]="!!(currentClient || isNew)">
@@ -150,9 +139,9 @@
                     <div class="form-group">
                       <label>{{ 'clients.fields.pesel' | text }}</label>
                       <div class="input-with-toggle">
-                        <input [type]="peselVisible ? 'text' : 'password'" [ngModel]="form.pesel" (ngModelChange)="form.pesel = $event; onFormChange()" [disabled]="!isEditMode" maxlength="11" />
-                        <button type="button" class="toggle-visibility-btn" (click)="togglePeselVisibility()" [attr.aria-label]="peselVisible ? 'Hide PESEL' : 'Show PESEL'">
-                          <span class="eye-icon" [innerHTML]="peselVisible ? eyeIconClosed : eyeIconOpen"></span>
+                        <input [type]="peselVisible ? 'text' : 'password'" [ngModel]="form.pesel" (ngModelChange)="form.pesel = $event; onFormChange()" [disabled]="!isEditMode" maxlength="11" (focus)="onPeselFocus()" (blur)="onPeselBlur()" />
+                        <button *ngIf="!peselFocused" type="button" class="toggle-visibility-btn" (mousedown)="$event.preventDefault(); togglePeselVisibility()" [attr.aria-label]="peselVisible ? 'Hide PESEL' : 'Show PESEL'">
+                          <span class="eye-icon" [innerHTML]="getSafeHtml(peselVisible ? eyeIconClosed : eyeIconOpen)"></span>
                         </button>
                       </div>
                     </div>
@@ -206,11 +195,15 @@
                     <input type="text" [ngModel]="form.zipCode" (ngModelChange)="form.zipCode = $event; onFormChange()" [disabled]="!isEditMode" placeholder="00-000" />
                   </div>
                   <div class="form-group">
+                    <label>{{ 'clients.fields.post' | text }}</label>
+                    <input type="text" [ngModel]="form.post" (ngModelChange)="form.post = $event; onFormChange()" [disabled]="!isEditMode" />
+                  </div>
+                </div>
+                <div class="form-row form-row-4">
+                  <div class="form-group">
                     <label>{{ 'clients.fields.street' | text }}</label>
                     <input type="text" [ngModel]="form.street" (ngModelChange)="form.street = $event; onFormChange()" [disabled]="!isEditMode" />
                   </div>
-                </div>
-                <div class="form-row form-row-3">
                   <div class="form-group required">
                     <label>{{ 'clients.fields.buildingNumber' | text }}</label>
                     <input type="text" [ngModel]="form.buildingNumber" (ngModelChange)="form.buildingNumber = $event; onFormChange()" [disabled]="!isEditMode" />
@@ -284,28 +277,46 @@
 </app-history-dialog>
 
 <!-- Unsaved Changes Dialog -->
-<app-confirm-dialog
-  *ngIf="unsavedDialogVisible"
-  [title]="'clients.messages.unsavedTitle' | text"
-  [message]="'clients.messages.unsavedText' | text"
-  [confirmLabel]="'clients.actions.save' | text"
-  [cancelLabel]="'clients.actions.cancel' | text"
-  [discardLabel]="'clients.actions.discard' | text"
-  (confirm)="onUnsavedConfirmSave()"
-  (discard)="onUnsavedConfirmDiscard()"
-  (cancel)="onUnsavedConfirmCancel()">
-</app-confirm-dialog>
+<div class="dialog-backdrop" *ngIf="unsavedDialogVisible">
+  <div class="dialog">
+    <h4 class="dialog__title">{{ 'clients.messages.unsavedTitle' | text }}</h4>
+    <div class="dialog__body">
+      <p>{{ 'clients.messages.unsavedText' | text }}</p>
+    </div>
+    <div class="dialog__actions">
+      <button class="btn btn-success" (click)="onUnsavedConfirmSave()">
+        {{ 'clients.actions.save' | text }}
+      </button>
+      <button class="btn btn-secondary" (click)="onUnsavedConfirmDiscard()">
+        {{ 'clients.actions.discard' | text }}
+      </button>
+      <button class="btn btn-ghost" (click)="onUnsavedConfirmCancel()">
+        {{ 'clients.actions.cancel' | text }}
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Delete Confirmation Dialog -->
-<app-confirm-dialog
-  *ngIf="deleteDialogVisible"
-  [title]="'clients.messages.deleteTitle' | text"
-  [message]="'clients.messages.deleteText' | text"
-  [confirmLabel]="'clients.actions.delete' | text"
-  [cancelLabel]="'clients.actions.cancel' | text"
-  (confirm)="onDeleteConfirm()"
-  (cancel)="onDeleteCancel()">
-</app-confirm-dialog>
+<div class="dialog-backdrop" *ngIf="deleteDialogVisible" (click)="onDeleteCancel()">
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <h4 class="dialog__title">{{ 'clients.messages.deleteTitle' | text }}</h4>
+    <div class="dialog__body">
+      <p>{{ 'clients.messages.deleteText' | text }}</p>
+      <div class="dialog__item-details" *ngIf="currentClient">
+        <strong>{{ currentClient.clientType === 'person' ? (currentClient.firstName + ' ' + currentClient.lastName) : currentClient.companyName }}</strong>
+      </div>
+    </div>
+    <div class="dialog__actions">
+      <button class="btn btn-danger" (click)="onDeleteConfirm()" [disabled]="deleting">
+        {{ 'clients.actions.delete' | text }}
+      </button>
+      <button class="btn btn-secondary" (click)="onDeleteCancel()">
+        {{ 'clients.actions.cancel' | text }}
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Map Dialog -->
 <div class="dialog-backdrop dialog-backdrop--dismissible" *ngIf="showMapDialog" (click)="onMapBackdropClick($event)">

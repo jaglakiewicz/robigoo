@@ -12,7 +12,19 @@
   flex: 1;
   min-height: 0;
   height: 0;
-  overflow: hidden;
+  overflow: visible;
+}
+
+/* Compact subsection spacing within inspection form */
+.settings-subsection-title {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-base);
+  padding-bottom: var(--space-xs);
+}
+
+.settings-subsection-title:first-of-type {
+  margin-top: 0;
 }
 
 /* Main content area wrapper */
@@ -25,67 +37,6 @@
 }
 
 /* ============================================================
-   ITEM ROWS
-   ============================================================ */
-.item-row {
-  display: flex;
-  gap: var(--space-md);
-  align-items: center;
-  margin-bottom: var(--space-md);
-  padding: var(--space-md);
-  background: var(--bg-alt);
-  border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast);
-  flex-wrap: wrap;
-}
-
-.item-row:hover { background: var(--panel-border); }
-
-.item-row input[type="text"] {
-  flex: 1;
-  padding: var(--space-sm) var(--space-md) !important;
-  border-radius: var(--radius-md) !important;
-  min-width: 150px;
-}
-
-.item-row label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  white-space: nowrap;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  flex-shrink: 0;
-}
-
-.item-row button {
-  width: 42px;
-  height: 42px;
-  padding: 0 !important;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--panel-border) !important;
-  background: var(--bg-alt);
-  color: var(--text);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
-}
-
-.item-row button:hover {
-  background: var(--panel-border);
-  border-color: var(--text-light) !important;
-}
-
-@media (max-width: 767px) {
-  .item-row { flex-direction: column; align-items: stretch; }
-  .item-row input[type="text"] { min-width: unset; }
-  .item-row label { width: 100%; }
-  .item-row button { width: 100%; }
-}
-
-/* ============================================================
    STEP CONTENT
    ============================================================ */
 .step-content {
@@ -93,8 +44,8 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--space-lg) 0;
-  animation: fadeIn 0.3s ease-in-out;
+  padding: var(--space-sm) 4px;
+  animation: fadeIn 0.25s ease-out;
 }
 
 @keyframes fadeIn {
@@ -102,39 +53,9 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.step-content h3 {
-  margin: 0 0 var(--space-lg) 0;
-  color: var(--primary);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-}
-
-.items-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-/* Button icon sizing */
-.btn-nav svg,
-.btn-back svg,
-.btn-next svg,
-.btn-save svg,
-.btn-cancel svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
 /* ============================================================
-   CLIENT/SPRAYER SELECTION
+   CLIENT / SPRAYER SELECTION
    ============================================================ */
-.step-description {
-  color: var(--text-secondary);
-  margin-bottom: var(--space-lg);
-  font-size: var(--font-size-sm);
-}
-
 .client-search-container {
   position: relative;
   display: flex;
@@ -249,13 +170,9 @@
   margin: 0;
 }
 
-.form-actions {
-  margin: var(--space-lg) 0;
-}
-
 .form-row {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-lg);
   flex-wrap: wrap;
 }
 
@@ -363,73 +280,6 @@
   color: var(--text-secondary);
 }
 
-/* Summary section */
-.summary-section {
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.summary-section:last-child {
-  border-bottom: none;
-}
-
-.summary-section h4 {
-  margin: 0 0 var(--space-sm) 0;
-  color: var(--text-muted);
-  font-size: var(--font-size-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.summary-section p {
-  margin: 0;
-  font-size: var(--font-size-base);
-  color: var(--text);
-}
-
-/* Message styles */
-.message.success {
-  background: var(--success-surface);
-  border-color: var(--success-border);
-  color: var(--success-text);
-}
-
-.message.error {
-  background: var(--error-surface);
-  border-color: var(--error-border);
-  color: var(--error-text);
-}
-
-/* ============================================================
-   DATA SECTIONS (General Data Step)
-   ============================================================ */
-.data-section {
-  margin-bottom: var(--space-xl);
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.section-header {
-  padding: var(--space-md) var(--space-lg);
-  background: var(--bg-alt);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.section-header h4 {
-  margin: 0;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  color: var(--primary);
-  text-align: left;
-}
-
-.section-body {
-  padding: var(--space-lg);
-}
-
 .form-actions-inline {
   margin: var(--space-md) 0;
 }
@@ -481,8 +331,21 @@
   gap: 2px;
 }
 
+/* Message styles */
+.message.success {
+  background: var(--success-surface);
+  border-color: var(--success-border);
+  color: var(--success-text);
+}
+
+.message.error {
+  background: var(--error-surface);
+  border-color: var(--error-border);
+  color: var(--error-text);
+}
+
 /* ============================================================
-   PROTOCOL SECTIONS (Protocol Step)
+   PROTOCOL SECTIONS
    ============================================================ */
 .protocol-step {
   padding-bottom: var(--space-xl);
@@ -492,177 +355,39 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-md) var(--space-lg);
-  background: var(--surface);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface-alt);
   border: 1px solid var(--border-light);
+  border-radius: var(--radius);
   flex-wrap: wrap;
-  gap: var(--space-md);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
 }
 
 .protocol-info {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 
-/* Protocol Layout with Side Navigation */
-.protocol-layout {
-  display: flex;
-  gap: var(--space-lg);
-  min-height: 400px;
-}
-
-.protocol-nav {
-  width: 220px;
-  flex-shrink: 0;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: var(--space-sm);
-  overflow-y: auto;
-  max-height: calc(100vh - 300px);
-}
-
-.protocol-nav-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  margin-bottom: var(--space-xs);
-}
-
-.protocol-nav-item:hover {
-  background: var(--bg-alt);
-}
-
-.protocol-nav-item.active {
-  background: var(--primary-surface);
-  border-left: 3px solid var(--primary);
-}
-
-.protocol-nav-item.completed .nav-number {
-  background: var(--success);
-  color: white;
-}
-
-.nav-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--panel-border);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
-  flex-shrink: 0;
-}
-
-.protocol-nav-item.active .nav-number {
-  background: var(--primary);
-  color: white;
-}
-
-.nav-label {
-  flex: 1;
-  font-size: var(--font-size-sm);
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.nav-check {
-  color: var(--success);
-  font-weight: bold;
-}
-
-.protocol-content {
-  flex: 1;
-  min-width: 0;
-}
-
 .protocol-section-content {
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: var(--space-sm) 0 var(--space-md) 0;
   animation: fadeIn 0.2s ease-out;
-}
-
-.protocol-section-header-inline {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-md);
-  border-bottom: 2px solid var(--primary);
-}
-
-.protocol-section-header-inline.final {
-  border-bottom-color: var(--success);
-}
-
-.protocol-section-header-inline h5 {
-  margin: 0;
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
+  border-left: 3px solid var(--primary-border);
+  padding-left: var(--space-md);
+  margin-left: var(--space-xs);
 }
 
 .final-section-content {
-  border: 2px solid var(--primary);
-}
-
-.final-section-content .section-number {
-  background: var(--success);
-}
-
-@media (max-width: 900px) {
-  .protocol-layout {
-    flex-direction: column;
-  }
-  
-  .protocol-nav {
-    width: 100%;
-    max-height: none;
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: var(--space-sm);
-    padding-bottom: var(--space-sm);
-    scrollbar-width: none;
-  }
-  
-  .protocol-nav::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .protocol-nav-item {
-    flex: 0 0 auto;
-    margin-bottom: 0;
-    padding: var(--space-sm) var(--space-md);
-  }
-  
-  .nav-label {
-    display: block;
-    font-size: var(--font-size-sm);
-  }
-  
-  .nav-number {
-    display: none;
-  }
+  border-left-color: var(--success-border);
 }
 
 .badge {
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.2px;
 }
 
 .badge-client {
@@ -672,71 +397,32 @@
 }
 
 .badge-sprayer {
-  background: var(--info-surface);
-  color: var(--info);
-  border: 1px solid var(--info-border);
+  background: color-mix(in srgb, var(--secondary) 10%, transparent);
+  color: var(--secondary);
+  border: 1px solid color-mix(in srgb, var(--secondary) 25%, transparent);
 }
 
 .badge-date {
   background: var(--bg-alt);
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
-}
-
-.btn-pdf-preview {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.protocol-section {
-  margin-bottom: var(--space-lg);
-  background: var(--surface);
+  color: var(--text-muted);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
 }
 
-.protocol-section-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md) var(--space-lg);
-  background: var(--bg-alt);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.section-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: var(--primary);
-  color: white;
-  border-radius: 50%;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  flex-shrink: 0;
-}
-
-.protocol-section-header h5 {
-  margin: 0;
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-bold);
-  color: var(--text);
-}
-
-.protocol-section-body {
-  padding: var(--space-lg);
-}
-
+/* ============================================================
+   CHECK ROWS (pass/fail toggles)
+   ============================================================ */
 .check-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-sm) 0;
+  padding: var(--space-xs) var(--space-sm);
   border-bottom: 1px solid var(--border-light);
+  transition: all 0.15s ease;
+}
+
+.check-row:hover {
+  background: color-mix(in srgb, var(--primary) 4%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 12%, var(--border-light));
 }
 
 .check-row:last-of-type {
@@ -751,57 +437,125 @@
 
 .check-buttons {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.check-assessments {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.assessment-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-weight: 600;
+  min-width: 28px;
+  text-align: center;
 }
 
 .btn-check {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 0;
   background: var(--surface);
   color: var(--text-muted);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-check:hover {
   border-color: var(--success);
   color: var(--success);
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px var(--success-surface);
 }
 
 .btn-check.fail:hover {
   border-color: var(--error);
   color: var(--error);
+  box-shadow: 0 0 0 3px var(--error-surface);
 }
 
 .btn-check.active {
   border-color: var(--success);
   background: var(--success);
   color: white;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--success) 35%, transparent);
 }
 
 .btn-check.fail.active {
   border-color: var(--error);
   background: var(--error);
   color: white;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--error) 35%, transparent);
 }
 
+/* Notes row */
 .notes-row {
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
   border-top: 1px solid var(--border-light);
+}
+
+/* Check table layout */
+.check-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-xs);
+}
+
+.check-table thead th {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--primary) 6%, var(--surface));
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--text);
+}
+
+.check-table th.ct-label,
+.check-table td.ct-label {
+  text-align: left;
+  font-size: var(--font-size-base);
+  color: var(--text);
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.check-table th.ct-header {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.check-table tbody td {
+  border: 1px solid var(--border-light);
+  padding: var(--space-xs);
+  vertical-align: middle;
+}
+
+.check-table tbody tr:hover {
+  background: color-mix(in srgb, var(--primary) 4%, transparent);
+}
+
+td.ct-btn {
+  text-align: center;
+  width: 44px;
+  padding: var(--space-xs) 2px;
 }
 
 .notes-row label {
   display: block;
   margin-bottom: var(--space-xs);
   color: var(--text-muted);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
 }
 
 .notes-row textarea {
@@ -816,6 +570,7 @@
   resize: vertical;
 }
 
+/* Measurements row */
 .measurements-row {
   margin-top: var(--space-md);
   padding: var(--space-md);
@@ -859,24 +614,9 @@
   text-align: center;
 }
 
-/* Final Result Section */
-.final-section {
-  border: 2px solid var(--primary);
-}
-
-.final-section .protocol-section-header {
-  background: var(--primary);
-}
-
-.final-section .protocol-section-header h5 {
-  color: white;
-}
-
-.final-section .section-number {
-  background: white;
-  color: var(--primary);
-}
-
+/* ============================================================
+   FINAL RESULT
+   ============================================================ */
 .final-result-row {
   display: flex;
   align-items: center;
@@ -928,32 +668,6 @@
 }
 
 /* ============================================================
-   NAVIGATION CENTER
-   ============================================================ */
-.nav-center {
-  display: flex;
-  gap: var(--space-md);
-}
-
-.btn-pdf {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  background: var(--info);
-  color: white;
-  border: none;
-}
-
-.btn-pdf:hover {
-  background: var(--info-dark);
-}
-
-.btn-pdf:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ============================================================
    PDF PREVIEW MODAL (using shared dialog styles)
    ============================================================ */
 .dialog--print {
@@ -968,289 +682,406 @@
   padding: var(--space-lg);
 }
 
-/* Protocol Document Styles - Matching XSL-FO PDF Format */
-.protocol-document {
-  background: white;
-  padding: 15mm;
-  max-width: 210mm;
-  min-height: 297mm;
-  margin: 0 auto;
-  box-shadow: var(--shadow-lg);
+/* ============================================================
+   OFFICIAL PROTOCOL FORM — matching PBTO.xlsx exactly
+   Two A4 pages: front (sections 1 + 2.1–2.2) and back (2.3–2.10 + tables)
+   ============================================================ */
+
+/* --- Page shell --- */
+.protocol-document.official-form {
+  background: transparent;
+  padding: 0;
+  max-width: none;
+  min-height: auto;
+  box-shadow: none;
   font-family: var(--font-family);
-  font-size: 9pt;
-  line-height: 1.4;
+  font-size: 7.5pt;
   color: #000;
+  line-height: 1.3;
 }
 
-/* Document Title */
-.doc-title {
-  text-align: center;
-  margin-bottom: 8mm;
+.form-page {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  margin: 0 auto 6mm;
+  padding: 8mm 8mm 8mm 10mm;
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  position: relative;
 }
 
-.doc-title h1 {
-  margin: 0 0 3mm 0;
-  font-size: 14pt;
-  font-weight: bold;
-  color: #1a5f7a;
+.fp-page-break {
+  margin-top: 6mm;
 }
 
-.doc-title h2 {
-  margin: 0;
-  font-size: 11pt;
-  font-weight: bold;
-  color: #1a5f7a;
-}
-
-/* Protocol Info Box */
-.doc-info-box {
-  width: 100%;
-  border: 1pt solid #1a5f7a;
-  border-collapse: collapse;
-  margin-bottom: 5mm;
-}
-
-.doc-info-box td {
-  padding: 2mm;
-  font-size: 9pt;
-  background-color: #e8f4f8;
-  border: 1pt solid #1a5f7a;
-}
-
-.doc-info-box td:first-child {
-  width: 50%;
-}
-
-/* Section Headers */
-.doc-section-header {
-  font-size: 10pt;
-  font-weight: bold;
-  color: white;
-  background-color: #1a5f7a;
-  padding: 2mm;
-  margin: 5mm 0 2mm 0;
-}
-
-/* Data Tables */
-.doc-data-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 5mm;
-}
-
-.doc-data-table td {
-  padding: 2mm;
-  border: 0.5pt solid #cccccc;
-  font-size: 9pt;
-}
-
-.doc-data-table .label-cell {
-  width: 35%;
-  font-size: 8pt;
-  font-weight: bold;
-  background-color: #f8f9fa;
-}
-
-.doc-data-table .value-cell {
-  width: 65%;
-}
-
-/* Results Table */
-.doc-results-table {
-  width: 100%;
-  border: 0.5pt solid #333333;
-  border-collapse: collapse;
-  margin-bottom: 5mm;
-}
-
-.doc-results-table th,
-.doc-results-table td {
-  border: 0.5pt solid #cccccc;
-}
-
-/* Results Table Header */
-.results-header {
-  background-color: #1a5f7a;
-  color: white;
-}
-
-.results-header th {
-  padding: 2mm;
-  font-size: 8pt;
-  font-weight: bold;
-  text-align: center;
-  border: 0.5pt solid #333333;
-}
-
-.results-header .col-num {
-  width: 8%;
-}
-
-.results-header .col-item {
-  width: 62%;
-  text-align: left;
-}
-
-.results-header .col-result {
-  width: 15%;
-}
-
-.results-header .col-notes {
-  width: 15%;
-}
-
-/* Section Title Row */
-.section-title-row {
-  background-color: #e8f4f8;
-}
-
-.section-title-row .section-num {
-  padding: 2mm;
-  font-size: 8pt;
-  font-weight: bold;
-  text-align: center;
-  border: 0.5pt solid #cccccc;
-}
-
-.section-title-row .section-title {
-  padding: 2mm;
-  font-size: 8pt;
-  font-weight: bold;
-  border: 0.5pt solid #cccccc;
-}
-
-/* Item Rows */
-.item-num {
-  padding: 1.5mm;
-  font-size: 7pt;
-  text-align: center;
-}
-
-.item-name {
-  padding: 1.5mm;
-  font-size: 8pt;
-}
-
-.item-result {
-  padding: 1.5mm;
-  font-size: 10pt;
-  font-weight: bold;
-  text-align: center;
-}
-
-.item-result.pass {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.item-result.fail {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.item-notes {
-  padding: 1.5mm;
-  font-size: 7pt;
-  color: #666666;
-}
-
-.item-measurements {
-  padding: 1.5mm;
-  font-size: 8pt;
-}
-
-.measurement-note {
-  display: block;
-  font-size: 7pt;
-  color: #666666;
-  margin-top: 1mm;
-}
-
-/* Final Result */
-.doc-final-result {
-  width: 100%;
-  padding: 4mm;
-  text-align: center;
-  font-size: 16pt;
-  font-weight: bold;
-  border: 2pt solid #1a5f7a;
-  margin: 5mm 0;
-}
-
-.doc-final-result.positive {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.doc-final-result.negative {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-/* General Notes */
-.doc-general-notes {
-  padding: 3mm;
-  margin: 5mm 0;
-  background-color: #fff3cd;
-  border: 0.5pt solid #ffc107;
-  font-size: 9pt;
-}
-
-/* Signatures */
-.doc-signatures {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10mm;
-  padding-top: 5mm;
-}
-
-.signature-column {
-  width: 45%;
-  text-align: center;
-}
-
-.signature-info {
-  font-size: 9pt;
-  margin-bottom: 15mm;
-}
-
-.signature-detail {
-  font-size: 8pt;
-  color: #666666;
-}
-
-.signature-line {
-  border-top: 0.5pt solid #333333;
+/* --- TOP GRID: inspector left | protocol right --- */
+.fp-top {
+  display: grid;
+  grid-template-columns: 55mm 1fr;
+  gap: 3mm;
   margin-bottom: 2mm;
 }
 
-.signature-label {
-  font-size: 8pt;
-  color: #666666;
+/* Left panel — inspector info */
+.fp-left-panel {
+  border: 1px solid #000;
+  padding: 2mm;
+  font-size: 7pt;
 }
 
-/* Document Footer */
-.doc-footer {
-  margin-top: 10mm;
-  padding-top: 3mm;
-  border-top: 0.5pt solid #cccccc;
+.fp-lsec {
+  font-weight: bold;
+  margin-bottom: 1mm;
+}
+
+.fp-lrow {
+  font-size: 6.5pt;
+  margin-bottom: 0.5mm;
+}
+
+.fp-lnote {
+  font-size: 6pt;
+  color: #444;
+  margin-bottom: 1mm;
+}
+
+.fp-lfield {
+  border-bottom: 0.5px solid #555;
+  min-height: 12mm;
+  margin-bottom: 2mm;
+  font-size: 6.5pt;
+  padding-bottom: 1mm;
+}
+
+.fp-stamp-label {
+  font-weight: bold;
+  margin-top: 2mm;
   font-size: 7pt;
-  color: #666666;
+}
+
+.fp-stamp-box {
+  border: 0.5px solid #777;
+  height: 20mm;
+  width: 100%;
+}
+
+/* Right panel */
+.fp-right-panel {}
+
+.fp-proto-title {
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5mm;
+}
+
+.fp-location {
+  font-size: 7.5pt;
+  margin-bottom: 1mm;
+}
+
+/* Underlined value spans */
+.fp-uline {
+  border-bottom: 0.5px solid #000;
+  display: inline-block;
+  min-width: 20mm;
+  padding-bottom: 0.5mm;
+}
+
+/* --- Result summary box --- */
+.fp-result-box {
+  border: 1px solid #000;
+  padding: 2mm;
+  margin: 2mm 0;
+  font-size: 7.5pt;
+}
+
+.fp-rb-row {
+  margin: 1mm 0;
+}
+
+.fp-sq {
+  font-size: 10pt;
+  margin-right: 1mm;
+  vertical-align: middle;
+}
+
+/* --- Owner box --- */
+.fp-owner-box {
+  border: 1px solid #000;
+  padding: 2mm;
+  font-size: 7pt;
+  margin-bottom: 2mm;
+}
+
+.fp-ob-title {
+  font-weight: bold;
+  margin-bottom: 1mm;
+}
+
+.fp-ob-note {
+  font-size: 6.5pt;
+  margin-bottom: 0.5mm;
+}
+
+.fp-ob-field {
+  border-bottom: 0.5px solid #555;
+  min-height: 9mm;
+  margin-bottom: 1.5mm;
+  font-size: 7pt;
+  padding-bottom: 1mm;
+}
+
+.fp-ob-small {
+  font-size: 6.5pt;
+  margin-top: 1mm;
+}
+
+/* --- Sprayer box --- */
+.fp-sprayer-box {
+  border: 1px solid #000;
+  padding: 2mm;
+  font-size: 7.5pt;
+}
+
+.fp-sb-row {
+  margin-bottom: 1mm;
+}
+
+.fp-small {
+  font-size: 6pt;
+  color: #444;
+}
+
+/* Sprayer details sub-section (right panel, aligned with owner area) */
+.fp-sprayer-details {
+  margin-top: 3mm;
+  padding-top: 2mm;
+  border-top: 0.5px solid #ccc;
+}
+
+.fp-sb-detail-row {
+  font-size: 7pt;
+  margin-bottom: 1mm;
+}
+
+.fp-sb-label {
+  font-weight: bold;
+  display: inline-block;
+  min-width: 32mm;
+}
+
+/* Owner section in left panel (per XLSX layout) */
+.fp-owner-left {
+  margin-top: 3mm;
+  padding-top: 2mm;
+  border-top: 0.5px solid #ccc;
+}
+
+/* --- Results footer section (bottom of page 2, per XLSX) --- */
+.fp-results-footer {
+  margin-top: 4mm;
+  border-top: 1px solid #000;
+  padding-top: 2mm;
+}
+
+.fp-results-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7.5pt;
+  margin: 2mm 0;
+}
+
+.fp-results-tbl td {
+  border: 0.5px solid #000;
+  padding: 2mm 3mm;
+  vertical-align: middle;
+}
+
+.fp-legal-note {
+  font-size: 5.5pt;
+  color: #444;
+  margin: 2mm 0;
+  line-height: 1.3;
+}
+
+.fp-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4mm;
+  font-size: 7pt;
+}
+
+.fp-sig-left {
+  width: 30%;
+}
+
+.fp-sig-center {
+  width: 30%;
   text-align: center;
 }
 
-/* Print Styles - A4 PDF Output */
+.fp-sig-right {
+  width: 30%;
+  text-align: center;
+}
+
+/* --- Main inspection table (8 columns) --- */
+.fp-it {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 6.5pt;
+}
+
+.fp-it th,
+.fp-it td {
+  border: 0.5px solid #000;
+  padding: 1px 2px;
+  vertical-align: middle;
+}
+
+.fp-it th {
+  text-align: center;
+  font-weight: bold;
+  background: #f0f0f0;
+  font-size: 6pt;
+}
+
+.fp-col-urz {
+  width: 20mm;
+  font-size: 6pt;
+}
+
+.fp-urz {
+  font-weight: bold;
+  vertical-align: top;
+  padding-top: 2px;
+}
+
+.fp-col-rodz {
+  width: 18mm;
+  font-size: 6pt;
+}
+
+.fp-col-pred {
+  /* auto width */
+}
+
+.fp-chk {
+  width: 7mm;
+  text-align: center;
+  font-size: 9pt;
+}
+
+.fp-col-uw {
+  width: 22mm;
+  font-size: 6pt;
+}
+
+/* Section header row */
+.fp-sec td {
+  background: #e0e0e0;
+  font-weight: bold;
+  text-align: center;
+  font-size: 7pt;
+  padding: 2px;
+}
+
+.fp-sec th {
+  background: #e0e0e0;
+  font-weight: bold;
+  text-align: center;
+  font-size: 7pt;
+  padding: 2px;
+}
+
+/* Section 1 table (4 columns: Przedmiot badań, wada, w normie, Uwagi) */
+.fp-sect1 {
+  margin-bottom: 2mm;
+}
+
+/* Indented sub-item */
+.fp-indent {
+  font-size: 6pt;
+  padding-left: 4mm;
+}
+
+/* --- Page 2 continuation header --- */
+.fp-cont-hdr {
+  display: flex;
+  justify-content: space-between;
+  font-size: 6.5pt;
+  color: #555;
+  margin-bottom: 2mm;
+  border-bottom: 0.5px solid #ccc;
+  padding-bottom: 1mm;
+}
+
+/* --- Bottom tables (manometer + nozzle) --- */
+.fp-btitle {
+  font-weight: bold;
+  text-align: center;
+  font-size: 7pt;
+  background: #e8e8e8;
+  border: 0.5px solid #000;
+  padding: 2px;
+  margin-top: 3mm;
+}
+
+.fp-mano,
+.fp-nozzle {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7pt;
+  margin-top: 0;
+}
+
+.fp-mano th,
+.fp-mano td,
+.fp-nozzle th,
+.fp-nozzle td {
+  border: 0.5px solid #000;
+  padding: 1.5px 3px;
+  text-align: center;
+}
+
+.fp-mano th,
+.fp-nozzle th {
+  background: #eee;
+  font-size: 6.5pt;
+}
+
+.fp-nlbl {
+  text-align: left !important;
+  padding-left: 3px;
+  background: #f5f5f5;
+  font-weight: bold;
+  font-size: 6.5pt;
+}
+
+/* --- Footnote --- */
+.fp-footnote {
+  font-size: 6pt;
+  font-style: italic;
+  color: #444;
+  margin-top: 3mm;
+  border-top: 0.5px solid #ccc;
+  padding-top: 1.5mm;
+}
+
+/* ============================================================
+   PRINT STYLES — A4 PDF Output
+   ============================================================ */
 @media print {
-  /* Hide everything except the document */
   body * {
     visibility: hidden;
   }
-  
+
   .dialog-backdrop,
   .dialog-backdrop * {
     visibility: visible;
   }
-  
+
   .dialog-backdrop {
     position: absolute;
     left: 0;
@@ -1259,7 +1090,7 @@
     background: white;
     padding: 0;
   }
-  
+
   .dialog--print {
     position: static;
     width: 100%;
@@ -1272,103 +1103,89 @@
     transform: none;
     padding: 0;
   }
-  
+
   .dialog__header,
   .dialog__footer {
     display: none !important;
   }
-  
+
   .print-preview-body {
     padding: 0;
     background: white;
     overflow: visible;
     height: auto;
   }
-  
+
   .protocol-document {
     box-shadow: none;
-    padding: 15mm;
+    padding: 0;
     max-width: none;
     width: 100%;
     min-height: auto;
-    page-break-inside: avoid;
   }
-  
-  /* Page setup */
-  @page {
-    size: A4;
-    margin: 15mm;
+
+  .form-page {
+    width: 100%;
+    margin: 0;
+    padding: 7mm 6mm 8mm 8mm;
+    box-shadow: none;
+    page-break-after: always;
+    min-height: auto;
   }
-  
-  /* Ensure tables don't break across pages */
-  .doc-results-table {
-    page-break-inside: auto;
-  }
-  
-  .doc-results-table tr {
-    page-break-inside: avoid;
+
+  .form-page:last-child {
     page-break-after: auto;
   }
-  
-  .section-title-row {
-    page-break-after: avoid;
+
+  @page {
+    size: A4;
+    margin: 0;
   }
-  
-  .doc-final-result {
-    page-break-before: avoid;
-  }
-  
-  .doc-signatures {
-    page-break-inside: avoid;
-  }
-  
-  /* Ensure colors print */
-  .results-header,
-  .doc-section-header {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  
-  .item-result.pass,
-  .item-result.fail,
-  .doc-final-result.positive,
-  .doc-final-result.negative,
-  .section-title-row,
-  .doc-info-box td {
+
+  .fp-sec td,
+  .fp-it th,
+  .fp-btitle,
+  .fp-mano th,
+  .fp-nozzle th,
+  .fp-nlbl {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 }
 
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
 @media (max-width: 767px) {
   .dialog--print {
     width: 95%;
     max-height: 95vh;
   }
-  
+
   .protocol-header {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .check-row {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-sm);
   }
-  
+
   .check-buttons {
     align-self: flex-end;
   }
-  
+
   .final-result-row {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .result-buttons {
     width: 100%;
   }
-  
+
   .btn-result {
     flex: 1;
   }

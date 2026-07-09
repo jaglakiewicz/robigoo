@@ -40,6 +40,12 @@ namespace Server.Application.CropSprayers
         /// </summary>
         /// <returns>True if deleted, false if not found.</returns>
         Task<bool> DeleteAsync(string serialNumber, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Returns distinct non-empty values for a given field (for autosuggestions).
+        /// </summary>
+        /// <returns>Sorted list of unique values, or null if the field is not supported.</returns>
+        Task<IReadOnlyList<string>?> GetDistinctValuesAsync(string field, CancellationToken cancellationToken = default);
     }
 
     #endregion

@@ -5,7 +5,7 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* ============================================================
@@ -849,9 +849,10 @@
 }
 
 /* ============================================================
-   XSL-FO STYLE PROTOCOL DOCUMENT PREVIEW
-   (Kept: these are print/document-specific styles with fixed dimensions)
+   OFFICIAL PROTOCOL FORM — matching PBTO.xlsx exactly
+   Two A4 pages: front (sections 1 + 2.1–2.2) and back (2.3–2.10 + tables)
    ============================================================ */
+
 .protocol-document-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -860,225 +861,386 @@
   border-radius: var(--radius-sm);
 }
 
-.protocol-document {
-  background: white;
-  padding: 12mm;
-  max-width: 210mm;
-  margin: 0 auto;
+/* --- Page shell --- */
+.protocol-document.official-form {
+  background: transparent;
+  padding: 0;
+  max-width: none;
+  min-height: auto;
+  box-shadow: none;
   font-family: var(--font-family);
-  font-size: 9pt;
-  color: #333;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  border-radius: var(--radius-sm);
+  font-size: 7.5pt;
+  color: #000;
+  line-height: 1.3;
 }
 
-/* Document Title */
-.doc-title {
-  text-align: center;
-  margin-bottom: 6mm;
-  padding-bottom: 4mm;
-  border-bottom: 2px solid #1a5f7a;
+.form-page {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  margin: 0 auto 6mm;
+  padding: 8mm 8mm 8mm 10mm;
+  box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  position: relative;
 }
 
-.doc-title h1 {
-  font-size: 14pt;
-  font-weight: bold;
-  color: #1a5f7a;
-  margin: 0 0 2mm 0;
+.fp-page-break {
+  margin-top: 6mm;
 }
 
-.doc-title h2 {
-  font-size: 11pt;
-  font-weight: normal;
-  color: #333;
-  margin: 0;
-}
-
-/* Info Box */
-.doc-info-box {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 4mm;
-  border: 1px solid #1a5f7a;
-}
-
-.doc-info-box td {
-  padding: 2mm 3mm;
-  border: 1px solid #ccc;
-  font-size: 9pt;
-}
-
-.doc-info-box strong {
-  color: #1a5f7a;
-}
-
-/* Section Headers */
-.doc-section-header {
-  background: #1a5f7a;
-  color: white;
-  font-weight: bold;
-  font-size: 10pt;
-  padding: 2mm 3mm;
-  margin-top: 4mm;
-  margin-bottom: 0;
-}
-
-/* Data Tables */
-.doc-data-table {
-  width: 100%;
-  border-collapse: collapse;
+/* --- TOP GRID: inspector left | protocol right --- */
+.fp-top {
+  display: grid;
+  grid-template-columns: 55mm 1fr;
+  gap: 3mm;
   margin-bottom: 2mm;
 }
 
-.doc-data-table td {
-  padding: 1.5mm 3mm;
-  border: 1px solid #ccc;
+/* Left panel — inspector info */
+.fp-left-panel {
+  border: 1px solid #000;
+  padding: 2mm;
+  font-size: 7pt;
+}
+
+.fp-lsec {
+  font-weight: bold;
+  margin-bottom: 1mm;
+}
+
+.fp-lrow {
+  font-size: 6.5pt;
+  margin-bottom: 0.5mm;
+}
+
+.fp-lnote {
+  font-size: 6pt;
+  color: #444;
+  margin-bottom: 1mm;
+}
+
+.fp-lfield {
+  border-bottom: 0.5px solid #555;
+  min-height: 12mm;
+  margin-bottom: 2mm;
+  font-size: 6.5pt;
+  padding-bottom: 1mm;
+}
+
+.fp-stamp-label {
+  font-weight: bold;
+  margin-top: 2mm;
+  font-size: 7pt;
+}
+
+.fp-stamp-box {
+  border: 0.5px solid #777;
+  height: 20mm;
+  width: 100%;
+}
+
+/* Right panel */
+.fp-right-panel {}
+
+.fp-proto-title {
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5mm;
+}
+
+.fp-location {
+  font-size: 7.5pt;
+  margin-bottom: 1mm;
+}
+
+/* Underlined value spans */
+.fp-uline {
+  border-bottom: 0.5px solid #000;
+  display: inline-block;
+  min-width: 20mm;
+  padding-bottom: 0.5mm;
+}
+
+/* --- Result summary box --- */
+.fp-result-box {
+  border: 1px solid #000;
+  padding: 2mm;
+  margin: 2mm 0;
+  font-size: 7.5pt;
+}
+
+.fp-rb-row {
+  margin: 1mm 0;
+}
+
+.fp-sq {
+  font-size: 10pt;
+  margin-right: 1mm;
+  vertical-align: middle;
+}
+
+/* --- Owner box --- */
+.fp-owner-box {
+  border: 1px solid #000;
+  padding: 2mm;
+  font-size: 7pt;
+  margin-bottom: 2mm;
+}
+
+.fp-ob-title {
+  font-weight: bold;
+  margin-bottom: 1mm;
+}
+
+.fp-ob-note {
+  font-size: 6.5pt;
+  margin-bottom: 0.5mm;
+}
+
+.fp-ob-field {
+  border-bottom: 0.5px solid #555;
+  min-height: 9mm;
+  margin-bottom: 1.5mm;
+  font-size: 7pt;
+  padding-bottom: 1mm;
+}
+
+.fp-ob-small {
+  font-size: 6.5pt;
+  margin-top: 1mm;
+}
+
+/* --- Sprayer box --- */
+.fp-sprayer-box {
+  border: 1px solid #000;
+  padding: 2mm;
+  font-size: 7.5pt;
+}
+
+.fp-sb-row {
+  margin-bottom: 1mm;
+}
+
+.fp-small {
+  font-size: 6pt;
+  color: #444;
+}
+
+/* Sprayer details sub-section (right panel, aligned with owner area) */
+.fp-sprayer-details {
+  margin-top: 3mm;
+  padding-top: 2mm;
+  border-top: 0.5px solid #ccc;
+}
+
+.fp-sb-detail-row {
+  font-size: 7pt;
+  margin-bottom: 1mm;
+}
+
+.fp-sb-label {
+  font-weight: bold;
+  display: inline-block;
+  min-width: 32mm;
+}
+
+/* Owner section in left panel (per XLSX layout) */
+.fp-owner-left {
+  margin-top: 3mm;
+  padding-top: 2mm;
+  border-top: 0.5px solid #ccc;
+}
+
+/* --- Results footer section (bottom of page 2, per XLSX) --- */
+.fp-results-footer {
+  margin-top: 4mm;
+  border-top: 1px solid #000;
+  padding-top: 2mm;
+}
+
+.fp-results-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7.5pt;
+  margin: 2mm 0;
+}
+
+.fp-results-tbl td {
+  border: 0.5px solid #000;
+  padding: 2mm 3mm;
+  vertical-align: middle;
+}
+
+.fp-legal-note {
+  font-size: 5.5pt;
+  color: #444;
+  margin: 2mm 0;
+  line-height: 1.3;
+}
+
+.fp-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4mm;
+  font-size: 7pt;
+}
+
+.fp-sig-left {
+  width: 30%;
+}
+
+.fp-sig-center {
+  width: 30%;
+  text-align: center;
+}
+
+.fp-sig-right {
+  width: 30%;
+  text-align: center;
+}
+
+/* --- Main inspection table (8 columns) --- */
+.fp-it {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 6.5pt;
+}
+
+.fp-it th,
+.fp-it td {
+  border: 0.5px solid #000;
+  padding: 1px 2px;
+  vertical-align: middle;
+}
+
+.fp-it th {
+  text-align: center;
+  font-weight: bold;
+  background: #f0f0f0;
+  font-size: 6pt;
+}
+
+.fp-col-urz {
+  width: 20mm;
+  font-size: 6pt;
+}
+
+.fp-urz {
+  font-weight: bold;
+  vertical-align: top;
+  padding-top: 2px;
+}
+
+.fp-col-rodz {
+  width: 18mm;
+  font-size: 6pt;
+}
+
+.fp-col-pred {
+  /* auto width */
+}
+
+.fp-chk {
+  width: 7mm;
+  text-align: center;
   font-size: 9pt;
 }
 
-.doc-data-table .label-cell {
-  width: 35%;
-  background: #f5f5f5;
-  font-weight: 500;
+.fp-col-uw {
+  width: 22mm;
+  font-size: 6pt;
 }
 
-.doc-data-table .value-cell {
-  width: 65%;
-}
-
-/* Results Table */
-.doc-results-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 4mm;
-}
-
-.doc-results-table th,
-.doc-results-table td {
-  padding: 1.5mm 2mm;
-  border: 1px solid #ccc;
-  font-size: 8pt;
-  text-align: left;
-  vertical-align: top;
-}
-
-.doc-results-table .results-header {
-  background: #e8e8e8;
-}
-
-.doc-results-table .results-header th {
+/* Section header row */
+.fp-sec td {
+  background: #e0e0e0;
   font-weight: bold;
-  font-size: 8pt;
-}
-
-.doc-results-table .col-num {
-  width: 6%;
   text-align: center;
-}
-
-.doc-results-table .col-item {
-  width: 54%;
-}
-
-.doc-results-table .col-result {
-  width: 15%;
-  text-align: center;
-}
-
-.doc-results-table .col-notes {
-  width: 25%;
-}
-
-/* Section title rows */
-.doc-results-table .section-title-row {
-  background: #f0f0f0;
-}
-
-.doc-results-table .section-num {
-  text-align: center;
-  font-weight: bold;
-}
-
-.doc-results-table .section-title {
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 8pt;
-}
-
-/* Item rows */
-.doc-results-table .item-num {
-  text-align: center;
-  color: #666;
-}
-
-.doc-results-table .item-name {
-  padding-left: 3mm;
-}
-
-.doc-results-table .item-result {
-  text-align: center;
-  font-weight: 600;
-}
-
-.doc-results-table .item-result.pass {
-  color: #2e7d32;
-  background: #e8f5e9;
-}
-
-.doc-results-table .item-result.fail {
-  color: #c62828;
-  background: #ffebee;
-}
-
-.doc-results-table .item-notes {
   font-size: 7pt;
-  color: #666;
+  padding: 2px;
 }
 
-/* Final Result */
-.doc-final-result {
+.fp-sec th {
+  background: #e0e0e0;
+  font-weight: bold;
+  text-align: center;
+  font-size: 7pt;
+  padding: 2px;
+}
+
+/* Section 1 table (4 columns: Przedmiot badań, wada, w normie, Uwagi) */
+.fp-sect1 {
+  margin-bottom: 2mm;
+}
+
+/* Indented sub-item */
+.fp-indent {
+  font-size: 6pt;
+  padding-left: 4mm;
+}
+
+/* --- Page 2 continuation header --- */
+.fp-cont-hdr {
+  display: flex;
+  justify-content: space-between;
+  font-size: 6.5pt;
+  color: #555;
+  margin-bottom: 2mm;
+  border-bottom: 0.5px solid #ccc;
+  padding-bottom: 1mm;
+}
+
+/* --- Bottom tables (manometer + nozzle) --- */
+.fp-btitle {
+  font-weight: bold;
+  text-align: center;
+  font-size: 7pt;
+  background: #e8e8e8;
+  border: 0.5px solid #000;
+  padding: 2px;
+  margin-top: 3mm;
+}
+
+.fp-mano,
+.fp-nozzle {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 4mm;
+  font-size: 7pt;
+  margin-top: 0;
 }
 
-.doc-final-result .final-result-cell {
+.fp-mano th,
+.fp-mano td,
+.fp-nozzle th,
+.fp-nozzle td {
+  border: 0.5px solid #000;
+  padding: 1.5px 3px;
   text-align: center;
-  font-size: 14pt;
+}
+
+.fp-mano th,
+.fp-nozzle th {
+  background: #eee;
+  font-size: 6.5pt;
+}
+
+.fp-nlbl {
+  text-align: left !important;
+  padding-left: 3px;
+  background: #f5f5f5;
   font-weight: bold;
-  padding: 4mm;
-  border: 2px solid #ccc;
+  font-size: 6.5pt;
 }
 
-.doc-final-result .final-result-cell.positive {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border-color: #2e7d32;
-}
-
-.doc-final-result .final-result-cell.negative {
-  background: #ffebee;
-  color: #c62828;
-  border-color: #c62828;
-}
-
-/* Notes */
-.doc-notes {
-  margin-top: 4mm;
-  padding: 2mm 3mm;
-  border: 1px solid #ccc;
-  background: #fafafa;
-}
-
-.doc-notes-label {
-  font-weight: bold;
-  margin-bottom: 1mm;
-  color: #1a5f7a;
-}
-
-.doc-notes-content {
-  font-size: 8pt;
-  line-height: 1.4;
+/* --- Footnote --- */
+.fp-footnote {
+  font-size: 6pt;
+  font-style: italic;
+  color: #444;
+  margin-top: 3mm;
+  border-top: 0.5px solid #ccc;
+  padding-top: 1.5mm;
 }
 
 /* ============================================================
@@ -1097,17 +1259,13 @@
     grid-template-columns: 1fr;
   }
 
-  .protocol-document {
-    padding: 6mm;
-    font-size: 8pt;
+  .protocol-document.official-form {
+    font-size: 6pt;
   }
 
-  .doc-title h1 {
-    font-size: 12pt;
-  }
-
-  .doc-title h2 {
-    font-size: 10pt;
+  .form-page {
+    width: 100%;
+    padding: 4mm;
   }
 
   /* Dashboard responsive */

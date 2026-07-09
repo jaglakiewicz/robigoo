@@ -81,6 +81,7 @@ namespace Server.Infrastructure.Persistence.Repositories
                     BuildingNumber = c.BuildingNumber,
                     ApartmentNumber = c.ApartmentNumber,
                     ZipCode = c.ZipCode,
+                    Post = c.Post,
                     CreatedAt = c.CreatedAt
                 })
                 .ToListAsync(cancellationToken);

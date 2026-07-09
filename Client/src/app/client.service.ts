@@ -28,6 +28,7 @@ export interface ClientListItem {
   buildingNumber?: string;
   apartmentNumber?: string;
   zipCode?: string;
+  post?: string;
   createdAt: string;
 }
 
@@ -49,6 +50,7 @@ export interface ClientDetail {
   buildingNumber: string;
   apartmentNumber: string;
   zipCode: string;
+  post: string;
   // Timestamps
   createdAt: string;
   updatedAt?: string | null;
@@ -71,6 +73,7 @@ export interface ClientCreateUpdateRequest {
   buildingNumber: string;
   apartmentNumber: string;
   zipCode: string;
+  post: string;
 }
 
 /** Search parameters for clients list */

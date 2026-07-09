@@ -19,6 +19,7 @@ namespace Server.Application.CropSprayers
         public string? Manufacturer { get; set; }
         public string? YearFrom { get; set; }
         public string? YearTo { get; set; }
+        public string? OwnerId { get; set; }
 
         #endregion
     }

@@ -4,25 +4,111 @@
   All rights reserved. Unauthorized distribution or disclosure is prohibited.
 -->
 
-<h3 class="component-title">{{ 'marks.title' | text }}</h3>
-<p class="component-subtitle">{{ 'marks.description' | text }}</p>
+<div class="settings-subsection-title">{{ 'marks.title' | text }}</div>
 
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>{{ 'marks.columns.number' | text }}</th>
-      <th>{{ 'marks.columns.vehicle' | text }}</th>
-      <th>{{ 'marks.columns.issued' | text }}</th>
-      <th>{{ 'marks.columns.expires' | text }}</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let mark of marks">
-      <td>{{ mark.number }}</td>
-      <td>{{ mark.vehicle }}</td>
-      <td>{{ mark.issued }}</td>
-      <td>{{ mark.expires }}</td>
-    </tr>
-  </tbody>
-</table>
+<!-- Date range controls -->
+<div class="marks-controls">
+  <div class="marks-date-range">
+    <div class="marks-field">
+      <label>{{ 'marks.dateFrom' | text }}</label>
+      <input type="date" [(ngModel)]="dateFrom" class="marks-input" />
+    </div>
+    <span class="marks-separator">–</span>
+    <div class="marks-field">
+      <label>{{ 'marks.dateTo' | text }}</label>
+      <input type="date" [(ngModel)]="dateTo" class="marks-input" />
+    </div>
+  </div>
+  <div class="marks-actions">
+    <button class="btn btn-primary" (click)="generate()" [disabled]="!dateFrom || !dateTo || loading">
+      <span [innerHTML]="iconSearchSafe"></span>
+      {{ 'marks.generate' | text }}
+    </button>
+    <button class="btn btn-secondary" *ngIf="generated && rows.length" (click)="openPrintPreview()">
+      <span [innerHTML]="iconPrintSafe"></span>
+      {{ 'marks.print' | text }}
+    </button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="loading" class="marks-loading">
+  {{ 'general.loading' | text }}
+</div>
+
+<!-- No data -->
+<div *ngIf="generated && !loading && !rows.length" class="marks-empty">
+  {{ 'marks.noData' | text }}
+</div>
+
+<!-- Marks table -->
+<div *ngIf="generated && !loading && rows.length" class="marks-table-wrapper">
+  <table class="marks-table">
+    <thead>
+      <tr>
+        <th>{{ 'marks.columns.lp' | text }}</th>
+        <th>{{ 'marks.columns.stickerNumber' | text }}</th>
+        <th>{{ 'marks.columns.issueDate' | text }}</th>
+        <th>{{ 'marks.columns.owner' | text }}</th>
+        <th>{{ 'marks.columns.protocolNumber' | text }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows">
+        <td class="cell-center">{{ row.lp }}</td>
+        <td>{{ row.stickerNumber }}</td>
+        <td class="cell-center">{{ row.issueDate }}</td>
+        <td>{{ row.owner }}</td>
+        <td>{{ row.protocolNumber }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Print preview modal -->
+<div class="print-overlay" *ngIf="isPrintPreview" (click)="closePrintPreview()">
+  <div class="print-modal" (click)="$event.stopPropagation()">
+    <div class="print-modal-header">
+      <h3>{{ 'marks.title' | text }}</h3>
+      <div class="print-modal-actions">
+        <button class="btn btn-primary" (click)="printMarks()">
+          <span [innerHTML]="iconPrintSafe"></span>
+          {{ 'marks.print' | text }}
+        </button>
+        <button class="btn btn-secondary" (click)="closePrintPreview()">
+          {{ 'general.close' | text }}
+        </button>
+      </div>
+    </div>
+    <div class="print-modal-body">
+      <div class="print-page">
+        <div class="print-header">
+          <h2>EWIDENCJA ZNAKÓW KONTROLNYCH</h2>
+          <p class="print-subtitle">potwierdzających sprawność techniczną sprzętu do stosowania środków ochrony roślin</p>
+          <p class="print-date-range">Okres: {{ formatDateRange() }}</p>
+        </div>
+        <table class="print-table">
+          <thead>
+            <tr>
+              <th>Lp.</th>
+              <th>Nr znaku kontrolnego</th>
+              <th>Data wydania</th>
+              <th>Właściciel opryskiwacza<br/>(imię nazwisko lub firma)</th>
+              <th>Nr protokołu kontroli</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of rows">
+              <td class="cell-center">{{ row.lp }}</td>
+              <td>{{ row.stickerNumber }}</td>
+              <td class="cell-center">{{ row.issueDate }}</td>
+              <td>{{ row.owner }}</td>
+              <td>{{ row.protocolNumber }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 

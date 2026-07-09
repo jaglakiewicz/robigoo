@@ -1,0 +1,233 @@
+﻿<div class="dashboard" [class.dashboard--has-expanded]="expandedWidget !== null">
+
+  <!-- Widget 1: Recent Inspections -->
+  <div class="widget" [class.widget--expanded]="isExpanded('inspections')">
+    <button class="expand-btn" (click)="toggleExpand('inspections')" [title]="isExpanded('inspections') ? 'Zwiń' : 'Rozwiń'">
+      <span [innerHTML]="isExpanded('inspections') ? iconMinimize : iconMaximize"></span>
+    </button>
+    <div class="widget-header widget-header--blue">
+      <div class="widget-header-left">
+        <div class="widget-icon" [innerHTML]="iconInspections"></div>
+        <div class="widget-title-group">
+          <div class="widget-title">Ostatnie badania</div>
+          <span class="widget-subtitle">Najnowsze protokoły kontroli</span>
+        </div>
+      </div>
+      <div class="widget-header-right">
+        <label class="limit-label">Pokaż:
+          <select class="limit-select" [ngModel]="inspectionsLimit" (ngModelChange)="onInspectionsLimitChange($event)">
+            <option *ngFor="let opt of limitOptions" [ngValue]="opt">{{ opt }}</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div *ngIf="loadingInspections" class="widget-loading">
+        <div class="loading-spinner"></div>
+      </div>
+      <div *ngIf="!loadingInspections && recentInspections.length === 0" class="widget-empty">
+        <div class="empty-icon" [innerHTML]="iconInspections"></div>
+        <span class="empty-text">Brak zarejestrowanych badań</span>
+      </div>
+      <table *ngIf="!loadingInspections && recentInspections.length > 0" class="widget-table">
+        <thead>
+          <tr>
+            <th>Nr protoko&#322;u</th>
+            <th>Data</th>
+            <th>Klient</th>
+            <th>Opryskiwacz</th>
+            <th class="th-right">Wynik</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let insp of recentInspections" class="row-clickable" (click)="navigateToInspection(insp.id)">
+            <td class="cell-mono">{{ insp.protocolNumber }}</td>
+            <td class="cell-date">{{ formatDate(insp.inspectionDate) }}</td>
+            <td>{{ insp.clientName || '&#8212;' }}</td>
+            <td>
+              <span class="sprayer-name">{{ insp.cropSprayerName || '&#8212;' }}</span>
+              <span *ngIf="insp.cropSprayerSerialNumber" class="cell-sub">{{ insp.cropSprayerSerialNumber }}</span>
+            </td>
+            <td class="td-right">
+              <span *ngIf="insp.finalResult === true" class="badge badge-success">
+                <span class="badge-icon badge-icon--success" [innerHTML]="iconCircleCheck"></span> Pozytywny
+              </span>
+              <span *ngIf="insp.finalResult === false" class="badge badge-error">
+                <span class="badge-icon badge-icon--error" [innerHTML]="iconCircleX"></span> Negatywny
+              </span>
+              <span *ngIf="insp.finalResult == null" class="badge badge-muted">&#8212;</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Widget 2: Recent Crop Sprayers -->
+  <div class="widget" [class.widget--expanded]="isExpanded('sprayers')">
+    <button class="expand-btn" (click)="toggleExpand('sprayers')" [title]="isExpanded('sprayers') ? 'Zwiń' : 'Rozwiń'">
+      <span [innerHTML]="isExpanded('sprayers') ? iconMinimize : iconMaximize"></span>
+    </button>
+    <div class="widget-header widget-header--teal">
+      <div class="widget-header-left">
+        <div class="widget-icon" [innerHTML]="iconSprayers"></div>
+        <div class="widget-title-group">
+          <div class="widget-title">Ostatnio dodane opryskiwacze</div>
+          <span class="widget-subtitle">Nowo zarejestrowane maszyny</span>
+        </div>
+      </div>
+      <div class="widget-header-right">
+        <label class="limit-label">Pokaż:
+          <select class="limit-select" [ngModel]="sprayersLimit" (ngModelChange)="onSprayersLimitChange($event)">
+            <option *ngFor="let opt of limitOptions" [ngValue]="opt">{{ opt }}</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div *ngIf="loadingSprayers" class="widget-loading">
+        <div class="loading-spinner"></div>
+      </div>
+      <div *ngIf="!loadingSprayers && recentCropSprayers.length === 0" class="widget-empty">
+        <div class="empty-icon" [innerHTML]="iconSprayers"></div>
+        <span class="empty-text">Brak zarejestrowanych opryskiwaczy</span>
+      </div>
+      <table *ngIf="!loadingSprayers && recentCropSprayers.length > 0" class="widget-table">
+        <thead>
+          <tr>
+            <th>Opryskiwacz</th>
+            <th>Nr seryjny</th>
+            <th>Producent</th>
+            <th>W&#322;a&#347;ciciel</th>
+            <th class="th-right">Dodano</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cs of recentCropSprayers" class="row-clickable" (click)="navigateToSprayer(cs.serialNumber)">
+            <td>
+              <span class="sprayer-name">{{ cs.sprayerName }}</span>
+              <span class="cell-sub">{{ getSprayerTypeName(cs.type) }} &middot; {{ getSprayerKindName(cs.kind) }}</span>
+            </td>
+            <td class="cell-mono">{{ cs.serialNumber }}</td>
+            <td>{{ cs.manufacturer }}</td>
+            <td>
+              <span *ngIf="cs.ownerName" class="owner-tag">{{ cs.ownerName }}</span>
+              <span *ngIf="!cs.ownerName" class="text-muted">&#8212;</span>
+            </td>
+            <td class="td-right cell-date">{{ formatDate(cs.createdAt) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Widget 3: Upcoming Inspections (with Map) -->
+  <div class="widget" [class.widget--expanded]="isExpanded('upcoming')">
+    <button class="expand-btn" (click)="toggleExpand('upcoming')" [title]="isExpanded('upcoming') ? 'Zwiń' : 'Rozwiń'">
+      <span [innerHTML]="isExpanded('upcoming') ? iconMinimize : iconMaximize"></span>
+    </button>
+    <div class="widget-header widget-header--amber">
+      <div class="widget-header-left">
+        <div class="widget-icon" [innerHTML]="iconClock"></div>
+        <div class="widget-title-group">
+          <div class="widget-title">Zbli&#380;aj&#261;ce si&#281; badania</div>
+          <span class="widget-subtitle">Opryskiwacze z ko&#324;cz&#261;c&#261; si&#281; wa&#380;no&#347;ci&#261; kontroli</span>
+        </div>
+      </div>
+      <div class="widget-header-right">
+        <label class="limit-label">Okres:
+          <select class="limit-select" [ngModel]="upcomingDuration" (ngModelChange)="onUpcomingDurationChange($event)">
+            <option *ngFor="let opt of upcomingDurationOptions" [ngValue]="opt.value">{{ opt.label }}</option>
+          </select>
+        </label>
+        <label class="limit-label">Poka&#380;:
+          <select class="limit-select" [ngModel]="upcomingLimit" (ngModelChange)="onLimitChange($event)">
+            <option *ngFor="let opt of limitOptions" [ngValue]="opt">{{ opt }}</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div *ngIf="loadingUpcoming" class="widget-loading">
+        <div class="loading-spinner"></div>
+      </div>
+      <div *ngIf="!loadingUpcoming && upcomingInspections.length === 0" class="widget-empty">
+        <div class="empty-icon" [innerHTML]="iconClock"></div>
+        <span class="empty-text">Brak zbliżających się badań</span>
+      </div>
+      <table *ngIf="!loadingUpcoming && upcomingInspections.length > 0" class="widget-table widget-table-upcoming">
+        <thead>
+          <tr>
+            <th>Opryskiwacz</th>
+            <th>W&#322;a&#347;ciciel</th>
+            <th>Ostatnie badanie</th>
+            <th>Wa&#380;ne do</th>
+            <th class="th-right">Pozosta&#322;o</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of upcomingInspections" [class]="getUrgencyRowClass(u.remainingDays)">
+            <td>
+              <span class="sprayer-name">{{ u.cropSprayerName }}</span>
+              <span class="cell-sub">{{ u.cropSprayerSerialNumber }}</span>
+            </td>
+            <td>
+              <span *ngIf="u.ownerName" class="owner-tag">{{ u.ownerName }}</span>
+              <span *ngIf="!u.ownerName" class="text-muted">&#8212;</span>
+            </td>
+            <td class="cell-date">{{ formatDate(u.lastInspectionDate) }}</td>
+            <td class="cell-date">{{ formatDate(u.validUntil) }}</td>
+            <td class="td-right">
+              <span class="remaining-badge" [class]="'remaining-badge ' + getUrgencyClass(u.remainingDays)">
+                {{ formatRemainingTime(u.remainingDays) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Widget 4: Statistics -->
+  <div class="widget" [class.widget--expanded]="isExpanded('stats')">
+    <button class="expand-btn" (click)="toggleExpand('stats')" [title]="isExpanded('stats') ? 'Zwiń' : 'Rozwiń'">
+      <span [innerHTML]="isExpanded('stats') ? iconMinimize : iconMaximize"></span>
+    </button>
+    <div class="widget-header widget-header--purple">
+      <div class="widget-header-left">
+        <div class="widget-icon" [innerHTML]="iconStats"></div>
+        <div class="widget-title-group">
+          <div class="widget-title">Statystyki badań</div>
+          <span class="widget-subtitle">Przegląd aktywności w wybranym roku</span>
+        </div>
+      </div>
+      <div class="widget-header-right">
+        <label class="limit-label">Rok:
+          <select class="limit-select" [ngModel]="statisticsYear" (ngModelChange)="onStatisticsYearChange($event)">
+            <option *ngFor="let y of availableYears" [ngValue]="y">{{ y }}</option>
+          </select>
+        </label>
+        <div *ngIf="!loadingStats && statistics" class="stats-hero">
+          <span class="stats-hero-number">{{ statistics.totalThisYear }}</span>
+          <span class="stats-hero-label">badań</span>
+        </div>
+      </div>
+    </div>
+    <div class="widget-body">
+      <div *ngIf="loadingStats" class="widget-loading">
+        <div class="loading-spinner"></div>
+      </div>
+      <div *ngIf="!loadingStats && statistics" class="stats-content">
+        <div class="stats-chart">
+          <div *ngFor="let m of statistics.months" class="stats-bar-row">
+            <span class="stats-bar-label">{{ m.monthName.substring(0, 3) }}</span>
+            <div class="stats-bar-track">
+              <div class="stats-bar-fill" [class.stats-bar-fill--current]="isCurrentMonth(m.month)" [style.width.%]="getBarWidth(m.count)"></div>
+            </div>
+            <span class="stats-bar-count" [class.stats-bar-count--zero]="m.count === 0">{{ m.count }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

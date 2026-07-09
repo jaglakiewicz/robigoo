@@ -15,8 +15,7 @@ DELETE FROM Inspections;
 DELETE FROM Clients;
 DELETE FROM Machines;
 
--- Delete activity and audit logs
-DELETE FROM UserActivityLogs;
+-- Delete audit logs
 DELETE FROM UserSessions;
 DELETE FROM LoginAttempts;
 DELETE FROM SecurityEventLogs;
@@ -32,7 +31,6 @@ DELETE FROM sqlite_sequence WHERE name IN (
     'Inspections',
     'Clients',
     'Machines',
-    'UserActivityLogs',
     'UserSessions',
     'LoginAttempts',
     'SecurityEventLogs',

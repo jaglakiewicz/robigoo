@@ -51,7 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
     { type: 'inspections', titleKey: 'menu.inspections', hintKey: 'menu.inspectionsHint' },
     { type: 'clients', titleKey: 'menu.clients', hintKey: 'menu.clientsHint' },
     { type: 'marks', titleKey: 'menu.marks', hintKey: 'menu.marksHint' },
-    { type: 'notifications', titleKey: 'menu.notifications', hintKey: 'menu.notificationsHint' },
+    { type: 'registry', titleKey: 'menu.registry', hintKey: 'menu.registryHint' },
     { type: 'types', titleKey: 'menu.types', hintKey: 'menu.typesHint' },
     { type: 'settings', titleKey: 'menu.settings', hintKey: 'menu.settingsHint' }
   ];
